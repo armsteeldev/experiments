@@ -38,10 +38,12 @@ execute, and write-to-output states were inspected separately.
 ### A Grammar of Growth — major redesign
 
 The default turtle orientation and fit were corrected so the fern grows upright
-and sits in the viewport above the floating dock. Framing now uses the available
-safe area. Branch endpoints receive small leaflets, making the generated form
-read more botanically instead of like a hanging root sketch. Fern and coral
-presets retain their own recursive structures; zoom and pan remain available.
+and sits in the viewport above the floating dock. The default now grows from a
+seeded, parametric cluster of five curved fronds, paired pinnae, and smaller
+leaflets. The foliage unfolds in base-to-tip order over several seconds;
+pausing preserves the current growth state. Other branching presets continue
+to use their own L-system rewrite rules. The wider composition reads as a fern
+and stays clear of the dock on desktop and mobile; zoom and pan remain available.
 
 ### Other exhibits
 
@@ -89,7 +91,8 @@ no browser console errors. The following interactions were also performed:
   Kogge–Stone. The default resolved to 8, and 255+1 resolved to sum 0 with
   carry 1.
 - CPU: staged decode/execute and full run through output and halt.
-- Growth: Fern and Coral presets, zoom, and mobile framing.
+- Growth: replayed the fern, paused and resumed it mid-growth, switched to
+  Coral, and checked the completed composition and mobile framing.
 - Fluid and reaction diffusion: elapsed simulation, pointer injection, and
   preset switching.
 - Gravity and flock: time evolution, body launch, attractor interaction, and
@@ -122,6 +125,8 @@ claim about every device or mobile GPU.
 - Adder gate truth tables; exhaustive 4-bit and 8-bit ripple/lookahead pairs;
   16-bit boundaries, carry/overflow, architecture equivalence, trace, replay,
   and input changes.
+- Seeded fern generation, three branching depths, finite bounded coordinates,
+  sequential curve order, and generation-dependent detail.
 - Storage checks.
 - Site checks for 13 exhibits, 15 canonical URLs, metadata, JSON-LD, icons,
   `robots.txt`, and the sitemap.
@@ -155,10 +160,12 @@ states show the result after direct input.
 
 ### A Grammar of Growth
 
-![Reframed fern with leaflets](screenshots/headed-growth-fern-leaflets.jpg)
+![Fern partway through its staged growth](screenshots/growth-fern-unfurling.jpg)
+
+![Completed five-frond fern composition](screenshots/growth-fern-evolved.jpg)
 
 ![Coral growth preset](screenshots/final-growth-coral-desktop.jpg) ·
-[Mobile framing](screenshots/final-route-lsystem-mobile.jpg)
+[Completed fern on mobile](screenshots/growth-fern-mobile.jpg)
 
 ### A Quiet Current
 

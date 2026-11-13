@@ -2,11 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
+import { generateFernGeometry } from '../simulations/fern'
+import type { FernGeometry, FernSegment } from '../simulations/fern'
 
 type Preset = { name: string; axiom: string; rules: Record<string, string>; angle: number; iterations: number; max: number; step: number; taper?: number; organic?: boolean; draw: string }
-type Segment = { x1: number; y1: number; cx: number; cy: number; x2: number; y2: number; depth: number; order: number }
+type Segment = FernSegment
 type Camera = { zoom: number; x: number; y: number }
-type Geometry = { segments: Segment[]; bounds: { minX: number; maxX: number; minY: number; maxY: number }; maxDepth: number }
+type Geometry = FernGeometry
 const MAX_SYMBOLS = 520_000
 const MAX_SEGMENTS = 100_000
 const presets: Record<string, Preset> = {
@@ -27,6 +29,7 @@ const palettes: Record<string, string[]> = {
 }
 
 function generate(kind: string, iterations: number, angle: number, randomness: number, seed: number): Geometry {
+  if (kind === 'fern') return generateFernGeometry(iterations, randomness, seed)
   const preset = presets[kind] || presets.tree
   let sentence = preset.axiom
   for (let generation = 0; generation < iterations; generation++) {
@@ -157,20 +160,28 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
           ctx.stroke(paths[tier])
         }
       }
-      if (presets[kind]?.organic && count > 0) {
-        const maxDepth = geometryRef.current.maxDepth
-        ctx.fillStyle = colors[colors.length - 1]
-        ctx.globalAlpha = kind === 'fern' ? .84 : .58
+      if (kind === 'fern') {
+        ctx.fillStyle = colors[colors.length - 2]
+        ctx.globalAlpha = .68
         for (let i = 0; i < count; i++) {
           const segment = geometryRef.current.segments[i]
-          const leafDepth = kind === 'fern' ? Math.max(2, Math.floor(maxDepth * .48)) : maxDepth - 1
-          const leafInterval = kind === 'fern' ? 9 : 3
-          if (segment.depth < leafDepth || segment.order % leafInterval !== 0) continue
+          if (!segment.leafSize) continue
           const heading = Math.atan2(segment.y2 - segment.y1, segment.x2 - segment.x1)
           ctx.beginPath()
-          const blade = kind === 'fern' ? 6.5 : 2.4
-          const leafAngle = kind === 'fern' ? heading + (segment.order % 2 ? Math.PI / 2 : -Math.PI / 2) : heading + Math.PI / 5
-          ctx.ellipse(segment.x2, segment.y2, blade / scale, (kind === 'fern' ? 2.4 : .7) / scale, leafAngle, 0, Math.PI * 2)
+          ctx.ellipse(segment.x2, segment.y2, segment.leafSize / scale, segment.leafSize * 0.34 / scale, heading, 0, Math.PI * 2)
+          ctx.fill()
+        }
+        ctx.globalAlpha = 1
+      } else if (presets[kind]?.organic && count > 0) {
+        const maxDepth = geometryRef.current.maxDepth
+        ctx.fillStyle = colors[colors.length - 1]
+        ctx.globalAlpha = .58
+        for (let i = 0; i < count; i++) {
+          const segment = geometryRef.current.segments[i]
+          if (segment.depth < maxDepth - 1 || segment.order % 3 !== 0) continue
+          const heading = Math.atan2(segment.y2 - segment.y1, segment.x2 - segment.x1)
+          ctx.beginPath()
+          ctx.ellipse(segment.x2, segment.y2, 2.4 / scale, .7 / scale, heading + Math.PI / 5, 0, Math.PI * 2)
           ctx.fill()
         }
       }
@@ -205,11 +216,10 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
       progress.current = growing && !paused ? 0 : geometry.segments.length
       lastGrowthKey.current = growthKey
     }
-    if (paused) progress.current = geometry.segments.length
     resize()
     const animate = () => {
       if (paused || !growing || progress.current >= geometry.segments.length) return
-      progress.current = Math.min(geometry.segments.length, progress.current + Math.max(1300, Math.ceil(geometry.segments.length / 46)))
+      progress.current = Math.min(geometry.segments.length, progress.current + Math.max(28, Math.ceil(geometry.segments.length / 240)))
       draw(progress.current)
       if (progress.current < geometry.segments.length) raf = requestAnimationFrame(animate)
     }
@@ -278,7 +288,7 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
         <button className="panel-action" onClick={() => setGrowing((value) => !value)}><span>{growing ? 'Pause growth' : 'Resume growth'}</span><i>{growing ? 'Ⅱ' : '▶'}</i></button>
       </ActionRow>
       <button className="panel-action" onClick={randomize}><span>Let the wind decide</span><i>↻</i></button>
-      <p className="control-note">Each grammar is rewritten into its own geometry. Drag to pan, scroll to magnify, and replay to watch the structure unfold.</p>
+      <p className="control-note">The fern grows from nested fronds and leaflets; the other forms unfold from branching rules. Drag to pan, scroll to magnify, and replay to watch them grow.</p>
     </ControlPanel>
   </div>
 }
