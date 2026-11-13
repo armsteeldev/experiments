@@ -65,7 +65,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     const resize = () => { const rect = canvas.getBoundingClientRect(); if (!rect.width || !rect.height) return; width = rect.width; height = rect.height; dpr = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(2_400_000 / (width * height))); canvas.width = Math.floor(width * dpr); canvas.height = Math.floor(height * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0) }
     const plot = () => width < 720
       ? ({ x: width * .06, y: height * .25, w: width * .88, h: height * .36 })
-      : ({ x: width * .06, y: height * .18, w: width * .56, h: height * .68 })
+      : ({ x: width * .06, y: height * .24, w: width * .56, h: height * .61 })
     const draw = (now: number) => {
       if(document.hidden){raf=requestAnimationFrame(draw);return}
       const p = plot(), q = settings.current, net = network.current, data = samples.current
@@ -106,7 +106,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
         const glow = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, r * 3.7); glow.addColorStop(0, hue + '66'); glow.addColorStop(1, hue + '00'); ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(point.x, point.y, r * 3.7, 0, Math.PI * 2); ctx.fill()
         ctx.beginPath(); ctx.arc(point.x, point.y, r, 0, Math.PI * 2); ctx.fillStyle = `rgba(10,20,27,${1 - normalized * .28})`; ctx.fill(); ctx.strokeStyle = hue; ctx.lineWidth = 1.1; ctx.stroke()
         ctx.beginPath(); ctx.arc(point.x, point.y, r * Math.max(.08, normalized), 0, Math.PI * 2); ctx.fillStyle = hue + 'cf'; ctx.fill()
-        ctx.fillStyle = '#90a2a7'; ctx.font = '8px monospace'; ctx.textAlign = layerIndex === 0 ? 'left' : layerIndex === positions.length - 1 ? 'right' : 'center'; ctx.fillText(layerIndex === 0 ? `x${neuron + 1}` : layerIndex === positions.length - 1 ? `${normalized.toFixed(2)}` : `${activationValue.toFixed(2)}`, point.x + (layerIndex === 0 ? -12 : layerIndex === positions.length - 1 ? 18 : 0), point.y + r + 12)
+        ctx.fillStyle = '#90a2a7'; ctx.font = mobile ? '7px monospace' : '9px monospace'; ctx.textAlign = layerIndex === 0 ? 'left' : layerIndex === positions.length - 1 ? 'right' : 'center'; ctx.fillText(layerIndex === 0 ? `x${neuron + 1}` : layerIndex === positions.length - 1 ? `${normalized.toFixed(2)}` : `${activationValue.toFixed(2)}`, point.x + (layerIndex === 0 ? -12 : layerIndex === positions.length - 1 ? 18 : 0), point.y + r + 12)
       }))
       ctx.textAlign = 'center'; ctx.fillStyle = '#a2b5b6'; ctx.font = '9px monospace'; ctx.fillText('INPUT', layerXs[0], graphY - 24); ctx.fillText('OUTPUT', layerXs[layerXs.length - 1], graphY - 24)
       const prediction = outputValue(computed.output[0], q.activation)
@@ -128,7 +128,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   const updateInput = (event: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current; if (!canvas) return
     const rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top
-    const mobile = rect.width < 720, plotX = .06, plotWidth = mobile ? .88 : .56, plotY = mobile ? .25 : .18, plotHeight = mobile ? .36 : .68
+    const mobile = rect.width < 720, plotX = .06, plotWidth = mobile ? .88 : .56, plotY = mobile ? .25 : .24, plotHeight = mobile ? .36 : .61
     if (x > rect.width * (mobile ? .96 : .65) || x < rect.width * (mobile ? .04 : .04) || y < rect.height * (plotY - .02) || y > rect.height * (plotY + plotHeight + .02)) return
     setInput([Math.max(-1, Math.min(1, ((x / rect.width - plotX) / plotWidth) * 2 - 1)), Math.max(-1, Math.min(1, 1 - ((y / rect.height - plotY) / plotHeight) * 2))])
   }

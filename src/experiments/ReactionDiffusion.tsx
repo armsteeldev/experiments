@@ -66,12 +66,12 @@ const initShader = [
   '  float radius=0.3+0.2*hash(cell+31.7);',
   '  float spot=1.0-smoothstep(radius*0.7,radius,length((local-jitter*0.55)*vec2(uAspect,1.0)));',
   '  float cellsX=2.0*floor(8.0*clamp(uAspect,0.5,3.0)+0.5);',
-  '  vec2 organicScale=vec2(cellsX,16.0);',
-  '  float organic=valueNoise(vUv,organicScale)*0.5+valueNoise(vUv,organicScale*2.0)*0.32+valueNoise(vUv,organicScale*4.0)*0.18;',
+  '  vec2 organicScale=vec2(cellsX*1.45,23.0);',
+  '  float organic=valueNoise(vUv,organicScale)*0.24+valueNoise(vUv,organicScale*2.0)*0.36+valueNoise(vUv,organicScale*4.0)*0.40;',
   '  float b=0.0;',
   '  if(uPreset==0)b=spot*step(0.36,h);',
-  '  if(uPreset==1)b=smoothstep(0.53,0.67,organic)*0.96;',
-  '  if(uPreset==2)b=smoothstep(0.5,0.64,organic)*0.92;',
+  '  if(uPreset==1)b=smoothstep(0.54,0.68,organic)*0.96;',
+  '  if(uPreset==2){float ridge=abs(organic-0.51);b=(1.0-smoothstep(0.035,0.095,ridge))*0.94;}',
   '  if(uPreset==3){float d=length((vUv-0.5)*vec2(uAspect,1.0));b=(1.0-smoothstep(0.035,0.055,d))*0.95+spot*step(0.84,h)*0.48;}',
   '  if(uPreset==4){float ring=abs(length((vUv-0.5)*vec2(uAspect,1.0))-0.23);b=max(spot*step(0.7,h),1.0-smoothstep(0.012,0.028,ring));}',
   '  b=clamp(b,0.0,0.98);',
@@ -235,12 +235,12 @@ function release(bundle: Bundle) {
 
 function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' && presets[props.stateFromUrl.preset] ? props.stateFromUrl.preset : 'coral')
+  const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' && presets[props.stateFromUrl.preset] ? props.stateFromUrl.preset : 'labyrinth')
   const [feed, setFeed] = useState(() => Number(props.stateFromUrl?.feed) || presets[presetName].feed)
   const [kill, setKill] = useState(() => Number(props.stateFromUrl?.kill) || presets[presetName].kill)
   const [diffusion, setDiffusion] = useState(() => Number(props.stateFromUrl?.diffusion) || 1)
   const [steps, setSteps] = useState(() => Number(props.stateFromUrl?.steps) || 3)
-  const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' ? props.stateFromUrl.palette : 'coral')
+  const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' ? props.stateFromUrl.palette : 'verdigris')
   const [brush, setBrush] = useState(() => typeof props.stateFromUrl?.brush === 'string' ? props.stateFromUrl.brush : 'seed')
   const [brushSize, setBrushSize] = useState(() => Number(props.stateFromUrl?.brushSize) || 28)
   const [quality, setQuality] = useState(() => typeof props.stateFromUrl?.quality === 'string' ? props.stateFromUrl.quality : 'detail')

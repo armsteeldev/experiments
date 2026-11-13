@@ -23,10 +23,13 @@ function makeScene(scene: Scene): GravityBody[] {
     { id: 1, x: 0, y: 0, vx: 0, vy: 0, mass: 980, color: '#f0bd77', trail: [] },
     ...[1.25, 2.05, 2.92, 3.88].map((r, i) => ({ id: i + 2, x: r, y: 0, vx: 0, vy: Math.sqrt(980 / r) * (i === 1 ? .82 : 1), mass: [.3, .8, .25, .5][i], color: planetColors[i], trail: [] })),
   ]
-  return [
-    { id: 1, x: 0, y: 0, vx: 0, vy: 0, mass: 980, color: '#f1bf79', trail: [] },
-    ...[1.18, 1.92, 2.85, 3.8, 4.65].map((r, i) => ({ id: i + 2, x: r, y: 0, vx: 0, vy: Math.sqrt(980 / r), mass: [.16, .55, .8, .3, .5][i], color: planetColors[i], trail: [] })),
-  ]
+  const star: GravityBody = { id: 1, x: 0, y: 0, vx: 0, vy: 0, mass: 980, color: '#f1bf79', trail: [] }
+  const radii = [1.18, 1.92, 2.85, 3.8, 4.65]
+  const phases = [-0.5, 1.15, 2.55, 3.8, 5.15]
+  return [star, ...radii.map((radius, i) => {
+    const x = Math.cos(phases[i]) * radius, y = Math.sin(phases[i]) * radius
+    return { id: i + 2, x, y, ...circularOrbitVelocity(star, x, y), mass: [.16, .55, .8, .3, .5][i], color: planetColors[i], trail: [] }
+  })]
 }
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n))
 type Params = { paused: boolean; speed: number; collision: CollisionMode; trails: boolean; prediction: boolean }

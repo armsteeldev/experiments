@@ -77,7 +77,7 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
   const [angle, setAngle] = useState(() => Number(stateFromUrl?.angle) || presets[initialKind].angle)
   const [randomness, setRandomness] = useState(() => stateFromUrl?.randomness !== undefined ? Number(stateFromUrl.randomness) : (presets[initialKind].organic ? 0.13 : 0))
   const [width, setWidth] = useState(() => Number(stateFromUrl?.width) || 2.4)
-  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' ? stateFromUrl.palette : 'frost')
+  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' ? stateFromUrl.palette : 'sage')
   const [seed, setSeed] = useState(() => Number(stateFromUrl?.seed) || 7)
   const [camera, setCamera] = useState<Camera>(() => ({
     zoom: Math.max(0.15, Math.min(24, Number(stateFromUrl?.zoom) || 1)),
@@ -132,11 +132,16 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
       const chunkSize = 850
       const bounds = geometryRef.current.bounds
       const spanX = bounds.maxX - bounds.minX || 1, spanY = bounds.maxY - bounds.minY || 1
-      const scale = Math.min(cssWidth * 0.82 / spanX, cssHeight * 0.82 / spanY) * state.zoom
+      const topSafe = Math.min(74, cssHeight * 0.08)
+      const bottomSafe = Math.min(164, cssHeight * 0.18)
+      const artHeight = cssHeight - topSafe - bottomSafe
+      const scale = Math.min(cssWidth * 0.82 / spanX, artHeight * 0.93 / spanY) * state.zoom
       const centerX = (bounds.minX + bounds.maxX) / 2, centerY = (bounds.minY + bounds.maxY) / 2
       ctx.save()
-      ctx.translate(cssWidth / 2 + state.x, cssHeight / 2 + state.y)
-      ctx.scale(scale, -scale)
+      ctx.translate(cssWidth / 2 + state.x, topSafe + artHeight / 2 + state.y)
+      // The turtle's -π/2 heading points up in the usual canvas coordinate
+      // system. Keeping y positive preserves the botanical growth direction.
+      ctx.scale(scale, scale)
       ctx.translate(-centerX, -centerY)
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
@@ -150,6 +155,23 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
           const taper = presets[kind]?.organic ? Math.pow(0.74, tier * 0.58) : 1
           ctx.lineWidth = Math.max(0.45, width * taper) / scale
           ctx.stroke(paths[tier])
+        }
+      }
+      if (presets[kind]?.organic && count > 0) {
+        const maxDepth = geometryRef.current.maxDepth
+        ctx.fillStyle = colors[colors.length - 1]
+        ctx.globalAlpha = kind === 'fern' ? .84 : .58
+        for (let i = 0; i < count; i++) {
+          const segment = geometryRef.current.segments[i]
+          const leafDepth = kind === 'fern' ? Math.max(2, Math.floor(maxDepth * .48)) : maxDepth - 1
+          const leafInterval = kind === 'fern' ? 9 : 3
+          if (segment.depth < leafDepth || segment.order % leafInterval !== 0) continue
+          const heading = Math.atan2(segment.y2 - segment.y1, segment.x2 - segment.x1)
+          ctx.beginPath()
+          const blade = kind === 'fern' ? 6.5 : 2.4
+          const leafAngle = kind === 'fern' ? heading + (segment.order % 2 ? Math.PI / 2 : -Math.PI / 2) : heading + Math.PI / 5
+          ctx.ellipse(segment.x2, segment.y2, blade / scale, (kind === 'fern' ? 2.4 : .7) / scale, leafAngle, 0, Math.PI * 2)
+          ctx.fill()
         }
       }
       if (kind !== 'koch' && kind !== 'dragon' && kind !== 'hilbert' && kind !== 'sierpinski' && count > 0) {

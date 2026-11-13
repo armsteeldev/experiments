@@ -4,7 +4,7 @@ import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 
 type Species = 0 | 1 | 2
-type Agent = { x: number; y: number; vx: number; vy: number; oldX: number; oldY: number; species: Species }
+type Agent = { x: number; y: number; vx: number; vy: number; oldX: number; oldY: number; species: Species; plumage: number; size: number }
 type Marker = { x: number; y: number; kind: 'attract' | 'repel' | 'obstacle' | 'food' }
 type Scenario = 'murmuration' | 'predator' | 'vortex' | 'competition' | 'migration'
 const scenarios: Record<Scenario, string> = {
@@ -28,10 +28,10 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const agents = useRef<Agent[]>([])
   const markers = useRef<Marker[]>([])
   const drawRef = useRef<() => void>(() => {})
-  const [scenario, setScenario] = useState<Scenario>(() => Object.keys(scenarios).includes(String(stateFromUrl?.scenario)) ? stateFromUrl?.scenario as Scenario : 'vortex')
-  const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || (window.matchMedia('(max-width: 720px)').matches ? 140 : 260), 120, 1400))
-  const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 2.2)
-  const [radius, setRadius] = useState(() => Number(stateFromUrl?.radius) || 72)
+  const [scenario, setScenario] = useState<Scenario>(() => Object.keys(scenarios).includes(String(stateFromUrl?.scenario)) ? stateFromUrl?.scenario as Scenario : 'murmuration')
+  const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || (window.matchMedia('(max-width: 720px)').matches ? 130 : 230), 120, 1400))
+  const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 1.55)
+  const [radius, setRadius] = useState(() => Number(stateFromUrl?.radius) || 104)
   const [tool, setTool] = useState(() => typeof stateFromUrl?.tool === 'string' ? stateFromUrl.tool : 'attract')
   const [seed, setSeed] = useState(() => Number(stateFromUrl?.seed) || 17)
   const params = useRef({ scenario, population, speed, radius, tool, seed, paused })
@@ -75,19 +75,19 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
           y = random() * height
           angle = (random() - 0.5) * 0.65
         } else {
-          const r = Math.sqrt(random()) * Math.min(width, height) * 0.38
-          angle = random() * Math.PI * 2
-          x = width * 0.5 + Math.cos(angle) * r
-          y = height * 0.5 + Math.sin(angle) * r
-          // Seed a loose circulating murmuration instead of sending the whole
-          // population along one heading and letting the opening read as a spray.
-          angle = Math.atan2(y - height * 0.5, x - width * 0.5) + Math.PI / 2 + (random() - 0.5) * 0.9
+          const r = Math.sqrt(random()) * Math.min(width, height) * 0.23
+          const bearing = random() * Math.PI * 2
+          x = width * 0.48 + Math.cos(bearing) * r
+          y = height * 0.48 + Math.sin(bearing) * r * 0.56
+          // A loose traveling cloud gives local alignment room to gather into
+          // a flock before the whole field stretches into its own patterns.
+          angle = (random() - 0.5) * 0.78 + 0.08
         }
-        const velocity = 0.8 + random() * 1.3
+        const velocity = scene === 'murmuration' ? 0.62 + random() * 0.82 : 0.8 + random() * 1.3
         const species: Species = scene === 'predator'
           ? i < Math.max(8, Math.floor(count * 0.035)) ? 2 : 1
           : scene === 'competition' ? i % 2 as 0 | 1 : 0
-        return { x, y, oldX: x, oldY: y, vx: Math.cos(angle) * velocity, vy: Math.sin(angle) * velocity, species }
+        return { x, y, oldX: x, oldY: y, vx: Math.cos(angle) * velocity, vy: Math.sin(angle) * velocity, species, plumage: i % 3, size: 1.05 + random() * 0.35 }
       })
       ctx.fillStyle = '#080d16'
       ctx.fillRect(0, 0, width, height)
@@ -117,7 +117,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
     const render = (leaveTrail: boolean) => {
       ctx.globalCompositeOperation = 'source-over'
       ctx.globalAlpha = 1
-      ctx.fillStyle = leaveTrail ? 'rgba(7,12,20,0.16)' : '#080d16'
+      ctx.fillStyle = leaveTrail ? 'rgba(7,12,20,0.26)' : '#080d16'
       ctx.fillRect(0, 0, width, height)
       for (const marker of markers.current) {
         const isObstacle = marker.kind === 'obstacle'
@@ -141,43 +141,50 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
       for (const bird of agents.current) {
         const angle = Math.atan2(bird.vy, bird.vx)
         const pace = clamp(Math.hypot(bird.vx, bird.vy) / Math.max(0.1, params.current.speed), 0, 1)
-        const color = params.current.scenario === 'murmuration' || params.current.scenario === 'vortex' || params.current.scenario === 'migration'
-          ? `hsl(${174 + pace * 38} 48% ${45 + pace * 23}%)`
-          : colors[bird.species]
+        const color = params.current.scenario === 'murmuration'
+          ? colors[bird.plumage]
+          : params.current.scenario === 'vortex' || params.current.scenario === 'migration'
+            ? `hsl(${174 + pace * 38} 48% ${45 + pace * 23}%)`
+            : colors[bird.species]
+        const predator = params.current.scenario === 'predator' && bird.species === 2
         const moved = Math.hypot(bird.x - bird.oldX, bird.y - bird.oldY)
         if (moved < Math.min(width, height) * 0.45) {
           ctx.beginPath()
           ctx.moveTo(bird.oldX, bird.oldY)
           ctx.lineTo(bird.x, bird.y)
           ctx.strokeStyle = color
-          ctx.globalAlpha = bird.species === 2 ? 0.38 : 0.2
-          ctx.lineWidth = bird.species === 2 ? 1.2 : 0.72
+          ctx.globalAlpha = predator ? 0.22 : 0.055
+          ctx.lineWidth = predator ? 0.9 : 0.4
           ctx.stroke()
         }
         ctx.save()
         ctx.translate(bird.x, bird.y)
         ctx.rotate(angle)
-        ctx.globalAlpha = bird.species === 2 ? 0.98 : 0.9
+        ctx.scale(bird.size, bird.size)
+        ctx.globalAlpha = predator ? 0.96 : 0.92
         ctx.fillStyle = color
         ctx.beginPath()
-        if (bird.species === 2) {
+        if (predator) {
           ctx.moveTo(6.2, 0); ctx.lineTo(-4.3, -3.2); ctx.lineTo(-1.8, 0); ctx.lineTo(-4.3, 3.2)
         } else {
-          // A swept silhouette reads as a bird in motion at close range while
-          // remaining a crisp directional mark in the full-field view.
-          ctx.moveTo(7.2, 0)
-          ctx.lineTo(1.5, -0.55)
-          ctx.lineTo(-3.8, -4.2)
-          ctx.lineTo(-2.5, -0.65)
-          ctx.lineTo(-5.3, -1.5)
-          ctx.lineTo(-3.1, 0)
-          ctx.lineTo(-5.3, 1.5)
-          ctx.lineTo(-2.5, 0.65)
-          ctx.lineTo(-3.8, 4.2)
-          ctx.lineTo(1.5, 0.55)
+          // A rounded body with two shallow swept wing arcs reads as a small
+          // bird at close range and as a soft, varied cloud at flock scale.
+          ctx.ellipse(-0.2, 0, 4.1, 1.45, 0, 0, Math.PI * 2)
+          ctx.fill()
+          ctx.beginPath()
+          ctx.moveTo(1.5, -0.65)
+          ctx.quadraticCurveTo(-1.6, -2.6, -5.6, -3.6)
+          ctx.quadraticCurveTo(-4.1, -1.3, -1.4, 0)
+          ctx.moveTo(1.5, 0.65)
+          ctx.quadraticCurveTo(-1.6, 2.6, -5.6, 3.6)
+          ctx.quadraticCurveTo(-4.1, 1.3, -1.4, 0)
+          ctx.strokeStyle = color
+          ctx.globalAlpha *= 0.6
+          ctx.lineWidth = 0.9
+          ctx.lineCap = 'round'
+          ctx.stroke()
         }
-        ctx.closePath()
-        ctx.fill()
+        if (predator) { ctx.closePath(); ctx.fill() }
         ctx.restore()
       }
       ctx.globalAlpha = 1
@@ -245,8 +252,9 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
           // Keep separation local; letting its inverse-distance sum dominate
           // alignment caused the opening flock to radiate into a starburst.
           const separation = limit(sx * 42, sy * 42, 0.11)
-          const alignment = limit(ax / neighbors - bird.vx, ay / neighbors - bird.vy, 0.085)
-          const cohesion = limit((cx / neighbors - bird.x) * 0.00115, (cy / neighbors - bird.y) * 0.00115, 0.084)
+          const alignment = limit(ax / neighbors - bird.vx, ay / neighbors - bird.vy, q.scenario === 'murmuration' ? 0.13 : 0.085)
+          const cohesionScale = q.scenario === 'murmuration' ? 0.0028 : 0.00115
+          const cohesion = limit((cx / neighbors - bird.x) * cohesionScale, (cy / neighbors - bird.y) * cohesionScale, q.scenario === 'murmuration' ? 0.12 : 0.084)
           fx += separation[0] + alignment[0] + cohesion[0]
           fy += separation[1] + alignment[1] + cohesion[1]
         }
@@ -271,6 +279,15 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
         } else if (q.scenario === 'migration') {
           const wind = limit(maxSpeed - bird.vx, 0.1 - bird.vy, 0.04)
           fx += wind[0]; fy += wind[1]
+        }
+        if (q.scenario === 'murmuration') {
+          // Keep this showcase flock in view without pinning it to a point:
+          // the edge only turns birds back once they approach the frame.
+          const margin = Math.min(76, Math.min(width, height) * 0.13)
+          if (bird.x < margin) fx += (margin - bird.x) / margin * 0.14
+          else if (bird.x > width - margin) fx -= (bird.x - (width - margin)) / margin * 0.14
+          if (bird.y < margin) fy += (margin - bird.y) / margin * 0.14
+          else if (bird.y > height - margin) fy -= (bird.y - (height - margin)) / margin * 0.14
         }
         for (const marker of markers.current) {
           let dx = marker.x - bird.x, dy = marker.y - bird.y
@@ -297,8 +314,14 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
         const velocity = limit(bird.vx, bird.vy, maxSpeed * (bird.species === 2 ? 1.25 : 1))
         bird.oldX = bird.x; bird.oldY = bird.y
         bird.vx = velocity[0]; bird.vy = velocity[1]
-        bird.x = (bird.x + bird.vx * dt + width) % width
-        bird.y = (bird.y + bird.vy * dt + height) % height
+        if (q.scenario === 'murmuration') {
+          bird.x += bird.vx * dt; bird.y += bird.vy * dt
+          if (bird.x < 6 || bird.x > width - 6) { bird.x = clamp(bird.x, 6, width - 6); bird.vx *= -0.72 }
+          if (bird.y < 6 || bird.y > height - 6) { bird.y = clamp(bird.y, 6, height - 6); bird.vy *= -0.72 }
+        } else {
+          bird.x = (bird.x + bird.vx * dt + width) % width
+          bird.y = (bird.y + bird.vy * dt + height) % height
+        }
       }
       render(true)
     }

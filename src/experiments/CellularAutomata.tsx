@@ -28,7 +28,7 @@ const cellPattern = (key: string) => {
 export default function CellularAutomata({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const initialRule = ruleOptions.some(([key]) => key === stateFromUrl?.rule) ? stateFromUrl?.rule as AutomatonRule : 'life'
   const savedPattern = String(stateFromUrl?.pattern ?? '')
-  const initialPattern = patterns[savedPattern] || ['random','empty','custom'].includes(savedPattern) ? savedPattern : 'pulsarGarden'
+  const initialPattern = patterns[savedPattern] || ['random','empty','custom'].includes(savedPattern) ? savedPattern : 'acorn'
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [rule, setRule] = useState<AutomatonRule>(initialRule)
   const [pattern, setPattern] = useState(initialPattern)
@@ -39,7 +39,7 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
   const [running, setRunning] = useState(true)
   const [generation, setGeneration] = useState(0)
   const [alive, setAlive] = useState(0)
-  const model = useRef({ width: 180, height: 112, cells: new Uint8Array(180 * 112), age: new Uint8Array(180 * 112), trail: new Uint8Array(180 * 112), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 3.1 : 2.1, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number } })
+  const model = useRef({ width: 180, height: 112, cells: new Uint8Array(180 * 112), age: new Uint8Array(180 * 112), trail: new Uint8Array(180 * 112), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 4.4 : 3.4, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number } })
   const parameters = useRef({ paused, running, speed, rule, renderMode, mode }); parameters.current = { paused, running, speed, rule, renderMode, mode }
   useEffect(() => { onShareState({ pattern, rule, speed, renderMode, seed }); }, [pattern, rule, speed, renderMode, seed, onShareState])
   useEffect(() => {

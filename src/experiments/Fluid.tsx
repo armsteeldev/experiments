@@ -184,15 +184,15 @@ function seed(bundle: Bundle, name: string, color: [number, number, number]) {
     source(0.58, 0.52, -0.8, -0.2, [0.9, 0.54, 0.33], 0.07)
   } else if (name === 'vortex') {
     const spectrum: [number, number, number][] = [color, [0.84, 0.3, 0.76], [0.94, 0.52, 0.2], [0.31, 0.54, 1]]
-    for (let i = 0; i < 24; i++) {
-      const angle = i / 24 * Math.PI * 2
+    for (let i = 0; i < 40; i++) {
+      const angle = i / 40 * Math.PI * 2
       const x = 0.5 + Math.cos(angle) * 0.24, y = 0.5 + Math.sin(angle) * 0.24
-      source(x, y, -Math.sin(angle) * 148, Math.cos(angle) * 148, spectrum[Math.floor(i / 6) % spectrum.length], 0.055, 0.52)
+      source(x, y, -Math.sin(angle) * 128, Math.cos(angle) * 128, spectrum[Math.floor(i / 10) % spectrum.length], 0.043, 0.34)
     }
-    for (let i = 0; i < 22; i++) {
-      const t = i / 21, angle = t * Math.PI * 3.2 - 1.3, radius = 0.028 + t * 0.19
+    for (let i = 0; i < 32; i++) {
+      const t = i / 31, angle = t * Math.PI * 3.2 - 1.3, radius = 0.028 + t * 0.19
       const x = 0.5 + Math.cos(angle) * radius, y = 0.5 + Math.sin(angle) * radius
-      source(x, y, -Math.sin(angle) * 180, Math.cos(angle) * 180, spectrum[(Math.floor(i / 6) + 1) % spectrum.length], 0.042, 0.38)
+      source(x, y, -Math.sin(angle) * 156, Math.cos(angle) * 156, spectrum[(Math.floor(i / 8) + 1) % spectrum.length], 0.035, 0.27)
     }
   } else {
     source(0.27, 0.46, 126, 56, color, 0.09, 1.15)
@@ -295,7 +295,9 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
   const [style, setStyle] = useState(() => typeof props.stateFromUrl?.style === 'string' ? props.stateFromUrl.style : 'silk')
   const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' && pigments[props.stateFromUrl.palette] ? props.stateFromUrl.palette : 'aurora')
   const [viscosity, setViscosity] = useState(() => Number(props.stateFromUrl?.viscosity) || 0.12)
-  const [dissipation, setDissipation] = useState(() => Number(props.stateFromUrl?.dissipation) || 0.994)
+  // A slower dye fade lets the seeded circulation remain legible while the
+  // velocity field continues to stretch it into new folds.
+  const [dissipation, setDissipation] = useState(() => Number(props.stateFromUrl?.dissipation) || 0.999)
   const [force, setForce] = useState(() => Number(props.stateFromUrl?.force) || 0.72)
   const [brushSize, setBrushSize] = useState(() => Number(props.stateFromUrl?.brushSize) || 42)
   const [vorticity, setVorticity] = useState(() => Number(props.stateFromUrl?.vorticity) || 16)
@@ -374,7 +376,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
         const emitterColor: [number, number, number][] = [[0.18, 0.84, 0.92], [0.9, 0.35, 0.64], [0.9, 0.68, 0.38], [0.44, 0.4, 0.96], [0.75, 0.88, 0.8]]
         const color = emitterColor[paletteIndex]
         splat(bundle, 'velocity', x, y, 0.035, [dx, dy], color, 0.28)
-        splat(bundle, 'dye', x, y, 0.035, [0, 0], color, 0.22)
+        splat(bundle, 'dye', x, y, 0.04, [0, 0], color, 0.34)
         ambientX = x; ambientY = y; lastAmbient = now
       }
       const styleVorticity = (params.current.style === 'ink' ? params.current.vorticity * 0.72 : params.current.style === 'electric' ? params.current.vorticity * 1.25 : params.current.vorticity) * 0.12

@@ -49,6 +49,7 @@ function executeNote(instruction: CpuState['ir'], before: CpuState, after: CpuSt
 }
 
 export default function InsideMachine({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 720px)').matches)
   const initialProgram = typeof stateFromUrl?.program === 'string' ? stateFromUrl.program : 'sum'
   const [example, setExample] = useState(Object.hasOwn(programs, initialProgram) ? initialProgram : 'sum')
   const [source, setSource] = useState(programs[Object.hasOwn(programs, initialProgram) ? initialProgram : 'sum'].code)
@@ -62,6 +63,12 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
   const phaseTimers = useRef<number[]>([])
   const cpuRef = useRef(cpu); cpuRef.current = cpu
   const program = useMemo(() => { try { return parseProgram(source) } catch { return [] } }, [source])
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 720px)')
+    const update = () => setCompact(query.matches)
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
   useEffect(() => { onShareState({ program: example }); }, [example, onShareState])
 
   const runCycle = () => {
@@ -99,15 +106,54 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
       </div>
       <div className="processor-core">
         <div className="core-caption"><span>PROCESSING UNIT</span><i>{phase === 'idle' ? 'IDLE BETWEEN CLOCKS' : phase.toUpperCase()}</i></div>
-        <svg className="datapath" viewBox="0 0 820 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <svg className={'datapath' + (compact ? ' datapath-compact' : '')} viewBox={compact ? '0 0 450 550' : '0 0 1000 620'} preserveAspectRatio="xMidYMid meet" aria-label="CPU datapath with program counter, memory, instruction register, decoder, ALU and four working registers">
           <defs><filter id="signal-glow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
-          <path className={'bus-line' + lit('PC')} d="M95 250 H162 V90 H240" /><path className={'bus-line' + lit('MEMORY')} d="M345 90 H412 V196" />
-          <path className={'bus-line' + lit('IR')} d="M510 196 H575 V250" /><path className={'bus-line' + lit('DECODER')} d="M575 292 H510" />
-          <path className={'bus-line' + lit('BUS')} d="M240 292 H160 V405 H650 V302" /><path className={'bus-line' + lit('ALU')} d="M412 306 V405" />
-          <path className={'bus-line' + lit('OUTPUT')} d="M650 250 H724" />
-          {[['PC', 34, 216, `${cpu.pc.toString(16).toUpperCase().padStart(2, '0')}`, 'program counter'], ['MEMORY', 240, 48, 'ROM / RAM', 'memory'], ['IR', 412, 154, cpu.ir?.op ?? '—', 'instruction register'], ['DECODER', 575, 216, phase === 'decode' ? 'DECODE' : 'CONTROL', 'instruction decoder'], ['ALU', 365, 246, cpu.ir?.op && ['ADD', 'SUB', 'MUL'].includes(cpu.ir.op) ? cpu.ir.op : 'ALU', 'arithmetic logic unit'], ['OUTPUT', 700, 216, dataValue(cpu.output), 'output']].map(([key, x, y, value, label]) => <g key={String(key)} className={'machine-block' + (trace.includes(String(key)) ? ' block-active' : '')} transform={`translate(${x} ${y})`}><rect width={key === 'DECODER' ? 116 : 96} height="64" rx="8" /><text className="block-kicker" x="12" y="18">{String(key)}</text><text className="block-value" x="12" y="43">{String(value)}</text><text className="block-caption" x="12" y="82">{String(label)}</text></g>)}
-          <path className={'bus-line register-bus' + (['RA','RB','RC','RD'].some((name)=>trace.includes(name)) ? ' signal-hot' : '')} d="M160 405 V472 M160 472 H650 M242 405 V472 M324 405 V472 M406 405 V472 M488 405 V472" />
-          {phase !== 'idle' && <text x="410" y="486" textAnchor="middle" className="cycle-phase-label">{phase === 'fetch' ? '01   FETCH INSTRUCTION' : phase === 'decode' ? '02   DECODE OPCODE & OPERANDS' : '03   EXECUTE · COMMIT RESULT'}</text>}
+          {compact ? <g className="machine-buses">
+            <path className={'bus-line' + lit('PC')} d="M116 129 H172" />
+            <path className={'bus-line' + lit('MEMORY')} d="M282 83 H313 V129 H334" />
+            <path className={'bus-line' + lit('IR')} d="M382 161 V203 H76 V230" />
+            <path className={'bus-line' + lit('DECODER')} d="M132 264 H174" />
+            <path className={'bus-line' + lit('ALU')} d="M284 264 H334" />
+            <path className={'bus-line' + lit('BUS')} d="M229 298 V365 H394" />
+            <path className={'bus-line register-bus' + (['RA','RB','RC','RD'].some((name)=>trace.includes(name)) ? ' signal-hot' : '')} d="M62 365 H394 M62 365 V380 M170 365 V380 M278 365 V380 M386 365 V380" />
+            <path className={'bus-line' + lit('OUTPUT')} d="M62 380 V344 H382 V298" />
+          </g> : <g className="machine-buses">
+            <path className={'bus-line' + lit('PC')} d="M175 263 H205 V112 H225" />
+            <path className={'bus-line' + lit('MEMORY')} d="M380 112 H440" />
+            <path className={'bus-line' + lit('IR')} d="M590 112 H650" />
+            <path className={'bus-line' + lit('DECODER')} d="M740 162 V220 H525 V270" />
+            <path className={'bus-line' + lit('ALU')} d="M620 324 H820" />
+            <path className={'bus-line' + lit('BUS')} d="M525 378 V431 H155" />
+            <path className={'bus-line register-bus' + (['RA','RB','RC','RD'].some((name)=>trace.includes(name)) ? ' signal-hot' : '')} d="M155 431 H845 M155 431 V455 M385 431 V455 M615 431 V455 M845 431 V455" />
+            <path className={'bus-line' + lit('OUTPUT')} d="M155 455 V414 H890 V378" />
+          </g>}
+          {(compact ? [
+            { key:'PC', x:20, y:96, w:96, h:66, value:cpu.pc.toString(16).toUpperCase().padStart(2,'0'), caption:'program counter' },
+            { key:'MEMORY', x:172, y:50, w:110, h:66, value:cpu.ir?.source ?? 'ROM / RAM', caption:'program + data' },
+            { key:'IR', x:334, y:96, w:96, h:66, value:cpu.ir?.op ?? '—', caption:'instruction register' },
+            { key:'DECODER', x:20, y:230, w:112, h:68, value:phase === 'decode' ? 'DECODE' : 'CONTROL', caption:'instruction decoder' },
+            { key:'ALU', x:174, y:230, w:110, h:68, value:cpu.ir?.op && ['ADD','SUB','MUL'].includes(cpu.ir.op) ? cpu.ir.op : 'ALU', caption:'arithmetic logic unit' },
+            { key:'OUTPUT', x:334, y:230, w:96, h:68, value:dataValue(cpu.output), caption:'output register' },
+          ] : [
+            { key:'PC', x:30, y:218, w:145, h:90, value:cpu.pc.toString(16).toUpperCase().padStart(2,'0'), caption:'program counter · next address' },
+            { key:'MEMORY', x:225, y:67, w:155, h:90, value:cpu.ir?.source ?? 'ROM + RAM', caption:'program + data memory' },
+            { key:'IR', x:440, y:67, w:150, h:90, value:cpu.ir?.op ?? '—', caption:'instruction register' },
+            { key:'DECODER', x:650, y:67, w:180, h:90, value:phase === 'decode' ? 'DECODE' : 'CONTROL', caption:'instruction decoder' },
+            { key:'ALU', x:430, y:270, w:190, h:108, value:cpu.ir?.op && ['ADD','SUB','MUL'].includes(cpu.ir.op) ? cpu.ir.op : 'ALU', caption:'arithmetic logic unit' },
+            { key:'OUTPUT', x:820, y:270, w:140, h:108, value:dataValue(cpu.output), caption:'output register' },
+          ]).map(({key,x,y,w,h,value,caption}) => <g key={key} className={'machine-block' + (trace.includes(key) ? ' block-active' : '')} transform={`translate(${x} ${y})`}>
+            <rect width={w} height={h} rx="11" />
+            <text className="block-kicker" x="12" y="22">{key}</text>
+            <text className="block-value" x="12" y={compact ? 44 : 53}>{value}</text>
+            <text className="block-caption" x="12" y={h - 12}>{caption}</text>
+          </g>)}
+          {(compact ? ['A','B','C','D'].map((name,index)=>({name,x:14+index*108,y:380,w:96,h:72})) : ['A','B','C','D'].map((name,index)=>({name,x:70+index*220,y:455,w:170,h:92}))).map(({name,x,y,w,h}) => <g key={`R${name}`} className={'register-tile machine-register' + (trace.includes(`R${name}`) ? ' register-active' : '')} transform={`translate(${x} ${y})`}>
+            <rect width={w} height={h} rx="9" />
+            <text className="register-name" x="11" y="18">REGISTER R{name}</text>
+            <text className="register-value" x="11" y={compact ? 43 : 49}>{byteBits(cpu.registers[name])}</text>
+            <text className="register-decimal" x={w-10} y={h-9} textAnchor="end">{dataValue(cpu.registers[name])} · {cpu.registers[name]}</text>
+          </g>)}
+          {phase !== 'idle' && <text x={compact ? 225 : 500} y={compact ? 530 : 592} textAnchor="middle" className="cycle-phase-label">{phase === 'fetch' ? '01   FETCH INSTRUCTION' : phase === 'decode' ? '02   DECODE OPCODE & OPERANDS' : '03   EXECUTE · COMMIT RESULT'}</text>}
         </svg>
         <div className="current-instruction"><span>INSTRUCTION REGISTER</span><strong>{cpu.ir?.source ?? 'Awaiting first clock'}</strong>{cpu.ir && <small>Next address <b>{cpu.pc.toString(16).toUpperCase().padStart(2, '0')}</b></small>}</div>
       </div>
