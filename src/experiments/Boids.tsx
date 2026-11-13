@@ -28,8 +28,8 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const agents = useRef<Agent[]>([])
   const markers = useRef<Marker[]>([])
   const drawRef = useRef<() => void>(() => {})
-  const [scenario, setScenario] = useState<Scenario>(() => Object.keys(scenarios).includes(String(stateFromUrl?.scenario)) ? stateFromUrl?.scenario as Scenario : 'murmuration')
-  const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || 540, 120, 1400))
+  const [scenario, setScenario] = useState<Scenario>(() => Object.keys(scenarios).includes(String(stateFromUrl?.scenario)) ? stateFromUrl?.scenario as Scenario : 'vortex')
+  const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || (window.matchMedia('(max-width: 720px)').matches ? 140 : 260), 120, 1400))
   const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 2.2)
   const [radius, setRadius] = useState(() => Number(stateFromUrl?.radius) || 72)
   const [tool, setTool] = useState(() => typeof stateFromUrl?.tool === 'string' ? stateFromUrl.tool : 'attract')
@@ -79,7 +79,9 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
           angle = random() * Math.PI * 2
           x = width * 0.5 + Math.cos(angle) * r
           y = height * 0.5 + Math.sin(angle) * r
-          angle = 0.25 + (random() - 0.5) * 0.9
+          // Seed a loose circulating murmuration instead of sending the whole
+          // population along one heading and letting the opening read as a spray.
+          angle = Math.atan2(y - height * 0.5, x - width * 0.5) + Math.PI / 2 + (random() - 0.5) * 0.9
         }
         const velocity = 0.8 + random() * 1.3
         const species: Species = scene === 'predator'
@@ -138,7 +140,10 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
         : params.current.scenario === 'competition' ? ['#80c3ca', '#e6b27e', '#f0a87e'] : palettes.flock
       for (const bird of agents.current) {
         const angle = Math.atan2(bird.vy, bird.vx)
-        const color = colors[bird.species]
+        const pace = clamp(Math.hypot(bird.vx, bird.vy) / Math.max(0.1, params.current.speed), 0, 1)
+        const color = params.current.scenario === 'murmuration' || params.current.scenario === 'vortex' || params.current.scenario === 'migration'
+          ? `hsl(${174 + pace * 38} 48% ${45 + pace * 23}%)`
+          : colors[bird.species]
         const moved = Math.hypot(bird.x - bird.oldX, bird.y - bird.oldY)
         if (moved < Math.min(width, height) * 0.45) {
           ctx.beginPath()
@@ -152,13 +157,24 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
         ctx.save()
         ctx.translate(bird.x, bird.y)
         ctx.rotate(angle)
-        ctx.globalAlpha = bird.species === 2 ? 0.96 : 0.78
+        ctx.globalAlpha = bird.species === 2 ? 0.98 : 0.9
         ctx.fillStyle = color
         ctx.beginPath()
         if (bird.species === 2) {
           ctx.moveTo(6.2, 0); ctx.lineTo(-4.3, -3.2); ctx.lineTo(-1.8, 0); ctx.lineTo(-4.3, 3.2)
         } else {
-          ctx.moveTo(5.4, 0); ctx.lineTo(-3.8, -2.3); ctx.lineTo(-1.4, 0); ctx.lineTo(-3.8, 2.3)
+          // A swept silhouette reads as a bird in motion at close range while
+          // remaining a crisp directional mark in the full-field view.
+          ctx.moveTo(7.2, 0)
+          ctx.lineTo(1.5, -0.55)
+          ctx.lineTo(-3.8, -4.2)
+          ctx.lineTo(-2.5, -0.65)
+          ctx.lineTo(-5.3, -1.5)
+          ctx.lineTo(-3.1, 0)
+          ctx.lineTo(-5.3, 1.5)
+          ctx.lineTo(-2.5, 0.65)
+          ctx.lineTo(-3.8, 4.2)
+          ctx.lineTo(1.5, 0.55)
         }
         ctx.closePath()
         ctx.fill()
@@ -226,9 +242,11 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
         }
         let fx = 0, fy = 0
         if (neighbors) {
-          const separation = limit(sx * 80, sy * 80, 0.16)
-          const alignment = limit(ax / neighbors - bird.vx, ay / neighbors - bird.vy, 0.072)
-          const cohesion = limit((cx / neighbors - bird.x) * 0.00075, (cy / neighbors - bird.y) * 0.00075, 0.064)
+          // Keep separation local; letting its inverse-distance sum dominate
+          // alignment caused the opening flock to radiate into a starburst.
+          const separation = limit(sx * 42, sy * 42, 0.11)
+          const alignment = limit(ax / neighbors - bird.vx, ay / neighbors - bird.vy, 0.085)
+          const cohesion = limit((cx / neighbors - bird.x) * 0.00115, (cy / neighbors - bird.y) * 0.00115, 0.084)
           fx += separation[0] + alignment[0] + cohesion[0]
           fy += separation[1] + alignment[1] + cohesion[1]
         }
@@ -301,7 +319,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   return <div className="experiment-surface">
     <canvas ref={canvasRef} className="experiment-canvas boids-canvas" aria-label="Interactive artificial life. Place fields and obstacles among flocking organisms." onPointerDown={addMarker} onContextMenu={(event) => event.preventDefault()} />
     <span className="canvas-coordinate">{scenarios[scenario].toUpperCase()} · {population.toLocaleString()} AGENTS</span>
-    <ControlPanel title="A Murmuration" note="SPATIAL ECOLOGY" visible={controlsVisible} onClose={onCloseControls}>
+    <ControlPanel title={scenario === 'vortex' ? 'An Emergent Vortex' : 'A Murmuration'} note="SPATIAL ECOLOGY" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Behavioural scene" value={scenario} options={Object.entries(scenarios).map(([key, name]) => [key, name])} onChange={(value) => { setScenario(value as Scenario); markers.current = [] }} />
       <RangeControl label="Population" value={population} min={120} max={1400} step={20} onChange={setPopulation} />
       <RangeControl label="Pace" value={speed} min={0.55} max={4.2} step={0.05} onChange={setSpeed} format={(value) => value.toFixed(1) + '×'} />
@@ -311,7 +329,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
         <button className="panel-action" onClick={() => { markers.current = []; drawRef.current() }}><span>Clear field marks</span><i>×</i></button>
         <button className="panel-action" onClick={randomize}><span>Re-seed system</span><i>↻</i></button>
       </ActionRow>
-      <p className="control-note">{scenario === 'predator' ? 'Hunters pursue nearby prey; prey align, gather and flee from danger.' : scenario === 'competition' ? 'Two groups flock by their own local rules and repel the other population.' : 'Separation, alignment and cohesion turn local sensing into collective movement.'} Place a field to alter the flow.</p>
+      <p className="control-note">{scenario === 'predator' ? 'Hunters pursue nearby prey; prey align, gather and flee from danger.' : scenario === 'competition' ? 'Two groups flock by their own local rules and repel the other population.' : scenario === 'vortex' ? 'A gentle rotating field seeds the circulation; local separation, alignment and cohesion reshape the flock. Hue shifts with speed.' : 'Separation, alignment and cohesion turn local sensing into collective movement. Hue shifts with speed.'} Place a field to alter the flow.</p>
     </ControlPanel>
   </div>
 }

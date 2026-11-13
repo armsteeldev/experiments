@@ -87,7 +87,7 @@ const renderShader = [
   '#version 300 es', 'precision highp float;', 'in vec2 vUv;', 'out vec4 outColor;',
   'uniform sampler2D uState;', 'uniform vec2 uTexel;', 'uniform int uPalette;', 'uniform float uTime;',
   'vec3 pigment(float t){',
-  ' if(uPalette==1)return 0.5+0.5*cos(6.28318*(t*vec3(0.72,0.93,0.78)+vec3(0.02,0.28,0.48)));',
+  ' if(uPalette==1){vec3 dusk=vec3(0.14,0.025,0.075);vec3 coral=vec3(0.88,0.12,0.19);vec3 peach=vec3(1.0,0.62,0.34);return t<0.58?mix(dusk,coral,smoothstep(0.0,0.58,t)):mix(coral,peach,smoothstep(0.58,1.0,t));}',
   ' if(uPalette==2)return 0.5+0.5*cos(6.28318*(t*vec3(0.65,0.82,0.62)+vec3(0.04,0.3,0.12)));',
   ' if(uPalette==3)return 0.5+0.5*cos(6.28318*(t*vec3(0.85,0.65,0.92)+vec3(0.05,0.12,0.42)));',
   ' if(uPalette==4)return 0.5+0.5*cos(6.28318*(t*vec3(0.84,0.72,0.56)+vec3(0.02,0.38,0.62)));',
@@ -235,12 +235,12 @@ function release(bundle: Bundle) {
 
 function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' && presets[props.stateFromUrl.preset] ? props.stateFromUrl.preset : 'labyrinth')
+  const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' && presets[props.stateFromUrl.preset] ? props.stateFromUrl.preset : 'coral')
   const [feed, setFeed] = useState(() => Number(props.stateFromUrl?.feed) || presets[presetName].feed)
   const [kill, setKill] = useState(() => Number(props.stateFromUrl?.kill) || presets[presetName].kill)
   const [diffusion, setDiffusion] = useState(() => Number(props.stateFromUrl?.diffusion) || 1)
   const [steps, setSteps] = useState(() => Number(props.stateFromUrl?.steps) || 3)
-  const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' ? props.stateFromUrl.palette : 'verdigris')
+  const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' ? props.stateFromUrl.palette : 'coral')
   const [brush, setBrush] = useState(() => typeof props.stateFromUrl?.brush === 'string' ? props.stateFromUrl.brush : 'seed')
   const [brushSize, setBrushSize] = useState(() => Number(props.stateFromUrl?.brushSize) || 28)
   const [quality, setQuality] = useState(() => typeof props.stateFromUrl?.quality === 'string' ? props.stateFromUrl.quality : 'detail')

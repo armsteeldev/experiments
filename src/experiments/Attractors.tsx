@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent, WheelEvent } from 'react'
+import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 
@@ -135,7 +135,8 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
       const q = parameters(), points = path.current
       if (points.length < 2) return
       const projected = points.map((p) => projection(p, q))
-      const groups = 24
+      ctx.globalCompositeOperation = 'lighter'
+      const groups = 40
       const groupSize = Math.ceil((projected.length - 1) / groups)
       for (let group = 0; group < groups; group++) {
         const from = group * groupSize, to = Math.min(projected.length - 1, from + groupSize)
@@ -145,9 +146,9 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
         ctx.beginPath()
         ctx.moveTo(start.x, start.y)
         for (let i = from + 1; i <= to; i++) ctx.lineTo(projected[i].x, projected[i].y)
-        ctx.globalAlpha = shade.alpha * 0.18
+        ctx.globalAlpha = shade.alpha * 0.12
         ctx.strokeStyle = shade.color
-        ctx.lineWidth = 5.5
+        ctx.lineWidth = 8
         ctx.lineCap = 'round'
         ctx.lineJoin = 'round'
         ctx.stroke()
@@ -155,13 +156,28 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
         ctx.lineWidth = 1.25 + Math.max(0, end.z) * 0.42
         ctx.stroke()
       }
+      ctx.shadowBlur = 8
+      for (let i = 80; i < projected.length - 80; i += 190) {
+        const sample = projected[i], shade = colorAt(i, sample.z, projected.length)
+        ctx.globalAlpha = shade.alpha * 0.65
+        ctx.fillStyle = shade.color
+        ctx.shadowColor = shade.color
+        ctx.beginPath()
+        ctx.arc(sample.x, sample.y, 0.75 + Math.max(0, sample.z) * 0.65, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.shadowBlur = 0
       const head = projected[projected.length - 1]
       ctx.globalAlpha = 0.9
       ctx.fillStyle = (palettes[q.palette] || palettes.polar)[2]
+      ctx.shadowColor = ctx.fillStyle as string
+      ctx.shadowBlur = 15
       ctx.beginPath()
       ctx.arc(head.x, head.y, 2.4, 0, Math.PI * 2)
       ctx.fill()
+      ctx.shadowBlur = 0
       ctx.globalAlpha = 1
+      ctx.globalCompositeOperation = 'source-over'
     }
     drawRef.current = draw
     resetRef.current = () => {
@@ -249,7 +265,13 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
     setCameraState({ ...camera.current })
     drawRef.current()
   }
-  const wheel = (event: WheelEvent<HTMLCanvasElement>) => { event.preventDefault(); camera.current.zoom = Math.max(0.45, Math.min(4.5, camera.current.zoom * Math.exp(-event.deltaY * 0.001))); setCameraState({ ...camera.current }); drawRef.current() }
+  const wheel = (event: WheelEvent) => { event.preventDefault(); camera.current.zoom = Math.max(0.45, Math.min(4.5, camera.current.zoom * Math.exp(-event.deltaY * 0.001))); setCameraState({ ...camera.current }); drawRef.current() }
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    canvas.addEventListener('wheel', wheel, { passive: false })
+    return () => canvas.removeEventListener('wheel', wheel)
+  }, [])
 
   const configurations: [string, string][] = system === 'lorenz'
     ? [['classic', 'Classic butterfly'], ['threshold', 'Near transition'], ['wide', 'Wide wings'], ['custom', 'Custom']]
@@ -258,7 +280,7 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
       : [['classic', 'Canonical orbit'], ['soft', 'Alternative orbit'], ['custom', 'Custom']]
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas attractor-canvas" aria-label="Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} onWheel={wheel} />
+    <canvas ref={canvasRef} className="experiment-canvas attractor-canvas" aria-label="Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
     <span className="canvas-coordinate">{systemNames[system].toUpperCase()} · RK4 · {trail.toLocaleString()} POINT TRAIL</span>
     <ControlPanel title="Weather, Remembered" note="STRANGE ATTRACTORS" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Dynamical system" value={system} options={Object.entries(systemNames).map(([key, name]) => [key, name])} onChange={chooseSystem} />
