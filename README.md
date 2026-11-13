@@ -1,85 +1,77 @@
 # Armsteel Experiments
 
-A self-hostable, browser-only digital museum for computational art. It uses React, TypeScript, and Vite, with Canvas 2D, WebGL2, WebGPU, and Web Workers for its studies. No application server, account, external API, image service, or runtime font request is required.
+A browser-based digital museum of thirteen interactive studies in mathematics, physics, computing, electronics, artificial life, and generative art. The client uses React, TypeScript, and Vite with Canvas 2D, WebGL2, WebGPU, and Web Workers where available. Production is a static site served by Caddy; it has no application server or account system.
 
-## Run locally
+## Local development
 
-Install the locked dependencies with **npm ci**, then start the development server with **npm run dev**. Open the local URL printed by Vite (normally `http://localhost:5173`).
+```sh
+npm ci
+npm run dev
+```
 
-Create a production bundle with **npm run build**, then inspect it locally with **npm run preview**. Vite serves the client-side routes directly in preview mode.
+Vite prints the local development URL. To inspect the production bundle locally:
 
-## Checks
+```sh
+npm run build
+npm run preview
+```
 
-- **npm run build** runs the TypeScript project checks and creates the production bundle in `dist/`.
-- **npm test** checks the shared simulation engines and exhaustively verifies The Adder’s supported arithmetic configurations.
-- **npm run test:numerics** checks deep-zoom coordinate precision, perturbation rendering, exact CPU repairs, and distinct tile detail at several zoom levels.
-- **node scripts/check-simulations.mjs** and **node scripts/check-adder.mjs** run those focused simulation checks individually.
-- **npx tsc --noEmit** runs an independent TypeScript check without emitting files.
-- **npm ls --depth=0** reports whether installed top-level dependencies match the package manifest.
+## Verification
 
-There is no lint script configured. Exhibits are registered centrally in `src/registry.ts`; each is loaded as its own route chunk and the collection derives its discipline filters from the registry.
+`npm run verify` runs the TypeScript and production build, deep-zoom numerical checks, simulation checks, exhaustive Adder checks, browser-storage checks, and generated SEO/site-file checks. It creates `dist/`, including a static HTML entry for each exhibit and the privacy page.
 
-## Publish on the Ubuntu host
+Focused checks are available as `npm run test:numerics`, `npm run test:simulations`, `npm run test:adder`, `npm run test:storage`, and `npm run check:site`. The numerical suite covers coordinates and rendering details through very deep zooms; actual render speed depends on the visitor's graphics hardware.
 
-For self-hosting this site with Caddy at [experiments.armsteel.dev](https://experiments.armsteel.dev), including the initial setup and future updates, see [deployment](docs/DEPLOYMENT.md).
+## The collection
 
-## The exhibition
+The public routes are generated from `src/data/experiments.json`:
 
-The exhibition is the collection entrance. The first screen keeps the “Where rules become worlds” headline alone in a slow, domain-warped light field. Below it, one featured study opens into an asymmetric gallery of procedural previews. Search covers titles, disciplines and methods; discipline filters follow the registry, and favourites and recently visited studies stay in browser storage. **Ctrl/⌘ K** opens search.
+1. The Infinite Shore — Mandelbrot and Julia sets
+2. A Quiet Current — interactive fluid motion
+3. A Murmuration — collective flocking
+4. Weather, Remembered — strange attractors
+5. The Pattern Beneath — reaction–diffusion
+6. A Grammar of Growth — Lindenmayer systems
+7. Gravity Playground — N-body gravity
+8. Inside the Machine — an 8-bit teaching computer
+9. Neural Networks — a trainable decision surface
+10. Logic Laboratory — editable Boolean circuits
+11. Invisible Forces — electrostatic fields
+12. Cellular Automata — local rules on a wrapped grid
+13. The Adder — ripple-carry and Kogge–Stone circuits
 
-Open a study and it becomes a fullscreen, viewport-filling environment. A floating glass dock provides previous/next navigation, a quick selector, random discovery, controls, information, pause, and fullscreen. Controls and the short concept note open as compact overlays; the longer explanation stays collapsed until requested. Click outside or press Escape to close overlays. The dock can be hidden with **H**; it returns when the pointer reaches the bottom edge, and a visible **Show controls** button provides the same action on touchscreens.
+Each study is lazy-loaded as its own route chunk. The shared shell handles navigation, descriptions, favourites, and browser history. WebGL2 studies have Canvas or CPU fallbacks where implemented; WebGPU accelerates deep Mandelbrot views when supported and available.
 
-Keyboard shortcuts: **← / →** move between studies, **Space** pauses or resumes, **F** toggles browser fullscreen, and **H** hides or shows the interface. Focused links and controls keep their normal keyboard behavior.
+## Add an exhibit
 
-The ambient field renders below native resolution at a bounded frame rate, pauses when the entrance is offscreen or the tab is hidden, and becomes a still image under reduced-motion preferences. Gallery previews stay still until hovered or keyboard-focused, then animate only while visible and stop under reduced motion. The large Mandelbrot preview is rasterized in a shared worker, with a smaller synchronous fallback when offscreen canvas is unavailable. The active experiment receives the shared paused state while its tab is hidden.
+1. Implement a component in `src/experiments/` using the `ExperimentControls` contract in `src/types.ts`. Clean up animation frames, workers, observers, and graphics resources when the component unmounts.
+2. Add complete visitor-facing copy and a unique `metaDescription` to `src/data/experiments.json`.
+3. Add its lazy component import to the matching ID in `src/registry.ts`.
+4. Run `npm run verify`. The checks cover duplicate IDs/numbers, route output, descriptions, structured data, and sitemap membership.
 
-The thirteen registered studies are:
+Titles, descriptions, canonicals, Open Graph tags, JSON-LD, route HTML, the sitemap, and `robots.txt` are generated from the registry and `src/data/site-copy.json` during the Vite production build. Route pages contain useful static HTML before React loads; the interactive application then takes over in the browser.
 
-- **The Infinite Shore** — Mandelbrot and Julia sets. The native range uses an immediate WebGL2 preview. Deep views use a WebGPU perturbation renderer: workers build high-precision BigInt reference orbits and send split-float orbit values plus binary exponents to the GPU, which evaluates pixels in independently scheduled tiles. During motion, an 84 ms scheduler beat renders a 20-tile patch around the cursor and limits CPU workers to half the pool; after a 220 ms gesture-idle interval, the full viewport queue takes over. In-flight calculations are kept and completed nearby tiles are cached. A scaled-orbit glitch test rebases difficult regions into smaller tiles; CPU workers recompute unresolved pixels from their exact coordinates. Camera movement reprojects the last image without waiting for tile rendering, and completed CPU tiles are warped into the live preview without copying the full viewport on every gesture. At CPU render completion, the frame is assembled directly from cached tile pixels so transient preview-layer state cannot leave gaps. Perturbation and exact-repair pixels share the same smooth color map. CPU rendering is the compatibility and device-loss fallback. Coordinates and share links retain decimal precision that grows with the zoom exponent; the zoom control has no arbitrary fixed ceiling. The numeric checks exercise sub-pixel coordinate separation through 10⁵⁰⁰× and compare actual perturbation and exact-repair colors across tile boundaries at 10⁵⁰×, while practical render time and memory still depend on hardware, iteration depth and viewport size.
-- **A Quiet Current** — a WebGL2 stable-fluids solver using separate velocity, pressure, dye, and display grids. It performs velocity and dye advection, diffusion, divergence calculation, pressure projection, and vorticity confinement. RGBA16F render targets preserve smooth pigment on compatible hardware; a denser Canvas fallback is used when WebGL2 is unavailable. Silk, ink, smoke, and electric styles change simulation and rendering behavior. Drag to inject momentum and pigment; tune brush, viscosity, force, dissipation, palette, and ambient sources.
-- **A Murmuration** — a spatially partitioned Boids simulation with separation, alignment, cohesion, predator avoidance, multiple populations, attractors, repulsors, obstacles, food, and long motion trails. Five scenes provide distinct initial conditions and interactions.
-- **Weather, Remembered** — Lorenz, Rössler, Thomas, Aizawa, and Halvorsen systems integrated with fourth-order Runge–Kutta. Rotate and zoom the camera, change speed, parameters, trail length and color mapping, or pause the trajectory while inspecting it.
-- **The Pattern Beneath** — a GPU Gray–Scott reaction–diffusion surface with a 9-point Laplacian, periodic concentration seeds, aspect-aware labyrinth and branching fields, high-density rendering, brush seeding, adjustable reaction rates, speed, quality and palettes. Traveling waves use a separate colliding-front regime. A CPU fallback is available without WebGL2.
-- **A Grammar of Growth** — eight deterministic L-system grammars, including plants, coral and recursive geometry. Curved branches, animated growth, regeneration seeds, palette and structural controls, pan and zoom, and bounded grammar sizes keep exploration responsive.
-- **Gravity Playground** — interactive N-body gravity with velocity-Verlet integration, orbital scenes, adjustable collision responses, trails, and predicted paths.
-- **Inside the Machine** — a visual 8-bit teaching processor that steps real instructions through memory, registers, decoding, and arithmetic; includes example programs and a custom program editor.
-- **Neural Networks** — a feedforward network trained with backpropagation on selectable datasets, hidden layer sizes, and activation functions, with its actual decision surface rendered behind the graph.
-- **Logic Laboratory** — an editable Boolean circuit board with half-adder, full-adder, multiplexer, and multi-bit adder presets, gate placement, live evaluation, and cycle reporting.
-- **Invisible Forces** — interactive electrostatics with dipole, quadrupole, ring, and cluster presets; field lines, potential, and independently integrated test-particle paths.
-- **Cellular Automata** — a wrapped two-dimensional grid with Life, HighLife, Seeds, and Brian’s Brain rules, selectable starting patterns, and age-based rendering.
-- **The Adder** — a gate-level binary calculator with ripple-carry and Kogge–Stone look-ahead architectures, deterministic gate playback, step controls, and selectable signal explanations.
+## Privacy and browser support
 
-Gallery search, category filters, favourites, and recently visited studies work in the browser. Exhibit share links encode the current control configuration in the URL. Browser storage is used only for favourites and recent visits.
+The app has no analytics, advertising, tracking cookies, third-party scripts, or remote fonts. Favourites are written to local storage only after a visitor saves one; recently viewed studies stay in tab memory. Shared settings are encoded in the URL and are not encrypted. See [Privacy](https://experiments.armsteel.dev/privacy).
 
-## Architecture
+Use a current browser with JavaScript, Canvas 2D, and Web Workers enabled. WebGL2 is used by several visual studies; WebGPU is optional. If a graphics feature is unavailable, the relevant study uses its implemented fallback or explains that it could not open.
 
-    src/
-      App.tsx                  exhibition, routing, immersive study shell, floating dock
-      registry.ts              metadata and lazy component registry for every study
-      types.ts                 shared category, exhibit, and experiment contracts
-      components/
-        AmbientField.tsx       low-resolution domain-warped ambient WebGL field
-        ArtworkPreview.tsx     responsive, visibility-aware procedural artwork
-        Controls.tsx           compact floating glass controls and native inputs
-        ExperimentBoundary.tsx recoverable exhibit rendering and import errors
-      experiments/             isolated WebGL2, worker, canvas, and CPU fallback implementations
-      workers/                 reference-orbit preparation and progressive CPU tile fallback
-      lib/deepZoom.ts          scientific magnification, fixed-point coordinates, perturbation scales
-      lib/mandelbrotGpu.ts     WebGPU perturbation compute, presentation, and bounded tile cache
-      lib/storage.ts           browser-local favourites, visit history, URL state
-      styles.css               design tokens, layout, responsive and motion rules
+## Publish
 
-Each experiment is a default React component that accepts the shared ExperimentControls contract: paused state, control visibility, decoded URL state, a callback for serializing its current configuration, and an overlay-dismiss callback. The registry supplies exhibition and information copy separately from simulation code. Each active study owns the viewport; the shared shell only layers navigation and optional overlays above it.
+The GitHub push does not deploy the site. After reviewing and approving a release on the Ubuntu host, run `npm run publish`. It runs `npm run verify`, stages the static output in a versioned release, and atomically switches the Caddy document-root symlink. Apply a reviewed Caddy hardening update separately with `sudo bash deploy/update-caddy.sh`. See [Deployment](docs/DEPLOYMENT.md) for first installation, public checks, and rollback.
 
-## Add an experiment
+## Structure
 
-1. Add a component in src/experiments/ that implements ExperimentControls.
-2. Put canvas, simulation state, listeners, observers, animation frames, and graphics resources inside the component lifecycle. Clean them up when the component unmounts.
-3. Pause simulation work when paused is true and when document.hidden is true. Limit canvas pixel ratio and use a ResizeObserver for the visible surface.
-4. Build experiment-specific controls with ControlPanel, RangeControl, SelectControl, or Segmented. Keep each control set in its own component and close the overlay through the supplied callback.
-5. Call onShareState() with serializable settings when those settings change. Initialize from stateFromUrl where the configuration can be restored safely.
-6. Add complete visitor-facing copy and its component to src/registry.ts. The gallery and exhibit route are generated from that registry.
-
-For The Infinite Shore, **npm run test:numerics** checks fixed-point coordinate round trips, pointer-focused zoom arithmetic, sub-double neighboring pixels through 10⁵⁰⁰×, known bounded/escaping points, and matching rendered colors from perturbation and exact repair across tile edges at 10⁵⁰×. The WebGPU path evaluates split-float reference orbits in tiles; Web Workers calculate high-precision BigInt reference orbits and provide progressive CPU tiles for compatibility and device-loss fallback. Completed reference orbits and rendered tiles are cached, while work near the cursor is prioritized during gestures. Software-only WebGPU implementations may be much slower than a hardware GPU; a previous headless Chromium SwiftShader check lost its WebGPU device and used the CPU fallback. Hardware WebGPU performance is device-dependent and is not claimed as verified here. A full CPU render is not a real-time substitute for the WebGPU path at large viewports.
-
-The app is a client-side single page site. Vite preview serves route fallbacks for `/exhibits/:id`.
+```text
+src/
+  data/                 exhibit metadata and shared page copy
+  experiments/          isolated interactive studies and fallbacks
+  components/           collection previews, controls, boundaries, and effects
+  simulations/          deterministic simulation engines
+  workers/              fractal and preview workers
+  lib/                  browser storage, metadata, and deep-zoom math
+scripts/                repeatable correctness and site-generation checks
+deploy/                 scoped Caddy configuration and release scripts
+docs/                   deployment details
+```

@@ -1,0 +1,24 @@
+{
+  "name": "Armsteel Experiments",
+  "short_name": "Experiments",
+  "description": "A browser-based museum of interactive computational art and science.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080c14",
+  "theme_color": "#080c14",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

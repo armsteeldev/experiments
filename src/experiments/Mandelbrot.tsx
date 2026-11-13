@@ -511,7 +511,6 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
       }
       sourceRef.current = 'gpu'
     } catch (error) {
-      console.warn('Mandelbrot WebGPU tile batch failed; switching to CPU tiles.', error)
       const lost = gpuRendererRef.current
       gpuRendererRef.current = null
       lost?.destroy()
@@ -613,13 +612,12 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
     // setup/cleanup probe cancel before allocating a GPUDevice or configuring
     // the canvas. Otherwise two adapters can race for the same canvas context.
     const initTimer = window.setTimeout(() => {
-      lease = acquireMandelbrotGpuRenderer(canvas, (reason) => {
+      lease = acquireMandelbrotGpuRenderer(canvas, () => {
         if (canceled) return
         gpuRendererRef.current = null
         lease?.release()
         setGpuReady(false)
         setRenderStatus('Graphics device lost · switching to CPU tiles')
-        console.warn('Mandelbrot WebGPU device lost:', reason)
       })
       void lease.promise.then((renderer) => {
         if (canceled) return
@@ -631,7 +629,6 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
         if (canceled) return
         gpuRendererRef.current = null
         setGpuReady(false)
-        console.warn('Mandelbrot WebGPU initialization failed; using CPU tiles.', error)
         setRenderStatus(error instanceof Error ? 'CPU progressive renderer · WebGPU unavailable' : 'CPU progressive renderer')
       })
     }, 0)

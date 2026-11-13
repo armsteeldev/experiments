@@ -1,12 +1,77 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import AmbientField from './components/AmbientField'
 import ArtworkPreview from './components/ArtworkPreview'
 import ExperimentBoundary from './components/ExperimentBoundary'
 import { Icon } from './components/Icon'
 import { experiments } from './registry'
+import siteCopy from './data/site-copy.json'
 import { decodeState, encodeState, getFavorites, getRecent, rememberVisit, toggleFavorite } from './lib/storage'
+import { SITE_ORIGIN, updatePageMetadata } from './lib/metadata'
 import type { ExperimentDefinition } from './types'
+
+const experimentIds = experiments.map((item) => item.id)
+const homeDescription = siteCopy.home.description
+
+function collectionStructuredData() {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${SITE_ORIGIN}/#website`,
+        url: `${SITE_ORIGIN}/`,
+        name: 'Armsteel Experiments',
+        description: 'A browser-based museum of interactive computational art and science.',
+        inLanguage: 'en',
+      },
+      {
+        '@type': 'CollectionPage',
+        '@id': `${SITE_ORIGIN}/#collection`,
+        url: `${SITE_ORIGIN}/`,
+        name: 'The Collection — Armsteel Experiments',
+        description: homeDescription,
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListOrder: 'https://schema.org/ItemListOrderUnordered',
+          numberOfItems: experiments.length,
+          itemListElement: experiments.map((item, index) => ({
+            '@type': 'ListItem', position: index + 1, name: item.title,
+            url: `${SITE_ORIGIN}/exhibits/${item.id}`,
+          })),
+        },
+      },
+    ],
+  }
+}
+
+function experimentStructuredData(experiment: ExperimentDefinition) {
+  const path = `/exhibits/${experiment.id}`
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebApplication',
+        '@id': `${SITE_ORIGIN}${path}#application`,
+        name: experiment.title,
+        description: experiment.metaDescription,
+        url: `${SITE_ORIGIN}${path}`,
+        applicationCategory: 'EducationalApplication',
+        operatingSystem: 'Any',
+        isAccessibleForFree: true,
+        inLanguage: 'en',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+          { '@type': 'ListItem', position: 2, name: experiment.title, item: `${SITE_ORIGIN}${path}` },
+        ],
+      },
+    ],
+  }
+}
 
 function Brand() {
   return <Link className="brand" to="/" aria-label="Armsteel Experiments — exhibition entrance">
@@ -19,7 +84,8 @@ function Header() {
   return <header className="site-header">
     <Brand />
     <nav className="header-nav" aria-label="Main navigation">
-      <a href="#collection" className="header-link">Collection <span aria-hidden="true">↘</span></a>
+      <Link to="/#collection" className="header-link">Collection <span aria-hidden="true">↘</span></Link>
+      <Link to="/privacy" className="header-link">Privacy</Link>
     </nav>
   </header>
 }
@@ -36,20 +102,10 @@ function normalized(value: string) {
   return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase()
 }
 
-function updateMetadata(title: string, description: string) {
-  document.title = title
-  const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]')
-  if (meta) meta.content = description
-  document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.setAttribute('content', title)
-  document.querySelector<HTMLMetaElement>('meta[property="og:description"]')?.setAttribute('content', description)
-  document.querySelector<HTMLMetaElement>('meta[name="twitter:title"]')?.setAttribute('content', title)
-  document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')?.setAttribute('content', description)
-}
-
 function Exhibition() {
   const [filter, setFilter] = useState<string>('All works')
   const [query, setQuery] = useState('')
-  const [favorites, setFavorites] = useState<string[]>(getFavorites)
+  const [favorites, setFavorites] = useState<string[]>(() => getFavorites(experimentIds))
   const [searchOpen, setSearchOpen] = useState(false)
   const navigate = useNavigate()
   const searchRef = useRef<HTMLInputElement>(null)
@@ -60,7 +116,7 @@ function Exhibition() {
     const needle = normalized(query.trim())
     return experiments.filter((item) => {
       const matchesFilter = filter === 'All works' || (filter === 'Favourites' ? favorites.includes(item.id) : item.category === filter)
-      const haystack = normalized([item.title, item.category, item.description, item.subtitle, item.method].join(' '))
+      const haystack = normalized([item.title, item.category, item.description, item.subtitle, item.about, item.method, item.metaDescription].join(' '))
       return matchesFilter && (!needle || haystack.includes(needle))
     })
   }, [filter, query, favorites])
@@ -68,9 +124,12 @@ function Exhibition() {
   const featured = filter === 'All works' && !query.trim() ? experiments.find((item) => item.featured) : undefined
   const gridItems = featured ? shown.filter((item) => item.id !== featured.id) : shown
 
-  useEffect(() => {
-    updateMetadata('Armsteel Experiments — Where rules become worlds', 'Enter a living collection of interactive experiments in mathematics, physics, space, computing, electronics, artificial life and generative art.')
-  }, [])
+  useEffect(() => updatePageMetadata({
+    title: 'Armsteel Experiments — Where rules become worlds',
+    description: homeDescription,
+    canonical: '/',
+    jsonLd: collectionStructuredData(),
+  }), [])
 
   useEffect(() => {
     if (searchOpen) searchRef.current?.focus()
@@ -97,9 +156,10 @@ function Exhibition() {
     const choice = pool[Math.floor(Math.random() * pool.length)]
     if (choice) navigate('/exhibits/' + choice.id)
   }
-  const favorite = (id: string) => setFavorites(toggleFavorite(id))
+  const favorite = (id: string) => setFavorites(toggleFavorite(id, experimentIds))
 
   return <main className="exhibition-page">
+    <a className="skip-link" href="#collection">Skip to collection</a>
     <AmbientField />
     <div className="ambient-grain" aria-hidden="true" />
     <Header />
@@ -107,7 +167,7 @@ function Exhibition() {
     <section className="hero-shell portal-hero" aria-labelledby="entrance-title">
       <div className="hero-copy">
         <h1 id="entrance-title"><span>Where rules</span><br /><span>become <em>worlds.</em></span></h1>
-        <p className="hero-description">An interactive museum of computational beauty.</p>
+        <p className="hero-description">{siteCopy.home.intro}</p>
         <a href="#collection" className="glass-cta">Explore the collection <Icon name="arrow" /></a>
       </div>
     </section>
@@ -178,7 +238,7 @@ function Exhibition() {
         <span>{item.number}</span><strong>{item.title}</strong><small>{item.category}</small><Icon name="arrow" />
       </Link>)}</div>
     </section>}
-    <footer className="portal-footer section-wrap"><Brand /><span>{experiments.length} studies · One living collection</span></footer>
+    <footer className="portal-footer section-wrap"><Brand /><span>{experiments.length} studies · One living collection</span><Link to="/privacy">Privacy</Link></footer>
   </main>
 }
 
@@ -187,6 +247,11 @@ type Overlay = 'controls' | 'info' | 'selector'
 function ExhibitPage() {
   const { id } = useParams()
   const experiment = experiments.find((item) => item.id === id)
+  if (!experiment) return <NotFoundPage />
+  return <ExhibitExperience experiment={experiment} />
+}
+
+function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition }) {
   const navigate = useNavigate()
   const location = useLocation()
   const stageRef = useRef<HTMLElement>(null)
@@ -196,21 +261,26 @@ function ExhibitPage() {
   const [documentVisible, setDocumentVisible] = useState(() => !document.hidden)
   const [activeOverlay, setActiveOverlay] = useState<Overlay | null>(null)
   const [interfaceVisible, setInterfaceVisible] = useState(true)
-  const [isFavorite, setIsFavorite] = useState(() => experiment ? getFavorites().includes(experiment.id) : false)
+  const [isFavorite, setIsFavorite] = useState(() => getFavorites(experimentIds).includes(experiment.id))
   const [fullscreen, setFullscreen] = useState(false)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    if (experiment) {
-      rememberVisit(experiment.id)
-      setIsFavorite(getFavorites().includes(experiment.id))
-      setPaused(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-      setActiveOverlay(null)
-      setInterfaceVisible(true)
-      stateRef.current = {}
-      updateMetadata(`${experiment.title} — Armsteel Experiments`, `${experiment.description} Explore ${experiment.method} in an interactive, full-screen study.`)
-    }
-  }, [experiment?.id])
+    rememberVisit(experiment.id, experimentIds)
+    setIsFavorite(getFavorites(experimentIds).includes(experiment.id))
+    setPaused(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    setActiveOverlay(null)
+    setInterfaceVisible(true)
+    stateRef.current = {}
+    const path = `/exhibits/${experiment.id}`
+    updatePageMetadata({
+      title: `${experiment.title} — Armsteel Experiments`,
+      description: experiment.metaDescription,
+      canonical: path,
+      type: 'article',
+      jsonLd: experimentStructuredData(experiment),
+    })
+  }, [experiment.id])
 
   useEffect(() => {
     document.body.classList.add('immersive-active')
@@ -295,8 +365,6 @@ function ExhibitPage() {
     return () => window.removeEventListener('keydown', key)
   }, [activeOverlay, experiment?.id, navigate])
 
-  if (!experiment) return <Navigate to="/" replace />
-
   const share = async () => {
     const url = new URL(window.location.href)
     const parameters = encodeState(stateRef.current)
@@ -315,7 +383,7 @@ function ExhibitPage() {
     visit(experiments[(index + delta + experiments.length) % experiments.length].id)
   }
   const random = () => {
-    const recentIds = getRecent()
+    const recentIds = getRecent(experimentIds)
     const choices = experiments.filter((item) => item.id !== experiment.id && !recentIds.includes(item.id))
     const pool = choices.length ? choices : experiments.filter((item) => item.id !== experiment.id)
     const choice = pool[Math.floor(Math.random() * pool.length)]
@@ -356,7 +424,7 @@ function ExhibitPage() {
       <details className="info-reading"><summary>Read the underlying idea</summary><p>{experiment.about}</p></details>
       <div className="info-method"><span>UNDERLYING IDEA</span><strong>{experiment.method}</strong></div>
       <div className="info-actions">
-        <button onClick={() => setIsFavorite(toggleFavorite(experiment.id).includes(experiment.id))} aria-pressed={isFavorite}><Icon name="heart" />{isFavorite ? 'Saved to exhibition' : 'Save to exhibition'}</button>
+        <button onClick={() => setIsFavorite(toggleFavorite(experiment.id, experimentIds).includes(experiment.id))} aria-pressed={isFavorite}><Icon name="heart" />{isFavorite ? 'Saved to exhibition' : 'Save to exhibition'}</button>
         <button onClick={() => { void share() }}><Icon name="share" />{copied ? 'Link copied' : 'Share this experiment'}</button>
       </div>
     </section>}
@@ -394,12 +462,85 @@ function ExhibitPage() {
   </main>
 }
 
+function PrivacyPage() {
+  useEffect(() => updatePageMetadata({
+    title: siteCopy.privacy.title,
+    description: siteCopy.privacy.description,
+    canonical: '/privacy',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${SITE_ORIGIN}/privacy#page`,
+      name: siteCopy.privacy.title,
+      description: siteCopy.privacy.description,
+      url: `${SITE_ORIGIN}/privacy`,
+      inLanguage: 'en',
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+          { '@type': 'ListItem', position: 2, name: 'Privacy', item: `${SITE_ORIGIN}/privacy` },
+        ],
+      },
+    },
+  }), [])
+
+  const renderParagraph = (paragraph: string) => paragraph.split(/\[(armsteel:favorites|experiments\.armsteel\.dev|email|contact page)\]/g).map((part, index) => {
+    if (part === 'armsteel:favorites' || part === 'experiments.armsteel.dev') return <code key={index}>{part}</code>
+    if (part === 'email') return <a key={index} href="mailto:armsteeldev@outlook.com">armsteeldev@outlook.com</a>
+    if (part === 'contact page') return <a key={index} href="https://armsteel.dev/contact/">Armsteel contact page</a>
+    return part
+  })
+
+  return <div className="information-page privacy-page">
+    <a className="skip-link" href="#privacy-content">Skip to privacy information</a>
+    <Header />
+    <main id="privacy-content" className="privacy-content section-wrap" aria-labelledby="privacy-title">
+      <p className="eyebrow"><span className="eyebrow-rule" /> PRIVACY</p>
+      <h1 id="privacy-title">{siteCopy.privacy.heading}</h1>
+      <p className="privacy-intro">{siteCopy.privacy.intro}</p>
+      {siteCopy.privacy.sections.map((section) => <section key={section.heading} aria-labelledby={`privacy-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+        <h2 id={`privacy-${section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => <p key={paragraph}>{renderParagraph(paragraph)}</p>)}
+      </section>)}
+    </main>
+    <footer className="portal-footer section-wrap"><Brand /><span>Armsteel Experiments</span><Link to="/">Return to the collection</Link></footer>
+  </div>
+}
+
+function NotFoundPage() {
+  useEffect(() => updatePageMetadata({
+    title: siteCopy.notFound.title,
+    description: siteCopy.notFound.description,
+    robots: 'noindex,nofollow',
+  }), [])
+
+  return <div className="information-page not-found-page">
+    <a className="skip-link" href="#not-found-content">Skip to page message</a>
+    <Header />
+    <main id="not-found-content" className="not-found-content section-wrap" aria-labelledby="not-found-title">
+      <p className="eyebrow"><span className="eyebrow-rule" /> 404 · OUTSIDE THE COLLECTION</p>
+      <h1 id="not-found-title">{siteCopy.notFound.heading}</h1>
+      <p>{siteCopy.notFound.message}</p>
+      <Link className="glass-cta" to="/">Return to the exhibition <Icon name="arrow" /></Link>
+    </main>
+    <footer className="portal-footer section-wrap"><Brand /><span>Armsteel Experiments</span><Link to="/privacy">Privacy</Link></footer>
+  </div>
+}
+
 export default function App() {
   const location = useLocation()
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [location.pathname])
+  useEffect(() => {
+    document.documentElement.classList.add('app-mounted')
+  }, [])
+  useEffect(() => {
+    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView()
+    else window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [location.pathname, location.hash])
   return <Routes>
     <Route path="/" element={<Exhibition />} />
     <Route path="/exhibits/:id" element={<ExhibitPage />} />
-    <Route path="*" element={<Navigate to="/" replace />} />
+    <Route path="/privacy" element={<PrivacyPage />} />
+    <Route path="*" element={<NotFoundPage />} />
   </Routes>
 }

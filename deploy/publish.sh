@@ -7,8 +7,11 @@ fail() { printf 'STOP: %s\n' "$*" >&2; exit 1; }
 repo_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 cd "$repo_dir"
 
-npm run build
+npm run verify
 [[ -f dist/index.html ]] || fail 'Vite build did not produce dist/index.html'
+for required in dist/404.html dist/robots.txt dist/sitemap.xml dist/og-image.png dist/privacy/index.html; do
+  [[ -f $required ]] || fail "production build is missing $required"
+done
 [[ -z $(find dist -type l -print -quit) ]] || fail 'dist contains a symbolic link; refusing to copy it into the public document root'
 getent group caddy >/dev/null || fail 'the Caddy service group does not exist on this host'
 sudo -v || fail 'sudo authentication is required to install a static release'

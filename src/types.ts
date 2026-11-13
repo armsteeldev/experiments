@@ -17,6 +17,7 @@ export type ExperimentDefinition = {
   category: Category
   subtitle: string
   description: string
+  metaDescription: string
   about: string
   method: string
   year: string

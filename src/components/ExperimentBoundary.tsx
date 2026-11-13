@@ -1,4 +1,4 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Component, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 type Props = { children: ReactNode }
@@ -11,16 +11,13 @@ export default class ExperimentBoundary extends Component<Props, State> {
     return { hasError: true }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('An experiment failed to render.', error, info.componentStack)
-  }
-
   render() {
     if (this.state.hasError) {
       return <div className="experience-error" role="alert">
         <span className="experience-error-mark" aria-hidden="true">∴</span>
         <h1>This world did not open.</h1>
         <p>The study encountered an error. Return to the collection and choose another path.</p>
+        <button type="button" onClick={() => window.location.reload()}>Reload this study</button>
         <Link to="/">Return to the collection <span aria-hidden="true">→</span></Link>
       </div>
     }

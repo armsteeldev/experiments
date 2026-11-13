@@ -264,7 +264,6 @@ export class MandelbrotGpuRenderer {
     this.format = format
     this.context = context
     this.onLost = onLost
-    device.addEventListener('uncapturederror', (event: any) => console.warn('Mandelbrot WebGPU validation error:', event.error?.message || event.error))
     this.sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear', addressModeU: 'clamp-to-edge', addressModeV: 'clamp-to-edge' })
     const computeModule = device.createShaderModule({ code: computeWGSL })
     const displayModule = device.createShaderModule({ code: displayWGSL })
@@ -340,7 +339,7 @@ export class MandelbrotGpuRenderer {
     this.device.queue.submit([clearEncoder.finish()])
     this.setDisplayParameters(this.previewWarp)
     void this.device.popErrorScope().then((error: any) => { if (error) throw error }).catch((error: unknown) => {
-      console.warn('Mandelbrot WebGPU resize failed; using CPU tiles.', error)
+      void error
       this.onLost(error instanceof Error ? error.message : 'WebGPU resize failed.')
     })
   }

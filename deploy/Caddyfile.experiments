@@ -7,7 +7,21 @@ experiments.armsteel.dev {
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "no-referrer"
+		Permissions-Policy "camera=(), geolocation=(), microphone=(), payment=(), serial=(), usb=()"
+		Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests"
 		-Server
+	}
+
+	handle /site.webmanifest {
+		header Content-Type "application/manifest+json"
+		header Cache-Control "no-cache"
+		file_server
+	}
+
+	handle /sitemap.xml {
+		header Content-Type "application/xml"
+		header Cache-Control "no-cache"
+		file_server
 	}
 
 	handle /assets/* {
@@ -16,7 +30,13 @@ experiments.armsteel.dev {
 	}
 
 	handle {
-		try_files {path} /index.html
+		header Cache-Control "no-cache"
+		try_files {path}/index.html {path}
+		file_server
+	}
+
+	handle_errors {
+		rewrite * /404.html
 		file_server
 	}
 }

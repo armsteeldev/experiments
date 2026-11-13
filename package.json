@@ -6,8 +6,13 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "test": "node scripts/check-simulations.mjs && node scripts/check-adder.mjs",
     "test:numerics": "node scripts/check-deep-zoom.mjs",
+    "test:simulations": "node scripts/check-simulations.mjs",
+    "test:adder": "node scripts/check-adder.mjs",
+    "test:storage": "node scripts/check-storage.mjs",
+    "test": "npm run test:numerics && npm run test:simulations && npm run test:adder && npm run test:storage",
+    "check:site": "node scripts/check-site-pages.mjs",
+    "verify": "npm run build && npm test && npm run check:site",
     "preview": "vite preview --host 0.0.0.0",
     "publish": "bash deploy/publish.sh"
   },
