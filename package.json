@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
+    "test": "node scripts/check-simulations.mjs && node scripts/check-adder.mjs",
     "test:numerics": "node scripts/check-deep-zoom.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "publish": "bash deploy/publish.sh"

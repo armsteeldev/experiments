@@ -69,7 +69,7 @@ function Exhibition() {
   const gridItems = featured ? shown.filter((item) => item.id !== featured.id) : shown
 
   useEffect(() => {
-    updateMetadata('Armsteel Experiments — Where rules become worlds', 'Enter a living collection of interactive experiments in mathematics, physics, computing and artificial life.')
+    updateMetadata('Armsteel Experiments — Where rules become worlds', 'Enter a living collection of interactive experiments in mathematics, physics, space, computing, electronics, artificial life and generative art.')
   }, [])
 
   useEffect(() => {

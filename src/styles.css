@@ -527,7 +527,7 @@ body.immersive-active { height: 100%; min-height: 0; }
 .preset-row { flex-wrap: wrap; }
 .control-note { font-size: 9px; line-height: 1.55; }
 .info-panel { position: absolute; z-index: 11; top: 20px; left: 20px; width: min(330px, calc(100vw - 32px)); padding: 21px 22px 18px; animation: floating-reveal .22s cubic-bezier(.2,.7,.2,1) both; }
-.info-panel > .panel-close { position: absolute; right: 13px; top: 13px; }
+.info-panel > .panel-close { position: absolute; z-index: 2; right: 13px; top: 13px; }
 .info-category { display: block; padding-right: 40px; color: #99b2c0; font: 8px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .info-category i { padding: 0 5px; color: #627d8d; font-style: normal; }
 .info-panel h1 { margin: 12px 36px 8px 0; color: #edf3f7; font: 500 26px/1.12 var(--serif); letter-spacing: -.025em; }
@@ -1473,7 +1473,7 @@ body.immersive-active { height: 100%; min-height: 0; }
   overscroll-behavior: contain;
   scrollbar-width: thin;
 }
-.info-panel > .panel-close { right: 13px; top: 13px; }
+.info-panel > .panel-close { z-index: 2; right: 13px; top: 13px; }
 .info-category { color: rgba(183, 205, 217, .83); }
 .info-panel h1 { margin-top: 15px; font-size: 29px; }
 .info-panel > p { color: rgba(213, 224, 230, .81); font-size: 11px; line-height: 1.72; }

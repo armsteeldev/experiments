@@ -20,13 +20,9 @@ const palettes: Record<string, Palette> = {
   adder: ['#9bbbc8', '#d0ae76', '#a49ac6'],
 }
 const previewModes: Record<string, string> = {
-  'gravity-playground': 'gravity',
-  'inside-machine': 'cpu',
-  'neural-network': 'neural',
-  'neural-networks': 'neural',
-  'logic-laboratory': 'circuit',
-  'invisible-forces': 'electric',
-  'cellular-automata': 'automata',
+  machine: 'cpu',
+  logic: 'circuit',
+  forces: 'electric',
 }
 const fractalCache = new Map<string, HTMLCanvasElement>()
 const backgroundCache = new Map<string, HTMLCanvasElement>()

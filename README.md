@@ -11,10 +11,13 @@ Create a production bundle with **npm run build**, then inspect it locally with 
 ## Checks
 
 - **npm run build** runs the TypeScript project checks and creates the production bundle in `dist/`.
+- **npm test** checks the shared simulation engines and exhaustively verifies The Adder’s supported arithmetic configurations.
 - **npm run test:numerics** checks deep-zoom coordinate precision, perturbation rendering, exact CPU repairs, and distinct tile detail at several zoom levels.
+- **node scripts/check-simulations.mjs** and **node scripts/check-adder.mjs** run those focused simulation checks individually.
+- **npx tsc --noEmit** runs an independent TypeScript check without emitting files.
 - **npm ls --depth=0** reports whether installed top-level dependencies match the package manifest.
 
-There is no separate lint or unit-test script configured. Exhibits are registered centrally in `src/registry.ts`; each is loaded as its own route chunk and the collection derives its discipline filters from the registry.
+There is no lint script configured. Exhibits are registered centrally in `src/registry.ts`; each is loaded as its own route chunk and the collection derives its discipline filters from the registry.
 
 ## Publish on the Ubuntu host
 
@@ -30,7 +33,7 @@ Keyboard shortcuts: **← / →** move between studies, **Space** pauses or resu
 
 The ambient field renders below native resolution at a bounded frame rate, pauses when the entrance is offscreen or the tab is hidden, and becomes a still image under reduced-motion preferences. Gallery previews stay still until hovered or keyboard-focused, then animate only while visible and stop under reduced motion. The large Mandelbrot preview is rasterized in a shared worker, with a smaller synchronous fallback when offscreen canvas is unavailable. The active experiment receives the shared paused state while its tab is hidden.
 
-Registered studies include:
+The thirteen registered studies are:
 
 - **The Infinite Shore** — Mandelbrot and Julia sets. The native range uses an immediate WebGL2 preview. Deep views use a WebGPU perturbation renderer: workers build high-precision BigInt reference orbits and send split-float orbit values plus binary exponents to the GPU, which evaluates pixels in independently scheduled tiles. During motion, an 84 ms scheduler beat renders a 20-tile patch around the cursor and limits CPU workers to half the pool; after a 220 ms gesture-idle interval, the full viewport queue takes over. In-flight calculations are kept and completed nearby tiles are cached. A scaled-orbit glitch test rebases difficult regions into smaller tiles; CPU workers recompute unresolved pixels from their exact coordinates. Camera movement reprojects the last image without waiting for tile rendering, and completed CPU tiles are warped into the live preview without copying the full viewport on every gesture. At CPU render completion, the frame is assembled directly from cached tile pixels so transient preview-layer state cannot leave gaps. Perturbation and exact-repair pixels share the same smooth color map. CPU rendering is the compatibility and device-loss fallback. Coordinates and share links retain decimal precision that grows with the zoom exponent; the zoom control has no arbitrary fixed ceiling. The numeric checks exercise sub-pixel coordinate separation through 10⁵⁰⁰× and compare actual perturbation and exact-repair colors across tile boundaries at 10⁵⁰×, while practical render time and memory still depend on hardware, iteration depth and viewport size.
 - **A Quiet Current** — a WebGL2 stable-fluids solver using separate velocity, pressure, dye, and display grids. It performs velocity and dye advection, diffusion, divergence calculation, pressure projection, and vorticity confinement. RGBA16F render targets preserve smooth pigment on compatible hardware; a denser Canvas fallback is used when WebGL2 is unavailable. Silk, ink, smoke, and electric styles change simulation and rendering behavior. Drag to inject momentum and pigment; tune brush, viscosity, force, dissipation, palette, and ambient sources.
@@ -38,6 +41,13 @@ Registered studies include:
 - **Weather, Remembered** — Lorenz, Rössler, Thomas, Aizawa, and Halvorsen systems integrated with fourth-order Runge–Kutta. Rotate and zoom the camera, change speed, parameters, trail length and color mapping, or pause the trajectory while inspecting it.
 - **The Pattern Beneath** — a GPU Gray–Scott reaction–diffusion surface with a 9-point Laplacian, periodic concentration seeds, aspect-aware labyrinth and branching fields, high-density rendering, brush seeding, adjustable reaction rates, speed, quality and palettes. Traveling waves use a separate colliding-front regime. A CPU fallback is available without WebGL2.
 - **A Grammar of Growth** — eight deterministic L-system grammars, including plants, coral and recursive geometry. Curved branches, animated growth, regeneration seeds, palette and structural controls, pan and zoom, and bounded grammar sizes keep exploration responsive.
+- **Gravity Playground** — interactive N-body gravity with velocity-Verlet integration, orbital scenes, adjustable collision responses, trails, and predicted paths.
+- **Inside the Machine** — a visual 8-bit teaching processor that steps real instructions through memory, registers, decoding, and arithmetic; includes example programs and a custom program editor.
+- **Neural Networks** — a feedforward network trained with backpropagation on selectable datasets, hidden layer sizes, and activation functions, with its actual decision surface rendered behind the graph.
+- **Logic Laboratory** — an editable Boolean circuit board with half-adder, full-adder, multiplexer, and multi-bit adder presets, gate placement, live evaluation, and cycle reporting.
+- **Invisible Forces** — interactive electrostatics with dipole, quadrupole, ring, and cluster presets; field lines, potential, and independently integrated test-particle paths.
+- **Cellular Automata** — a wrapped two-dimensional grid with Life, HighLife, Seeds, and Brian’s Brain rules, selectable starting patterns, and age-based rendering.
+- **The Adder** — a gate-level binary calculator with ripple-carry and Kogge–Stone look-ahead architectures, deterministic gate playback, step controls, and selectable signal explanations.
 
 Gallery search, category filters, favourites, and recently visited studies work in the browser. Exhibit share links encode the current control configuration in the URL. Browser storage is used only for favourites and recent visits.
 
