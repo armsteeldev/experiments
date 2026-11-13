@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { PointerEvent, WheelEvent } from 'react'
+import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 
@@ -71,7 +71,7 @@ function generate(kind: string, iterations: number, angle: number, randomness: n
 
 export default function LSystems({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const initialKind = typeof stateFromUrl?.kind === 'string' && presets[stateFromUrl.kind] ? stateFromUrl.kind : 'hilbert'
+  const initialKind = typeof stateFromUrl?.kind === 'string' && presets[stateFromUrl.kind] ? stateFromUrl.kind : 'fern'
   const [kind, setKind] = useState(initialKind)
   const [iterations, setIterations] = useState(() => Number(stateFromUrl?.iterations) || presets[initialKind].iterations)
   const [angle, setAngle] = useState(() => Number(stateFromUrl?.angle) || presets[initialKind].angle)
@@ -219,9 +219,10 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
     setCamera(next)
     drawRef.current(next)
   }
-  const wheel = (event: WheelEvent<HTMLCanvasElement>) => {
+  const wheel = (event: WheelEvent) => {
     event.preventDefault()
-    const rect = event.currentTarget.getBoundingClientRect()
+    const rect = canvasRef.current?.getBoundingClientRect()
+    if (!rect) return
     const current = cameraRef.current
     const factor = Math.exp(-event.deltaY * 0.001)
     const zoom = Math.max(0.15, Math.min(24, current.zoom * factor))
@@ -232,10 +233,16 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
     setCamera(next)
     drawRef.current(next)
   }
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    canvas.addEventListener('wheel', wheel, { passive: false })
+    return () => canvas.removeEventListener('wheel', wheel)
+  }, [])
   const preset = presets[kind]
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative L-system artwork. Drag to pan and scroll to zoom." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} onWheel={wheel} />
+    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative L-system artwork. Drag to pan and scroll to zoom." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
     <span className="canvas-coordinate">{preset.name.toUpperCase()} · {geometry.segments.length.toLocaleString()} CURVES</span>
     <ControlPanel title="A Grammar of Growth" note="GENERATIVE SYSTEMS" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Generative grammar" value={kind} options={Object.entries(presets).map(([key, value]) => [key, value.name])} onChange={selectPreset} />

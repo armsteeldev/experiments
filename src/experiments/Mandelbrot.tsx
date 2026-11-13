@@ -68,7 +68,9 @@ type Metrics = {
 }
 type GpuQueueItem = { request: TileRequest; tile: GpuTile }
 
-const defaults: View = { x: '-0.5', y: '0', zoom: magnification(1) }
+// Frame the cardioid and its circular bulbs as a composed opening view while
+// keeping every published cartography preset independent of this default.
+const defaults: View = { x: '-0.5', y: '0', zoom: magnification(1.28) }
 const presets: Record<string, View> = {
   overview: defaults,
   seahorse: { x: '-0.743643887037159', y: '0.131825904205312', zoom: magnification(180) },
