@@ -14,7 +14,7 @@ Create a production bundle with **npm run build**, then inspect it locally with 
 - **npm run test:numerics** checks deep-zoom coordinate precision, perturbation rendering, exact CPU repairs, and distinct tile detail at several zoom levels.
 - **npm ls --depth=0** reports whether installed top-level dependencies match the package manifest.
 
-There is no separate lint or unit-test script configured. The six exhibits are registered centrally in `src/registry.ts`; the build checks their imports and TypeScript integration.
+There is no separate lint or unit-test script configured. Exhibits are registered centrally in `src/registry.ts`; each is loaded as its own route chunk and the collection derives its discipline filters from the registry.
 
 ## Publish on the Ubuntu host
 
@@ -22,11 +22,15 @@ For self-hosting this site with Caddy at [experiments.armsteel.dev](https://expe
 
 ## The exhibition
 
-The exhibition is the collection entrance. Open a study and it becomes a fullscreen, viewport-filling environment. A floating glass dock provides previous/next navigation, a quick selector, random discovery, controls, information, pause, and fullscreen. Controls and the short concept note open as compact overlays; click outside or press Escape to close them. The dock can be hidden with **H** and returns when the pointer reaches the bottom edge.
+The exhibition is the collection entrance. The first screen keeps the “Where rules become worlds” headline alone in a slow, domain-warped light field. Below it, one featured study opens into an asymmetric gallery of procedural previews. Search covers titles, disciplines and methods; discipline filters follow the registry, and favourites and recently visited studies stay in browser storage. **Ctrl/⌘ K** opens search.
+
+Open a study and it becomes a fullscreen, viewport-filling environment. A floating glass dock provides previous/next navigation, a quick selector, random discovery, controls, information, pause, and fullscreen. Controls and the short concept note open as compact overlays; the longer explanation stays collapsed until requested. Click outside or press Escape to close overlays. The dock can be hidden with **H**; it returns when the pointer reaches the bottom edge, and a visible **Show controls** button provides the same action on touchscreens.
 
 Keyboard shortcuts: **← / →** move between studies, **Space** pauses or resumes, **F** toggles browser fullscreen, and **H** hides or shows the interface. Focused links and controls keep their normal keyboard behavior.
 
-The collection contains six interactive studies:
+The ambient field renders below native resolution at a bounded frame rate, pauses when the entrance is offscreen or the tab is hidden, and becomes a still image under reduced-motion preferences. Gallery previews stay still until hovered or keyboard-focused, then animate only while visible and stop under reduced motion. The large Mandelbrot preview is rasterized in a shared worker, with a smaller synchronous fallback when offscreen canvas is unavailable. The active experiment receives the shared paused state while its tab is hidden.
+
+Registered studies include:
 
 - **The Infinite Shore** — Mandelbrot and Julia sets. The native range uses an immediate WebGL2 preview. Deep views use a WebGPU perturbation renderer: workers build high-precision BigInt reference orbits and send split-float orbit values plus binary exponents to the GPU, which evaluates pixels in independently scheduled tiles. During motion, an 84 ms scheduler beat renders a 20-tile patch around the cursor and limits CPU workers to half the pool; after a 220 ms gesture-idle interval, the full viewport queue takes over. In-flight calculations are kept and completed nearby tiles are cached. A scaled-orbit glitch test rebases difficult regions into smaller tiles; CPU workers recompute unresolved pixels from their exact coordinates. Camera movement reprojects the last image without waiting for tile rendering, and completed CPU tiles are warped into the live preview without copying the full viewport on every gesture. At CPU render completion, the frame is assembled directly from cached tile pixels so transient preview-layer state cannot leave gaps. Perturbation and exact-repair pixels share the same smooth color map. CPU rendering is the compatibility and device-loss fallback. Coordinates and share links retain decimal precision that grows with the zoom exponent; the zoom control has no arbitrary fixed ceiling. The numeric checks exercise sub-pixel coordinate separation through 10⁵⁰⁰× and compare actual perturbation and exact-repair colors across tile boundaries at 10⁵⁰×, while practical render time and memory still depend on hardware, iteration depth and viewport size.
 - **A Quiet Current** — a WebGL2 stable-fluids solver using separate velocity, pressure, dye, and display grids. It performs velocity and dye advection, diffusion, divergence calculation, pressure projection, and vorticity confinement. RGBA16F render targets preserve smooth pigment on compatible hardware; a denser Canvas fallback is used when WebGL2 is unavailable. Silk, ink, smoke, and electric styles change simulation and rendering behavior. Drag to inject momentum and pigment; tune brush, viscosity, force, dissipation, palette, and ambient sources.
@@ -41,12 +45,13 @@ Gallery search, category filters, favourites, and recently visited studies work 
 
     src/
       App.tsx                  exhibition, routing, immersive study shell, floating dock
-      registry.ts              metadata and component registry for every study
+      registry.ts              metadata and lazy component registry for every study
       types.ts                 shared category, exhibit, and experiment contracts
       components/
-        AmbientField.tsx       low resolution procedural ambient canvas
-        ArtworkPreview.tsx     lazy, low-cost procedural gallery artwork
+        AmbientField.tsx       low-resolution domain-warped ambient WebGL field
+        ArtworkPreview.tsx     responsive, visibility-aware procedural artwork
         Controls.tsx           compact floating glass controls and native inputs
+        ExperimentBoundary.tsx recoverable exhibit rendering and import errors
       experiments/             isolated WebGL2, worker, canvas, and CPU fallback implementations
       workers/                 reference-orbit preparation and progressive CPU tile fallback
       lib/deepZoom.ts          scientific magnification, fixed-point coordinates, perturbation scales

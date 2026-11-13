@@ -1,6 +1,6 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, LazyExoticComponent } from 'react'
 
-export type Category = 'Mathematics' | 'Physics' | 'Artificial Life' | 'Generative Art'
+export type Category = 'Mathematics' | 'Physics' | 'Computing' | 'Electronics' | 'Artificial Life' | 'Generative Art'
 
 export type ExperimentControls = {
   paused: boolean
@@ -22,5 +22,5 @@ export type ExperimentDefinition = {
   year: string
   updated: string
   featured?: boolean
-  Component: ComponentType<ExperimentControls>
+  Component: ComponentType<ExperimentControls> | LazyExoticComponent<ComponentType<ExperimentControls>>
 }

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Icon } from './Icon'
 
 export function ControlPanel({ title, note, visible, children, footer, onClose }: { title: string; note?: string; visible: boolean; children: ReactNode; footer?: ReactNode; onClose: () => void }) {
-  return <aside className={'control-panel floating-panel glass-material' + (visible ? ' is-open' : '')} aria-label={title + ' controls'} aria-hidden={!visible} inert={!visible}>
+  return <aside id="experiment-controls" className={'control-panel floating-panel glass-material' + (visible ? ' is-open' : '')} aria-label={title + ' controls'} aria-hidden={!visible} inert={!visible}>
     <div className="panel-heading"><div><span>EXPERIMENT CONTROLS</span><strong>{title}</strong></div>{note && <small>{note}</small>}<button className="panel-close" onClick={onClose} aria-label="Close controls" title="Close controls"><Icon name="close" /></button></div>
     <div className="panel-content">{children}</div>
     {footer && <div className="panel-footer">{footer}</div>}

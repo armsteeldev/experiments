@@ -1,10 +1,12 @@
+import { lazy } from 'react'
 import type { ExperimentDefinition } from './types'
-import Mandelbrot from './experiments/Mandelbrot'
-import Fluid from './experiments/Fluid'
-import Boids from './experiments/Boids'
-import Attractors from './experiments/Attractors'
-import ReactionDiffusion from './experiments/ReactionDiffusion'
-import LSystems from './experiments/LSystems'
+
+const Mandelbrot = lazy(() => import('./experiments/Mandelbrot'))
+const Fluid = lazy(() => import('./experiments/Fluid'))
+const Boids = lazy(() => import('./experiments/Boids'))
+const Attractors = lazy(() => import('./experiments/Attractors'))
+const ReactionDiffusion = lazy(() => import('./experiments/ReactionDiffusion'))
+const LSystems = lazy(() => import('./experiments/LSystems'))
 
 export const experiments: ExperimentDefinition[] = [
   {
@@ -57,5 +59,6 @@ export const experiments: ExperimentDefinition[] = [
   },
 ]
 
-export const categories = ['All works', 'Mathematics', 'Physics', 'Artificial Life', 'Generative Art', 'Favourites'] as const
+const disciplines = [...new Set(experiments.map((item) => item.category))]
+export const categories = ['All works', ...disciplines, 'Favourites'] as const
 export type Filter = typeof categories[number]
