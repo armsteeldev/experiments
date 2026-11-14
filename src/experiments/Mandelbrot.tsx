@@ -47,7 +47,7 @@ type WorkerResponse = {
   renderMs?: number
   message?: string
 }
-type WorkerSlot = { worker: Worker; busy: boolean }
+type WorkerSlot = { worker: Worker; busy: boolean; requestId?: number }
 type RefEntry = { values: Float32Array; exponents: Int32Array; bytes: number; used: number }
 type PixelEntry = { pixels: Uint8ClampedArray; bytes: number; used: number }
 type Metrics = {
@@ -538,6 +538,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
       if (index < 0) break
       const request = pendingRequestsRef.current.splice(index, 1)[0]
       slot.busy = true
+      slot.requestId = request.id
       workerRequestsRef.current.set(request.id, request)
       slot.worker.postMessage(request)
     }
@@ -545,6 +546,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
 
   handleWorkerRef.current = (slot, response) => {
     slot.busy = false
+    slot.requestId = undefined
     const request = workerRequestsRef.current.get(response.id)
     workerRequestsRef.current.delete(response.id)
     if (response.kind === 'error') {
@@ -580,13 +582,24 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
 
   useEffect(() => {
     const slots: WorkerSlot[] = []
-    const count = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 4) - 1))
+    // Deep tile work is BigInt-heavy. Two workers keep useful throughput
+    // without consuming every core while the camera and the rest of the page are live.
+    const count = Math.max(1, Math.min(2, (navigator.hardwareConcurrency || 4) - 1))
     try {
       for (let i = 0; i < count; i++) {
         const worker = new Worker(new URL('../workers/mandelbrot.worker.ts', import.meta.url), { type: 'module' })
-        const slot = { worker, busy: false }
+        const slot: WorkerSlot = { worker, busy: false }
         worker.onmessage = (event: MessageEvent<WorkerResponse>) => handleWorkerRef.current(slot, event.data)
-        worker.onerror = () => { slot.busy = false; setRenderStatus('A rendering worker stopped · retrying with remaining workers'); pumpWorkersRef.current() }
+        worker.onerror = () => {
+          const failed = workerRequestsRef.current.get(slot.requestId || -1)
+          if (failed?.generation === currentGenerationRef.current) pendingRequestsRef.current.unshift(failed)
+          if (slot.requestId) workerRequestsRef.current.delete(slot.requestId)
+          slot.busy = false; slot.requestId = undefined
+          worker.terminate()
+          workerSlotsRef.current = workerSlotsRef.current.filter((candidate) => candidate !== slot)
+          setRenderStatus(workerSlotsRef.current.length ? 'A rendering worker stopped · continuing with remaining capacity' : 'Rendering workers stopped · reset the view to retry')
+          pumpWorkersRef.current()
+        }
         slots.push(slot)
       }
       workerSlotsRef.current = slots
@@ -742,13 +755,10 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
     gpuBatchRef.current = []
     const active = config.current
     const target = gpuRendererRef.current ? 'gpu' : 'cpu'
-    // Let already-running tile/reference jobs finish. Their results are cached
-    // even when stale, and workers immediately pick up the newest prioritized
-    // queue when they return. Cancelling on every camera update starved detail
-    // during continuous wheel and drag gestures.
-    if (metricRef.current.backend !== (target === 'gpu' ? 'webgpu' : 'cpu')) {
-      for (const slot of workerSlotsRef.current) slot.worker.postMessage({ action: 'cancel', generation })
-    }
+    // Stop obsolete work on each new camera generation. Reference generation
+    // and CPU tile rows yield cooperatively, so rapid input frees a worker
+    // promptly instead of accumulating expensive stale renders.
+    for (const slot of workerSlotsRef.current) slot.worker.postMessage({ action: 'cancel', generation })
     lastScheduleAtRef.current = now
     const iterationsAtView = iterationsAtZoom(active.iterations, active.view.zoom)
     const tileSize = target === 'gpu' ? gpuRendererRef.current?.getTileSize() || 64 : 32

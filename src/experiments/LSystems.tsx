@@ -4,19 +4,20 @@ import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { generateFernGeometry } from '../simulations/fern'
+import { generateParametricTree } from '../simulations/parametricTree'
 import type { FernGeometry, FernSegment } from '../simulations/fern'
 
-type Preset = { name: string; axiom: string; rules: Record<string, string>; angle: number; iterations: number; max: number; step: number; taper?: number; organic?: boolean; draw: string }
+type Preset = { name: string; axiom?: string; rules?: Record<string, string>; angle: number; iterations: number; max: number; step: number; taper?: number; organic?: boolean; draw: string }
 type Segment = FernSegment
 type Camera = { zoom: number; x: number; y: number }
 type Geometry = FernGeometry
 const MAX_SYMBOLS = 520_000
 const MAX_SEGMENTS = 100_000
 const presets: Record<string, Preset> = {
-  tree: { name: 'Wind-shaped tree', axiom: 'F', rules: { F: 'F[+F]F[-F]F' }, angle: 28, iterations: 6, max: 6, step: 0.8, taper: 0.79, organic: true, draw: 'F' },
-  fern: { name: 'Unfurling fern', axiom: 'X', rules: { X: 'F+[[X]-X]-F[-FX]+X', F: 'FF' }, angle: 28, iterations: 6, max: 6, step: 0.75, taper: 0.91, organic: true, draw: 'F' },
+  tree: { name: 'Wind-shaped tree', angle: 52, iterations: 6, max: 6, step: 0.94, taper: 0.86, organic: true, draw: 'F' },
+  fern: { name: 'Unfurling fern', angle: 28, iterations: 6, max: 6, step: 0.75, taper: 0.91, organic: true, draw: 'F' },
   coral: { name: 'Branching coral', axiom: 'F', rules: { F: 'F[+F]F[-F][F]' }, angle: 22, iterations: 6, max: 6, step: 0.79, taper: 0.84, organic: true, draw: 'F' },
-  fan: { name: 'Sea fan', axiom: 'X', rules: { X: 'F[+X]F[-X][+X]FX', F: 'FF' }, angle: 23, iterations: 5, max: 5, step: 0.76, taper: 0.9, organic: true, draw: 'F' },
+  fan: { name: 'Sea fan', axiom: 'X', rules: { X: 'F[+X][-X]F[+X][-X]F[+X][-X]X', F: 'FF' }, angle: 42, iterations: 5, max: 5, step: 0.76, taper: 0.9, organic: true, draw: 'F' },
   koch: { name: 'Folded coastline', axiom: 'F', rules: { F: 'F+F--F+F' }, angle: 60, iterations: 5, max: 6, step: 1, draw: 'F' },
   dragon: { name: 'Paper dragon', axiom: 'FX', rules: { X: 'X+YF+', Y: '-FX-Y' }, angle: 90, iterations: 12, max: 13, step: 1, draw: 'F' },
   hilbert: { name: 'Hilbert passage', axiom: 'A', rules: { A: '+BF-AFA-FB+', B: '-AF+BFB+FA-' }, angle: 90, iterations: 6, max: 7, step: 1, draw: 'F' },
@@ -30,13 +31,14 @@ const palettes: Record<string, string[]> = {
 }
 
 function generate(kind: string, iterations: number, angle: number, randomness: number, seed: number): Geometry {
-  if (kind === 'fern') return generateFernGeometry(iterations, randomness, seed)
+  if (kind === 'fern') return generateFernGeometry(iterations, randomness, seed, angle)
+  if (kind === 'tree') return generateParametricTree(iterations, randomness, seed, angle)
   const preset = presets[kind] || presets.tree
-  let sentence = preset.axiom
+  let sentence = preset.axiom || 'F'
   for (let generation = 0; generation < iterations; generation++) {
     let next = ''
     for (const symbol of sentence) {
-      const replacement = preset.rules[symbol] || symbol
+      const replacement = preset.rules?.[symbol] || symbol
       if (next.length + replacement.length > MAX_SYMBOLS) break
       next += replacement
     }
@@ -80,7 +82,7 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
   const [kind, setKind] = useState(initialKind)
   const [iterations, setIterations] = useState(() => Number(stateFromUrl?.iterations) || presets[initialKind].iterations)
   const [angle, setAngle] = useState(() => Number(stateFromUrl?.angle) || presets[initialKind].angle)
-  const [randomness, setRandomness] = useState(() => stateFromUrl?.randomness !== undefined ? Number(stateFromUrl.randomness) : (presets[initialKind].organic ? 0.13 : 0))
+  const [randomness, setRandomness] = useState(() => stateFromUrl?.randomness !== undefined ? Number(stateFromUrl.randomness) : (presets[initialKind].organic ? 0.26 : 0))
   const [width, setWidth] = useState(() => Number(stateFromUrl?.width) || 2.4)
   const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' ? stateFromUrl.palette : 'sage')
   const [seed, setSeed] = useState(() => Number(stateFromUrl?.seed) || 7)
@@ -102,6 +104,13 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
   cameraRef.current = camera
   const geometryRef = useRef(geometry)
   geometryRef.current = geometry
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    const depthCounts = geometry.segments.reduce<Record<number, number>>((counts, segment) => { counts[segment.depth] = (counts[segment.depth] || 0) + 1; return counts }, {})
+    const inspect = () => ({ kind, total: geometryRef.current.segments.length, progress: progress.current, maxDepth: geometryRef.current.maxDepth, depthCounts })
+    ;(window as Window & { __ARMSTEEL_GROWTH__?: typeof inspect }).__ARMSTEEL_GROWTH__ = inspect
+    return () => { delete (window as Window & { __ARMSTEEL_GROWTH__?: typeof inspect }).__ARMSTEEL_GROWTH__ }
+  }, [kind, geometry])
   useEffect(() => { onShareState({ kind, iterations, angle, randomness, width, palette, seed, zoom: camera.zoom, panX: camera.x, panY: camera.y }) }, [kind, iterations, angle, randomness, width, palette, seed, camera, onShareState])
 
   useEffect(() => {
@@ -110,11 +119,13 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
     if (!canvas || !ctx) return
     let cssWidth = 0, cssHeight = 0, dpr = 1, raf = 0
     const chunks = chunksRef.current
+    let fanWebPaths: Path2D[] = []
     const colors = palettes[palette] || palettes.sage
     const build = () => {
       const geometryNow = geometryRef.current
-      const chunkSize = 850
+      const chunkSize = 64
       chunks.length = 0
+      fanWebPaths = []
       for (let start = 0; start < geometryNow.segments.length; start += chunkSize) {
         const paths = Array.from({ length: 8 }, () => new Path2D())
         const end = Math.min(geometryNow.segments.length, start + chunkSize)
@@ -129,12 +140,33 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
         }
         chunks.push(paths)
       }
+      if (kind === 'fan' && geometryNow.segments.length) {
+        const { minY, maxY, minX, maxX } = geometryNow.bounds
+        const spanY = maxY - minY || 1, spanX = maxX - minX || 1
+        for (let row = 1; row <= 28; row++) {
+          const y = minY + spanY * (0.16 + row / 30 * 0.8)
+          let left = Infinity, right = -Infinity
+          for (const segment of geometryNow.segments) {
+            const dy = segment.y2 - segment.y1
+            if (Math.abs(dy) < 1e-8 || y < Math.min(segment.y1, segment.y2) || y > Math.max(segment.y1, segment.y2)) continue
+            const t = (y - segment.y1) / dy
+            if (t < 0 || t > 1) continue
+            const x = segment.x1 + (segment.x2 - segment.x1) * t
+            left = Math.min(left, x); right = Math.max(right, x)
+          }
+          if (!Number.isFinite(left) || right - left < spanX * .12) continue
+          const web = new Path2D()
+          web.moveTo(left, y)
+          web.quadraticCurveTo((left + right) / 2, y + spanY * .008, right, y)
+          fanWebPaths.push(web)
+        }
+      }
     }
     const draw = (visible: number, state = cameraRef.current) => {
       ctx.fillStyle = '#080c14'
       ctx.fillRect(0, 0, cssWidth, cssHeight)
       const count = Math.min(geometryRef.current.segments.length, Math.floor(visible))
-      const chunkSize = 850
+      const chunkSize = 64
       const bounds = geometryRef.current.bounds
       const spanX = bounds.maxX - bounds.minX || 1, spanY = bounds.maxY - bounds.minY || 1
       const topSafe = Math.min(74, cssHeight * 0.08)
@@ -150,50 +182,106 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
       ctx.translate(-centerX, -centerY)
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
-      for (let i = 0; i < chunks.length; i++) {
-        if (i * chunkSize >= count) break
-        const paths = chunks[i]
+      if (kind === 'fan' && fanWebPaths.length) {
+        ctx.globalAlpha = .35
+        ctx.strokeStyle = colors[2]
+        ctx.lineWidth = .9 / scale
+        for (const web of fanWebPaths) ctx.stroke(web)
+        ctx.globalAlpha = 1
+      }
+      const drawPaths = (paths: Path2D[]) => {
         for (let tier = 0; tier < paths.length; tier++) {
-          if (!paths[tier]) continue
           ctx.strokeStyle = colors[Math.min(colors.length - 1, Math.floor(tier / 7 * colors.length))]
           ctx.globalAlpha = 0.7 + tier * 0.035
-          const taper = presets[kind]?.organic ? Math.pow(0.74, tier * 0.58) : 1
-          ctx.lineWidth = Math.max(0.45, width * taper) / scale
+          const taper = presets[kind]?.organic ? Math.pow(kind === 'tree' ? 0.82 : 0.74, tier * (kind === 'tree' ? 0.7 : 0.58)) : 1
+          ctx.lineWidth = Math.max(0.45, width * taper * (kind === 'tree' ? 1.65 : 1)) / scale
           ctx.stroke(paths[tier])
         }
       }
+      const completeChunks = Math.floor(count / chunkSize)
+      for (let i = 0; i < completeChunks; i++) {
+        const paths = chunks[i]
+        drawPaths(paths)
+      }
+      const partialStart = completeChunks * chunkSize
+      if (count > partialStart) {
+        const partial = Array.from({ length: 8 }, () => new Path2D())
+        for (let i = partialStart; i < count; i++) {
+          const segment = geometryRef.current.segments[i]
+          const tier = presets[kind]?.organic
+            ? Math.min(7, Math.floor(segment.depth / Math.max(1, geometryRef.current.maxDepth) * 7))
+            : Math.min(7, Math.floor(segment.order / Math.max(1, geometryRef.current.segments.length) * 8))
+          partial[tier].moveTo(segment.x1, segment.y1)
+          partial[tier].quadraticCurveTo(segment.cx, segment.cy, segment.x2, segment.y2)
+        }
+        drawPaths(partial)
+      }
       if (kind === 'fern') {
         ctx.fillStyle = colors[colors.length - 2]
-        ctx.globalAlpha = .68
+        ctx.strokeStyle = colors[colors.length - 1]
+        ctx.globalAlpha = .82
         for (let i = 0; i < count; i++) {
           const segment = geometryRef.current.segments[i]
           if (!segment.leafSize) continue
-          const heading = Math.atan2(segment.y2 - segment.y1, segment.x2 - segment.x1)
           ctx.beginPath()
-          ctx.ellipse(segment.x2, segment.y2, segment.leafSize / scale, segment.leafSize * 0.34 / scale, heading, 0, Math.PI * 2)
+          const dx = segment.x2 - segment.x1, dy = segment.y2 - segment.y1
+          const normalX = -dy / Math.max(1e-6, Math.hypot(dx, dy)), normalY = dx / Math.max(1e-6, Math.hypot(dx, dy))
+          const middleX = (segment.x1 + segment.x2) / 2, middleY = (segment.y1 + segment.y2) / 2
+          const widthAtMiddle = segment.leafSize * 0.46
+          ctx.moveTo(segment.x1, segment.y1)
+          ctx.quadraticCurveTo(middleX + normalX * widthAtMiddle, middleY + normalY * widthAtMiddle, segment.x2, segment.y2)
+          ctx.quadraticCurveTo(middleX - normalX * widthAtMiddle, middleY - normalY * widthAtMiddle, segment.x1, segment.y1)
           ctx.fill()
+          ctx.globalAlpha = .32
+          ctx.lineWidth = .38 / scale
+          ctx.beginPath(); ctx.moveTo(segment.x1, segment.y1); ctx.lineTo(segment.x2, segment.y2); ctx.stroke()
+          ctx.globalAlpha = .82
         }
         ctx.globalAlpha = 1
       } else if (presets[kind]?.organic && count > 0) {
         const maxDepth = geometryRef.current.maxDepth
-        ctx.fillStyle = colors[colors.length - 1]
-        ctx.globalAlpha = .58
+        ctx.fillStyle = kind === 'coral' ? '#f1b28d' : kind === 'tree' ? colors[1] : colors[colors.length - 1]
+        ctx.strokeStyle = kind === 'coral' ? '#f4d3ad' : colors[colors.length - 1]
+        ctx.globalAlpha = kind === 'coral' ? .78 : kind === 'tree' ? .8 : .7
         for (let i = 0; i < count; i++) {
           const segment = geometryRef.current.segments[i]
-          if (segment.depth < maxDepth - 1 || segment.order % 3 !== 0) continue
+          if (segment.depth < maxDepth - (kind === 'tree' ? 3 : 1) || segment.order % (kind === 'coral' ? 2 : kind === 'tree' ? 2 : 3) !== 0) continue
           const heading = Math.atan2(segment.y2 - segment.y1, segment.x2 - segment.x1)
-          ctx.beginPath()
-          ctx.ellipse(segment.x2, segment.y2, 2.4 / scale, .7 / scale, heading + Math.PI / 5, 0, Math.PI * 2)
-          ctx.fill()
-        }
-      }
-      if (kind !== 'koch' && kind !== 'dragon' && kind !== 'hilbert' && kind !== 'sierpinski' && count > 0) {
-        const maxDepth = geometryRef.current.maxDepth
-        const segment = geometryRef.current.segments[Math.max(0, count - 1)]
-        if (segment && segment.depth >= maxDepth - 1) {
-          ctx.globalAlpha = 0.72
-          ctx.fillStyle = colors[colors.length - 1]
-          ctx.beginPath(); ctx.ellipse(segment.x2, segment.y2, 2.4 / scale, 1.35 / scale, -Math.PI / 3, 0, Math.PI * 2); ctx.fill()
+          if (kind === 'tree') {
+            const leafBase = { x: segment.x2, y: segment.y2 }
+            const leafSpan = 12 + (segment.order % 5) * 1.6
+            const leafWidth = 4 + (segment.order % 3) * 1.2
+            for (const side of [-1, 1]) {
+              const leafAngle = heading + side * (.52 + (segment.order % 7) * .018)
+              const tip = { x: leafBase.x + Math.cos(leafAngle) * leafSpan / scale, y: leafBase.y + Math.sin(leafAngle) * leafSpan / scale }
+              const middle = { x: (leafBase.x + tip.x) / 2, y: (leafBase.y + tip.y) / 2 }
+              const normalX = -Math.sin(leafAngle) * leafWidth / scale, normalY = Math.cos(leafAngle) * leafWidth / scale
+              ctx.fillStyle = segment.order % 7 === 0 ? colors[2] : colors[1]
+              ctx.beginPath()
+              ctx.moveTo(leafBase.x, leafBase.y)
+              ctx.quadraticCurveTo(middle.x + normalX, middle.y + normalY, tip.x, tip.y)
+              ctx.quadraticCurveTo(middle.x - normalX, middle.y - normalY, leafBase.x, leafBase.y)
+              ctx.closePath(); ctx.fill()
+            }
+          } else if (kind === 'coral') {
+            const length = Math.max(.035, Math.hypot(segment.x2 - segment.x1, segment.y2 - segment.y1) * .72)
+            ctx.lineWidth = Math.max(.7, width * .3) / scale
+            for (const side of [-1, 1]) {
+              const baseX = segment.x2 + Math.cos(heading) * length * .12, baseY = segment.y2 + Math.sin(heading) * length * .12
+              const tipX = baseX + Math.cos(heading + side * .48) * length, tipY = baseY + Math.sin(heading + side * .48) * length
+              ctx.beginPath(); ctx.moveTo(baseX, baseY); ctx.quadraticCurveTo(baseX + Math.cos(heading + side * .3) * length * .75, baseY + Math.sin(heading + side * .3) * length * .75, tipX, tipY); ctx.stroke()
+              ctx.beginPath(); ctx.arc(tipX, tipY, Math.max(.012, length * .11), 0, Math.PI * 2); ctx.fill()
+            }
+            ctx.beginPath(); ctx.arc(segment.x2, segment.y2, Math.max(.014, length * .13), 0, Math.PI * 2); ctx.fill()
+          } else {
+            const length = Math.max(.045, Math.hypot(segment.x2 - segment.x1, segment.y2 - segment.y1) * .9)
+            for (const side of [-1, 1]) {
+              const leafAngle = heading + side * .62
+              const tipX = segment.x2 + Math.cos(leafAngle) * length, tipY = segment.y2 + Math.sin(leafAngle) * length
+              const middleX = (segment.x2 + tipX) / 2, middleY = (segment.y2 + tipY) / 2
+              ctx.beginPath(); ctx.moveTo(segment.x2, segment.y2); ctx.quadraticCurveTo(middleX - Math.sin(leafAngle) * length * .24, middleY + Math.cos(leafAngle) * length * .24, tipX, tipY); ctx.quadraticCurveTo(middleX + Math.sin(leafAngle) * length * .24, middleY - Math.cos(leafAngle) * length * .24, segment.x2, segment.y2); ctx.fill()
+            }
+          }
         }
       }
       ctx.globalAlpha = 1
@@ -233,7 +321,7 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
     const preset = presets[value]
     if (!preset) return
     setKind(value); setIterations(preset.iterations); setAngle(preset.angle); setGrowing(true)
-    setRandomness(preset.organic ? 0.13 : 0)
+    setRandomness(preset.organic ? 0.26 : 0)
     setCamera({ zoom: 1, x: 0, y: 0 })
     setGrowthKey((current) => current + 1)
   }
@@ -277,23 +365,23 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
   const replayGrowth = () => { setGrowing(true); setGrowthKey((value) => value + 1); hint.dismiss() }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative L-system artwork. Drag to pan and scroll to zoom." aria-describedby={hint.visible ? 'lsystem-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
-    {hint.visible ? <aside className="scene-nudge" id="lsystem-first-move" role="note"><span>Try this · A Grammar of Growth</span><p>Replay the growth to watch one small branching rule write the whole shape, generation by generation.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={replayGrowth}>Replay the growth</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
+    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative botanical and L-system artwork. Drag to pan and scroll to zoom." aria-describedby={hint.visible ? 'lsystem-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    {hint.visible ? <aside className="scene-nudge" id="lsystem-first-move" role="note"><span>Try this · A Grammar of Growth</span><p>Watch the fern unfurl, then switch to a tree or coral and follow the branching rule.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={replayGrowth}>Replay the growth</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{preset.name.toUpperCase()} · {geometry.segments.length.toLocaleString()} CURVES</span>
     <ControlPanel title="A Grammar of Growth" note="GENERATIVE SYSTEMS" visible={controlsVisible} onClose={onCloseControls}>
-      <SelectControl label="Generative grammar" value={kind} options={Object.entries(presets).map(([key, value]) => [key, value.name])} onChange={selectPreset} />
+      <SelectControl label="Growth form" value={kind} options={Object.entries(presets).map(([key, value]) => [key, value.name])} onChange={selectPreset} />
       <RangeControl label="Generations" value={iterations} min={1} max={preset.max} step={1} onChange={(value) => { setIterations(value); setGrowing(true); setGrowthKey((current) => current + 1) }} />
       <RangeControl label="Branch angle" value={angle} min={8} max={112} step={0.5} onChange={(value) => { setAngle(value); setGrowing(true); setGrowthKey((current) => current + 1) }} format={(value) => value.toFixed(1) + '°'} />
       <RangeControl label="Wind / asymmetry" value={randomness} min={0} max={0.65} step={0.01} onChange={(value) => { setRandomness(value); setGrowing(true); setGrowthKey((current) => current + 1) }} format={(value) => Math.round(value * 100) + '%'} />
       <RangeControl label="Ink weight" value={width} min={0.6} max={4} step={0.1} onChange={setWidth} format={(value) => value.toFixed(1)} />
       <SelectControl label="Pigment" value={palette} options={[['sage', 'Moss and lichen'], ['frost', 'Winter glass'], ['ember', 'Autumn ember'], ['violet', 'Ultraviolet garden']]} onChange={setPalette} />
-      <details className="lsystem-rule"><summary>See the rule behind this shape</summary><p>Start with <code>{preset.axiom}</code>. At every generation, replace each symbol using these rules:</p>{Object.entries(preset.rules).map(([symbol, replacement]) => <code className="lsystem-rule-line" key={symbol}>{symbol} → {replacement}</code>)}<p>The new string is interpreted as forward strokes, turns and saved branches. More generations repeat the same replacement rule.</p></details>
+      <details className="lsystem-rule"><summary>{kind === 'fern' ? 'How this fern is constructed' : kind === 'tree' ? 'How this tree grows' : 'See the rule behind this shape'}</summary>{kind === 'fern' ? <p>This is a seeded parametric botanical generator, not an L-system rewrite. Seven curved rachises carry paired pinnae and smaller lance-shaped leaflets; the wind control changes their asymmetry.</p> : kind === 'tree' ? <p>This is a seeded parametric tree, not an L-system rewrite. A curved trunk divides into boughs and finer twigs at every generation; branch angle sets the crown spread and wind changes each limb's bend.</p> : <><p>Start with <code>{preset.axiom}</code>. At every generation, replace each symbol using these rules:</p>{Object.entries(preset.rules || {}).map(([symbol, replacement]) => <code className="lsystem-rule-line" key={symbol}>{symbol} → {replacement}</code>)}<p>The string is interpreted as forward strokes, turns and saved branches. Every generation repeats the same replacement.</p></>}</details>
       <ActionRow>
         <button className="panel-action" onClick={() => { setGrowing(true); setGrowthKey((value) => value + 1) }}><span>Replay the growth</span><i>↗</i></button>
         <button className="panel-action" onClick={() => setGrowing((value) => !value)}><span>{growing ? 'Pause growth' : 'Resume growth'}</span><i>{growing ? 'Ⅱ' : '▶'}</i></button>
       </ActionRow>
       <button className="panel-action" onClick={randomize}><span>Let the wind decide</span><i>↻</i></button>
-      <p className="control-note">The fern grows from nested fronds and leaflets; the other forms unfold from branching rules. Drag to pan, scroll to magnify, and replay to watch them grow.</p>
+      <p className="control-note">The fern and tree use seeded parametric botany. Coral, sea fan and the geometric patterns use visible L-system rewrites. Drag to pan, scroll to magnify, and replay to watch growth unfold.</p>
     </ControlPanel>
   </div>
 }

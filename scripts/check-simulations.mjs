@@ -29,6 +29,34 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
   const orbit = gravity.circularOrbitVelocity(star, 3.5, 0)
   assert.ok(orbit.vy > 0 && Math.abs(orbit.vx) < 1e-12, 'A body to the right should launch prograde, upward')
   assert.ok(Math.abs(Math.hypot(orbit.vx, orbit.vy) - Math.sqrt(980 / 3.5)) < .01, 'Circular launch should match the local orbital speed')
+  const tinyPlanet = { id: 20, x: 1.2, y: 0, vx: 0, vy: 4, mass: .08, color: '#fff' }
+  assert.equal(gravity.pickGravityBodyAtWorld([star, tinyPlanet], 1.2 + 18 / 80, 0, 80, 20)?.id, tinyPlanet.id, 'A tiny planet has a forgiving screen-space target')
+  const closeBodies = [
+    { ...star, x: 0, mass: 1 }, { ...tinyPlanet, id: 21, x: .1, mass: .1 },
+  ]
+  assert.equal(gravity.pickGravityBodyAtWorld(closeBodies, .08, 0, 100, 20)?.id, 21, 'The nearest center wins when hit targets overlap')
+  const samplesAt = (hz, zoomScale, pxPerWorldSecond = 3) => {
+    const samples = []
+    for (let frame = 0; frame <= hz / 5; frame++) {
+      const time = frame * 1000 / hz
+      const worldX = time / 1000 * pxPerWorldSecond
+      samples.push({ x: worldX * zoomScale / zoomScale, y: 0, time })
+    }
+    return samples
+  }
+  const throw60 = gravity.estimateGravityThrowVelocity(samplesAt(60, 24))
+  const throw120 = gravity.estimateGravityThrowVelocity(samplesAt(120, 240))
+  assert.ok(throw60 && throw120 && Math.abs(throw60.vx - throw120.vx) < .01, 'World-space throws are stable across 60 and 120 Hz sampling and zoom scales')
+  assert.equal(gravity.estimateGravityThrowVelocity([{ x: 0, y: 0, time: 0 }, { x: .01, y: .01, time: 100 }]), null, 'A stationary release does not create launch velocity')
+  const fastThrow = gravity.estimateGravityThrowVelocity([{ x: 0, y: 0, time: 0 }, { x: 100, y: 0, time: 100 }])
+  assert.ok(fastThrow && Math.hypot(fastThrow.vx, fastThrow.vy) <= 28, 'Throw velocity has a predictable maximum')
+  const heldPair = [
+    { ...star, id: 31, mass: 50 }, { id: 32, x: 2, y: 0, vx: 0, vy: 5, mass: .5, color: '#fff' },
+  ]
+  const heldPosition = { x: heldPair[1].x, y: heldPair[1].y, vx: heldPair[1].vx, vy: heldPair[1].vy }
+  for (let i = 0; i < 300; i++) gravity.integrateGravity(heldPair, .003, 1, 'merge', 32)
+  assert.deepEqual({ x: heldPair[1].x, y: heldPair[1].y, vx: heldPair[1].vx, vy: heldPair[1].vy }, heldPosition, 'A manipulated body stays fixed with its original velocity while the rest of the system continues')
+  assert.notEqual(heldPair[0].x, 0, 'Other bodies continue to respond to a held body')
   const circular = [star, { id: 9, x: 3.5, y: 0, ...orbit, mass: .5, color: '#fff' }]
   for (let i = 0; i < 2400; i++) gravity.integrateGravity(circular, .003, 1, 'pass')
   const orbitRadius = Math.hypot(circular[1].x - circular[0].x, circular[1].y - circular[0].y)

@@ -1726,6 +1726,61 @@ body.immersive-active { height: 100%; min-height: 0; }
   .exhibition-page .featured-art-link > .artwork-preview,
   .exhibition-page .card-art-link .artwork-preview { transition: none; }
 }
+
+/* Clear button roles: glass utility actions, selectable chips, and solid panel actions. */
+.exhibition-page .quiet-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(215, 232, 241, .16);
+  border-bottom-color: rgba(215, 232, 241, .16);
+  border-radius: 999px;
+  color: rgba(220, 231, 237, .86);
+  background: linear-gradient(145deg, rgba(193, 217, 230, .085), rgba(77, 101, 122, .06));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+}
+.exhibition-page .quiet-button:hover { border-color: rgba(220, 239, 248, .34); color: #f2f6f8; background: linear-gradient(145deg, rgba(193, 217, 230, .15), rgba(77, 101, 122, .1)); }
+.exhibition-page .filter-chip {
+  border-color: rgba(211, 229, 238, .08);
+  background: rgba(164, 193, 207, .035);
+}
+.exhibition-page .filter-chip:hover { border-color: rgba(211, 229, 238, .2); background: rgba(164, 193, 207, .08); }
+.exhibition-page .filter-chip.active { border-color: rgba(205, 225, 236, .32); background: linear-gradient(135deg, rgba(192, 216, 229, .16), rgba(94, 121, 141, .11)); }
+.exhibition-page .favorite-button { width: 44px; height: 44px; }
+.exhibition-page .favorite-button:focus-visible { outline-color: #f0c4bd; }
+.segmented-control button, .preset-row button {
+  border-color: rgba(205, 224, 237, .19);
+  background: linear-gradient(145deg, rgba(159, 187, 203, .075), rgba(17, 27, 39, .54));
+  color: rgba(193, 206, 216, .86);
+}
+.segmented-control button:hover:not(:disabled), .preset-row button:hover:not(:disabled) { border-color: rgba(205, 228, 240, .36); background: rgba(131, 166, 185, .15); }
+.segmented-control button.chosen, .preset-row button.selected, .segmented-control button[aria-pressed="true"], .preset-row button[aria-pressed="true"] {
+  border-color: rgba(174, 215, 225, .52); color: #edf4f6; background: linear-gradient(145deg, rgba(103, 153, 172, .27), rgba(56, 88, 109, .19));
+  box-shadow: inset 0 1px rgba(255,255,255,.1), 0 2px 9px rgba(0,0,0,.14);
+}
+.panel-action {
+  min-height: 42px;
+  border-color: rgba(208, 228, 238, .2);
+  border-radius: 9px;
+  color: rgba(224, 234, 239, .92);
+  background: linear-gradient(145deg, rgba(154, 190, 206, .12), rgba(40, 58, 73, .24));
+  box-shadow: inset 0 1px rgba(255,255,255,.07);
+}
+.panel-action:hover:not(:disabled) { border-color: rgba(213, 236, 245, .39); background: linear-gradient(145deg, rgba(154, 190, 206, .2), rgba(40, 58, 73, .34)); }
+.panel-action:active:not(:disabled) { transform: translateY(1px); }
+.panel-action:disabled, .segmented-control button:disabled, .preset-row button:disabled { color: rgba(162, 175, 185, .45); border-color: rgba(197, 215, 225, .08); background: rgba(20, 30, 40, .4); cursor: not-allowed; }
+.small-action { min-height: 40px; border-color: rgba(193, 224, 212, .23); }
+.small-action:active:not(:disabled) { transform: translateY(1px); }
+.dock-button:not(:hover):not(.is-active) { background: rgba(208, 228, 238, .035); border-color: rgba(208, 228, 238, .055); }
+.dock-button:focus-visible, .dock-current:focus-visible, .panel-action:focus-visible, .segmented-control button:focus-visible, .preset-row button:focus-visible, .small-action:focus-visible {
+  outline: 2px solid rgba(193, 227, 238, .96);
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .exhibition-page .quiet-button { min-height: 44px; padding-inline: 11px; }
+  .exhibition-page .filter-chip { min-height: 42px; }
+  .exhibition-page .favorite-button { width: 44px; height: 44px; }
+  .segmented-control button, .preset-row button, .small-action, .panel-action { min-height: 44px; }
+}
 @supports not (backdrop-filter: blur(1px)) {
   .glass-material { background: rgba(12, 19, 28, .93); }
   .exhibition-page .glass-cta, .exhibition-page .card-open, .exhibition-page .favorite-button { background-color: rgba(10, 17, 25, .92); }

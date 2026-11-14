@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { AttractorTrailBuffer, attractorRenderStride, shouldRenderAttractorFrame } from '../simulations/attractorTrail'
 
 type Point3 = { x: number; y: number; z: number }
 type SystemName = 'lorenz' | 'rossler' | 'thomas' | 'aizawa' | 'halvorsen'
@@ -32,39 +33,36 @@ const palettes: Record<string, [string, string, string]> = {
   glacial: ['#b7e6df', '#76a9d3', '#9686c8'],
 }
 
-function derivative(p: Point3, system: SystemName, q: { rho: number; sigma: number; beta: number; a: number; b: number; c: number }) {
-  if (system === 'lorenz') return { x: q.sigma * (p.y - p.x), y: p.x * (q.rho - p.z) - p.y, z: p.x * p.y - q.beta * p.z }
-  if (system === 'rossler') return { x: -p.y - p.z, y: p.x + q.a * p.y, z: q.b + p.z * (p.x - q.c) }
-  if (system === 'thomas') return { x: Math.sin(p.y) - q.a * p.x, y: Math.sin(p.z) - q.a * p.y, z: Math.sin(p.x) - q.a * p.z }
-  if (system === 'aizawa') return {
-    x: (p.z - q.b) * p.x - 3.5 * p.y,
-    y: 3.5 * p.x + (p.z - q.b) * p.y,
-    z: q.c + q.a * p.z - p.z * p.z * p.z / 3 - (p.x * p.x + p.y * p.y) * (1 + 0.25 * p.z) + 0.1 * p.z * p.x * p.x * p.x,
+const derivativeScratch = Array.from({ length: 4 }, () => ({ x: 0, y: 0, z: 0 }))
+function derivativeInto(x: number, y: number, z: number, system: SystemName, q: { rho: number; sigma: number; beta: number; a: number; b: number; c: number }, out: Point3) {
+  if (system === 'lorenz') { out.x = q.sigma * (y - x); out.y = x * (q.rho - z) - y; out.z = x * y - q.beta * z; return }
+  if (system === 'rossler') { out.x = -y - z; out.y = x + q.a * y; out.z = q.b + z * (x - q.c); return }
+  if (system === 'thomas') { out.x = Math.sin(y) - q.a * x; out.y = Math.sin(z) - q.a * y; out.z = Math.sin(x) - q.a * z; return }
+  if (system === 'aizawa') {
+    out.x = (z - q.b) * x - 3.5 * y
+    out.y = 3.5 * x + (z - q.b) * y
+    out.z = q.c + q.a * z - z * z * z / 3 - (x * x + y * y) * (1 + 0.25 * z) + 0.1 * z * x * x * x
+    return
   }
-  const a = q.a
-  return {
-    x: -a * p.x - 4 * p.y - 4 * p.z - p.y * p.y,
-    y: -a * p.y - 4 * p.z - 4 * p.x - p.z * p.z,
-    z: -a * p.z - 4 * p.x - 4 * p.y - p.x * p.x,
-  }
+  out.x = -q.a * x - 4 * y - 4 * z - y * y
+  out.y = -q.a * y - 4 * z - 4 * x - z * z
+  out.z = -q.a * z - 4 * x - 4 * y - x * x
 }
-function add(p: Point3, v: Point3, amount: number): Point3 { return { x: p.x + v.x * amount, y: p.y + v.y * amount, z: p.z + v.z * amount } }
-function rk4(p: Point3, dt: number, system: SystemName, q: { rho: number; sigma: number; beta: number; a: number; b: number; c: number }): Point3 {
-  const k1 = derivative(p, system, q)
-  const k2 = derivative(add(p, k1, dt / 2), system, q)
-  const k3 = derivative(add(p, k2, dt / 2), system, q)
-  const k4 = derivative(add(p, k3, dt), system, q)
-  return {
-    x: p.x + dt / 6 * (k1.x + 2 * k2.x + 2 * k3.x + k4.x),
-    y: p.y + dt / 6 * (k1.y + 2 * k2.y + 2 * k3.y + k4.y),
-    z: p.z + dt / 6 * (k1.z + 2 * k2.z + 2 * k3.z + k4.z),
-  }
+function advancePoint(p: Point3, dt: number, system: SystemName, q: { rho: number; sigma: number; beta: number; a: number; b: number; c: number }) {
+  const half = dt / 2, k1 = derivativeScratch[0], k2 = derivativeScratch[1], k3 = derivativeScratch[2], k4 = derivativeScratch[3]
+  derivativeInto(p.x, p.y, p.z, system, q, k1)
+  derivativeInto(p.x + k1.x * half, p.y + k1.y * half, p.z + k1.z * half, system, q, k2)
+  derivativeInto(p.x + k2.x * half, p.y + k2.y * half, p.z + k2.z * half, system, q, k3)
+  derivativeInto(p.x + k3.x * dt, p.y + k3.y * dt, p.z + k3.z * dt, system, q, k4)
+  p.x += dt / 6 * (k1.x + 2 * k2.x + 2 * k3.x + k4.x)
+  p.y += dt / 6 * (k1.y + 2 * k2.y + 2 * k3.y + k4.y)
+  p.z += dt / 6 * (k1.z + 2 * k2.z + 2 * k3.z + k4.z)
 }
 
 export default function Attractors({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hint = useDiscoveryHint('attractors')
-  const path = useRef<Point3[]>([])
+  const path = useRef(new AttractorTrailBuffer(28_000))
   const trajectoryCenter = useRef<Point3>({ x: 0, y: 0, z: 0 })
   const point = useRef<Point3>({ x: 0.1, y: 0, z: 0 })
   const [cameraState, setCameraState] = useState<Camera>(() => {
@@ -95,7 +93,14 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d', { alpha: false })
     if (!canvas || !ctx) return
-    let width = 0, height = 0, raf = 0, previous = 0
+    let width = 0, height = 0, raf = 0, previous = 0, lastDrawAt = -Infinity
+    let warming = false, burnRemaining = 0, fillRemaining = 0
+    let centerX = 0, centerY = 0, centerZ = 0, centerCount = 0
+    let renderMs = 0, simulationMs = 0, renderedPoints = 0
+    const screenX = new Float32Array(path.current.capacity)
+    const screenY = new Float32Array(path.current.capacity)
+    const screenZ = new Float32Array(path.current.capacity)
+    const stat = { renderer: 'canvas2d', hardwareRenderer: '', renderMs: 0, simulationMs: 0, renderedPoints: 0, trailPoints: 0, warming: false, drawCount: 0 }
     const resize = () => {
       const rect = canvas.getBoundingClientRect()
       if (!rect.width || !rect.height) return
@@ -109,45 +114,56 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
     const observer = new ResizeObserver(resize)
     observer.observe(canvas)
     const parameters = () => params.current
-    const projection = (p: Point3, q: typeof params.current) => {
-      const yaw = camera.current.y, pitch = camera.current.x
-      const centered = { x: p.x - trajectoryCenter.current.x, y: p.y - trajectoryCenter.current.y, z: p.z - trajectoryCenter.current.z }
-      const x = centered.x * Math.cos(yaw) - centered.z * Math.sin(yaw)
-      const z0 = centered.x * Math.sin(yaw) + centered.z * Math.cos(yaw)
-      const y = centered.y * Math.cos(pitch) - z0 * Math.sin(pitch)
-      const z = centered.y * Math.sin(pitch) + z0 * Math.cos(pitch)
-      const scale = Math.min(width, height) * 0.4 * camera.current.zoom / extent[q.system]
-      const depth = 4.5 / (4.5 + z / extent[q.system] * 0.6)
-      return { x: width / 2 + x * scale * depth, y: height / 2 - y * scale * depth, z: z / extent[q.system] }
-    }
-    const colorAt = (index: number, depth: number, length: number) => {
-      const stops = palettes[parameters().palette] || palettes.polar
+    const colorAt = (index: number, depth: number, length: number, stops: [string, string, string]) => {
       const t = Math.max(0, Math.min(0.9999, index / Math.max(1, length) * 0.78 + (depth + 1) * 0.11))
       const position = t * 2
       const segment = Math.min(1, Math.floor(position))
       const mix = position - segment
       const first = stops[segment], second = stops[segment + 1]
-      const rgb = [1, 3, 5].map((offset) => Math.round(parseInt(first.slice(offset, offset + 2), 16) * (1 - mix) + parseInt(second.slice(offset, offset + 2), 16) * mix))
-      return { color: 'rgb(' + rgb.join(',') + ')', alpha: 0.42 + 0.48 * Math.max(0, Math.min(1, (depth + 1.3) / 2.6)) }
+      const r = Math.round(parseInt(first.slice(1, 3), 16) * (1 - mix) + parseInt(second.slice(1, 3), 16) * mix)
+      const g = Math.round(parseInt(first.slice(3, 5), 16) * (1 - mix) + parseInt(second.slice(3, 5), 16) * mix)
+      const b = Math.round(parseInt(first.slice(5, 7), 16) * (1 - mix) + parseInt(second.slice(5, 7), 16) * mix)
+      return { color: `rgb(${r},${g},${b})`, alpha: 0.42 + 0.48 * Math.max(0, Math.min(1, (depth + 1.3) / 2.6)) }
     }
     const draw = () => {
       if (!width || !height) return
       ctx.fillStyle = '#080c14'
       ctx.fillRect(0, 0, width, height)
+      const started = performance.now()
+      lastDrawAt = started
       const q = parameters(), points = path.current
-      if (points.length < 2) return
-      const projected = points.map((p) => projection(p, q))
+      const pointCount = Math.min(points.length, q.trail)
+      if (pointCount < 2) return
+      const stride = attractorRenderStride(pointCount)
+      const sampleCount = Math.ceil((pointCount - 1) / stride) + 1
+      const firstPoint = points.length - pointCount
+      const yaw = camera.current.y, pitch = camera.current.x
+      const sinYaw = Math.sin(yaw), cosYaw = Math.cos(yaw), sinPitch = Math.sin(pitch), cosPitch = Math.cos(pitch)
+      const scale = Math.min(width, height) * 0.4 * camera.current.zoom / extent[q.system]
+      const center = trajectoryCenter.current
+      for (let sample = 0; sample < sampleCount; sample++) {
+        const source = firstPoint + Math.min(pointCount - 1, sample * stride)
+        const x0 = points.xAt(source) - center.x, y0 = points.yAt(source) - center.y, z0 = points.zAt(source) - center.z
+        const x = x0 * cosYaw - z0 * sinYaw
+        const rotatedZ = x0 * sinYaw + z0 * cosYaw
+        const y = y0 * cosPitch - rotatedZ * sinPitch
+        const z = y0 * sinPitch + rotatedZ * cosPitch
+        const depthScale = 4.5 / (4.5 + z / extent[q.system] * 0.6)
+        screenX[sample] = width / 2 + x * scale * depthScale
+        screenY[sample] = height / 2 - y * scale * depthScale
+        screenZ[sample] = z / extent[q.system]
+      }
       ctx.globalCompositeOperation = 'lighter'
-      const groups = 40
-      const groupSize = Math.ceil((projected.length - 1) / groups)
+      const groups = Math.min(40, sampleCount - 1)
+      const stops = palettes[q.palette] || palettes.polar
       for (let group = 0; group < groups; group++) {
-        const from = group * groupSize, to = Math.min(projected.length - 1, from + groupSize)
+        const from = Math.floor(group * (sampleCount - 1) / groups), to = Math.floor((group + 1) * (sampleCount - 1) / groups)
         if (to <= from) continue
-        const start = projected[from], end = projected[to]
-        const shade = colorAt(to, end.z, projected.length)
+        const sourceEnd = Math.min(pointCount - 1, to * stride)
+        const shade = colorAt(sourceEnd, screenZ[to], pointCount, stops)
         ctx.beginPath()
-        ctx.moveTo(start.x, start.y)
-        for (let i = from + 1; i <= to; i++) ctx.lineTo(projected[i].x, projected[i].y)
+        ctx.moveTo(screenX[from], screenY[from])
+        for (let i = from + 1; i <= to; i++) ctx.lineTo(screenX[i], screenY[i])
         ctx.globalAlpha = shade.alpha * 0.12
         ctx.strokeStyle = shade.color
         ctx.lineWidth = 8
@@ -155,78 +171,113 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
         ctx.lineJoin = 'round'
         ctx.stroke()
         ctx.globalAlpha = shade.alpha
-        ctx.lineWidth = 1.25 + Math.max(0, end.z) * 0.42
+        ctx.lineWidth = 1.25 + Math.max(0, screenZ[to]) * 0.42
         ctx.stroke()
       }
       ctx.shadowBlur = 8
-      for (let i = 80; i < projected.length - 80; i += 190) {
-        const sample = projected[i], shade = colorAt(i, sample.z, projected.length)
+      const dotStride = Math.max(1, Math.round(190 / stride))
+      for (let i = Math.max(1, Math.round(80 / stride)); i < sampleCount - Math.round(80 / stride); i += dotStride) {
+        const shade = colorAt(Math.min(pointCount - 1, i * stride), screenZ[i], pointCount, stops)
         ctx.globalAlpha = shade.alpha * 0.65
         ctx.fillStyle = shade.color
         ctx.shadowColor = shade.color
         ctx.beginPath()
-        ctx.arc(sample.x, sample.y, 0.75 + Math.max(0, sample.z) * 0.65, 0, Math.PI * 2)
+        ctx.arc(screenX[i], screenY[i], 0.75 + Math.max(0, screenZ[i]) * 0.65, 0, Math.PI * 2)
         ctx.fill()
       }
       ctx.shadowBlur = 0
-      const head = projected[projected.length - 1]
       ctx.globalAlpha = 0.9
       ctx.fillStyle = (palettes[q.palette] || palettes.polar)[2]
       ctx.shadowColor = ctx.fillStyle as string
       ctx.shadowBlur = 15
       ctx.beginPath()
-      ctx.arc(head.x, head.y, 2.4, 0, Math.PI * 2)
+      ctx.arc(screenX[sampleCount - 1], screenY[sampleCount - 1], 2.4, 0, Math.PI * 2)
       ctx.fill()
       ctx.shadowBlur = 0
       ctx.globalAlpha = 1
       ctx.globalCompositeOperation = 'source-over'
+      renderMs = performance.now() - started
+      renderedPoints = sampleCount
+      stat.renderMs = renderMs
+      stat.simulationMs = simulationMs
+      stat.renderedPoints = renderedPoints
+      stat.trailPoints = pointCount
+      stat.warming = warming
+      stat.drawCount++
     }
-    drawRef.current = draw
+    drawRef.current = () => {
+      if (parameters().paused || shouldRenderAttractorFrame(performance.now(), lastDrawAt)) draw()
+    }
     resetRef.current = () => {
-      path.current = []
+      path.current.clear()
       trajectoryCenter.current = { x: 0, y: 0, z: 0 }
       point.current = { x: 0.1, y: 0, z: 0 }
+      warming = false
+      burnRemaining = 0
+      fillRemaining = 0
+      centerX = centerY = centerZ = centerCount = 0
       draw()
     }
-    const warm = () => {
+    const startWarm = () => {
       const q = parameters()
-      const dt = q.system === 'lorenz' ? 0.004 : q.system === 'aizawa' ? 0.008 : 0.01
-      point.current = { x: 0.1, y: 0, z: 0 }
-      const burnIn = q.system === 'lorenz' ? 2600 : 4200
-      for (let i = 0; i < burnIn; i++) {
-        point.current = rk4(point.current, dt, q.system, q)
-        if (!Number.isFinite(point.current.x + point.current.y + point.current.z)) { point.current = { x: 0.1, y: 0, z: 0 }; break }
-      }
-      for (let i = 0; i < q.trail; i++) {
-        point.current = rk4(point.current, dt, q.system, q)
-        if (Number.isFinite(point.current.x + point.current.y + point.current.z)) path.current.push(point.current)
-        else { path.current = []; point.current = { x: 0.1, y: 0, z: 0 }; break }
-      }
-      if (path.current.length) {
-        const center = path.current.reduce((sum, p) => ({ x: sum.x + p.x, y: sum.y + p.y, z: sum.z + p.z }), { x: 0, y: 0, z: 0 })
-        trajectoryCenter.current = { x: center.x / path.current.length, y: center.y / path.current.length, z: center.z / path.current.length }
-      }
+      point.current.x = 0.1; point.current.y = 0; point.current.z = 0
+      path.current.clear()
+      trajectoryCenter.current = { x: 0, y: 0, z: 0 }
+      centerX = centerY = centerZ = centerCount = 0
+      burnRemaining = q.system === 'lorenz' ? 2600 : 4200
+      fillRemaining = Math.min(path.current.capacity, q.trail)
+      warming = true
     }
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick)
-      if (document.hidden || parameters().paused || now - previous < 28) return
-      const elapsed = Math.min(2, (now - previous) / 16.67 || 1)
+      if (document.hidden) { previous = now; return }
+      const elapsed = Math.max(0.25, Math.min(2, (now - previous) / 16.67 || 1))
       previous = now
       const q = parameters()
-      if (!path.current.length) warm()
+      if (q.paused) return
+      if (!warming && path.current.length === 0) startWarm()
       const dt = q.system === 'lorenz' ? 0.004 : q.system === 'aizawa' ? 0.008 : 0.01
-      const count = Math.max(1, Math.round(q.speed * elapsed * 11))
-      for (let i = 0; i < count; i++) {
-        point.current = rk4(point.current, dt, q.system, q)
-        path.current.push(point.current)
+      const simulationStarted = performance.now()
+      if (burnRemaining > 0 || fillRemaining > 0) {
+        warming = true
+        const budget = 180
+        let steps = 0
+        while (steps < budget && burnRemaining > 0) {
+          advancePoint(point.current, dt, q.system, q)
+          burnRemaining--; steps++
+        }
+        while (steps < budget && burnRemaining === 0 && fillRemaining > 0) {
+          advancePoint(point.current, dt, q.system, q)
+          if (Number.isFinite(point.current.x + point.current.y + point.current.z)) {
+            path.current.push(point.current.x, point.current.y, point.current.z)
+            centerX += point.current.x; centerY += point.current.y; centerZ += point.current.z; centerCount++
+          } else {
+            path.current.clear(); point.current.x = 0.1; point.current.y = 0; point.current.z = 0
+            warming = false; burnRemaining = 0; fillRemaining = 0; break
+          }
+          fillRemaining--; steps++
+        }
+        if (burnRemaining === 0 && fillRemaining === 0) {
+          warming = false
+          if (centerCount) trajectoryCenter.current = { x: centerX / centerCount, y: centerY / centerCount, z: centerZ / centerCount }
+        }
+      } else {
+        const count = Math.max(1, Math.round(q.speed * elapsed * 11))
+        for (let i = 0; i < count; i++) {
+          advancePoint(point.current, dt, q.system, q)
+          path.current.push(point.current.x, point.current.y, point.current.z)
+        }
       }
-      if (path.current.length > q.trail) path.current.splice(0, path.current.length - q.trail)
-      draw()
+      simulationMs = performance.now() - simulationStarted
+      if (shouldRenderAttractorFrame(performance.now(), lastDrawAt)) draw()
     }
+    if (import.meta.env.DEV) (window as Window & { __ARMSTEEL_ATTRACTORS__?: typeof stat }).__ARMSTEEL_ATTRACTORS__ = stat
     resize()
     raf = requestAnimationFrame(tick)
-    return () => { cancelAnimationFrame(raf); observer.disconnect(); path.current = []; resetRef.current = () => {}; drawRef.current = () => {} }
+    return () => { cancelAnimationFrame(raf); observer.disconnect(); path.current.clear(); if (import.meta.env.DEV) delete (window as Window & { __ARMSTEEL_ATTRACTORS__?: typeof stat }).__ARMSTEEL_ATTRACTORS__; resetRef.current = () => {}; drawRef.current = () => {} }
   }, [])
+
+  useEffect(() => { drawRef.current() }, [cameraState, palette, trail])
 
   const chooseSystem = (value: string) => {
     const next = value as SystemName

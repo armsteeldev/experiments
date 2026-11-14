@@ -96,7 +96,7 @@ for (let tileY = 0; tileY < viewportHeight; tileY += tileSize) {
   for (let tileX = 0; tileX < viewportWidth; tileX += tileSize) {
     const anchorX = deepCenterX + coordinateOffset(tileX + tileSize / 2 - viewportWidth / 2, viewportHeight, deepView, deepDigits)
     const anchorY = deepCenterY + coordinateOffset(viewportHeight / 2 - tileY - tileSize / 2, viewportHeight, deepView, deepDigits)
-    const orbit = makeReference(anchorX, anchorY, anchorX, anchorY, deepDigits, maxIterations, false)
+    const orbit = await makeReference(anchorX, anchorY, anchorX, anchorY, deepDigits, maxIterations, false)
     for (const py of [0, 15, 16, 31]) for (const px of [0, 15, 16, 31]) {
       const offsetX = coordinateOffset(px + 0.5 - tileSize / 2, viewportHeight, deepView, deepDigits)
       const offsetY = coordinateOffset(-(py + 0.5 - tileSize / 2), viewportHeight, deepView, deepDigits)
@@ -131,7 +131,7 @@ for (const exponent of [20, 30, 50]) {
   const iterations = 220 + exponent * 14
   const anchorX = centerX + coordinateOffset(tileX + tileSize / 2 - width / 2, height, zoom, digits)
   const anchorY = centerY + coordinateOffset(height / 2 - tileY - tileSize / 2, height, zoom, digits)
-  const orbit = makeReference(anchorX, anchorY, anchorX, anchorY, digits, iterations, false)
+  const orbit = await makeReference(anchorX, anchorY, anchorX, anchorY, digits, iterations, false)
   const colors = []
   for (let py = 0; py < tileSize; py += 4) for (let px = 0; px < tileSize; px += 4) {
     const ox = coordinateOffset(px + 0.5 - tileSize / 2, height, zoom, digits)
@@ -147,5 +147,21 @@ for (const exponent of [20, 30, 50]) {
   assert.ok(!depthFingerprints.some((entry) => entry.hash === hash), `10^${exponent}× is not a magnified copy of another level`)
   depthFingerprints.push({ exponent, hash })
 }
+
+// A camera update must interrupt an expensive reference orbit before it turns
+// into another stale tile. Exercise cancellation through the worker message API.
+const cancelledResponses = []
+workerScope.postMessage = (message) => cancelledResponses.push(message)
+workerScope.onmessage({ data: {
+  action: 'prepare', id: 9001, generation: 31, tileKey: 'cancel-test',
+  x: '0', y: '0', zoom: magnification('1e50'), width: 1, height: 1,
+  tile: { x: 0, y: 0, width: 1, height: 1, slot: 0 }, iterations: 100000,
+  mode: 'mandelbrot', palette: 'abyss', target: 'cpu',
+} })
+await new Promise((resolve) => setTimeout(resolve, 1))
+workerScope.onmessage({ data: { action: 'cancel', generation: 32 } })
+for (let attempts = 0; !cancelledResponses.length && attempts < 20; attempts++) await new Promise((resolve) => setTimeout(resolve, 1))
+assert.equal(cancelledResponses[0]?.kind, 'cancelled', 'a newer generation cancels an in-progress high-precision reference orbit')
+assert.equal(cancelledResponses[0]?.id, 9001)
 
 console.log('Deep zoom coordinates pass through 10⁵⁰⁰×; perturbation/exact colors agree at 10⁵⁰× and tile fingerprints differ at 10²⁰×, 10³⁰× and 10⁵⁰×.')

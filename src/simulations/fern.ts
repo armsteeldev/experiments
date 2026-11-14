@@ -17,9 +17,10 @@ export type FernGeometry = {
 }
 
 /** Build a seeded cluster of fern fronds, pinnae, and paired leaflets. */
-export function generateFernGeometry(iterations: number, randomness: number, seed: number): FernGeometry {
+export function generateFernGeometry(iterations: number, randomness: number, seed: number, branchAngle = 28): FernGeometry {
   const detail = Math.max(1, Math.min(8, Math.floor(iterations)))
   const wind = Math.max(0, Math.min(0.65, randomness))
+  const fanSpread = Math.max(0.55, Math.min(1.75, branchAngle / 28))
   let randomState = seed >>> 0
   const random = () => { randomState = (randomState * 1664525 + 1013904223) >>> 0; return randomState / 4294967296 }
   const segments: FernSegment[] = []
@@ -47,19 +48,25 @@ export function generateFernGeometry(iterations: number, randomness: number, see
     }
   }
   const fronds = [
-    { lean: -0.76, length: 78, offset: -5 },
-    { lean: -0.38, length: 98, offset: -2 },
-    { lean: 0.04, length: 112, offset: 0 },
-    { lean: 0.43, length: 96, offset: 2 },
-    { lean: 0.78, length: 74, offset: 5 },
+    { lean: -0.88, length: 70, offset: -7, baseY: 5 },
+    { lean: -0.66, length: 84, offset: -5, baseY: 2 },
+    { lean: -0.42, length: 99, offset: -3, baseY: 1 },
+    { lean: -0.16, length: 111, offset: -1, baseY: 0 },
+    { lean: 0.12, length: 108, offset: 1, baseY: 0 },
+    { lean: 0.43, length: 96, offset: 3, baseY: 2 },
+    { lean: 0.77, length: 78, offset: 6, baseY: 5 },
   ].map((frond) => {
-    const lean = frond.lean + (random() - 0.5) * wind * 0.35
-    const tip = { x: frond.offset + lean * frond.length * 0.43, y: -frond.length }
+    const lean = frond.lean * fanSpread + (random() - 0.5) * (0.28 + wind * 0.75)
+    const length = frond.length * (0.93 + random() * 0.14)
+    const offset = frond.offset + (random() - 0.5) * (0.8 + wind * 2)
+    const baseY = frond.baseY + (random() - 0.5) * wind * 5
+    const tip = { x: offset + lean * length * 0.48, y: baseY - length }
     return {
       ...frond,
+      length,
       pointAt: (t: number): FernPoint => ({
-        x: frond.offset + (tip.x - frond.offset) * t + Math.sin(t * Math.PI) * lean * 5,
-        y: -frond.length * t,
+        x: offset + (tip.x - offset) * t + Math.sin(t * Math.PI) * lean * length * (0.07 + wind * 0.025),
+        y: baseY + (tip.y - baseY) * t + Math.sin(t * Math.PI) * (frond.lean > 0 ? 1 : -1) * length * 0.012,
       }),
     }
   })
@@ -70,9 +77,10 @@ export function generateFernGeometry(iterations: number, randomness: number, see
     const base = frond.pointAt(t)
     const before = frond.pointAt(Math.max(0, t - 0.01)), after = frond.pointAt(Math.min(1, t + 0.01))
     const axis = Math.atan2(after.y - before.y, after.x - before.x)
-    const heading = axis + side * 1.12 + (random() - 0.5) * wind * 0.48
+    const sideAngle = 1.12 + (Math.max(8, Math.min(112, branchAngle)) - 28) * 0.009
+    const heading = axis + side * sideAngle + (random() - 0.5) * wind * 0.48
     const profile = Math.pow(Math.max(0, Math.sin(Math.PI * (t - 0.1) / 0.82)), 0.78)
-    const length = frond.length * (0.18 + wind * 0.025) * profile
+    const length = frond.length * (0.18 + wind * 0.04) * profile * (0.88 + random() * 0.24)
     const target = axis + (random() - 0.5) * wind * 0.22
     const tip = { x: base.x + Math.cos((heading + target) / 2) * length, y: base.y + Math.sin((heading + target) / 2) * length }
     const c1 = { x: base.x + Math.cos(heading) * length * 0.48, y: base.y + Math.sin(heading) * length * 0.48 }
@@ -86,12 +94,12 @@ export function generateFernGeometry(iterations: number, randomness: number, see
       const tangentAfter = curvePoint(base, c1, c2, tip, Math.min(1, along + 0.015))
       const pinnaAxis = Math.atan2(tangentAfter.y - tangentBefore.y, tangentAfter.x - tangentBefore.x)
       for (const lobeSide of [-1, 1]) {
-        const lobeAngle = pinnaAxis + lobeSide * (0.94 + (random() - 0.5) * wind * 0.28)
-        const lobeLength = length * 0.21 * (1 - along * 0.22) * (0.92 + random() * 0.16)
+        const lobeAngle = pinnaAxis + lobeSide * (0.82 + random() * 0.2 + (random() - 0.5) * wind * 0.4)
+        const lobeLength = length * 0.23 * (1 - along * 0.22) * (0.84 + random() * 0.32)
         const middle = { x: origin.x + Math.cos(lobeAngle - lobeSide * 0.12) * lobeLength * 0.62, y: origin.y + Math.sin(lobeAngle - lobeSide * 0.12) * lobeLength * 0.62 }
         const end = { x: middle.x + Math.cos(lobeAngle + lobeSide * 0.2) * lobeLength * 0.38, y: middle.y + Math.sin(lobeAngle + lobeSide * 0.2) * lobeLength * 0.38 }
         add(origin, middle, 2)
-        add(middle, end, 2, Math.max(0.55, lobeLength * 0.34))
+        add(middle, end, 2, Math.max(0.16, lobeLength * 0.55))
       }
     }
   }

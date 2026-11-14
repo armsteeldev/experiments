@@ -7,6 +7,8 @@
 .exp-prompt { position:absolute; left:31px; bottom:36px; color:#8da2a7; font:8px var(--mono); letter-spacing:.1em; text-shadow:0 1px 8px #02060b; pointer-events:none; }
 .gravity-canvas { cursor:grab; }
 .gravity-canvas:active { cursor:grabbing; }
+.gravity-canvas.gravity-launch-cursor { cursor:crosshair; }
+.gravity-canvas { touch-action:none; }
 .gravity-hud { position:absolute; top:36px; left:36px; display:flex; flex-direction:column; gap:10px; min-width:205px; padding:14px 16px; border-radius:10px; color:#b9c9ce; }
 .gravity-hud > strong { color:#e9eee6; font:300 29px var(--serif); letter-spacing:.04em; }
 .gravity-hud > strong small { color:#87999e; font:8px var(--mono); letter-spacing:.15em; }
@@ -17,6 +19,11 @@
 .gravity-tools button:hover,.forces-tools button:hover,.machine-controls button:hover,.neural-training-tools button:hover,.automata-stats button:hover { color:#f0f4ed; border-color:rgba(191,225,222,.38); background:rgba(48,78,81,.56); }
 .gravity-tools button.selected,.forces-tools button.selected { color:#d8eee2; border-color:rgba(142,226,202,.56); background:rgba(75,145,131,.17); }
 .gravity-tools button span { padding-right:5px; color:#d8e6d9; font-size:13px; vertical-align:-1px; }
+.gravity-manipulation-mode { display:flex; gap:2px; padding:2px; border:1px solid rgba(194,221,223,.2); border-radius:9px; background:rgba(7,15,22,.78); box-shadow:0 6px 22px #0005,inset 0 1px #ffffff0c; }
+.gravity-tools .gravity-manipulation-mode button { min-height:34px; padding-inline:11px; border-color:transparent; background:transparent; }
+.gravity-tools .gravity-manipulation-mode button.selected { color:#e6f3ed; border-color:rgba(153,223,202,.42); background:linear-gradient(135deg,rgba(91,164,148,.27),rgba(73,110,133,.2)); box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 16px rgba(92,167,151,.12); }
+.gravity-tools button:focus-visible { outline:2px solid #a9dcd1; outline-offset:3px; }
+.gravity-tools button:disabled { opacity:.45; cursor:not-allowed; }
 .gravity-inspect { position:absolute; right:33px; bottom:91px; min-width:155px; display:flex; flex-direction:column; gap:6px; padding:13px 15px; color:#acbcc0; border-left:1px solid #a1d7cf55; background:linear-gradient(90deg,rgba(15,29,35,.5),transparent); }
 .gravity-inspect > span,.gravity-inspect > small { color:#82969a; font:7px var(--mono); letter-spacing:.1em; }
 .gravity-inspect > strong { font:20px var(--serif); color:#e6e8de; }
@@ -224,9 +231,11 @@
   .gravity-hud { top:13px; left:13px; min-width:148px; gap:7px; padding:10px 11px; }
   .gravity-hud > strong { font-size:22px; }
   .gravity-hud > span:last-child { font-size:6px; }
-  .gravity-tools { left:12px; bottom:71px; gap:4px; }
-  .gravity-tools button,.forces-tools button { min-height:36px; padding-inline:8px; font-size:7px; }
-  .gravity-inspect { right:11px; bottom:77px; min-width:108px; padding:8px; }
+  .gravity-tools { left:12px; bottom:calc(88px + env(safe-area-inset-bottom)); right:12px; max-width:calc(100% - 24px); gap:4px; flex-wrap:wrap; }
+  .gravity-tools button,.forces-tools button { min-height:44px; padding-inline:8px; font-size:7px; }
+  .gravity-tools .gravity-manipulation-mode button { min-height:44px; padding-inline:9px; }
+  .gravity-inspect { right:11px; bottom:calc(205px + env(safe-area-inset-bottom)); min-width:108px; padding:8px; }
+  .gravity-prompt { display:none; }
   .gravity-inspect > strong { font-size:16px; }
   .machine-topline { top:14px; left:14px; right:14px; gap:10px; font-size:6px; }
   .machine-topline .exp-eyebrow { font-size:6px; letter-spacing:.09em; }

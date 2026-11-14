@@ -73,13 +73,18 @@ function colorAt(mu: number, _z2: number, paletteName: string, inside: boolean) 
   return (r << 16) | (g << 8) | b
 }
 
-function makeReference(cx: bigint, cy: bigint, constantX: bigint, constantY: bigint, digits: number, iterations: number, julia: boolean): Orbit {
+async function makeReference(cx: bigint, cy: bigint, constantX: bigint, constantY: bigint, digits: number, iterations: number, julia: boolean, current: () => boolean = () => true): Promise<Orbit | null> {
   const unit = 10n ** BigInt(digits)
   const bailoutSquared = 16n * unit * unit
-  const values: number[] = []
-  const exponents: number[] = []
+  const values = new Float32Array((iterations + 1) * 4)
+  const exponents = new Int32Array(iterations + 1)
   let x = julia ? cx : 0n, y = julia ? cy : 0n, complete = true
+  let length = 0
   for (let i = 0; i <= iterations; i++) {
+    if ((i & 127) === 0) {
+      if (!current()) return null
+      if (i !== 0) await new Promise<void>((resolve) => setTimeout(resolve, 0))
+    }
     const bx = fixedToBinary(x, digits), by = fixedToBinary(y, digits)
     const commonExponent = Math.max(bx.mantissa ? bx.exponent : -Infinity, by.mantissa ? by.exponent : -Infinity)
     const exponent = Number.isFinite(commonExponent) ? commonExponent : 0
@@ -87,8 +92,10 @@ function makeReference(cx: bigint, cy: bigint, constantX: bigint, constantY: big
     const yMantissa = by.mantissa ? scaledComponent(by.mantissa, by.exponent, exponent) : 0
     const xHigh = Math.fround(xMantissa), yHigh = Math.fround(yMantissa)
     const xLow = Math.fround(xMantissa - xHigh), yLow = Math.fround(yMantissa - yHigh)
-    values.push(xHigh, yHigh, xLow, yLow)
-    exponents.push(exponent)
+    const at = i * 4
+    values[at] = xHigh; values[at + 1] = yHigh; values[at + 2] = xLow; values[at + 3] = yLow
+    exponents[i] = exponent
+    length++
     if (x * x + y * y > bailoutSquared) { complete = false; break }
     if (i === iterations) break
     const nextX = (x * x - y * y) / unit + constantX
@@ -96,7 +103,7 @@ function makeReference(cx: bigint, cy: bigint, constantX: bigint, constantY: big
     x = nextX
     y = nextY
   }
-  return { values: Float32Array.from(values), exponents: Int32Array.from(exponents), length: exponents.length, complete }
+  return { values: values.slice(0, length * 4), exponents: exponents.slice(0, length), length, complete }
 }
 
 function precisePixel(startX: bigint, startY: bigint, constantX: bigint, constantY: bigint, julia: boolean, unit: bigint, digits: number, maxIterations: number, palette: string) {
@@ -230,7 +237,11 @@ async function prepare(request: Request) {
     const julia = request.mode === 'julia'
     const constantX = julia ? parseFixed(request.juliaX || '-0.745', digits) : anchorX
     const constantY = julia ? parseFixed(request.juliaY || '0.186', digits) : anchorY
-    const orbit = makeReference(anchorX, anchorY, constantX, constantY, digits, request.iterations, julia)
+    const orbit = await makeReference(anchorX, anchorY, constantX, constantY, digits, request.iterations, julia, () => request.generation === activeGeneration)
+    if (!orbit) {
+      scope.postMessage({ id: request.id, generation: request.generation, tileKey: request.tileKey, tile: request.tile, kind: 'cancelled' })
+      return
+    }
     const referenceMs = performance.now() - start
     if (request.target === 'gpu') {
       const response: Response = {
