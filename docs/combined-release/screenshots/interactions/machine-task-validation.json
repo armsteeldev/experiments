@@ -1,0 +1,119 @@
+{
+  "first": true,
+  "firstState": {
+    "clock": "01",
+    "stage": "Current stage: idle",
+    "instruction": "LDI A, 7 · actual instruction",
+    "registers": [
+      "7",
+      "0"
+    ]
+  },
+  "tasks": [
+    {
+      "task": "sum",
+      "complete": true,
+      "state": {
+        "note": "The computer has finished this task.",
+        "clock": "05",
+        "output": "12",
+        "outputDecimal": "12 · decimal",
+        "registers": [
+          "12",
+          "5"
+        ],
+        "memory": [
+          "0\n00",
+          "1\n00",
+          "2\n00",
+          "3\n00",
+          "4\n00",
+          "5\n00",
+          "6\n00",
+          "7\n00"
+        ],
+        "runButton": "Run the whole task ▶",
+        "instruction": "HLT · actual instruction"
+      }
+    },
+    {
+      "task": "compare",
+      "complete": true,
+      "state": {
+        "note": "The computer has finished this task.",
+        "clock": "07",
+        "output": "00",
+        "outputDecimal": "0 · decimal",
+        "registers": [
+          "2",
+          "5"
+        ],
+        "memory": [
+          "0\n00",
+          "1\n00",
+          "2\n00",
+          "3\n00",
+          "4\n00",
+          "5\n00",
+          "6\n00",
+          "7\n00"
+        ],
+        "runButton": "Run the whole task ▶",
+        "instruction": "HLT · actual instruction"
+      }
+    },
+    {
+      "task": "memory",
+      "complete": true,
+      "state": {
+        "note": "The computer has finished this task.",
+        "clock": "05",
+        "output": "07",
+        "outputDecimal": "7 · decimal",
+        "registers": [
+          "7",
+          "7"
+        ],
+        "memory": [
+          "0\n00",
+          "1\n00",
+          "2\n00",
+          "3\n07",
+          "4\n00",
+          "5\n00",
+          "6\n00",
+          "7\n00"
+        ],
+        "runButton": "Run the whole task ▶",
+        "instruction": "HLT · actual instruction"
+      }
+    },
+    {
+      "task": "count",
+      "complete": true,
+      "state": {
+        "note": "The computer has finished this task.",
+        "clock": "20",
+        "output": "05",
+        "outputDecimal": "5 · decimal",
+        "registers": [
+          "5",
+          "1"
+        ],
+        "memory": [
+          "0\n00",
+          "1\n00",
+          "2\n00",
+          "3\n00",
+          "4\n00",
+          "5\n00",
+          "6\n00",
+          "7\n00"
+        ],
+        "runButton": "Run the whole task ▶",
+        "instruction": "HLT · actual instruction"
+      }
+    }
+  ],
+  "errors": []
+}

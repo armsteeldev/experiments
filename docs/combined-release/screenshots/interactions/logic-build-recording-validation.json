@@ -1,0 +1,111 @@
+{
+  "frames": 16,
+  "placement": {
+    "xorButton": {
+      "x": 629.4227600097656,
+      "y": 773.7613525390625
+    },
+    "clickedAt": [
+      770,
+      470
+    ],
+    "xorId": "translate(552 208.07257080078125)",
+    "xorTitle": "XOR",
+    "nodeClass": "circuit-node node-xor value-unknown",
+    "transform": null
+  },
+  "wires": [
+    {
+      "from": "a",
+      "to": "xor-1",
+      "index": 0,
+      "ok": true,
+      "a": {
+        "x": 289.7823791503906,
+        "y": 453.0127410888672,
+        "w": 50.61383056640625,
+        "h": 50.613861083984375
+      },
+      "b": {
+        "x": 662.1556396484375,
+        "y": 447.4764404296875,
+        "w": 48.20361328125,
+        "h": 48.20367431640625
+      },
+      "wires": 4
+    },
+    {
+      "from": "b",
+      "to": "xor-1",
+      "index": 1,
+      "ok": true,
+      "a": {
+        "x": 291.59999084472656,
+        "y": 713.3999938964844,
+        "w": 50.399993896484375,
+        "h": 50.39996337890625
+      },
+      "b": {
+        "x": 662.4000244140625,
+        "y": 492.28709411621094,
+        "w": 48,
+        "h": 48.000030517578125
+      },
+      "wires": 5
+    },
+    {
+      "from": "xor-1",
+      "to": "lamp",
+      "index": 0,
+      "ok": true,
+      "a": {
+        "x": 861.5999755859375,
+        "y": 469.8870849609375,
+        "w": 48,
+        "h": 48
+      },
+      "b": {
+        "x": 1140,
+        "y": 610.2000122070312,
+        "w": 50.39990234375,
+        "h": 50.4000244140625
+      },
+      "wires": 5
+    }
+  ],
+  "state": {
+    "nodes": [
+      {
+        "class": "circuit-node node-input value-one",
+        "transform": "translate(95 206)",
+        "label": "A"
+      },
+      {
+        "class": "circuit-node node-input value-zero",
+        "transform": "translate(95 423)",
+        "label": "B"
+      },
+      {
+        "class": "circuit-node node-and value-zero",
+        "transform": "translate(490 310)",
+        "label": "AND"
+      },
+      {
+        "class": "circuit-node node-output value-one",
+        "transform": "translate(950 337)",
+        "label": "LAMP"
+      },
+      {
+        "class": "circuit-node node-xor value-one",
+        "transform": "translate(552 208.07257080078125)",
+        "label": "XOR"
+      }
+    ],
+    "wires": 5,
+    "lamp": "1",
+    "status": "LIVE CIRCUIT",
+    "lesson": "LIVE CIRCUIT\nSwitch A is on · connected gate and lamp values updated.\nEach lamp reads the value the circuit actually produced.",
+    "inspector": "Switch A is on · connected gate and lamp values updated.\nOUTPUT LAMP 1"
+  },
+  "errors": []
+}

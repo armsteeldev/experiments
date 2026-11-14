@@ -165,6 +165,7 @@ function Exhibition() {
     <Header />
 
     <section className="hero-shell portal-hero" aria-labelledby="entrance-title">
+      <div className="hero-study-art" aria-hidden="true"><ArtworkPreview id="attractors" live /></div>
       <div className="hero-copy">
         <h1 id="entrance-title"><span>Where rules</span><br /><span>become <em>worlds.</em></span></h1>
         <p className="hero-description">{siteCopy.home.intro}</p>

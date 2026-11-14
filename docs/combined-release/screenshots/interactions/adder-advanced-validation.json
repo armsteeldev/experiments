@@ -1,0 +1,16 @@
+{
+  "width": "16",
+  "architecture": "lookahead",
+  "state": {
+    "selects": [
+      "16",
+      "lookahead"
+    ],
+    "viewBox": "0 0 1000 500",
+    "caption": "THE GATE DECK\n16-BIT · CARRIES RESOLVE IN GROUPS",
+    "bitCount": 16,
+    "gateCount": 2,
+    "overflow": false
+  },
+  "errors": []
+}

@@ -1,0 +1,10 @@
+{
+  "fluidButton": true,
+  "reactionButton": true,
+  "calculate": true,
+  "adder": {
+    "readout": "ANSWER\n8\n1000\n4 BIT · CARRY 0",
+    "overflow": false
+  },
+  "errors": []
+}

@@ -1,0 +1,42 @@
+{
+  "selected": {
+    "selects": [
+      "16",
+      "lookahead"
+    ],
+    "speed": "2"
+  },
+  "clicked": true,
+  "complete": true,
+  "state": {
+    "console": "1 + 1 = 2\n0 XOR 0 gives sum bit 0.\n←\n▶\n→\n↺\nCIRCUIT SETTINGS",
+    "answer": "RESULT\n2\n0000000000000010",
+    "bits": [
+      "₁₅ · 32768\n0\n0\n0",
+      "₁₄ · 16384\n0\n0\n0",
+      "₁₃ · 8192\n0\n0\n0",
+      "₁₂ · 4096\n0\n0\n0",
+      "₁₁ · 2048\n0\n0\n0",
+      "₁₀ · 1024\n0\n0\n0",
+      "₉ · 512\n0\n0\n0",
+      "₈ · 256\n0\n0\n0",
+      "₇ · 128\n0\n0\n0",
+      "₆ · 64\n0\n0\n0",
+      "₅ · 32\n0\n0\n0",
+      "₄ · 16\n0\n0\n0",
+      "₃ · 8\n0\n0\n0",
+      "₂ · 4\n0\n0\n0",
+      "₁ · 2\n0\n0\n1",
+      "₀ · 1\n1\n1\n0"
+    ],
+    "caption": "THE GATE DECK\n16-BIT · CARRIES RESOLVE IN GROUPS",
+    "viewBox": "0 0 1000 500",
+    "overflow": false,
+    "settings": [
+      "16",
+      "lookahead"
+    ],
+    "speed": "2"
+  },
+  "errors": []
+}

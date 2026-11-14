@@ -1,0 +1,21 @@
+{
+  "before": {
+    "stats": [
+      "00004",
+      "0168"
+    ],
+    "visibility": "visible",
+    "reduced": false
+  },
+  "started": true,
+  "after": {
+    "stats": [
+      "00012",
+      "0005"
+    ],
+    "pauseButton": [
+      "Ⅱ PAUSE"
+    ],
+    "visibility": "visible"
+  }
+}

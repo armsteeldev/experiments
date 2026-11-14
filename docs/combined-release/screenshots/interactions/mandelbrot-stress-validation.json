@@ -1,0 +1,1088 @@
+{
+  "ready": false,
+  "zoomReady": true,
+  "deepSelect": "deep",
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+    "webgpu": false,
+    "hardwareConcurrency": 6,
+    "visibility": "visible"
+  },
+  "snapshots": [
+    {
+      "phase": "deep-initial",
+      "now": 26768,
+      "metrics": {
+        "generation": 11,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 9,
+        "firstTileMs": 81,
+        "fullRenderMs": null,
+        "cpuRenderMs": 1637.5999994277954,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 139264,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 47,
+        "cancelMessages": 22,
+        "responses": 45,
+        "kinds": {
+          "cancelled": 11,
+          "cpu-tile": 34
+        },
+        "pending": 2
+      },
+      "status": "CPU · 1%",
+      "heap": 10054874,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+5s",
+      "now": 31775,
+      "metrics": {
+        "generation": 11,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 105,
+        "firstTileMs": 81,
+        "fullRenderMs": null,
+        "cpuRenderMs": 11735.499999046326,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 532480,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 143,
+        "cancelMessages": 22,
+        "responses": 141,
+        "kinds": {
+          "cancelled": 11,
+          "cpu-tile": 130
+        },
+        "pending": 2
+      },
+      "status": "CPU · 7%",
+      "heap": 11052014,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+10s",
+      "now": 37580,
+      "metrics": {
+        "generation": 28,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 207,
+        "firstTileMs": 1.200000286102295,
+        "fullRenderMs": null,
+        "cpuRenderMs": 8417.19999885559,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 1449984,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 383,
+        "cancelMessages": 56,
+        "responses": 381,
+        "kinds": {
+          "cancelled": 27,
+          "cpu-tile": 354
+        },
+        "pending": 2
+      },
+      "status": "CPU · 15%",
+      "heap": 15466858,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+15s",
+      "now": 42584,
+      "metrics": {
+        "generation": 28,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 346,
+        "firstTileMs": 1.200000286102295,
+        "fullRenderMs": null,
+        "cpuRenderMs": 18609.80000257492,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 2019328,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 522,
+        "cancelMessages": 56,
+        "responses": 520,
+        "kinds": {
+          "cancelled": 27,
+          "cpu-tile": 493
+        },
+        "pending": 2
+      },
+      "status": "CPU · 25%",
+      "heap": 15173486,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+20s",
+      "now": 48277,
+      "metrics": {
+        "generation": 28,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 501,
+        "firstTileMs": 1.200000286102295,
+        "fullRenderMs": null,
+        "cpuRenderMs": 29761.50000143051,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 2654208,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 677,
+        "cancelMessages": 56,
+        "responses": 675,
+        "kinds": {
+          "cancelled": 27,
+          "cpu-tile": 648
+        },
+        "pending": 2
+      },
+      "status": "CPU · 37%",
+      "heap": 11978574,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+25s",
+      "now": 53281,
+      "metrics": {
+        "generation": 28,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 673,
+        "firstTileMs": 1.200000286102295,
+        "fullRenderMs": null,
+        "cpuRenderMs": 39744.29999780655,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 3337984,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 849,
+        "cancelMessages": 56,
+        "responses": 847,
+        "kinds": {
+          "cancelled": 27,
+          "cpu-tile": 820
+        },
+        "pending": 2
+      },
+      "status": "CPU · 50%",
+      "heap": 12671739,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+30s",
+      "now": 58648,
+      "metrics": {
+        "generation": 41,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 827,
+        "firstTileMs": 0.9000000953674316,
+        "fullRenderMs": null,
+        "cpuRenderMs": 4534.900000095367,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 4419072,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 1129,
+        "cancelMessages": 82,
+        "responses": 1127,
+        "kinds": {
+          "cancelled": 38,
+          "cpu-tile": 1089
+        },
+        "pending": 2
+      },
+      "status": "CPU · 61%",
+      "heap": 15432793,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+35s",
+      "now": 64427,
+      "metrics": {
+        "generation": 59,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 980,
+        "firstTileMs": 0.9000000953674316,
+        "fullRenderMs": null,
+        "cpuRenderMs": 696.1000008583069,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 5699072,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 1466,
+        "cancelMessages": 118,
+        "responses": 1464,
+        "kinds": {
+          "cancelled": 58,
+          "cpu-tile": 1406
+        },
+        "pending": 2
+      },
+      "status": "CPU · 73%",
+      "heap": 15919013,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+40s",
+      "now": 69427,
+      "metrics": {
+        "generation": 59,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 1175,
+        "firstTileMs": 0.9000000953674316,
+        "fullRenderMs": null,
+        "cpuRenderMs": 10574.30000114441,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 6479360,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 1661,
+        "cancelMessages": 118,
+        "responses": 1659,
+        "kinds": {
+          "cancelled": 58,
+          "cpu-tile": 1601
+        },
+        "pending": 2
+      },
+      "status": "CPU · 88%",
+      "heap": 19037258,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+45s",
+      "now": 74429,
+      "metrics": {
+        "generation": 59,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 1334,
+        "firstTileMs": 0.9000000953674316,
+        "fullRenderMs": 10008.60000038147,
+        "cpuRenderMs": 19624.400000572205,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": null,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 7048376,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 1818,
+        "cancelMessages": 118,
+        "responses": 1818,
+        "kinds": {
+          "cancelled": 58,
+          "cpu-tile": 1760
+        },
+        "pending": 0
+      },
+      "status": "",
+      "heap": 21596452,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+50s",
+      "now": 80062,
+      "metrics": {
+        "generation": 69,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 45,
+        "firstTileMs": 199,
+        "fullRenderMs": null,
+        "cpuRenderMs": 5412.700000286102,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": 32.10000038146973,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 7236792,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617875576888888888888888888888888888888888888888889",
+          "y": "0.02817533977921104899241152114431950968753907674299305301444444444444444444444444444444444444444444"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 1876,
+        "cancelMessages": 138,
+        "responses": 1874,
+        "kinds": {
+          "cancelled": 68,
+          "cpu-tile": 1806
+        },
+        "pending": 2
+      },
+      "status": "CPU · 3%",
+      "heap": 21179934,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+55s",
+      "now": 85063,
+      "metrics": {
+        "generation": 69,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 150,
+        "firstTileMs": 199,
+        "fullRenderMs": null,
+        "cpuRenderMs": 15427.200001716614,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": 32.10000038146973,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 7666872,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617875576888888888888888888888888888888888888888889",
+          "y": "0.02817533977921104899241152114431950968753907674299305301444444444444444444444444444444444444444444"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 1981,
+        "cancelMessages": 138,
+        "responses": 1979,
+        "kinds": {
+          "cancelled": 68,
+          "cpu-tile": 1911
+        },
+        "pending": 2
+      },
+      "status": "CPU · 11%",
+      "heap": 19875875,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+60s",
+      "now": 90880,
+      "metrics": {
+        "generation": 87,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 1334,
+        "firstTileMs": 1,
+        "fullRenderMs": 62.19999980926514,
+        "cpuRenderMs": 0,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": 32.10000038146973,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 8436920,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 2180,
+        "cancelMessages": 174,
+        "responses": 2180,
+        "kinds": {
+          "cancelled": 81,
+          "cpu-tile": 2099
+        },
+        "pending": 0
+      },
+      "status": "",
+      "heap": 18000479,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+65s",
+      "now": 95884,
+      "metrics": {
+        "generation": 87,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 1334,
+        "firstTileMs": 1,
+        "fullRenderMs": 62.19999980926514,
+        "cpuRenderMs": 0,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": 32.10000038146973,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 8436920,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 2180,
+        "cancelMessages": 174,
+        "responses": 2180,
+        "kinds": {
+          "cancelled": 81,
+          "cpu-tile": 2099
+        },
+        "pending": 0
+      },
+      "status": "",
+      "heap": 18003495,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+70s",
+      "now": 101639,
+      "metrics": {
+        "generation": 92,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 31,
+        "firstTileMs": 1,
+        "fullRenderMs": null,
+        "cpuRenderMs": 6162.500001907349,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": 9.900000095367432,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 8563896,
+        "zoom": {
+          "mantissa": 8.352099999999998,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 2217,
+        "cancelMessages": 184,
+        "responses": 2215,
+        "kinds": {
+          "cancelled": 85,
+          "cpu-tile": 2130
+        },
+        "pending": 2
+      },
+      "status": "CPU · 2%",
+      "heap": 28131641,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    },
+    {
+      "phase": "t+75s",
+      "now": 106641,
+      "metrics": {
+        "generation": 92,
+        "backend": "cpu",
+        "partial": false,
+        "tilesTotal": 1334,
+        "tilesComplete": 91,
+        "firstTileMs": 1,
+        "fullRenderMs": null,
+        "cpuRenderMs": 16050.600001335144,
+        "workerReferenceMs": 0,
+        "cameraResponseMs": 9.900000095367432,
+        "referenceCacheBytes": 0,
+        "cpuTileCacheBytes": 8809656,
+        "zoom": {
+          "mantissa": 8.352099999999998,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      },
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "maxActive": 2,
+        "terminated": 2,
+        "prepares": 2277,
+        "cancelMessages": 184,
+        "responses": 2275,
+        "kinds": {
+          "cancelled": 85,
+          "cpu-tile": 2190
+        },
+        "pending": 2
+      },
+      "status": "CPU · 6%",
+      "heap": 30695453,
+      "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+    }
+  ],
+  "roundEvents": [
+    {
+      "at": 6,
+      "kind": "rapid-presets",
+      "switches": [
+        "antenna",
+        "seahorse",
+        "spiral",
+        "deep"
+      ],
+      "metric": {
+        "now": 32578,
+        "metrics": {
+          "generation": 20,
+          "backend": "cpu",
+          "partial": true,
+          "tilesTotal": 20,
+          "tilesComplete": 5,
+          "firstTileMs": 9.300000190734863,
+          "fullRenderMs": null,
+          "cpuRenderMs": 38.69999933242798,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": null,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 819200,
+          "zoom": {
+            "mantissa": 8.473791421579898,
+            "exponent": 35
+          },
+          "center": {
+            "x": "-1.418201097493689306326484444107128357451446060204475014186505935096746876713704372439",
+            "y": "0.030215449269490043295384188182894834115244567205321423472080536036379980929922290617"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 221,
+          "cancelMessages": 40,
+          "responses": 220,
+          "kinds": {
+            "cancelled": 20,
+            "cpu-tile": 200
+          },
+          "pending": 1
+        },
+        "status": "CPU · 25%",
+        "heap": 14209677,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    },
+    {
+      "at": 18,
+      "kind": "pan",
+      "metric": {
+        "now": 45198,
+        "metrics": {
+          "generation": 28,
+          "backend": "cpu",
+          "partial": false,
+          "tilesTotal": 1334,
+          "tilesComplete": 420,
+          "firstTileMs": 1.200000286102295,
+          "fullRenderMs": null,
+          "cpuRenderMs": 23661.00000190735,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": null,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 2322432,
+          "zoom": {
+            "mantissa": 1,
+            "exponent": 50
+          },
+          "center": {
+            "x": "-1.74006238257933990522084416706582563829664172043617186688",
+            "y": "0.02817533977921104899241152114431950968753907674299060857"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 596,
+          "cancelMessages": 56,
+          "responses": 594,
+          "kinds": {
+            "cancelled": 27,
+            "cpu-tile": 567
+          },
+          "pending": 2
+        },
+        "status": "CPU · 31%",
+        "heap": 12327334,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    },
+    {
+      "at": 28,
+      "kind": "reset-during-render",
+      "before": {
+        "now": 55469,
+        "metrics": {
+          "generation": 30,
+          "backend": "cpu",
+          "partial": true,
+          "tilesTotal": 20,
+          "tilesComplete": 4,
+          "firstTileMs": 12,
+          "fullRenderMs": null,
+          "cpuRenderMs": 22.899999618530273,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": null,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 3711488,
+          "zoom": {
+            "mantissa": 3.0152787055664447,
+            "exponent": 45
+          },
+          "center": {
+            "x": "-1.62770314255530960635168851796256208250313067093087228325979728384",
+            "y": "0.02562243614348735509386822800276267423139913233793428263017253676"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 942,
+          "cancelMessages": 60,
+          "responses": 941,
+          "kinds": {
+            "cancelled": 27,
+            "cpu-tile": 914
+          },
+          "pending": 1
+        },
+        "status": "CPU · 15%",
+        "heap": 14157748,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      },
+      "reselect": "deep",
+      "after": {
+        "now": 55498,
+        "metrics": {
+          "generation": 30,
+          "backend": "cpu",
+          "partial": true,
+          "tilesTotal": 20,
+          "tilesComplete": 6,
+          "firstTileMs": 12,
+          "fullRenderMs": null,
+          "cpuRenderMs": 34.59999895095825,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": null,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 3719680,
+          "zoom": {
+            "mantissa": 2.8120904440416443,
+            "exponent": 44
+          },
+          "center": {
+            "x": "-1.60209555488082986302902298077961512940114832481475475100024982087803432704",
+            "y": "0.02504060857272138072448915350213116649043348836936814426017476956908231906"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 944,
+          "cancelMessages": 60,
+          "responses": 943,
+          "kinds": {
+            "cancelled": 27,
+            "cpu-tile": 916
+          },
+          "pending": 1
+        },
+        "status": "CPU · 30%",
+        "heap": 14157748,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    },
+    {
+      "at": 35,
+      "kind": "rapid-presets",
+      "switches": [
+        "antenna",
+        "seahorse",
+        "spiral",
+        "deep"
+      ],
+      "metric": {
+        "now": 63425,
+        "metrics": {
+          "generation": 50,
+          "backend": "cpu",
+          "partial": true,
+          "tilesTotal": 20,
+          "tilesComplete": 7,
+          "firstTileMs": 11.100000381469727,
+          "fullRenderMs": null,
+          "cpuRenderMs": 60.09999990463257,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": null,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 5336832,
+          "zoom": {
+            "mantissa": 9.632321944439441,
+            "exponent": 35
+          },
+          "center": {
+            "x": "-1.418351632183474735820918866625319881103459938047718674554622205255434933715255883176",
+            "y": "0.030287339939989926832493076475948952320762918581030423099901184746890325189414057182"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 1366,
+          "cancelMessages": 100,
+          "responses": 1365,
+          "kinds": {
+            "cancelled": 48,
+            "cpu-tile": 1317
+          },
+          "pending": 1
+        },
+        "status": "CPU · 35%",
+        "heap": 18599002,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    },
+    {
+      "at": 48,
+      "kind": "pan",
+      "metric": {
+        "now": 77061,
+        "metrics": {
+          "generation": 68,
+          "backend": "cpu",
+          "partial": false,
+          "tilesTotal": 1334,
+          "tilesComplete": 0,
+          "firstTileMs": null,
+          "fullRenderMs": null,
+          "cpuRenderMs": 0,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": 32.10000038146973,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 7052472,
+          "zoom": {
+            "mantissa": 1,
+            "exponent": 50
+          },
+          "center": {
+            "x": "-1.74006238257933990522084416706582563829664172043617875576888888888888888888888888888888888888888889",
+            "y": "0.02817533977921104899241152114431950968753907674299305301444444444444444444444444444444444444444444"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 1828,
+          "cancelMessages": 136,
+          "responses": 1826,
+          "kinds": {
+            "cancelled": 65,
+            "cpu-tile": 1761
+          },
+          "pending": 2
+        },
+        "status": "CPU · 0%",
+        "heap": 24324538,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    },
+    {
+      "at": 58,
+      "kind": "rapid-presets",
+      "switches": [
+        "antenna",
+        "seahorse",
+        "spiral",
+        "deep"
+      ],
+      "metric": {
+        "now": 87877,
+        "metrics": {
+          "generation": 78,
+          "backend": "cpu",
+          "partial": true,
+          "tilesTotal": 20,
+          "tilesComplete": 3,
+          "firstTileMs": 7.900000095367432,
+          "fullRenderMs": null,
+          "cpuRenderMs": 20.800000190734863,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": 32.10000038146973,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 8137912,
+          "zoom": {
+            "mantissa": 1.7931965214912853,
+            "exponent": 36
+          },
+          "center": {
+            "x": "-1.4329204736850086962381218141405507855551200129921130823691780389643205031491207736467",
+            "y": "0.0317309604824659844813025761230757363512317104115673688749981615875984444128865177335"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 2101,
+          "cancelMessages": 156,
+          "responses": 2100,
+          "kinds": {
+            "cancelled": 74,
+            "cpu-tile": 2026
+          },
+          "pending": 1
+        },
+        "status": "CPU · 15%",
+        "heap": 25533390,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    },
+    {
+      "at": 68,
+      "kind": "four-deep-zooms",
+      "zoom": {
+        "now": 98304,
+        "metrics": {
+          "generation": 91,
+          "backend": "cpu",
+          "partial": true,
+          "tilesTotal": 20,
+          "tilesComplete": 0,
+          "firstTileMs": null,
+          "fullRenderMs": null,
+          "cpuRenderMs": 0,
+          "workerReferenceMs": 0,
+          "cameraResponseMs": 9.900000095367432,
+          "referenceCacheBytes": 0,
+          "cpuTileCacheBytes": 8436920,
+          "zoom": {
+            "mantissa": 8.352099999999998,
+            "exponent": 50
+          },
+          "center": {
+            "x": "-1.74006238257933990522084416706582563829664172043617186688",
+            "y": "0.02817533977921104899241152114431950968753907674299060857"
+          }
+        },
+        "workers": {
+          "created": 4,
+          "active": 2,
+          "maxActive": 2,
+          "terminated": 2,
+          "prepares": 2184,
+          "cancelMessages": 182,
+          "responses": 2183,
+          "kinds": {
+            "cancelled": 84,
+            "cpu-tile": 2099
+          },
+          "pending": 1
+        },
+        "status": "CPU · 0%",
+        "heap": 24105378,
+        "href": "http://127.0.0.1:5181/exhibits/mandelbrot"
+      }
+    }
+  ],
+  "crashes": [],
+  "errors": []
+}

@@ -11,6 +11,10 @@ patterns.pulsarGarden = {
   name: 'Pulsar garden',
   cells: [0, 20, 40].flatMap((y) => [0, 20, 40].flatMap((x) => patterns.pulsar.cells.map(([px, py]) => [x + px, y + py] as [number, number]))),
 }
+patterns.pulsarTrio = {
+  name: 'Pulsar trio',
+  cells: [0, 16, 32].flatMap((x) => patterns.pulsar.cells.map(([px, py]) => [x + px, py] as [number, number])),
+}
 export function stepAutomaton(cells: Uint8Array, width: number, height: number, rule: AutomatonRule = 'life') {
   if (cells.length !== width * height) throw new Error('Grid dimensions do not match cell count')
   const next = new Uint8Array(cells.length)

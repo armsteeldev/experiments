@@ -1,0 +1,395 @@
+{
+  "checks": [
+    {
+      "device": "desktop",
+      "id": "mandelbrot",
+      "title": "The Infinite Shore — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 4,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "fluid",
+      "title": "A Quiet Current — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "boids",
+      "title": "A Murmuration — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "attractors",
+      "title": "Weather, Remembered — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "reaction",
+      "title": "Armsteel Experiments — Where rules become worlds",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1424,
+      "ready": false,
+      "loading": false,
+      "canvas": 0,
+      "svg": 0
+    },
+    {
+      "device": "desktop",
+      "id": "lsystem",
+      "title": "A Grammar of Growth — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "gravity",
+      "title": "Gravity Playground — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "machine",
+      "title": "Inside the Machine — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 0,
+      "svg": 12
+    },
+    {
+      "device": "desktop",
+      "id": "neural",
+      "title": "Neural Networks — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "logic",
+      "title": "Logic Laboratory — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 0,
+      "svg": 12
+    },
+    {
+      "device": "desktop",
+      "id": "forces",
+      "title": "Invisible Forces — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "automata",
+      "title": "Cellular Automata — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "desktop",
+      "id": "adder",
+      "title": "The Adder — Armsteel Experiments",
+      "viewport": [
+        1440,
+        900
+      ],
+      "docWidth": 1440,
+      "bodyWidth": 1440,
+      "ready": true,
+      "loading": false,
+      "canvas": 0,
+      "svg": 12
+    },
+    {
+      "device": "mobile",
+      "id": "mandelbrot",
+      "title": "The Infinite Shore — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 4,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "fluid",
+      "title": "A Quiet Current — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "boids",
+      "title": "A Murmuration — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "attractors",
+      "title": "Weather, Remembered — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "reaction",
+      "title": "The Pattern Beneath — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "lsystem",
+      "title": "A Grammar of Growth — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "gravity",
+      "title": "Gravity Playground — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "machine",
+      "title": "Inside the Machine — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 0,
+      "svg": 12
+    },
+    {
+      "device": "mobile",
+      "id": "neural",
+      "title": "Neural Networks — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "logic",
+      "title": "Logic Laboratory — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 0,
+      "svg": 12
+    },
+    {
+      "device": "mobile",
+      "id": "forces",
+      "title": "Invisible Forces — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "automata",
+      "title": "Cellular Automata — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 1,
+      "svg": 11
+    },
+    {
+      "device": "mobile",
+      "id": "adder",
+      "title": "The Adder — Armsteel Experiments",
+      "viewport": [
+        390,
+        844
+      ],
+      "docWidth": 390,
+      "bodyWidth": 390,
+      "ready": true,
+      "loading": false,
+      "canvas": 0,
+      "svg": 12
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,150 @@
+{
+  "homeLoaded": true,
+  "home": {
+    "title": "Where rules\nbecome worlds.",
+    "studyArt": true,
+    "cards": 12,
+    "metaTitle": "Armsteel Experiments \u2014 Where rules become worlds",
+    "canonical": "https://experiments.armsteel.dev/"
+  },
+  "searchOpened": true,
+  "search": {
+    "query": "Neural",
+    "cards": [
+      "Neural Networks"
+    ],
+    "count": 1
+  },
+  "searchEscape": {
+    "closed": true,
+    "focus": "Search the collection"
+  },
+  "favouriteToggled": {
+    "study": "A Quiet Current",
+    "before": "false",
+    "after": "true",
+    "label": "Remove A Quiet Current from favourites"
+  },
+  "favouritesFilter": {
+    "cards": [
+      "A Quiet Current",
+      "Neural Networks"
+    ],
+    "count": 2,
+    "filter": "Favourites2",
+    "note": "Neural Networks was already saved in the isolated browser profile."
+  },
+  "privacyLoaded": true,
+  "privacy": {
+    "heading": "A small, local footprint.",
+    "sections": 4,
+    "canonical": "https://experiments.armsteel.dev/privacy",
+    "robots": "index,follow"
+  },
+  "directRouteLoaded": true,
+  "directRouteRefresh": true,
+  "routeAfterRefresh": {
+    "path": "/exhibits/fluid",
+    "title": "02\nA Quiet Current",
+    "overflow": false
+  },
+  "dockBefore": {
+    "rect": [
+      555,
+      828,
+      146,
+      42
+    ],
+    "expanded": "false",
+    "hit": ""
+  },
+  "selector": true,
+  "selectorEscape": true,
+  "fullscreen": {
+    "active": true,
+    "button": "Exit fullscreen"
+  },
+  "fullscreenExit": true,
+  "errors": [],
+  "keyboardInitialFocus": "BODY",
+  "spacePaused": true,
+  "spaceResumed": true,
+  "hideInterface": true,
+  "showInterface": true,
+  "fullscreenShortcut": true,
+  "fullscreenShortcutExit": true,
+  "arrowNavigation": true,
+  "arrowRoute": "/exhibits/boids",
+  "keyboardErrors": [],
+  "mobile": true,
+  "mobileState": {
+    "path": "/exhibits/adder",
+    "width": 390,
+    "documentWidth": 390,
+    "board": "0 0 620 500",
+    "dockButtons": [
+      {
+        "label": "Return to exhibition",
+        "w": 34,
+        "h": 38
+      },
+      {
+        "label": "Previous experiment",
+        "w": 34,
+        "h": 38
+      },
+      {
+        "label": "Choose experiment. Current experiment: The Adder",
+        "w": 83,
+        "h": 38
+      },
+      {
+        "label": "Next experiment",
+        "w": 34,
+        "h": 38
+      },
+      {
+        "label": "Surprise me with another experiment",
+        "w": 0,
+        "h": 0
+      },
+      {
+        "label": "Toggle experiment controls",
+        "w": 34,
+        "h": 38
+      },
+      {
+        "label": "Toggle experiment information",
+        "w": 34,
+        "h": 38
+      },
+      {
+        "label": "Pause experiment",
+        "w": 34,
+        "h": 38
+      },
+      {
+        "label": "Enter fullscreen",
+        "w": 34,
+        "h": 38
+      }
+    ]
+  },
+  "mobileSelector": true,
+  "mobileSelectorItems": {
+    "items": 13,
+    "overflow": false
+  },
+  "mobileErrors": [],
+  "favouriteRestored": {
+    "before": "true",
+    "after": "false",
+    "label": "Add A Quiet Current to favourites",
+    "restoredOriginalState": true
+  },
+  "afterUnfavoriteFilter": {
+    "count": 1,
+    "emptyState": null,
+    "filter": "Favourites1"
+  }
+}

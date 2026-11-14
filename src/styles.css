@@ -1727,6 +1727,82 @@ body.immersive-active { height: 100%; min-height: 0; }
   .exhibition-page .card-art-link .artwork-preview { transition: none; }
 }
 
+/* Let the entrance show one of the collection's real visual languages. */
+.exhibition-page .portal-hero::before { z-index: 1; }
+.exhibition-page .portal-hero .hero-study-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.exhibition-page .portal-hero .hero-study-art .artwork-preview {
+  position: absolute;
+  top: 4%;
+  right: -12%;
+  width: min(70vw, 1080px);
+  height: 92%;
+  opacity: .96;
+  filter: brightness(1.16) saturate(1.08);
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse 66% 72% at 67% 48%, #000 27%, rgba(0,0,0,.83) 57%, transparent 100%);
+  transform: scale(1.22, .84);
+  transform-origin: 67% 48%;
+}
+.exhibition-page .portal-hero .hero-copy {
+  z-index: 2;
+  top: 51%;
+  left: max(42px, calc((100vw - 1300px) / 2));
+  width: min(670px, 49vw);
+  align-items: flex-start;
+  text-align: left;
+  transform: translateY(-50%);
+  animation: entrance-arrive-left 1.15s cubic-bezier(.2, .68, .25, 1) both;
+}
+.exhibition-page .portal-hero .hero-copy h1 {
+  font-size: clamp(72px, 7.2vw, 106px);
+  line-height: .96;
+  letter-spacing: -.035em;
+}
+.exhibition-page .portal-hero .hero-copy h1 em { font-style: normal; }
+.exhibition-page .portal-hero .hero-description { max-width: 350px; margin: 26px 0 22px; }
+.exhibition-page .portal-hero .glass-cta { align-self: flex-start; }
+@media (max-width: 720px) {
+  .exhibition-page .portal-hero::before {
+    background:
+      linear-gradient(180deg, rgba(4,7,12,.18), transparent 36%, rgba(6,9,15,.48) 68%, rgba(7,10,16,.84)),
+      linear-gradient(90deg, rgba(4,8,13,.28), transparent 72%);
+  }
+  .exhibition-page .portal-hero .hero-study-art .artwork-preview {
+    top: -3%;
+    right: -30%;
+    width: 132vw;
+    height: 66%;
+    opacity: .8;
+    mask-image: radial-gradient(ellipse 68% 66% at 61% 45%, #000 26%, rgba(0,0,0,.78) 57%, transparent 100%);
+    transform: scale(1.12, .84);
+    transform-origin: 61% 45%;
+  }
+  .exhibition-page .portal-hero .hero-copy {
+    top: 65%;
+    left: 22px;
+    width: calc(100% - 44px);
+    align-items: flex-start;
+    text-align: left;
+    transform: translateY(-50%);
+  }
+  .exhibition-page .portal-hero .hero-copy h1 { font-size: clamp(40px, 12.7vw, 50px); line-height: .98; }
+  .exhibition-page .portal-hero .hero-description { max-width: 290px; margin: 18px 0 17px; }
+  .exhibition-page .portal-hero .glass-cta { min-height: 50px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .exhibition-page .portal-hero .hero-copy { animation: none; }
+}
+@keyframes entrance-arrive-left {
+  from { opacity: 0; transform: translateY(calc(-50% + 15px)); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(-50%); filter: blur(0); }
+}
+
 /* Clear button roles: glass utility actions, selectable chips, and solid panel actions. */
 .exhibition-page .quiet-button {
   min-height: 42px;

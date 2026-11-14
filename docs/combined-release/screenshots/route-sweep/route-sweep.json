@@ -1,0 +1,615 @@
+{
+  "generatedAt": "2026-11-14T19:38:34.398Z",
+  "desktop": [
+    {
+      "id": "mandelbrot",
+      "title": "The Infinite Shore",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Mandelbrot and Julia fractal. Drag to move the view; scroll or pinch to zoom into the coastline.",
+          "cls": "experiment-canvas fractal-canvas fractal-fast"
+        },
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Deep zoom fractal view. Drag to move; scroll or pinch to zoom.",
+          "cls": "experiment-canvas fractal-canvas fractal-gpu"
+        },
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Deep zoom fractal view. Drag to move; scroll or pinch to zoom.",
+          "cls": "experiment-canvas fractal-canvas fractal-cpu"
+        },
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": null,
+          "cls": "experiment-canvas fractal-repair"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 5228208
+    },
+    {
+      "id": "fluid",
+      "title": "A Quiet Current",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1457,
+          "h": 911,
+          "aria": "GPU fluid dynamics. Drag to inject momentum and pigment.",
+          "cls": "experiment-canvas fluid-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4533676
+    },
+    {
+      "id": "boids",
+      "title": "A Murmuration",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Interactive artificial life. Tap to place food that attracts the flock; change the field in controls.",
+          "cls": "experiment-canvas boids-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 5608440
+    },
+    {
+      "id": "attractors",
+      "title": "Weather, Remembered",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom.",
+          "cls": "experiment-canvas attractor-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4341056
+    },
+    {
+      "id": "reaction",
+      "title": "The Pattern Beneath",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1443,
+          "h": 902,
+          "aria": "Gray–Scott reaction diffusion. Paint to add or erase chemical seeds.",
+          "cls": "experiment-canvas reaction-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4250964
+    },
+    {
+      "id": "lsystem",
+      "title": "A Grammar of Growth",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Generative botanical and L-system artwork. Drag to pan and scroll to zoom.",
+          "cls": "experiment-canvas lsystem-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 8758400
+    },
+    {
+      "id": "gravity",
+      "title": "Gravity Playground",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan.",
+          "cls": "experiment-canvas gravity-canvas "
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4788512
+    },
+    {
+      "id": "machine",
+      "title": "Inside the Machine",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [],
+      "visibleH1": [
+        "Give it a job."
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4421696
+    },
+    {
+      "id": "neural",
+      "title": "Neural Networks",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess.",
+          "cls": "neural-learning-map"
+        }
+      ],
+      "visibleH1": [
+        "Show it a pattern."
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 6325880
+    },
+    {
+      "id": "logic",
+      "title": "Logic Laboratory",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [],
+      "visibleH1": [
+        "Make a light obey."
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4591672
+    },
+    {
+      "id": "forces",
+      "title": "Invisible Forces",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Electric charges create a field. Positive charges send field arrows outward; negative charges draw them inward.",
+          "cls": "experiment-canvas forces-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 6162272
+    },
+    {
+      "id": "automata",
+      "title": "Cellular Automata",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 1440,
+          "h": 900,
+          "aria": "Cell grid. Paint living cells, then step the rule to see which survive and which neighbors are born.",
+          "cls": "experiment-canvas automata-canvas tool-paint"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4702652
+    },
+    {
+      "id": "adder",
+      "title": "The Adder",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        1440,
+        900
+      ],
+      "documentWidth": 1440,
+      "surfaces": 1,
+      "canvases": [],
+      "visibleH1": [
+        "THE ADDER"
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4551352
+    }
+  ],
+  "mobile": [
+    {
+      "id": "mandelbrot",
+      "title": "The Infinite Shore",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Mandelbrot and Julia fractal. Drag to move the view; scroll or pinch to zoom into the coastline.",
+          "cls": "experiment-canvas fractal-canvas fractal-fast"
+        },
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Deep zoom fractal view. Drag to move; scroll or pinch to zoom.",
+          "cls": "experiment-canvas fractal-canvas fractal-gpu"
+        },
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Deep zoom fractal view. Drag to move; scroll or pinch to zoom.",
+          "cls": "experiment-canvas fractal-canvas fractal-cpu"
+        },
+        {
+          "w": 390,
+          "h": 844,
+          "aria": null,
+          "cls": "experiment-canvas fractal-repair"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 5261760
+    },
+    {
+      "id": "fluid",
+      "title": "A Quiet Current",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 395,
+          "h": 854,
+          "aria": "GPU fluid dynamics. Drag to inject momentum and pigment.",
+          "cls": "experiment-canvas fluid-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4339260
+    },
+    {
+      "id": "boids",
+      "title": "A Murmuration",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Interactive artificial life. Tap to place food that attracts the flock; change the field in controls.",
+          "cls": "experiment-canvas boids-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 5177400
+    },
+    {
+      "id": "attractors",
+      "title": "Weather, Remembered",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom.",
+          "cls": "experiment-canvas attractor-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4617944
+    },
+    {
+      "id": "reaction",
+      "title": "The Pattern Beneath",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 845,
+          "aria": "Gray–Scott reaction diffusion. Paint to add or erase chemical seeds.",
+          "cls": "experiment-canvas reaction-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4283972
+    },
+    {
+      "id": "lsystem",
+      "title": "A Grammar of Growth",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Generative botanical and L-system artwork. Drag to pan and scroll to zoom.",
+          "cls": "experiment-canvas lsystem-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 8782280
+    },
+    {
+      "id": "gravity",
+      "title": "Gravity Playground",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan.",
+          "cls": "experiment-canvas gravity-canvas "
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4993956
+    },
+    {
+      "id": "machine",
+      "title": "Inside the Machine",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [],
+      "visibleH1": [
+        "Give it a job."
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4461716
+    },
+    {
+      "id": "neural",
+      "title": "Neural Networks",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess.",
+          "cls": "neural-learning-map"
+        }
+      ],
+      "visibleH1": [
+        "Show it a pattern."
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4848192
+    },
+    {
+      "id": "logic",
+      "title": "Logic Laboratory",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [],
+      "visibleH1": [
+        "Make a light obey."
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4589572
+    },
+    {
+      "id": "forces",
+      "title": "Invisible Forces",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Electric charges create a field. Positive charges send field arrows outward; negative charges draw them inward.",
+          "cls": "experiment-canvas forces-canvas"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 8062620
+    },
+    {
+      "id": "automata",
+      "title": "Cellular Automata",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [
+        {
+          "w": 390,
+          "h": 844,
+          "aria": "Cell grid. Paint living cells, then step the rule to see which survive and which neighbors are born.",
+          "cls": "experiment-canvas automata-canvas tool-paint"
+        }
+      ],
+      "visibleH1": [],
+      "errors": [],
+      "jsHeapUsedSize": 4750416
+    },
+    {
+      "id": "adder",
+      "title": "The Adder",
+      "loaded": true,
+      "horizontalOverflow": false,
+      "viewport": [
+        390,
+        844
+      ],
+      "documentWidth": 390,
+      "surfaces": 1,
+      "canvases": [],
+      "visibleH1": [
+        "THE ADDER"
+      ],
+      "errors": [],
+      "jsHeapUsedSize": 4645428
+    }
+  ]
+}

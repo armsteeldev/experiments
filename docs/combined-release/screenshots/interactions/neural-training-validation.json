@@ -1,0 +1,16 @@
+{
+  "trained": {
+    "score": "2 EXAMPLES · 2 GUESSED RIGHT\n100%\n1 coral · 1 teal",
+    "loss": "0.045",
+    "examples": "2 EXAMPLES · 2 GUESSED RIGHT",
+    "probePressed": "true"
+  },
+  "before": "2 EXAMPLES · 2 GUESSED RIGHT",
+  "probe": {
+    "status": "The model guesses TEAL\n0.628 confidence · test points stay out of training",
+    "selected": "true",
+    "examples": "2 EXAMPLES · 2 GUESSED RIGHT"
+  },
+  "examplesUnchanged": true,
+  "errors": []
+}

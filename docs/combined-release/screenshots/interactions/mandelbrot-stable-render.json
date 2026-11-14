@@ -1,0 +1,393 @@
+{
+  "loaded": true,
+  "deep": true,
+  "selection": "deep",
+  "starting": {
+    "metric": {
+      "generation": 10,
+      "backend": "webgpu",
+      "partial": false,
+      "startedAt": 1394.5999999046326,
+      "cameraResponseMs": null,
+      "firstTileMs": 4,
+      "fullRenderMs": null,
+      "tilesTotal": 345,
+      "tilesComplete": 163,
+      "workerReferenceMs": 3029.499972820282,
+      "cpuRenderMs": 0,
+      "gpuUploadMs": 75.99999141693115,
+      "gpuCompletionMs": 2955.300000667572,
+      "cacheHits": 0,
+      "glitchRepairs": 1658,
+      "referenceCacheBytes": 23819760,
+      "cpuTileCacheBytes": 0,
+      "gpuTileCacheBytes": 6732344,
+      "zoom": {
+        "mantissa": 1,
+        "exponent": 50
+      },
+      "center": {
+        "x": "-1.74006238257933990522084416706582563829664172043617186688",
+        "y": "0.02817533977921104899241152114431950968753907674299060857"
+      }
+    },
+    "workers": {
+      "created": 4,
+      "active": 2,
+      "maxActive": 2,
+      "terminated": 2,
+      "prepares": 7135,
+      "cancelMessages": 20,
+      "responses": 7133,
+      "kinds": {
+        "reference": 7133
+      },
+      "pending": {
+        "7477": 10,
+        "7478": 10
+      }
+    },
+    "heap": 43409779,
+    "visibility": "visible"
+  },
+  "samples": [
+    {
+      "sec": 5,
+      "time": 9659,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 165,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 105939663,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 15232,
+        "responses": 15230,
+        "pending": 2
+      },
+      "status": "WEBGPU · 47%"
+    },
+    {
+      "sec": 10,
+      "time": 14667,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 166,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 161760287,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 22628,
+        "responses": 22626,
+        "pending": 2
+      },
+      "status": "WEBGPU · 48%"
+    },
+    {
+      "sec": 15,
+      "time": 19672,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 167,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 103527917,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 29971,
+        "responses": 29969,
+        "pending": 2
+      },
+      "status": "WEBGPU · 48%"
+    },
+    {
+      "sec": 20,
+      "time": 24675,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 168,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 160953733,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 36878,
+        "responses": 36876,
+        "pending": 2
+      },
+      "status": "WEBGPU · 48%"
+    },
+    {
+      "sec": 25,
+      "time": 29681,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 168,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 199416385,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 43755,
+        "responses": 43753,
+        "pending": 2
+      },
+      "status": "WEBGPU · 48%"
+    },
+    {
+      "sec": 30,
+      "time": 34683,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 168,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 176590173,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 49791,
+        "responses": 49791,
+        "pending": 0
+      },
+      "status": "WEBGPU · 48%"
+    },
+    {
+      "sec": 35,
+      "time": 39688,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 170,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 224666343,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 56141,
+        "responses": 56139,
+        "pending": 2
+      },
+      "status": "WEBGPU · 49%"
+    },
+    {
+      "sec": 40,
+      "time": 44695,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 170,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 187925797,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 61758,
+        "responses": 61756,
+        "pending": 2
+      },
+      "status": "WEBGPU · 49%"
+    },
+    {
+      "sec": 45,
+      "time": 49701,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 172,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 220830921,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 67993,
+        "responses": 67993,
+        "pending": 0
+      },
+      "status": "WEBGPU · 49%"
+    },
+    {
+      "sec": 50,
+      "time": 54946,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 176,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 265384079,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": "WEBGPU · 51%"
+    },
+    {
+      "sec": 55,
+      "time": 59947,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 196,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 159385503,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": "WEBGPU · 56%"
+    },
+    {
+      "sec": 60,
+      "time": 64948,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 229,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 141410943,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": "WEBGPU · 66%"
+    },
+    {
+      "sec": 65,
+      "time": 69950,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 260,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 103296367,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": "WEBGPU · 75%"
+    },
+    {
+      "sec": 70,
+      "time": 74950,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 302,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 94049811,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": "WEBGPU · 87%"
+    },
+    {
+      "sec": 75,
+      "time": 79952,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 338,
+      "fullRenderMs": null,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 87501871,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": "WEBGPU · 97%"
+    },
+    {
+      "sec": 80,
+      "time": 85187,
+      "generation": 10,
+      "backend": "webgpu",
+      "tilesTotal": 345,
+      "tilesComplete": 345,
+      "fullRenderMs": 80136.30000019073,
+      "cpuRenderMs": 0,
+      "cacheBytes": 0,
+      "heap": 94259715,
+      "workers": {
+        "created": 4,
+        "active": 2,
+        "max": 2,
+        "requests": 70941,
+        "responses": 70941,
+        "pending": 0
+      },
+      "status": ""
+    }
+  ],
+  "crashes": [],
+  "errors": []
+}

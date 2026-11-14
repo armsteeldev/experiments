@@ -1,0 +1,51 @@
+{
+  "paused": true,
+  "results": [
+    {
+      "name": "default",
+      "scale": 87.5794689471905,
+      "body": {
+        "id": 6,
+        "mass": 0.5
+      },
+      "screenCenter": {
+        "x": 1007.5863193385582,
+        "y": 161.68842522863565
+      },
+      "offsetPixels": 15,
+      "selected": "SELECTED BODY\n0.5 mass\nv 14.52 units / time",
+      "hitTarget": true
+    },
+    {
+      "name": "zoomed-out",
+      "scale": 20,
+      "body": {
+        "id": 6,
+        "mass": 0.5
+      },
+      "screenCenter": {
+        "x": 1000.4506525778943,
+        "y": 156.9801619661573
+      },
+      "offsetPixels": 15,
+      "selected": "SELECTED BODY\n0.5 mass\nv 14.52 units / time",
+      "hitTarget": true
+    },
+    {
+      "name": "zoomed-in",
+      "scale": 480,
+      "body": {
+        "id": 6,
+        "mass": 0.5
+      },
+      "screenCenter": {
+        "x": 1210.021716556962,
+        "y": 304.02837327176087
+      },
+      "offsetPixels": 15,
+      "selected": "SELECTED BODY\n0.5 mass\nv 14.52 units / time",
+      "hitTarget": true
+    }
+  ],
+  "errors": []
+}

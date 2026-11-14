@@ -1,0 +1,298 @@
+[
+  {
+    "site": "main",
+    "id": "home",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "Where rules\nbecome worlds."
+    ],
+    "canvases": 14,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "home",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "Where rules\nbecome worlds."
+    ],
+    "canvases": 15,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "home",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "Where rules\nbecome worlds."
+    ],
+    "canvases": 14,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "home",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "Where rules\nbecome worlds."
+    ],
+    "canvases": 15,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "fluid",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "fluid",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "fluid",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "fluid",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "reaction",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "reaction",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "reaction",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "reaction",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "automata",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "automata",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "automata",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "automata",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [],
+    "canvases": 1,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "adder",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "THE ADDER"
+    ],
+    "canvases": 0,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "adder",
+    "mode": "desktop",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "THE ADDER"
+    ],
+    "canvases": 0,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "main",
+    "id": "adder",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "THE ADDER"
+    ],
+    "canvases": 0,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  },
+  {
+    "site": "candidate",
+    "id": "adder",
+    "mode": "mobile",
+    "loaded": true,
+    "horizontalOverflow": false,
+    "h1": [
+      "THE ADDER"
+    ],
+    "canvases": 0,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)",
+      "webgpu": false
+    },
+    "errors": []
+  }
+]

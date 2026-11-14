@@ -1,0 +1,140 @@
+{
+  "system": "rossler",
+  "initial": {
+    "drawCount": 86,
+    "trailPoints": 13800,
+    "stat": {
+      "renderer": "canvas2d",
+      "hardwareRenderer": "",
+      "renderMs": 1.4000000953674316,
+      "simulationMs": 0,
+      "renderedPoints": 13800,
+      "trailPoints": 13800,
+      "warming": true,
+      "drawCount": 86
+    },
+    "anchors": [],
+    "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2, OpenGL 4.5.0)"
+  },
+  "samples": [
+    {
+      "t": 5016,
+      "drawCount": 204,
+      "trailPoints": 16000,
+      "renderMs": 1,
+      "simulationMs": 0
+    },
+    {
+      "t": 11096,
+      "drawCount": 342,
+      "trailPoints": 16000,
+      "renderMs": 0.8000001907348633,
+      "simulationMs": 0
+    },
+    {
+      "t": 16139,
+      "drawCount": 458,
+      "trailPoints": 16000,
+      "renderMs": 0.9000000953674316,
+      "simulationMs": 0
+    },
+    {
+      "t": 21145,
+      "drawCount": 578,
+      "trailPoints": 16000,
+      "renderMs": 0.9000000953674316,
+      "simulationMs": 0
+    },
+    {
+      "t": 27228,
+      "drawCount": 722,
+      "trailPoints": 16000,
+      "renderMs": 0.8999996185302734,
+      "simulationMs": 0
+    },
+    {
+      "t": 32256,
+      "drawCount": 839,
+      "trailPoints": 16000,
+      "renderMs": 0.9000000953674316,
+      "simulationMs": 0
+    },
+    {
+      "t": 37262,
+      "drawCount": 954,
+      "trailPoints": 16000,
+      "renderMs": 0.9000000953674316,
+      "simulationMs": 0
+    }
+  ],
+  "final": {
+    "elapsedMs": 37421.2999997139,
+    "rafCount": 2245,
+    "rafHz": 59.99257107628982,
+    "rafMs": {
+      "median": 16.69999999999709,
+      "p95": 16.700000000004366,
+      "over50ms": 0
+    },
+    "longTasks": [
+      {
+        "start": 52.40000009536743,
+        "duration": 53
+      }
+    ],
+    "countLongTasks": 1,
+    "longTaskMs": 53,
+    "attractor": {
+      "renderer": "canvas2d",
+      "hardwareRenderer": "",
+      "renderMs": 1.1000003814697266,
+      "simulationMs": 0,
+      "renderedPoints": 8001,
+      "trailPoints": 16000,
+      "warming": false,
+      "drawCount": 958
+    },
+    "jsHeap": 8763484
+  },
+  "metricRecord": {
+    "cpu": [
+      {
+        "name": "LayoutDuration",
+        "value": 0.018426
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.036926
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 1.300681
+      },
+      {
+        "name": "TaskDuration",
+        "value": 2.126554
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 5058736
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 7491584
+      }
+    ]
+  },
+  "cleanup": {
+    "home": "/exhibits/attractors",
+    "globalStillPresent": true,
+    "referenceDrawCount": 1012,
+    "route": "http://127.0.0.1:5181/exhibits/attractors"
+  },
+  "savedCount": 1012,
+  "cleanupAfter": {
+    "referenceDrawCount": 1062,
+    "delta": 104,
+    "globalStillPresent": true
+  },
+  "errors": []
+}

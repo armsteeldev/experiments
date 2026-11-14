@@ -362,7 +362,15 @@ export class MandelbrotGpuRenderer {
     if (!this.width || !this.height) return
     if (source && source.width === this.width && source.height === this.height) {
       this.device.queue.copyExternalImageToTexture({ source }, { texture: this.previewTexture }, [this.width, this.height, 1])
-    } else this.device.queue.copyTextureToTexture({ texture: this.frameTexture }, { texture: this.previewTexture }, [this.width, this.height, 1])
+    } else {
+      const encoder = this.device.createCommandEncoder()
+      encoder.copyTextureToTexture(
+        { texture: this.frameTexture },
+        { texture: this.previewTexture },
+        [this.width, this.height, 1],
+      )
+      this.device.queue.submit([encoder.finish()])
+    }
     this.previewWarp = warp
     this.device.queue.writeBuffer(this.validBuffer, 0, new Uint32Array(this.tileSlots))
     this.setDisplayParameters(warp)

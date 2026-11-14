@@ -185,15 +185,13 @@ function seed(bundle: Bundle, name: string, color: [number, number, number]) {
     source(0.58, 0.52, -0.8, -0.2, [0.9, 0.54, 0.33], 0.07)
   } else if (name === 'vortex') {
     const spectrum: [number, number, number][] = [color, [0.84, 0.3, 0.76], [0.94, 0.52, 0.2], [0.31, 0.54, 1]]
-    for (let i = 0; i < 40; i++) {
-      const angle = i / 40 * Math.PI * 2
-      const x = 0.5 + Math.cos(angle) * 0.24, y = 0.5 + Math.sin(angle) * 0.24
-      source(x, y, -Math.sin(angle) * 128, Math.cos(angle) * 128, spectrum[Math.floor(i / 10) % spectrum.length], 0.043, 0.34)
-    }
-    for (let i = 0; i < 32; i++) {
-      const t = i / 31, angle = t * Math.PI * 3.2 - 1.3, radius = 0.028 + t * 0.19
-      const x = 0.5 + Math.cos(angle) * radius, y = 0.5 + Math.sin(angle) * radius
-      source(x, y, -Math.sin(angle) * 156, Math.cos(angle) * 156, spectrum[(Math.floor(i / 8) + 1) % spectrum.length], 0.035, 0.27)
+    for (let i = 0; i <= 20; i++) {
+      const t = i / 20
+      const x = 0.09 + t * 0.82
+      const y = 0.52 + 0.18 * Math.sin(t * Math.PI * 2) + 0.055 * Math.sin(t * Math.PI * 4 - 0.7)
+      const slope = 0.36 * Math.PI * Math.cos(t * Math.PI * 2) + 0.22 * Math.PI * Math.cos(t * Math.PI * 4 - 0.7)
+      const tint = spectrum[Math.min(spectrum.length - 1, Math.floor(t * spectrum.length))]
+      source(x, y, 84, 84 * slope / 0.82, tint, 0.083, 0.2)
     }
   } else {
     source(0.27, 0.46, 126, 56, color, 0.09, 1.15)

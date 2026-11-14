@@ -1,0 +1,59 @@
+{
+  "before": {
+    "focus": "BODY",
+    "pause": "false",
+    "label": "Pause experiment"
+  },
+  "afterPause": {
+    "focus": "BODY",
+    "labels": [
+      "Return to exhibition",
+      "Previous experiment",
+      "Choose experiment. Current experiment: A Quiet Current",
+      "Next experiment",
+      "Surprise me with another experiment",
+      "Toggle experiment controls",
+      "Toggle experiment information",
+      "Resume experiment",
+      "Enter fullscreen"
+    ],
+    "keys": [
+      {
+        "key": " ",
+        "code": "Space",
+        "target": "BODY",
+        "defaultPrevented": true
+      }
+    ]
+  },
+  "afterResume": {
+    "focus": "BODY",
+    "labels": [
+      "Return to exhibition",
+      "Previous experiment",
+      "Choose experiment. Current experiment: A Quiet Current",
+      "Next experiment",
+      "Surprise me with another experiment",
+      "Toggle experiment controls",
+      "Toggle experiment information",
+      "Pause experiment",
+      "Enter fullscreen"
+    ],
+    "keys": [
+      {
+        "key": " ",
+        "code": "Space",
+        "target": "BODY",
+        "defaultPrevented": true
+      },
+      {
+        "key": " ",
+        "code": "Space",
+        "target": "BODY",
+        "defaultPrevented": true
+      }
+    ]
+  },
+  "paused": true,
+  "resumed": true
+}

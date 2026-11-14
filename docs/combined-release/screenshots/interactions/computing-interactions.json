@@ -1,0 +1,117 @@
+{
+  "adder": {
+    "onePlusOne": {
+      "answer": "RESULT\n2\n0010",
+      "binary": "0010",
+      "complete": true
+    },
+    "fivePlusThree": {
+      "answer": "RESULT\n8\n1000",
+      "binary": "1000",
+      "complete": true
+    },
+    "advanced": {
+      "caption": "THE GATE DECK\n16-BIT · CARRY WALKS LEFT",
+      "width": 16,
+      "board": "0 0 1000 500",
+      "architecture": "THE GATE DECK\n16-BIT · CARRY WALKS LEFT"
+    },
+    "mobileLayout": {
+      "answer": "RESULT\n8\n1000",
+      "viewBox": "0 0 620 500",
+      "width": 390,
+      "overflow": false
+    },
+    "errors": []
+  },
+  "machine": {
+    "firstStep": true,
+    "tasks": [
+      {
+        "requested": "sum",
+        "selected": {
+          "value": "sum",
+          "label": "Load a task Add two numbers Check whether equal Store and retrieve Count in a loop"
+        },
+        "state": {
+          "task": "Holder B now keeps 5.",
+          "output": "00",
+          "memory": "DATA MEMORY\n16 places\n0\n00\n1\n00\n2\n00\n3\n00\n4\n00\n5\n00\n6\n00\n7\n00\nA number was loaded into a register so the machine can use it later.",
+          "button": "Pause the machine Ⅱ"
+        }
+      },
+      {
+        "requested": "compare",
+        "selected": {
+          "value": "compare",
+          "label": "Load a task Add two numbers Check whether equal Store and retrieve Count in a loop"
+        },
+        "state": {
+          "task": "Holder B now keeps 5.",
+          "output": "00",
+          "memory": "DATA MEMORY\n16 places\n0\n00\n1\n00\n2\n00\n3\n00\n4\n00\n5\n00\n6\n00\n7\n00\nA number was loaded into a register so the machine can use it later.",
+          "button": "Pause the machine Ⅱ"
+        }
+      },
+      {
+        "requested": "memory",
+        "selected": {
+          "value": "memory",
+          "label": "Load a task Add two numbers Check whether equal Store and retrieve Count in a loop"
+        },
+        "state": {
+          "task": "Memory place 3 now keeps 7.",
+          "output": "00",
+          "memory": "DATA MEMORY\n16 places\n0\n00\n1\n00\n2\n00\n3\n07\n4\n00\n5\n00\n6\n00\n7\n00\nMemory place 3 now keeps the value, even after it leaves register A.",
+          "button": "Pause the machine Ⅱ"
+        }
+      },
+      {
+        "requested": "count",
+        "selected": {
+          "value": "count",
+          "label": "Load a task Add two numbers Check whether equal Store and retrieve Count in a loop"
+        },
+        "state": {
+          "task": "Holder B now keeps 1.",
+          "output": "00",
+          "memory": "DATA MEMORY\n16 places\n0\n00\n1\n00\n2\n00\n3\n00\n4\n00\n5\n00\n6\n00\n7\n00\nA number was loaded into a register so the machine can use it later.",
+          "button": "Pause the machine Ⅱ"
+        }
+      }
+    ],
+    "errors": []
+  },
+  "neural": {
+    "blank": true,
+    "canvas": {
+      "x": -0.23138427734375,
+      "y": -0.144622802734375,
+      "w": 1440.462890625,
+      "h": 900.289306640625
+    },
+    "drawn": {
+      "summary": "2 EXAMPLES · 1 GUESSED RIGHT\n50%\n1 coral · 1 teal",
+      "examples": "2 EXAMPLES · 1 GUESSED RIGHT",
+      "loss": "0.646"
+    },
+    "undo": true,
+    "afterUndo": {
+      "summary": "1 EXAMPLES · 1 GUESSED RIGHT\n100%\n0 coral · 1 teal",
+      "examples": "1 EXAMPLES · 1 GUESSED RIGHT",
+      "loss": "0.441"
+    },
+    "afterRedraw": {
+      "summary": "2 EXAMPLES · 1 GUESSED RIGHT\n50%\n1 coral · 1 teal",
+      "examples": "2 EXAMPLES · 1 GUESSED RIGHT",
+      "loss": "0.646"
+    },
+    "lossBefore": 0.646,
+    "lossAfterTraining": 0.05,
+    "probe": {
+      "status": "ADDING CORAL EXAMPLES\nAdded a coral example. Drag to place it precisely.",
+      "selected": "false"
+    },
+    "errors": []
+  }
+}

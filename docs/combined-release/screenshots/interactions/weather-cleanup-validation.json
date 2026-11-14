@@ -1,0 +1,20 @@
+{
+  "arrived": true,
+  "before": {
+    "count": 14,
+    "visibility": "visible"
+  },
+  "afterNav": {
+    "path": "/",
+    "active": true,
+    "count": 14,
+    "heap": 8998342
+  },
+  "afterWait": {
+    "active": false,
+    "count": 15,
+    "delta": 1,
+    "heap": 10615090
+  },
+  "errors": []
+}

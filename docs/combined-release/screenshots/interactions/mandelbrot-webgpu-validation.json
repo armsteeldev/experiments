@@ -1,0 +1,199 @@
+{
+  "loaded": true,
+  "gpu": {
+    "secure": true,
+    "gpu": "object",
+    "adapter": true,
+    "features": [
+      "depth32float-stencil8",
+      "rg11b10ufloat-renderable",
+      "bgra8unorm-storage",
+      "texture-formats-tier1",
+      "chromium-experimental-multi-draw-indirect",
+      "texture-compression-bc",
+      "dual-source-blending",
+      "core-features-and-limits",
+      "chromium-experimental-sampling-resource-table",
+      "chromium-experimental-timestamp-query-inside-passes",
+      "float32-filterable",
+      "indirect-first-instance",
+      "float32-blendable",
+      "atomic-vec2u-min-max",
+      "subgroup-size-control",
+      "texture-compression-unaligned",
+      "depth-clip-control",
+      "texture-compression-bc-sliced-3d",
+      "clip-distances",
+      "timestamp-query",
+      "texture-formats-tier2",
+      "primitive-index",
+      "texture-component-swizzle",
+      "subgroups"
+    ]
+  },
+  "selected": "deep",
+  "deep": true,
+  "start": {
+    "metric": {
+      "generation": 10,
+      "backend": "webgpu",
+      "partial": false,
+      "startedAt": 1431,
+      "cameraResponseMs": null,
+      "firstTileMs": 4.100000381469727,
+      "fullRenderMs": null,
+      "tilesTotal": 345,
+      "tilesComplete": 160,
+      "workerReferenceMs": 2082.499948501587,
+      "cpuRenderMs": 0,
+      "gpuUploadMs": 50.59999322891235,
+      "gpuCompletionMs": 1976.7999920845032,
+      "cacheHits": 0,
+      "glitchRepairs": 1112,
+      "referenceCacheBytes": 16622600,
+      "cpuTileCacheBytes": 0,
+      "gpuTileCacheBytes": 5985208,
+      "zoom": {
+        "mantissa": 1,
+        "exponent": 50
+      },
+      "center": {
+        "x": "-1.74006238257933990522084416706582563829664172043617186688",
+        "y": "0.02817533977921104899241152114431950968753907674299060857"
+      }
+    },
+    "error": false,
+    "status": "WEBGPU · 46%"
+  },
+  "zoom": {
+    "metric": {
+      "generation": 11,
+      "backend": "webgpu",
+      "partial": true,
+      "startedAt": 3753.5,
+      "cameraResponseMs": 36.299999713897705,
+      "firstTileMs": 45.5,
+      "fullRenderMs": null,
+      "tilesTotal": 20,
+      "tilesComplete": 1,
+      "workerReferenceMs": 105.39999628067017,
+      "cpuRenderMs": 0,
+      "gpuUploadMs": 3.700002670288086,
+      "gpuCompletionMs": 219.80000019073486,
+      "cacheHits": 0,
+      "glitchRepairs": 125,
+      "referenceCacheBytes": 19199600,
+      "cpuTileCacheBytes": 0,
+      "gpuTileCacheBytes": 6115256,
+      "zoom": {
+        "mantissa": 1.7,
+        "exponent": 50
+      },
+      "center": {
+        "x": "-1.74006238257933990522084416706582563829664172043617186688",
+        "y": "0.02817533977921104899241152114431950968753907674299060857"
+      }
+    },
+    "error": false
+  },
+  "pan": {
+    "metric": {
+      "generation": 25,
+      "backend": "webgpu",
+      "partial": false,
+      "startedAt": 5125.10000038147,
+      "cameraResponseMs": 30.09999990463257,
+      "firstTileMs": null,
+      "fullRenderMs": null,
+      "tilesTotal": 345,
+      "tilesComplete": 0,
+      "workerReferenceMs": 0,
+      "cpuRenderMs": 0,
+      "gpuUploadMs": 0,
+      "gpuCompletionMs": 0,
+      "cacheHits": 0,
+      "glitchRepairs": 0,
+      "referenceCacheBytes": 21422080,
+      "cpuTileCacheBytes": 0,
+      "gpuTileCacheBytes": 6116280,
+      "zoom": {
+        "mantissa": 1.7,
+        "exponent": 50
+      },
+      "center": {
+        "x": "-1.740062382579339905220844167065825638296641720436170089102222222222222222222222222222222222222222222",
+        "y": "0.028175339779211048992411521144319509687539076742999471315098039215686274509803921568627450980392157"
+      }
+    },
+    "error": false,
+    "status": "WEBGPU · 0%",
+    "coords": "Re -1.74006238…222222222 · Im 0.028175339…980392157 · ×1.7e50"
+  },
+  "reset": {
+    "metric": {
+      "generation": 27,
+      "backend": "webgpu",
+      "partial": true,
+      "startedAt": 6143,
+      "cameraResponseMs": 30.09999990463257,
+      "firstTileMs": null,
+      "fullRenderMs": null,
+      "tilesTotal": 20,
+      "tilesComplete": 0,
+      "workerReferenceMs": 0,
+      "cpuRenderMs": 0,
+      "gpuUploadMs": 0,
+      "gpuCompletionMs": 0,
+      "cacheHits": 0,
+      "glitchRepairs": 0,
+      "referenceCacheBytes": 21427280,
+      "cpuTileCacheBytes": 0,
+      "gpuTileCacheBytes": 6116280,
+      "zoom": {
+        "mantissa": 2.016984650594263,
+        "exponent": 48
+      },
+      "center": {
+        "x": "-1.6924189018663560553934210385938423591992135756060584543959644400355555555555555555555555555555556",
+        "y": "0.0270928367727409510507928512397164120761761069680848574802930413915686274509803921568627450980392"
+      }
+    },
+    "error": false
+  },
+  "selectedAgain": "deep",
+  "final": {
+    "metric": {
+      "generation": 38,
+      "backend": "webgpu",
+      "partial": false,
+      "startedAt": 6926.900000095367,
+      "cameraResponseMs": 30.09999990463257,
+      "firstTileMs": 0.40000009536743164,
+      "fullRenderMs": null,
+      "tilesTotal": 345,
+      "tilesComplete": 142,
+      "workerReferenceMs": 0,
+      "cpuRenderMs": 0,
+      "gpuUploadMs": 0,
+      "gpuCompletionMs": 0,
+      "cacheHits": 345,
+      "glitchRepairs": 0,
+      "referenceCacheBytes": 21470080,
+      "cpuTileCacheBytes": 0,
+      "gpuTileCacheBytes": 6116280,
+      "zoom": {
+        "mantissa": 1,
+        "exponent": 50
+      },
+      "center": {
+        "x": "-1.74006238257933990522084416706582563829664172043617186688",
+        "y": "0.02817533977921104899241152114431950968753907674299060857"
+      }
+    },
+    "error": false,
+    "status": "WEBGPU · 41%",
+    "heap": 33132796,
+    "readyState": "complete"
+  },
+  "errors": []
+}

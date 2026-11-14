@@ -1,0 +1,227 @@
+[
+  {
+    "name": "deep-zoom-webgpu",
+    "route": "/exhibits/mandelbrot",
+    "frames": 27,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/mandelbrot",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "preset": "deep",
+      "metric": {
+        "generation": 10,
+        "backend": "webgpu",
+        "partial": false,
+        "startedAt": 2225.2000002861023,
+        "cameraResponseMs": null,
+        "firstTileMs": null,
+        "fullRenderMs": null,
+        "tilesTotal": 345,
+        "tilesComplete": 0,
+        "workerReferenceMs": 0,
+        "cpuRenderMs": 0,
+        "gpuUploadMs": 0,
+        "gpuCompletionMs": 0,
+        "cacheHits": 0,
+        "glitchRepairs": 0,
+        "referenceCacheBytes": 1192800,
+        "cpuTileCacheBytes": 0,
+        "gpuTileCacheBytes": 2621440,
+        "zoom": {
+          "mantissa": 1,
+          "exponent": 50
+        },
+        "center": {
+          "x": "-1.74006238257933990522084416706582563829664172043617186688",
+          "y": "0.02817533977921104899241152114431950968753907674299060857"
+        }
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "weather-remembered",
+    "route": "/exhibits/attractors",
+    "frames": 29,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/attractors",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "moved": true
+    },
+    "errors": []
+  },
+  {
+    "name": "gravity-throw",
+    "route": "/exhibits/gravity",
+    "frames": 24,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/gravity",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "mass": 0.5,
+      "release": null
+    },
+    "errors": []
+  },
+  {
+    "name": "fluid-current",
+    "route": "/exhibits/fluid",
+    "frames": 28,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/fluid",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "gesture": "pigment current plus vortex preset"
+    },
+    "errors": []
+  },
+  {
+    "name": "adder-calculation",
+    "route": "/exhibits/adder",
+    "frames": 40,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/adder",
+      "title": "THE ADDER",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "result": "5 + 3 = 8",
+      "binary": "1000",
+      "gates": 5
+    },
+    "errors": []
+  },
+  {
+    "name": "inside-the-machine",
+    "route": "/exhibits/machine",
+    "frames": 27,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/machine",
+      "title": "Give it a job.",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "started": true
+    },
+    "errors": []
+  },
+  {
+    "name": "neural-training",
+    "route": "/exhibits/neural",
+    "frames": 28,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/neural",
+      "title": "Show it a pattern.",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "examples": "2 EXAMPLES \u00b7 1 GUESSED RIGHT",
+      "started": "Pause learning \u2161"
+    },
+    "errors": []
+  },
+  {
+    "name": "logic-circuit",
+    "route": "/exhibits/logic",
+    "frames": 32,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/logic",
+      "title": "Make a light obey.",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "lamp": "1",
+      "status": "LIVE CIRCUIT"
+    },
+    "errors": []
+  },
+  {
+    "name": "growth-composition",
+    "route": "/exhibits/lsystem",
+    "frames": 30,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/lsystem",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "preset": "fern",
+      "growth": {
+        "kind": "fern",
+        "total": 10472,
+        "progress": 1936,
+        "maxDepth": 3,
+        "depthCounts": {
+          "0": 392,
+          "1": 1120,
+          "2": 8960
+        }
+      }
+    },
+    "errors": []
+  },
+  {
+    "name": "logic-circuit-build",
+    "route": "/exhibits/logic",
+    "frames": 16,
+    "metrics": {
+      "url": "http://127.0.0.1:5181/exhibits/logic",
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false
+    },
+    "actionResult": {
+      "component": "XOR",
+      "connections": [
+        "A to XOR input 1",
+        "B to XOR input 2",
+        "XOR to lamp"
+      ],
+      "lamp": "1",
+      "status": "LIVE CIRCUIT"
+    },
+    "errors": []
+  }
+]

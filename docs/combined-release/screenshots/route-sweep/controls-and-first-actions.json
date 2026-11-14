@@ -1,0 +1,1107 @@
+[
+  {
+    "id": "mandelbrot",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        457
+      ],
+      "selects": [
+        {
+          "label": "Cartography The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Satellite filament · 10⁵⁰× Current view",
+          "value": "overview",
+          "options": [
+            "The whole set",
+            "Seahorse valley",
+            "The whirlpool",
+            "Miniature Mandelbrot",
+            "Filament lace",
+            "Satellite antenna",
+            "Satellite filament · 10⁵⁰×",
+            "Current view"
+          ]
+        },
+        {
+          "label": "Pigment Abyss Mineral Twilight Ice Ember",
+          "value": "abyss",
+          "options": [
+            "Abyss",
+            "Mineral",
+            "Twilight",
+            "Ice",
+            "Ember"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Escape detail 680",
+          "value": "680",
+          "min": "160",
+          "max": "4000"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "−",
+          "aria": "Zoom out",
+          "disabled": false
+        },
+        {
+          "text": "+",
+          "aria": "Zoom in",
+          "disabled": false
+        },
+        {
+          "text": "Reset",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Mandelbrot",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Julia",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": false,
+    "afterAction": null,
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "fluid",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        698
+      ],
+      "selects": [
+        {
+          "label": "Rendering style Silk · flowing ribbons Ink · dense pigment Smoke · soft volume Electric · luminous folds",
+          "value": "silk",
+          "options": [
+            "Silk · flowing ribbons",
+            "Ink · dense pigment",
+            "Smoke · soft volume",
+            "Electric · luminous folds"
+          ]
+        },
+        {
+          "label": "Pigment Aurora Wild petal Ember Violet hour Moon pearl",
+          "value": "aurora",
+          "options": [
+            "Aurora",
+            "Wild petal",
+            "Ember",
+            "Violet hour",
+            "Moon pearl"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Brush width 42 px",
+          "value": "42",
+          "min": "12",
+          "max": "110"
+        },
+        {
+          "label": "Stroke strength 0.72×",
+          "value": "0.7",
+          "min": "0.15",
+          "max": "1.8"
+        },
+        {
+          "label": "Swirl strength · vorticity 16",
+          "value": "16",
+          "min": "0",
+          "max": "32"
+        },
+        {
+          "label": "Flow resistance · viscosity soft",
+          "value": "0.12",
+          "min": "0",
+          "max": "0.9"
+        },
+        {
+          "label": "Colour persistence 99.9%",
+          "value": "0.999",
+          "min": "0.96",
+          "max": "0.999"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Crossing",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Vortex",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Quiet",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Drifting",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Strokes only",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Clear the water ↺",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "boids",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        510
+      ],
+      "selects": [
+        {
+          "label": "Behavioural scene Silver murmuration Predator and prey Emergent vortex Competing populations Chaotic migration",
+          "value": "murmuration",
+          "options": [
+            "Silver murmuration",
+            "Predator and prey",
+            "Emergent vortex",
+            "Competing populations",
+            "Chaotic migration"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Population 230",
+          "value": "240",
+          "min": "120",
+          "max": "1400"
+        },
+        {
+          "label": "Pace 1.6×",
+          "value": "1.55",
+          "min": "0.55",
+          "max": "4.2"
+        },
+        {
+          "label": "Awareness 104 px",
+          "value": "104",
+          "min": "28",
+          "max": "132"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Attract",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Repel",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Barrier",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Food",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Clear field marks ×",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Re-seed system ↻",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "attractors",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        592
+      ],
+      "selects": [
+        {
+          "label": "Dynamical system Lorenz · butterfly Rössler · ribbon Thomas · cyclic Aizawa · tangled torus Halvorsen · three-fold",
+          "value": "lorenz",
+          "options": [
+            "Lorenz · butterfly",
+            "Rössler · ribbon",
+            "Thomas · cyclic",
+            "Aizawa · tangled torus",
+            "Halvorsen · three-fold"
+          ]
+        },
+        {
+          "label": "Configuration Classic butterfly Near transition Wide wings Custom",
+          "value": "classic",
+          "options": [
+            "Classic butterfly",
+            "Near transition",
+            "Wide wings",
+            "Custom"
+          ]
+        },
+        {
+          "label": "Light Polar light Northern green Ember Glacial glass",
+          "value": "polar",
+          "options": [
+            "Polar light",
+            "Northern green",
+            "Ember",
+            "Glacial glass"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Lorenz ρ · bend 28.0",
+          "value": "28",
+          "min": "10",
+          "max": "45"
+        },
+        {
+          "label": "Lorenz σ · x response 10.0",
+          "value": "10",
+          "min": "5",
+          "max": "18"
+        },
+        {
+          "label": "Lorenz β · z damping 2.67",
+          "value": "2.67",
+          "min": "1",
+          "max": "5"
+        },
+        {
+          "label": "Simulation speed 1.8×",
+          "value": "1.8",
+          "min": "0.25",
+          "max": "4"
+        },
+        {
+          "label": "Trail length 16k points",
+          "value": "16000",
+          "min": "2500",
+          "max": "28000"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Begin the orbit again ↺",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": false,
+    "afterAction": null,
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "reaction",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        672
+      ],
+      "selects": [
+        {
+          "label": "Reaction regime Pearl field Coral branching Labyrinth Traveling pulses Replication",
+          "value": "coral",
+          "options": [
+            "Pearl field",
+            "Coral branching",
+            "Labyrinth",
+            "Traveling pulses",
+            "Replication"
+          ]
+        },
+        {
+          "label": "Pigment River stone Red coral Verdigris Ultraviolet Warm earth",
+          "value": "verdigris",
+          "options": [
+            "River stone",
+            "Red coral",
+            "Verdigris",
+            "Ultraviolet",
+            "Warm earth"
+          ]
+        },
+        {
+          "label": "Simulation detail High detail Balanced",
+          "value": "detail",
+          "options": [
+            "High detail",
+            "Balanced"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Fresh supply · feed 0.0545",
+          "value": "0.0545",
+          "min": "0.012",
+          "max": "0.075"
+        },
+        {
+          "label": "Pattern removal · kill 0.0620",
+          "value": "0.062",
+          "min": "0.035",
+          "max": "0.075"
+        },
+        {
+          "label": "Diffusion 1.00",
+          "value": "1",
+          "min": "0.55",
+          "max": "1.45"
+        },
+        {
+          "label": "Reaction speed 3 steps/frame",
+          "value": "3",
+          "min": "1",
+          "max": "5"
+        },
+        {
+          "label": "Brush radius 28 px",
+          "value": "28",
+          "min": "8",
+          "max": "72"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Seed",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Erase",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Begin a new pattern ↻",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "lsystem",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        559
+      ],
+      "selects": [
+        {
+          "label": "Growth form Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passage Sierpiński pathway",
+          "value": "fern",
+          "options": [
+            "Wind-shaped tree",
+            "Unfurling fern",
+            "Branching coral",
+            "Sea fan",
+            "Folded coastline",
+            "Paper dragon",
+            "Hilbert passage",
+            "Sierpiński pathway"
+          ]
+        },
+        {
+          "label": "Pigment Moss and lichen Winter glass Autumn ember Ultraviolet garden",
+          "value": "sage",
+          "options": [
+            "Moss and lichen",
+            "Winter glass",
+            "Autumn ember",
+            "Ultraviolet garden"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Generations 6",
+          "value": "6",
+          "min": "1",
+          "max": "6"
+        },
+        {
+          "label": "Branch angle 28.0°",
+          "value": "28",
+          "min": "8",
+          "max": "112"
+        },
+        {
+          "label": "Wind / asymmetry 26%",
+          "value": "0.26",
+          "min": "0",
+          "max": "0.65"
+        },
+        {
+          "label": "Ink weight 2.4",
+          "value": "2.4",
+          "min": "0.6",
+          "max": "4"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Replay the growth ↗",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Pause growth Ⅱ",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Let the wind decide ↻",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "gravity",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        477
+      ],
+      "selects": [
+        {
+          "label": "Initial system A small solar system Binary stars Three-body chaos Orbital instability",
+          "value": "solar",
+          "options": [
+            "A small solar system",
+            "Binary stars",
+            "Three-body chaos",
+            "Orbital instability"
+          ]
+        },
+        {
+          "label": "Collision response Merge · conserve momentum Elastic bounce Ignore collisions",
+          "value": "merge",
+          "options": [
+            "Merge · conserve momentum",
+            "Elastic bounce",
+            "Ignore collisions"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Simulation speed 1.00×",
+          "value": "1",
+          "min": "0.25",
+          "max": "2.2"
+        },
+        {
+          "label": "New body's mass · pull 2.0",
+          "value": "2",
+          "min": "0.2",
+          "max": "30"
+        },
+        {
+          "label": "Launch speed 4.0",
+          "value": "4",
+          "min": "0.5",
+          "max": "9"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Trails on",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Predict orbit",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Reset scene",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "machine",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        703
+      ],
+      "selects": [
+        {
+          "label": "Load a task Add two numbers Check whether equal Store and retrieve Count in a loop",
+          "value": "sum",
+          "options": [
+            "Add two numbers",
+            "Check whether equal",
+            "Store and retrieve",
+            "Count in a loop"
+          ]
+        }
+      ],
+      "ranges": [],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": false,
+    "afterAction": null,
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "neural",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        493
+      ],
+      "selects": [
+        {
+          "label": "Training pattern Opposite corners Inside the ring Across a diagonal My own examples",
+          "value": "xor",
+          "options": [
+            "Opposite corners",
+            "Inside the ring",
+            "Across a diagonal",
+            "My own examples"
+          ]
+        },
+        {
+          "label": "Neurons in each hidden layer 3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
+          "value": "5",
+          "options": [
+            "3 neurons",
+            "4 neurons",
+            "5 neurons",
+            "6 neurons",
+            "8 neurons"
+          ]
+        },
+        {
+          "label": "Number of hidden layers One layer Two layers",
+          "value": "1",
+          "options": [
+            "One layer",
+            "Two layers"
+          ]
+        },
+        {
+          "label": "Activation function tanh sigmoid ReLU",
+          "value": "tanh",
+          "options": [
+            "tanh",
+            "sigmoid",
+            "ReLU"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Learning rate 0.080",
+          "value": "0.08",
+          "min": "0.01",
+          "max": "0.22"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Reset the weights",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": false,
+    "afterAction": null,
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "logic",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        431
+      ],
+      "selects": [
+        {
+          "label": "Load a circuit Both switches · AND Either switch · OR Different switches · XOR Half adder Full adder 2-to-1 multiplexer Two-bit adder",
+          "value": "and",
+          "options": [
+            "Both switches · AND",
+            "Either switch · OR",
+            "Different switches · XOR",
+            "Half adder",
+            "Full adder",
+            "2-to-1 multiplexer",
+            "Two-bit adder"
+          ]
+        },
+        {
+          "label": "Gate to place AND OR NOT XOR NAND NOR",
+          "value": "and",
+          "options": [
+            "AND",
+            "OR",
+            "NOT",
+            "XOR",
+            "NAND",
+            "NOR"
+          ]
+        },
+        {
+          "label": "",
+          "value": "a",
+          "options": [
+            "INPUT A",
+            "INPUT B",
+            "AND GATE"
+          ]
+        },
+        {
+          "label": "",
+          "value": "gate",
+          "options": [
+            "AND GATE",
+            "OUTPUT LAMP"
+          ]
+        },
+        {
+          "label": "",
+          "value": "0",
+          "options": [
+            "Input 1",
+            "Input 2"
+          ]
+        }
+      ],
+      "ranges": [],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Place AND with pointer",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Add AND here",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Clear board",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Undo",
+          "aria": null,
+          "disabled": true
+        },
+        {
+          "text": "Redo",
+          "aria": null,
+          "disabled": true
+        },
+        {
+          "text": "Restore starter",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": false,
+    "afterAction": null,
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "forces",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        357
+      ],
+      "selects": [
+        {
+          "label": "Charge arrangement Electric dipole Quadrupole A charged ring Uneven cluster",
+          "value": "dipole",
+          "options": [
+            "Electric dipole",
+            "Quadrupole",
+            "A charged ring",
+            "Uneven cluster"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Test-particle charge 1.00×",
+          "value": "1",
+          "min": "0.3",
+          "max": "2"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Potential on",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Field lines on",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Trajectories on",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Clear particles",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Restore charges",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "automata",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        420
+      ],
+      "selects": [
+        {
+          "label": "Rule system Conway · B3/S23 HighLife · B36/S23 Seeds · B2/S Brian's Brain",
+          "value": "life",
+          "options": [
+            "Conway · B3/S23",
+            "HighLife · B36/S23",
+            "Seeds · B2/S",
+            "Brian's Brain"
+          ]
+        },
+        {
+          "label": "Starting pattern Glider Lightweight spaceship Pulsar R-pentomino Acorn Pulsar garden Pulsar trio Random field Empty board Your drawing",
+          "value": "pulsarTrio",
+          "options": [
+            "Glider",
+            "Lightweight spaceship",
+            "Pulsar",
+            "R-pentomino",
+            "Acorn",
+            "Pulsar garden",
+            "Pulsar trio",
+            "Random field",
+            "Empty board",
+            "Your drawing"
+          ]
+        },
+        {
+          "label": "Rendering Age spectrum Porcelain Ember",
+          "value": "age",
+          "options": [
+            "Age spectrum",
+            "Porcelain",
+            "Ember"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Generation rate 8 gen/s",
+          "value": "8",
+          "min": "1",
+          "max": "18"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        },
+        {
+          "text": "Step once",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Pause",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Randomize",
+          "aria": null,
+          "disabled": false
+        },
+        {
+          "text": "Clear cells",
+          "aria": null,
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": true,
+    "afterAction": {
+      "hint": false
+    },
+    "closed": true,
+    "errors": []
+  },
+  {
+    "id": "adder",
+    "loaded": true,
+    "opened": true,
+    "controls": {
+      "panel": true,
+      "open": true,
+      "expanded": "true",
+      "rect": [
+        356,
+        395
+      ],
+      "selects": [
+        {
+          "label": "Circuit width 4-bit · 0–15 8-bit · 0–255 16-bit · 0–65,535",
+          "value": "4",
+          "options": [
+            "4-bit · 0–15",
+            "8-bit · 0–255",
+            "16-bit · 0–65,535"
+          ]
+        },
+        {
+          "label": "Carry architecture Ripple carry Kogge–Stone look-ahead",
+          "value": "ripple",
+          "options": [
+            "Ripple carry",
+            "Kogge–Stone look-ahead"
+          ]
+        }
+      ],
+      "ranges": [
+        {
+          "label": "Signal speed 1×",
+          "value": "1",
+          "min": "0.5",
+          "max": "2"
+        }
+      ],
+      "actions": [
+        {
+          "text": "",
+          "aria": "Close controls",
+          "disabled": false
+        }
+      ]
+    },
+    "firstAction": false,
+    "afterAction": null,
+    "closed": true,
+    "errors": []
+  }
+]
