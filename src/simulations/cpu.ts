@@ -1,7 +1,15 @@
 export type Opcode = 'LDI' | 'MOV' | 'ADD' | 'SUB' | 'MUL' | 'LOAD' | 'STORE' | 'OUT' | 'JMP' | 'JNZ' | 'HLT'
+export type CpuDemoTask = 'sum' | 'compare' | 'memory' | 'count'
 export type Instruction = { op: Opcode; args: string[]; source: string }
 export type CpuState = { registers: Record<string, number>; pc: number; ir: Instruction | null; memory: number[]; output: number; halted: boolean; cycles: number; transfer: string[]; error: string | null }
 const opcodes = new Set<Opcode>(['LDI', 'MOV', 'ADD', 'SUB', 'MUL', 'LOAD', 'STORE', 'OUT', 'JMP', 'JNZ', 'HLT'])
+
+export function createCpuDemoProgram(task: CpuDemoTask, a: number, b: number): string {
+  if (task === 'sum') return `LDI A, ${a}\nLDI B, ${b}\nADD A, B\nOUT A\nHLT`
+  if (task === 'compare') return `LDI A, ${a}\nLDI B, ${b}\nSUB A, B\nJNZ A, 7\nLDI C, 1\nOUT C\nJMP 9\nLDI C, 0\nOUT C\nHLT`
+  if (task === 'memory') return `LDI A, ${a}\nSTORE 3, A\nLOAD B, 3\nOUT B\nHLT`
+  return 'LDI A, 0\nLDI B, 1\nLDI C, 5\nADD A, B\nSUB C, B\nJNZ C, 3\nOUT A\nHLT'
+}
 
 export function parseProgram(source: string): Instruction[] {
   return source.split(/\r?\n/).map((line) => line.split(';')[0].trim()).filter(Boolean).map((line) => {

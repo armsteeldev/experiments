@@ -68,6 +68,20 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
   assert.equal(state.registers.A, 12)
   assert.equal(state.output, 12)
   assert.equal(state.halted, true)
+  const runDemo = (task, a, b) => {
+    const instructions = cpu.parseProgram(cpu.createCpuDemoProgram(task, a, b))
+    const result = cpu.createCpuState()
+    for (let i = 0; i < 40 && !result.halted; i++) cpu.executeCpuCycle(result, instructions)
+    assert.equal(result.halted, true, `${task} demo halts through actual CPU instructions`)
+    return result
+  }
+  assert.equal(runDemo('sum', 5, 3).output, 8, 'Task-first addition executes the submitted values on the CPU')
+  assert.equal(runDemo('compare', 7, 7).output, 1, 'The comparison program reports equal values through its branch')
+  assert.equal(runDemo('compare', 7, 5).output, 0, 'The comparison program reports unequal values through its branch')
+  const memoryDemo = runDemo('memory', 42, 0)
+  assert.equal(memoryDemo.memory[3], 42, 'The task-first memory program stores a value in RAM')
+  assert.equal(memoryDemo.output, 42, 'The task-first memory program retrieves its stored value')
+  assert.equal(runDemo('count', 0, 0).output, 5, 'The task-first counter reaches five by looping')
   const memoryProgram = cpu.parseProgram('LDI A, 42\nSTORE 3, A\nLOAD B, 3\nOUT B\nHLT')
   const memoryState = cpu.createCpuState()
   for (let i = 0; i < 8 && !memoryState.halted; i++) cpu.executeCpuCycle(memoryState, memoryProgram)
@@ -91,6 +105,14 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
     { x: [-1, -1], y: 1 }, { x: [-1, 1], y: 0 },
     { x: [1, -1], y: 0 }, { x: [1, 1], y: 1 },
   ]
+  let seed = 801
+  const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 }
+  const visitorPattern = Array.from({ length: 48 }, () => { const x = random() * 2 - 1, y = random() * 2 - 1; return { x: [x, y], y: Number(x * y > 0) } })
+  const visitorNetwork = neural.createNetwork([2, 5, 1], 1)
+  const visitorStart = neural.accuracy(visitorNetwork, visitorPattern, 'tanh')
+  for (let i = 0; i < 75; i++) neural.trainNetworkStep(visitorNetwork, visitorPattern, 'tanh', .08)
+  assert.ok(neural.accuracy(visitorNetwork, visitorPattern, 'tanh') >= .9, 'The exhibit’s deterministic starter network learns its visible XOR pattern in a short training run')
+  assert.ok(neural.accuracy(visitorNetwork, visitorPattern, 'tanh') > visitorStart + .35, 'Training changes the network’s predictions for the starter examples')
   const net = neural.createNetwork([2, 6, 1], 31)
   const startLoss = samples.reduce((sum, sample) => sum + .5 * (neural.forwardNetwork(net, sample.x, 'tanh').output[0] - (sample.y * 2 - 1)) ** 2, 0) / samples.length
   for (let i = 0; i < 1500; i++) neural.trainNetworkStep(net, samples, 'tanh', .08)
