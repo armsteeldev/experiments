@@ -66,6 +66,8 @@ Real CDP mouse drags and emulated touch pointer events were used, not just simul
 
 Detailed coordinates, feedback, and body state are in [`gravity-interaction-validation.json`](screenshots/interactions/gravity-interaction-validation.json). The small body's hit area also selected correctly from a 15 px offset at minimum, default, and maximum zoom (scales 20, 87.6, and 480) while the simulation was paused: [`gravity-hitbox-zoom-validation.json`](screenshots/interactions/gravity-hitbox-zoom-validation.json). These tests establish pointer/touch-emulation behavior, not physical touchscreen feel.
 
+With a 2.0-mass body in a launched circular orbit, the visible prediction was compared with the body's rendered position 200, 500, and 1,000 ms later. The errors were about 5.5 screen pixels at each horizon (roughly half the prediction polyline's point spacing), with no browser exception: [`gravity-prediction-accuracy-validation.json`](screenshots/interactions/gravity-prediction-accuracy-validation.json). The overlay is [`gravity-predicted-trajectory-overlay.png`](screenshots/interactions/gravity-predicted-trajectory-overlay.png).
+
 ## Computing exhibits
 
 - **The Adder:** browser calculations returned 2 for 1+1 (`0010`) and 8 for 5+3 (`1000`). The screen ties decimal inputs to binary places, gate signals, carry, and result. The mobile 5+3 state at 390 px has no horizontal overflow. A full 16-bit Kogge–Stone calculation completed with result 2 (`0000000000000010`) and carry 0; see [`adder-advanced-final-validation.json`](screenshots/interactions/adder-advanced-final-validation.json).

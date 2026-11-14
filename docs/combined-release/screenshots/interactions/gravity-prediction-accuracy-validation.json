@@ -1,0 +1,94 @@
+{
+  "initial": {
+    "panelOpen": false,
+    "canvas": [
+      -8.646809577941895,
+      -5.404286861419678,
+      1457.2935791015625,
+      910.80859375
+    ]
+  },
+  "launchButton": {
+    "x": 315.21205139160156,
+    "y": 718.3234252929688,
+    "w": 107.05160522460938,
+    "h": 40.4803466796875,
+    "text": "＋ Launch body"
+  },
+  "launchArmed": true,
+  "launchedLoaded": true,
+  "launched": {
+    "hud": "07 BODIES",
+    "selected": true,
+    "status": "Circular orbit launched around the most massive body."
+  },
+  "controlsDock": {
+    "x": 831.953125,
+    "y": 849,
+    "w": 42,
+    "h": 42,
+    "text": ""
+  },
+  "panelOpen": true,
+  "predictionButton": {
+    "x": 1243.0003051757812,
+    "y": 450.0003356933594,
+    "w": 101.3436279296875,
+    "h": 39.99993896484375,
+    "text": "Predict orbit"
+  },
+  "predictionOnLoaded": true,
+  "predictionCaptured": true,
+  "report": {
+    "positionSamples": 164,
+    "predictionSamples": 136,
+    "frameIntervalMs": 16.8,
+    "selectedBodyPixelRadius": 5.08,
+    "matched": true,
+    "checks": [
+      {
+        "horizonMs": 200,
+        "actualTimeMs": 198.1,
+        "predictionIndex": 6,
+        "predicted": [
+          703.0502703459732,
+          648.7979582399269
+        ],
+        "actual": {
+          "x": 708.5262421789121,
+          "y": 649.4494655843081
+        },
+        "pixelError": 5.51
+      },
+      {
+        "horizonMs": 500,
+        "actualTimeMs": 497.7,
+        "predictionIndex": 15,
+        "predicted": [
+          612.1443099956376,
+          611.6267905917006
+        ],
+        "actual": {
+          "x": 616.6033826150604,
+          "y": 614.8761060560026
+        },
+        "pixelError": 5.52
+      },
+      {
+        "horizonMs": 1000,
+        "actualTimeMs": 998.1,
+        "predictionIndex": 30,
+        "predicted": [
+          535.2821684719098,
+          470.5913741970834
+        ],
+        "actual": {
+          "x": 535.7498830235187,
+          "y": 476.09636993170307
+        },
+        "pixelError": 5.52
+      }
+    ]
+  },
+  "errors": []
+}
