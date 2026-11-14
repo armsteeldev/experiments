@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { bodyRadius, circularOrbitVelocity, gravityEnergy, integrateGravity, type CollisionMode, type GravityBody } from '../simulations/gravity'
 import './ExpandedExhibits.css'
 
@@ -36,6 +37,7 @@ type Params = { paused: boolean; speed: number; collision: CollisionMode; trails
 
 export default function GravityPlayground({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hint = useDiscoveryHint('gravity')
   const [scene, setScene] = useState<Scene>(() => sceneNames.some(([key]) => key === stateFromUrl?.scene) ? stateFromUrl?.scene as Scene : 'solar')
   const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 1)
   const [collision, setCollision] = useState<CollisionMode>(() => ['merge','bounce','pass'].includes(String(stateFromUrl?.collision)) ? stateFromUrl?.collision as CollisionMode : 'merge')
@@ -66,6 +68,20 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     setReadout({ bodies: s.bodies.length, energy: '—' })
     setLaunchMode(false)
     setLaunchFeedback('')
+  }
+  const launchCircularBody = () => {
+    const s = state.current
+    const source = s.bodies.reduce<GravityBody | null>((largest, body) => !largest || body.mass > largest.mass ? body : largest, null)
+    if (s.bodies.length >= 32) { setLaunchFeedback('This scene is full. Reset it to launch another body.'); return }
+    const child = { id: 0, x: 0, y: 0, vx: 0, vy: 0, mass, color: '' }
+    const radius = source ? Math.max(bodyRadius(source) + bodyRadius(child) + .16, source.mass / (22 * 22) * 1.1) : 1
+    const x = source ? source.x + radius : 0, y = source?.y ?? 0
+    const velocity = source ? circularOrbitVelocity(source, x, y) : { vx: launchSpeed, vy: 0 }
+    const body = { id: nextId++, x, y, ...velocity, mass, color: planetColors[nextId % planetColors.length], trail: [] }
+    s.bodies.push(body); s.revision++; setSelected(body.id)
+    setReadout({ bodies: s.bodies.length, energy: gravityEnergy(s.bodies).toFixed(1) })
+    setLaunchFeedback('Circular orbit launched around the most massive body.')
+    hint.dismiss()
   }
   useEffect(() => {
     const canvas = canvasRef.current, ctx = canvas?.getContext('2d', { alpha: false })
@@ -157,6 +173,7 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
   useEffect(() => { resetScene() }, [scene])
 
   const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    hint.dismiss()
     const canvas = canvasRef.current, s = state.current; if (!canvas) return
     const rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top
     const wx = s.cameraX + (x - s.width / 2) / s.scale, wy = s.cameraY + (y - s.height / 2) / s.scale
@@ -213,7 +230,8 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
   }
 
   return <section className="experiment-surface gravity-surface" aria-label="Gravity simulator">
-    <canvas ref={canvasRef} className="experiment-canvas gravity-canvas" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    <canvas ref={canvasRef} className="experiment-canvas gravity-canvas" aria-label="Moving bodies pull on one another. Drag a body to move it; drag empty space to pan." aria-describedby={hint.visible ? 'gravity-first-move' : undefined} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    {hint.visible ? <aside className="scene-nudge scene-nudge-high" id="gravity-first-move" role="note"><span>Try this · Gravity Playground</span><p>Launch a small moon, then change its path. More mass pulls harder; a sideways launch can bend the orbit.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={launchCircularBody}>Launch a gentle orbit</button></aside> : <button className="scene-nudge-reopen scene-nudge-reopen-high" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <div className="exp-hud gravity-hud"><span className="exp-eyebrow">N-BODY DYNAMICS <i /></span><strong>{readout.bodies.toString().padStart(2, '0')} <small>BODIES</small></strong><span>MECHANICAL ENERGY <b>{readout.energy}</b></span></div>
     <div className="exp-prompt gravity-prompt">{launchMode ? 'CLICK TO PLACE A CIRCULAR ORBIT · DRAG TO SET A CUSTOM VELOCITY' : launchFeedback || 'DRAG A BODY TO REPOSITION · DRAG EMPTY SPACE TO PAN · SCROLL TO ZOOM'}</div>
     <div className="gravity-tools"><button className={launchMode ? 'selected' : ''} onClick={() => { setLaunchMode((v) => !v); setLaunchFeedback('') }} aria-pressed={launchMode}><span>＋</span> Launch body</button>{selectedBody && <button onClick={removeSelected} aria-label="Remove selected body">Remove body</button>}<button onClick={() => setSelected(null)} aria-label="Clear body selection">Clear focus</button></div>
@@ -222,11 +240,11 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
       <SelectControl label="Initial system" value={scene} options={sceneNames} onChange={(value) => setScene(value as Scene)} />
       <RangeControl label="Simulation speed" value={speed} min={.25} max={2.2} step={.05} format={(v) => `${v.toFixed(2)}×`} onChange={setSpeed} />
       {selectedBody && <><RangeControl label="Focused mass" value={selectedBody.mass} min={.05} max={1200} step={.05} format={(v) => v.toFixed(2)} onChange={(v)=>adjustSelected('mass',v)} /><RangeControl label="Velocity · x" value={selectedBody.vx} min={-35} max={35} step={.05} format={(v)=>v.toFixed(2)} onChange={(v)=>adjustSelected('vx',v)} /><RangeControl label="Velocity · y" value={selectedBody.vy} min={-35} max={35} step={.05} format={(v)=>v.toFixed(2)} onChange={(v)=>adjustSelected('vy',v)} /></>}
-      <RangeControl label="New body mass" value={mass} min={.2} max={30} step={.2} format={(v) => v.toFixed(1)} onChange={setMass} />
-      <RangeControl label="Launch strength" value={launchSpeed} min={.5} max={9} step={.1} format={(v) => v.toFixed(1)} onChange={setLaunchSpeed} />
+      <RangeControl label="New body's mass · pull" value={mass} min={.2} max={30} step={.2} format={(v) => v.toFixed(1)} onChange={setMass} />
+      <RangeControl label="Launch speed" value={launchSpeed} min={.5} max={9} step={.1} format={(v) => v.toFixed(1)} onChange={setLaunchSpeed} />
       <SelectControl label="Collision response" value={collision} options={[["merge", "Merge · conserve momentum"], ["bounce", "Elastic bounce"], ["pass", "Ignore collisions"]]} onChange={(value) => setCollision(value as CollisionMode)} />
       <ActionRow><button className="small-action" onClick={() => setTrails((v) => !v)}>{trails ? 'Trails on' : 'Trails off'}</button><button className="small-action" onClick={() => setPrediction((v) => !v)}>{prediction ? 'Prediction on' : 'Predict orbit'}</button><button className="small-action" onClick={resetScene} title="Reset bodies and refit the current scene">Reset scene</button></ActionRow>
-      <p className="control-note">Click Launch body, then click space to place a near-circular orbit around the most massive body. Drag instead to set a custom velocity. The dashed path predicts the selected body's future; the model holds up to 32 bodies.</p>
+      <p className="control-note">Click Launch body, then click space to place a near-circular orbit around the most massive body. Drag instead to set a custom velocity. More mass pulls harder; launch speed changes the path. The dashed line predicts the selected body’s future. Values use the simulation’s scale-free model units, not measured planetary units; the model holds up to 32 bodies.</p>
     </ControlPanel>
   </section>
 }

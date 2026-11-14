@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 
 type Species = 0 | 1 | 2
 type Agent = { x: number; y: number; vx: number; vy: number; oldX: number; oldY: number; species: Species; plumage: number; size: number }
@@ -24,6 +25,7 @@ function limit(x: number, y: number, max: number): [number, number] {
 }
 
 export default function Boids({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const hint = useDiscoveryHint('boids')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const agents = useRef<Agent[]>([])
   const markers = useRef<Marker[]>([])
@@ -32,7 +34,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || (window.matchMedia('(max-width: 720px)').matches ? 130 : 230), 120, 1400))
   const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 1.55)
   const [radius, setRadius] = useState(() => Number(stateFromUrl?.radius) || 104)
-  const [tool, setTool] = useState(() => typeof stateFromUrl?.tool === 'string' ? stateFromUrl.tool : 'attract')
+  const [tool, setTool] = useState(() => typeof stateFromUrl?.tool === 'string' ? stateFromUrl.tool : 'food')
   const [seed, setSeed] = useState(() => Number(stateFromUrl?.seed) || 17)
   const params = useRef({ scenario, population, speed, radius, tool, seed, paused })
   params.current = { scenario, population, speed, radius, tool, seed, paused }
@@ -330,17 +332,27 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
     return () => { cancelAnimationFrame(raf); resizeObserver.disconnect(); agents.current = []; markers.current = []; drawRef.current = () => {} }
   }, [])
 
-  const addMarker = (event: PointerEvent<HTMLCanvasElement>) => {
-    if (event.button !== 0) return
-    const rect = event.currentTarget.getBoundingClientRect()
-    markers.current.push({ x: event.clientX - rect.left, y: event.clientY - rect.top, kind: tool as Marker['kind'] })
+  const placeMarker = (x: number, y: number, kind: Marker['kind'] = tool as Marker['kind']) => {
+    markers.current.push({ x, y, kind })
     if (markers.current.length > 16) markers.current.shift()
     drawRef.current()
+  }
+  const addMarker = (event: PointerEvent<HTMLCanvasElement>) => {
+    if (event.button !== 0) return
+    hint.dismiss()
+    const rect = event.currentTarget.getBoundingClientRect()
+    placeMarker(event.clientX - rect.left, event.clientY - rect.top)
+  }
+  const placeFoodAtCentre = () => {
+    const rect = canvasRef.current?.getBoundingClientRect()
+    if (rect) placeMarker(rect.width / 2, rect.height / 2, 'food')
+    hint.dismiss()
   }
   const randomize = () => { setSeed((value) => (value * 1664525 + 1013904223) >>> 0 || 1); markers.current = [] }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas boids-canvas" aria-label="Interactive artificial life. Place fields and obstacles among flocking organisms." onPointerDown={addMarker} onContextMenu={(event) => event.preventDefault()} />
+    <canvas ref={canvasRef} className="experiment-canvas boids-canvas" aria-label="Interactive artificial life. Tap to place food that attracts the flock; change the field in controls." aria-describedby={hint.visible ? 'boids-first-move' : undefined} onPointerDown={addMarker} onContextMenu={(event) => event.preventDefault()} />
+    {hint.visible ? <aside className="scene-nudge" id="boids-first-move" role="note"><span>Try this · A Murmuration</span><p>Drop food into the flock and watch nearby birds turn toward it. Every bird follows only its local neighbours.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={placeFoodAtCentre}>Drop food here</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{scenarios[scenario].toUpperCase()} · {population.toLocaleString()} AGENTS</span>
     <ControlPanel title={scenario === 'vortex' ? 'An Emergent Vortex' : 'A Murmuration'} note="SPATIAL ECOLOGY" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Behavioural scene" value={scenario} options={Object.entries(scenarios).map(([key, name]) => [key, name])} onChange={(value) => { setScenario(value as Scenario); markers.current = [] }} />
@@ -348,6 +360,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
       <RangeControl label="Pace" value={speed} min={0.55} max={4.2} step={0.05} onChange={setSpeed} format={(value) => value.toFixed(1) + '×'} />
       <RangeControl label="Awareness" value={radius} min={28} max={132} step={2} onChange={setRadius} format={(value) => value + ' px'} />
       <Segmented label="Place into the field" value={tool} options={[['attract', 'Attract'], ['repel', 'Repel'], ['obstacle', 'Barrier'], ['food', 'Food']]} onChange={setTool} />
+      <p className="control-note">Each bird reacts to nearby flockmates: it keeps space, matches their heading and turns toward the group. Awareness sets how far it looks; food, attractors, repellers and barriers change the surroundings.</p>
       <ActionRow>
         <button className="panel-action" onClick={() => { markers.current = []; drawRef.current() }}><span>Clear field marks</span><i>×</i></button>
         <button className="panel-action" onClick={randomize}><span>Re-seed system</span><i>↻</i></button>

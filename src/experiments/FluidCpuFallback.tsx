@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 
 const MAX_CELLS = 90_000
 const pigment: Record<string, [number, number, number]> = {
@@ -158,6 +159,7 @@ function seedScene(s: FluidState, mode: string, colorName: string) {
 }
 
 export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const hint = useDiscoveryHint('fluid')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const drawRef = useRef<() => void>(() => {})
   const simulation = useRef<FluidState | null>(null)
@@ -298,12 +300,13 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
   }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas fluid-canvas" aria-label="Interactive fluid simulation. Drag to inject colour and motion." onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); setPoint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') setPoint(event) }} onPointerUp={() => { pointer.current = null }} onPointerCancel={() => { pointer.current = null }} />
+    <canvas ref={canvasRef} className="experiment-canvas fluid-canvas" aria-label="Interactive fluid simulation. Drag to inject colour and motion." aria-describedby={hint.visible ? 'fluid-fallback-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); event.currentTarget.setPointerCapture(event.pointerId); setPoint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') setPoint(event) }} onPointerUp={() => { pointer.current = null }} onPointerCancel={() => { pointer.current = null }} />
+    {hint.visible ? <aside className="scene-nudge" id="fluid-fallback-first-move" role="note"><span>Try this · A Quiet Current</span><p>Drag through the colour to stir the water. Your hand adds both a swirl and fresh pigment.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <ControlPanel title="A Quiet Current" note="INCOMPRESSIBLE FLOW" visible={controlsVisible} onClose={onCloseControls}>
       <div className="preset-row"><span>FLOW</span>{[['still', 'Still'], ['crossing', 'Crossing'], ['vortex', 'Vortex']].map(([key, title]) => <button key={key} className={presetName === key ? 'selected' : ''} onClick={() => seed(key)}>{title}</button>)}</div>
       <SelectControl label="Pigment" value={palette} options={[['aurora', 'Aurora'], ['petal', 'Wild petal'], ['ember', 'Ember'], ['violet', 'Violet hour']]} onChange={setPalette} />
-      <RangeControl label="Viscosity" value={viscosity} min={0} max={0.9} step={0.01} onChange={setViscosity} format={(value) => value < 0.1 ? 'silk' : value < 0.4 ? 'soft' : 'thick'} />
-      <RangeControl label="Dye persistence" value={dissipation} min={0.94} max={0.999} step={0.001} onChange={setDissipation} format={(value) => (value * 100).toFixed(1) + '%'} />
+      <RangeControl label="Flow resistance · viscosity" value={viscosity} min={0} max={0.9} step={0.01} onChange={setViscosity} format={(value) => value < 0.1 ? 'silk' : value < 0.4 ? 'soft' : 'thick'} />
+      <RangeControl label="Colour persistence" value={dissipation} min={0.94} max={0.999} step={0.001} onChange={setDissipation} format={(value) => (value * 100).toFixed(1) + '%'} />
       <button className="panel-action" onClick={clear}><span>Clear the water</span><i>↺</i></button>
       <p className="control-note">Drag to inject momentum and pigment. Opposing strokes fold into vortices and mix as they travel.</p>
     </ControlPanel>

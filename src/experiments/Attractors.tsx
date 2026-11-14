@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 
 type Point3 = { x: number; y: number; z: number }
 type SystemName = 'lorenz' | 'rossler' | 'thomas' | 'aizawa' | 'halvorsen'
@@ -62,6 +63,7 @@ function rk4(p: Point3, dt: number, system: SystemName, q: { rho: number; sigma:
 
 export default function Attractors({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hint = useDiscoveryHint('attractors')
   const path = useRef<Point3[]>([])
   const trajectoryCenter = useRef<Point3>({ x: 0, y: 0, z: 0 })
   const point = useRef<Point3>({ x: 0.1, y: 0, z: 0 })
@@ -280,15 +282,17 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
       : [['classic', 'Canonical orbit'], ['soft', 'Alternative orbit'], ['custom', 'Custom']]
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas attractor-canvas" aria-label="Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    <canvas ref={canvasRef} className="experiment-canvas attractor-canvas" aria-label="Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom." aria-describedby={hint.visible ? 'attractors-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    {hint.visible ? <aside className="scene-nudge" id="attractors-first-move" role="note"><span>Try this · Weather, Remembered</span><p>Drag the butterfly to turn it. Change ρ in Controls to see how a small change can reshape its path.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{systemNames[system].toUpperCase()} · RK4 · {trail.toLocaleString()} POINT TRAIL</span>
     <ControlPanel title="Weather, Remembered" note="STRANGE ATTRACTORS" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Dynamical system" value={system} options={Object.entries(systemNames).map(([key, name]) => [key, name])} onChange={chooseSystem} />
       <SelectControl label="Configuration" value={configuration} options={configurations} onChange={chooseConfiguration} />
+      <p className="control-note">{system === 'lorenz' ? 'Lorenz: ρ changes the fold, σ changes how x responds to y−x, and β damps z.' : system === 'rossler' ? 'Rössler: a changes feedback in y, b sets the upward push in z, and c shifts where the trajectory folds.' : system === 'thomas' ? 'Thomas: b sets how strongly the same damping pulls each of x, y and z back toward the centre.' : system === 'aizawa' ? 'Aizawa: a shapes the vertical response, b shifts the centre of the turning, and c adds a vertical push.' : 'Halvorsen: a controls the damping shared by all three directions; changing it reshapes the orbit.'}</p>
       {system === 'lorenz' ? <>
-        <RangeControl label="ρ · instability" value={rho} min={10} max={45} step={0.1} onChange={(value) => { setRho(value); setConfiguration('custom') }} format={(value) => value.toFixed(1)} />
-        <RangeControl label="σ · coupling" value={sigma} min={5} max={18} step={0.1} onChange={(value) => { setSigma(value); setConfiguration('custom') }} format={(value) => value.toFixed(1)} />
-        <RangeControl label="β · geometry" value={beta} min={1} max={5} step={0.01} onChange={(value) => { setBeta(value); setConfiguration('custom') }} format={(value) => value.toFixed(2)} />
+        <RangeControl label="Lorenz ρ · bend" value={rho} min={10} max={45} step={0.1} onChange={(value) => { setRho(value); setConfiguration('custom') }} format={(value) => value.toFixed(1)} />
+        <RangeControl label="Lorenz σ · x response" value={sigma} min={5} max={18} step={0.1} onChange={(value) => { setSigma(value); setConfiguration('custom') }} format={(value) => value.toFixed(1)} />
+        <RangeControl label="Lorenz β · z damping" value={beta} min={1} max={5} step={0.01} onChange={(value) => { setBeta(value); setConfiguration('custom') }} format={(value) => value.toFixed(2)} />
       </> : system === 'rossler' ? <>
         <RangeControl label="a · growth" value={a} min={0.05} max={0.45} step={0.005} onChange={(value) => { setA(value); setConfiguration('custom') }} format={(value) => value.toFixed(3)} />
         <RangeControl label="b · drift" value={b} min={0.05} max={0.45} step={0.005} onChange={(value) => { setB(value); setConfiguration('custom') }} format={(value) => value.toFixed(3)} />
@@ -303,7 +307,7 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
       <RangeControl label="Simulation speed" value={speed} min={0.25} max={4} step={0.05} onChange={setSpeed} format={(value) => value.toFixed(1) + '×'} />
       <RangeControl label="Trail length" value={trail} min={2500} max={28000} step={500} onChange={setTrail} format={(value) => Math.round(value / 1000) + 'k points'} />
       <button className="panel-action" onClick={() => resetRef.current()}><span>Begin the orbit again</span><i>↺</i></button>
-      <p className="control-note">Rotate and zoom the projection. Every curve is integrated from its system’s differential equations with fourth-order Runge–Kutta.</p>
+      <p className="control-note">These numbers change the equations, so the path itself changes. Rotate and zoom the projection; every curve is integrated with fourth-order Runge–Kutta.</p>
     </ControlPanel>
   </div>
 }

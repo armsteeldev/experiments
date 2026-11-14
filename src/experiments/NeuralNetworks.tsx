@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { accuracy, createNetwork, forwardNetwork, trainNetworkStep, type Activation, type NeuralNetwork, type Sample } from '../simulations/neural'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import './ExpandedExhibits.css'
 
 type DatasetName = 'xor' | 'circle' | 'diagonal'
@@ -27,14 +28,15 @@ function measureLoss(network: NeuralNetwork, samples: readonly Sample[], activat
 
 export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hint = useDiscoveryHint('neural')
   const [dataset, setDataset] = useState<DatasetName>(() => ['xor', 'circle', 'diagonal'].includes(String(stateFromUrl?.dataset)) ? stateFromUrl?.dataset as DatasetName : 'xor')
   const [hidden, setHidden] = useState(() => hiddenSizes.includes(Number(stateFromUrl?.hidden)) ? Number(stateFromUrl?.hidden) : 5)
   const [depth, setDepth] = useState(() => [1, 2].includes(Number(stateFromUrl?.depth)) ? Number(stateFromUrl?.depth) : 1)
   const [activation, setActivation] = useState<Activation>(() => ['tanh', 'sigmoid', 'relu'].includes(String(stateFromUrl?.activation)) ? stateFromUrl?.activation as Activation : 'tanh')
   const [rate, setRate] = useState(() => Number.isFinite(Number(stateFromUrl?.rate)) && Number(stateFromUrl?.rate) >= .01 && Number(stateFromUrl?.rate) <= .22 ? Number(stateFromUrl?.rate) : .08)
   const [training, setTraining] = useState(false)
-  const [loss, setLoss] = useState('0.0000')
-  const [score, setScore] = useState('0%')
+  const [loss, setLoss] = useState('—')
+  const [score, setScore] = useState('—')
   const [input, setInput] = useState<[number, number]>([.38, -.24])
   const network = useRef<NeuralNetwork>(createNetwork([2, 5, 1], 4))
   const samples = useRef(makeDataset(dataset))
@@ -52,11 +54,6 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   useEffect(() => { resetNetwork(dataset, hidden, depth) }, [dataset, hidden, depth])
   useEffect(() => { setTraining(false); setLoss(measureLoss(network.current, samples.current, activation).toFixed(4)); setScore(`${Math.round(accuracy(network.current, samples.current, activation) * 100)}%`) }, [activation])
   useEffect(() => { onShareState({ dataset, hidden, depth, activation, rate }); }, [dataset, hidden, depth, activation, rate, onShareState])
-  useEffect(() => {
-    const timer = window.setTimeout(() => setTraining(true), 700)
-    return () => window.clearTimeout(timer)
-  }, [])
-
   useEffect(() => {
     const canvas = canvasRef.current, ctx = canvas?.getContext('2d', { alpha: false })
     if (!canvas || !ctx) return
@@ -130,24 +127,28 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     const rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top
     const mobile = rect.width < 720, plotX = .06, plotWidth = mobile ? .88 : .56, plotY = mobile ? .25 : .24, plotHeight = mobile ? .36 : .61
     if (x > rect.width * (mobile ? .96 : .65) || x < rect.width * (mobile ? .04 : .04) || y < rect.height * (plotY - .02) || y > rect.height * (plotY + plotHeight + .02)) return
+    hint.dismiss()
     setInput([Math.max(-1, Math.min(1, ((x / rect.width - plotX) / plotWidth) * 2 - 1)), Math.max(-1, Math.min(1, 1 - ((y / rect.height - plotY) / plotHeight) * 2))])
   }
   const currentPrediction = outputValue(forwardNetwork(network.current, input, activation).output[0], activation)
 
   return <section className="experiment-surface neural-surface" aria-label="Trainable neural network">
-    <canvas className="experiment-canvas neural-canvas" ref={canvasRef} onPointerDown={updateInput} onPointerMove={(event) => { if (event.buttons & 1) updateInput(event) }} />
-    <div className="neural-heading"><span className="exp-eyebrow">A SMALL LEARNING MACHINE <i /></span><h2>Watch the boundary <em>move.</em></h2><p>Lines show learned weights; node glow shows activation. <b>{datasets.find(([key]) => key === dataset)?.[1]}</b> · teal = class 1, coral = class 0. Click the map to probe.</p></div>
-    <div className="neural-metrics"><div><span>{training ? 'TRAINING LOSS' : 'CURRENT LOSS'}</span><strong>{loss}</strong></div><div><span>TRAIN ACCURACY</span><strong>{score}</strong></div><div><span>LIVE PREDICTION</span><strong>{currentPrediction.toFixed(3)}</strong></div></div>
-    <div className="neural-training-tools"><button className={training ? 'training' : ''} onClick={() => setTraining((value) => !value)}>{training ? 'Ⅱ  Pause learning' : '▶  Train network'}</button><button onClick={() => resetNetwork()}>Reinitialize</button></div>
-    <div className="neural-input-readout">INPUT POINT <b>x₁ {input[0].toFixed(2)}</b><b>x₂ {input[1].toFixed(2)}</b><span>CLICK THE MAP TO PROBE</span></div>
+    <canvas className="experiment-canvas neural-canvas" ref={canvasRef} aria-label="Prediction map. Teal and coral areas are the network's current guesses; dots are examples. Drag to test a point." aria-describedby={hint.visible ? 'neural-first-move' : 'neural-map-help'} onPointerDown={updateInput} onPointerMove={(event) => { if (event.buttons & 1) updateInput(event) }} />
+    {hint.visible ? <aside className="scene-nudge scene-nudge-neural" id="neural-first-move" role="note"><span>Try this · Neural Networks</span><p>Move the bright point, then press Train. Watch the colour map change around the example dots.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen scene-nudge-neural-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
+    <div className="neural-heading"><span className="exp-eyebrow">A SMALL LEARNING MACHINE <i /></span><h2>Watch the boundary <em>move.</em></h2><p id="neural-map-help">Each dot is an example. Teal and coral show the two groups. Drag a point, then press Train to watch the boundary change.</p></div>
+    <div className="neural-metrics"><div><span>MISMATCH <i>LOSS</i></span><strong>{loss}</strong><small>Lower means guesses are closer to the examples.</small></div><div><span>EXAMPLES CORRECT <i>ACCURACY</i></span><strong>{score}</strong></div><div><span>THIS POINT <i>PREDICTION</i></span><strong>{currentPrediction.toFixed(3)} · {currentPrediction >= .5 ? 'Class 1' : 'Class 0'}</strong><small>{currentPrediction >= .5 ? 'The model colours it teal.' : 'The model colours it coral.'}</small></div></div>
+    <div className="neural-training-tools"><button className={training ? 'training' : ''} onClick={() => { setTraining((value) => !value); hint.dismiss() }}>{training ? 'Ⅱ  Pause training' : '▶  Train the network'}</button><button onClick={() => { resetNetwork(); hint.dismiss() }}>Reset and compare</button></div>
+    <div className="neural-input-readout"><span>POINT BEING TESTED</span><b>x₁ {input[0].toFixed(2)}</b><b>x₂ {input[1].toFixed(2)}</b><small>Use the map or the two sliders in Controls.</small></div>
     <ControlPanel title="Neural Networks" note="Feedforward · backpropagation" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Training examples" value={dataset} options={datasets as [string, string][]} onChange={(value) => setDataset(value as DatasetName)} />
-      <SelectControl label="Hidden neurons" value={String(hidden)} options={hiddenSizes.map((size) => [String(size), `${size} neurons`] as [string,string])} onChange={(value) => setHidden(Number(value))} />
-      <SelectControl label="Hidden layers" value={String(depth)} options={[["1", "One layer"], ["2", "Two layers"]]} onChange={(value) => setDepth(Number(value))} />
-      <SelectControl label="Activation function" value={activation} options={[["tanh", "tanh"], ["sigmoid", "sigmoid"], ["relu", "ReLU"]]} onChange={(value) => setActivation(value as Activation)} />
-      <RangeControl label="Learning rate" value={rate} min={.01} max={.22} step={.005} format={(v) => v.toFixed(3)} onChange={setRate} />
+      <SelectControl label="Neurons in each middle layer" value={String(hidden)} options={hiddenSizes.map((size) => [String(size), `${size} neurons`] as [string,string])} onChange={(value) => setHidden(Number(value))} />
+      <SelectControl label="Number of middle layers" value={String(depth)} options={[["1", "One layer"], ["2", "Two layers"]]} onChange={(value) => setDepth(Number(value))} />
+      <SelectControl label="Neuron response rule · activation" value={activation} options={[["tanh", "tanh"], ["sigmoid", "sigmoid"], ["relu", "ReLU"]]} onChange={(value) => setActivation(value as Activation)} />
+      <RangeControl label="Weight update size · learning rate" value={rate} min={.01} max={.22} step={.005} format={(v) => v.toFixed(3)} onChange={setRate} />
+      <RangeControl label="Test point x₁" value={input[0]} min={-1} max={1} step={.01} format={(v) => v.toFixed(2)} onChange={(v) => setInput(([_, y]) => [v, y])} />
+      <RangeControl label="Test point x₂" value={input[1]} min={-1} max={1} step={.01} format={(v) => v.toFixed(2)} onChange={(v) => setInput(([x]) => [x, v])} />
       <ActionRow><button className="small-action" onClick={() => setTraining((value) => !value)}>{training ? 'Pause training' : 'Train continuously'}</button><button className="small-action" onClick={() => resetNetwork()}>Reset weights</button></ActionRow>
-      <p className="control-note">Online mini-batches update every 65 ms. The map shows the actual network prediction at each sampled point; color marks its class confidence.</p>
+      <p className="control-note">The two labelled groups are classes 0 and 1. This feedforward network learns by backpropagation: neurons combine weighted inputs using an activation rule, and each update adjusts weights to reduce loss. Teal lines carry positive weights, coral lines negative weights; thicker lines have greater magnitude.</p>
     </ControlPanel>
   </section>
 }

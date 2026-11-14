@@ -14,7 +14,16 @@
 .adder-renaissance .adder-result-readout strong { font-size:29px; }
 .adder-renaissance .adder-result-readout small { font-size:7px; }
 .adder-renaissance .adder-calculate { height:42px; padding:0 15px; font-size:8px; }
-.adder-renaissance .adder-modes { gap:12px; }
+.adder-renaissance .adder-advanced { position:relative; justify-self:end; align-self:center; color:#b4c8bf; font:8px var(--mono); }
+.adder-renaissance .adder-advanced > summary { max-width:210px; padding:10px 12px; border:1px solid rgba(164,200,191,.16); border-radius:8px; background:rgba(12,24,28,.6); cursor:pointer; list-style:none; white-space:nowrap; }
+.adder-renaissance .adder-advanced > summary::-webkit-details-marker { display:none; }
+.adder-renaissance .adder-advanced > summary::after { content:'⌄'; margin-left:9px; color:#92b9a7; }
+.adder-renaissance .adder-advanced[open] > summary::after { content:'⌃'; }
+.adder-renaissance .adder-modes { position:absolute; z-index:8; top:calc(100% + 7px); right:0; min-width:230px; display:grid; gap:10px; padding:12px; border:1px solid rgba(164,200,191,.2); border-radius:10px; background:rgba(9,18,23,.96); box-shadow:0 16px 42px rgba(0,0,0,.4); backdrop-filter:blur(18px); }
+.adder-renaissance .adder-modes p { margin:0; color:#99ada6; font:9px/1.5 var(--sans); }
+.adder-signed-detail { padding-top:8px; border-top:1px solid rgba(164,200,191,.12); }
+.adder-signed-detail > summary { min-height:34px; display:flex; align-items:center; color:#bcd1c6; font:9px var(--sans); cursor:pointer; }
+.adder-signed-detail p { color:#9bafaa; }
 .adder-renaissance .adder-modes > label { font-size:8px; }
 .adder-renaissance .adder-modes select { max-width:78px; font-size:8px; }
 .adder-renaissance .adder-architecture button { min-height:30px; padding-inline:10px; font-size:7px; }
@@ -96,9 +105,10 @@
 .adder-transport-track > div i { display:block; height:100%; border-radius:3px; background:linear-gradient(90deg,#80caa8,#d9ca8b); box-shadow:0 0 9px rgba(150,220,175,.4); transition:width .18s linear; }
 .adder-transport-speed { width:105px; }
 .adder-transport-speed .range-control { margin:0; }
-.adder-live-explanation { position:absolute; z-index:2; left:50%; bottom:73px; width:min(760px,calc(100% - 40px)); display:flex; align-items:center; justify-content:center; gap:12px; color:#97aaa2; text-align:center; transform:translateX(-50%); pointer-events:none; }
+.adder-live-explanation { position:absolute; z-index:2; left:50%; bottom:96px; width:min(760px,calc(100% - 40px)); display:flex; align-items:center; justify-content:center; gap:12px; color:#97aaa2; text-align:center; transform:translateX(-50%); pointer-events:none; }
 .adder-live-explanation .explanation-phase { color:#a6ccb4; font:7px var(--mono); letter-spacing:.14em; white-space:nowrap; }
-.adder-live-explanation strong { color:#93a8a2; font:9px/1.45 var(--sans); font-weight:400; }
+.adder-live-explanation strong { color:#b4c8bf; font:10px/1.45 var(--sans); font-weight:400; }
+.adder-live-explanation small { color:#758d88; font:8px var(--mono); white-space:nowrap; }
 .adder-renaissance .control-note { font-size:9px; line-height:1.6; }
 .adder-renaissance .adder-control-copy { color:#b4c6bd; font:10px/1.6 var(--sans); }
 
@@ -120,11 +130,13 @@
   .adder-renaissance .adder-kicker i { width:4px; height:4px; }
   .adder-renaissance .adder-title-block h1 { margin-top:3px; font-size:21px; }
   .adder-renaissance .adder-title-block p { margin-top:4px; font-size:7px; }
-  .adder-renaissance .adder-modes { gap:6px; grid-column:2; grid-row:1; }
+  .adder-renaissance .adder-advanced { grid-column:2; grid-row:1; }
+  .adder-renaissance .adder-advanced > summary { max-width:135px; min-height:36px; display:flex; align-items:center; overflow:hidden; padding:0 6px; font-size:6px; text-overflow:ellipsis; }
+  .adder-renaissance .adder-modes { min-width:198px; gap:7px; padding:9px; }
   .adder-renaissance .adder-modes > label { gap:4px; font-size:6px; }
   .adder-renaissance .adder-modes select { max-width:62px; padding:4px 11px 4px 5px; font-size:7px; }
   .adder-renaissance .adder-architecture { padding:2px; }
-  .adder-renaissance .adder-architecture button { min-height:26px; padding:0 5px; font-size:5px; }
+  .adder-renaissance .adder-architecture button { min-height:34px; padding:0 7px; font-size:7px; }
   .adder-renaissance .adder-equation { grid-column:1/-1; grid-row:2; justify-content:space-between; gap:4px; padding-top:3px; }
   .adder-renaissance .adder-input { min-width:51px; width:60px; gap:4px; }
   .adder-renaissance .adder-input > span,.adder-renaissance .adder-result-readout > span { font-size:6px; }
@@ -134,32 +146,33 @@
   .adder-renaissance .adder-result-readout { min-width:58px; gap:2px; }
   .adder-renaissance .adder-result-readout strong { font-size:20px; }
   .adder-renaissance .adder-result-readout small { font-size:5px; }
-  .adder-renaissance .adder-calculate { height:33px; gap:5px; padding:0 8px; font-size:6px; }
+  .adder-renaissance .adder-calculate { height:40px; gap:5px; padding:0 8px; font-size:6px; }
   .adder-lesson-heading { top:133px; left:16px; right:16px; display:block; }
   .adder-lesson-heading > div { gap:5px; }
   .adder-lesson-heading > div > span { font-size:6px; }
   .adder-lesson-heading strong { font-size:17px; }
-  .adder-lesson-heading p { display:none; }
+  .adder-lesson-heading p { display:block; max-width:calc(100% - 16px); margin:6px 0 0; font-size:8px; line-height:1.35; text-align:left; }
   .adder-stage-board { top:185px; left:8px; width:calc(100% - 16px); height:calc(100% - 444px); min-height:292px; }
   .board-caption { font-size:10px; }
   .adder-bit-strip { left:10px; right:10px; bottom:182px; max-width:none; gap:4px; justify-content:flex-start; overflow-x:auto; padding:6px; transform:none; scrollbar-width:none; }
   .adder-bit-strip::-webkit-scrollbar { display:none; }
   .bit-strip-caption { padding:0 3px; font-size:6px; }
-  .adder-bit-strip button { flex:0 0 33px; min-width:33px; gap:2px; padding:3px; }
+  .adder-bit-strip button { flex:0 0 36px; min-width:36px; min-height:36px; gap:2px; padding:3px; }
   .adder-bit-strip button strong { font-size:9px; }
   .adder-bit-strip button small { font-size:6px; }
   .adder-bit-strip button i { font-size:8px; }
   .bit-strip-note { display:none; }
   .adder-transport { bottom:111px; width:calc(100% - 20px); gap:6px; padding:6px; }
   .adder-transport-actions { gap:2px; }
-  .adder-transport-actions button { width:29px; height:28px; font-size:12px; }
+  .adder-transport-actions button { width:36px; height:36px; font-size:14px; }
   .adder-transport-track { grid-template-columns:1fr auto; gap:5px; font-size:6px; }
   .adder-transport-track .transport-label { display:none; }
   .adder-transport-track > div { grid-column:1/-1; grid-row:2; }
   .adder-transport-speed { display:none; }
-  .adder-live-explanation { bottom:75px; width:calc(100% - 24px); display:block; }
+  .adder-live-explanation { bottom:70px; width:calc(100% - 24px); display:grid; gap:3px; }
   .adder-live-explanation .explanation-phase { display:block; margin-bottom:3px; font-size:6px; }
-  .adder-live-explanation strong { display:block; font-size:7px; }
+  .adder-live-explanation strong { display:block; font-size:8px; }
+  .adder-live-explanation small { font-size:7px; }
 }
 
 @media (prefers-reduced-motion:reduce) {

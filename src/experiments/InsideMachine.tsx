@@ -48,6 +48,39 @@ function executeNote(instruction: CpuState['ir'], before: CpuState, after: CpuSt
   return 'The instruction completed.'
 }
 
+function plainInstructionNote(instruction: CpuState['ir'], state: CpuState, phase: 'decode' | 'execute', beforeState?: CpuState) {
+  if (!instruction) return 'The computer is waiting for an instruction.'
+  const [first, second] = instruction.args
+  const left = first?.toUpperCase() ?? 'A'
+  const right = second?.toUpperCase() ?? 'A'
+  const operands = beforeState ?? state
+  const leftValue = operands.registers[left] ?? 0
+  const rightValue = operands.registers[right] ?? 0
+  if (phase === 'decode') {
+    if (instruction.op === 'LDI') return `The computer reads the line: put ${second} into number holder ${first}.`
+    if (instruction.op === 'ADD') return `The computer reads the line: add the numbers in ${first} and ${second}.`
+    if (instruction.op === 'SUB') return `The computer reads the line: subtract ${second} from ${first}.`
+    if (instruction.op === 'MUL') return `The computer reads the line: multiply the numbers in ${first} and ${second}.`
+    if (instruction.op === 'OUT') return `The computer reads the line: show the number in ${first}.`
+    if (instruction.op === 'LOAD') return `The computer reads the line: copy the value at memory place ${second} into ${first}.`
+    if (instruction.op === 'STORE') return `The computer reads the line: save ${second} in memory place ${first}.`
+    if (instruction.op === 'HLT') return 'The computer reads the instruction to finish this program.'
+    return `The computer reads the instruction ${instruction.source}.`
+  }
+  if (instruction.op === 'LDI') return `Number holder ${first} now holds ${state.registers[left]}. The computer has stored this number for the next step.`
+  if (instruction.op === 'MOV') return `Number holder ${first} now copies ${state.registers[left]} from ${second}.`
+  if (instruction.op === 'ADD') return `The math unit adds ${leftValue} + ${rightValue}; number holder ${first} changes to ${state.registers[left]}.`
+  if (instruction.op === 'SUB') return `The math unit subtracts ${rightValue} from ${leftValue}; number holder ${first} changes to ${state.registers[left]}.`
+  if (instruction.op === 'MUL') return `The math unit multiplies ${leftValue} × ${rightValue}; number holder ${first} changes to ${state.registers[left]}.`
+  if (instruction.op === 'OUT') return `The result display now shows ${state.output}, copied from number holder ${first}.`
+  if (instruction.op === 'LOAD') return `Memory place ${second} contains ${state.registers[left]}; that value is now in number holder ${first}.`
+  if (instruction.op === 'STORE') return `Memory place ${first} now holds ${state.memory[Number(first)] ?? 0}, copied from number holder ${second}.`
+  if (instruction.op === 'JMP') return `The next instruction will come from line ${state.pc}.`
+  if (instruction.op === 'JNZ') return operands.registers[left] !== 0 ? `${first} is ${operands.registers[left]}, so the computer returns to line ${state.pc}.` : `${first} is 0, so the computer continues to line ${state.pc}.`
+  if (instruction.op === 'HLT') return `The computer has finished. The result display stays at ${state.output}.`
+  return `The computer completed ${instruction.op}.`
+}
+
 export default function InsideMachine({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 720px)').matches)
   const initialProgram = typeof stateFromUrl?.program === 'string' ? stateFromUrl.program : 'sum'
@@ -56,7 +89,8 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
   const [cpu, setCpu] = useState<CpuState>(createCpuState)
   const [autoRun, setAutoRun] = useState(false)
   const [phase, setPhase] = useState<'idle' | 'fetch' | 'decode' | 'execute'>('idle')
-  const [stepNote, setStepNote] = useState('Press Step instruction to fetch the highlighted line from program memory.')
+  const [stepNote, setStepNote] = useState('Registers hold numbers; memory stores instructions and data. Step to watch the math unit (ALU) add 7 + 5.')
+  const [stepDetail, setStepDetail] = useState('Each instruction is fetched from program memory, interpreted, then carried out by the machine.')
   const [clock, setClock] = useState(0)
   const [error, setError] = useState('')
   const [trace, setTrace] = useState<string[]>([])
@@ -78,9 +112,9 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
     const address = next.pc, instruction = fetchCpuInstruction(next, program)
     if (!instruction) { setCpu(next); cpuRef.current = next; setError(next.error ?? ''); setStepNote('The program counter reached the end of ROM.'); setPhase('idle'); return }
     setCpu(next); cpuRef.current = next; setError(next.error ?? '')
-    setTrace(next.transfer); setPhase('fetch'); setStepNote(`Fetch ${addressLabel(address)}: ${instruction.source} moves from ROM into the instruction register; PC advances to ${addressLabel(next.pc)}.`)
-    phaseTimers.current.push(window.setTimeout(() => { const decoding=cloneCpu(cpuRef.current);decodeCpuInstruction(decoding);setCpu(decoding);cpuRef.current=decoding;setTrace(decoding.transfer);setPhase('decode');setStepNote(decodeNote(instruction)) }, 170))
-    phaseTimers.current.push(window.setTimeout(() => { const before=cloneCpu(cpuRef.current),executing=cloneCpu(cpuRef.current);executeCpuInstruction(executing);setCpu(executing);cpuRef.current=executing;setError(executing.error??'');setTrace(executing.transfer);setClock((value)=>value+1);setPhase('execute');setStepNote(executing.error ? `Fault · ${executing.error}` : executeNote(instruction,before,executing)) }, 340))
+    setTrace(next.transfer); setPhase('fetch'); setStepNote(`Reading line ${addressLabel(address)}: “${instruction.source}”.`); setStepDetail(`Fetch: the program counter selects address ${addressLabel(address)} and copies the instruction from ROM into the instruction register.`)
+    phaseTimers.current.push(window.setTimeout(() => { const decoding=cloneCpu(cpuRef.current);decodeCpuInstruction(decoding);setCpu(decoding);cpuRef.current=decoding;setTrace(decoding.transfer);setPhase('decode');setStepNote(plainInstructionNote(instruction, decoding, 'decode'));setStepDetail(decodeNote(instruction)) }, 170))
+    phaseTimers.current.push(window.setTimeout(() => { const before=cloneCpu(cpuRef.current),executing=cloneCpu(cpuRef.current);executeCpuInstruction(executing);setCpu(executing);cpuRef.current=executing;setError(executing.error??'');setTrace(executing.transfer);setClock((value)=>value+1);setPhase('execute');setStepNote(executing.error ? `The computer stopped: ${executing.error}` : plainInstructionNote(instruction, executing, 'execute', before));setStepDetail(executing.error ? `Fault · ${executing.error}` : executeNote(instruction,before,executing)) }, 340))
     phaseTimers.current.push(window.setTimeout(() => setPhase('idle'), 740))
   }
   useEffect(() => {
@@ -90,8 +124,8 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
   }, [autoRun, paused, cpu.halted, program, error])
   useEffect(() => () => { phaseTimers.current.forEach((timer) => window.clearTimeout(timer)) }, [])
 
-  const reset = (run = false) => { phaseTimers.current.forEach((timer)=>window.clearTimeout(timer));phaseTimers.current=[];const fresh = createCpuState(); setCpu(fresh); cpuRef.current = fresh; setClock(0);setError(''); setTrace([]); setPhase('idle');setStepNote('Program reset. Step once to fetch the highlighted instruction.');setAutoRun(run) }
-  const loadExample = (name: string) => { if(!programs[name])return;phaseTimers.current.forEach((timer)=>window.clearTimeout(timer));phaseTimers.current=[];setExample(name); setSource(programs[name].code); const fresh = createCpuState(); setCpu(fresh); cpuRef.current = fresh;setClock(0); setError(''); setTrace([]); setPhase('idle');setStepNote(`${programs[name].name} is ready. Step through it to follow the data.`);setAutoRun(false) }
+  const reset = (run = false) => { phaseTimers.current.forEach((timer)=>window.clearTimeout(timer));phaseTimers.current=[];const fresh = createCpuState(); setCpu(fresh); cpuRef.current = fresh; setClock(0);setError(''); setTrace([]); setPhase('idle');setStepNote(example === 'sum' ? 'Registers hold numbers; memory stores instructions and data. Step to watch the math unit (ALU) add 7 + 5.' : 'Program reset. Step once to follow the next instruction.');setStepDetail('Registers are small places to hold numbers. The highlighted program line tells the computer what to do next.');setAutoRun(run) }
+  const loadExample = (name: string) => { if(!programs[name])return;phaseTimers.current.forEach((timer)=>window.clearTimeout(timer));phaseTimers.current=[];setExample(name); setSource(programs[name].code); const fresh = createCpuState(); setCpu(fresh); cpuRef.current = fresh;setClock(0); setError(''); setTrace([]); setPhase('idle');setStepNote(name === 'sum' ? 'Registers hold numbers; memory stores instructions and data. Step to watch the math unit (ALU) add 7 + 5.' : `${programs[name].name} is ready. Step through it to follow the data.`);setStepDetail('Registers hold numbers; memory holds program instructions and saved data.');setAutoRun(false) }
   const currentLine = cpu.ir ? Math.max(0, cpu.pc - 1) : cpu.pc
   const lit = (name: string) => trace.includes(name) ? ' signal-hot' : ''
 
@@ -101,12 +135,12 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
     <div className="machine-rom-mobile"><span>ROM · CURRENT LINE <small>{addressLabel(currentLine)}</small></span><strong>{program[currentLine]?.source ?? 'Program complete'}</strong></div>
     <div className="cpu-stage">
       <div className="program-window machine-glass">
-        <div className="machine-window-label"><span>PROGRAM · ROM</span><span>8-BIT ISA</span></div>
+        <div className="machine-window-label"><span>{example === 'sum' ? 'TRY: ADD 7 + 5' : 'PROGRAM · ROM'}</span><span>{example === 'sum' ? 'STEP EACH LINE' : '8-BIT ISA'}</span></div>
         <div className="machine-code-list">{program.length ? program.map((line, index) => <div key={index} className={(index === currentLine && !cpu.halted ? 'pc-active ' : '') + (cpu.halted && index === currentLine ? 'pc-halted' : '')}><small>{index.toString(16).toUpperCase().padStart(2, '0')}</small><code>{line.source}</code>{index === currentLine && !cpu.halted && <i>PC</i>}</div>) : <p className="machine-code-error">{error || 'Write an instruction to begin.'}</p>}</div>
       </div>
       <div className="processor-core">
         <div className="core-caption"><span>PROCESSING UNIT</span><i>{phase === 'idle' ? 'IDLE BETWEEN CLOCKS' : phase.toUpperCase()}</i></div>
-        <svg className={'datapath' + (compact ? ' datapath-compact' : '')} viewBox={compact ? '0 0 450 550' : '0 0 1000 620'} preserveAspectRatio="xMidYMid meet" aria-label="CPU datapath with program counter, memory, instruction register, decoder, ALU and four working registers">
+        <svg className={'datapath' + (compact ? ' datapath-compact' : '')} viewBox={compact ? '0 0 450 550' : '0 0 1000 620'} preserveAspectRatio="xMidYMid meet" role="img" aria-label={`CPU datapath. Current instruction ${cpu.ir?.source ?? program[currentLine]?.source ?? 'none'}. Register A ${cpu.registers.A}, B ${cpu.registers.B}, C ${cpu.registers.C}, D ${cpu.registers.D}; output ${cpu.output}.`}>
           <defs><filter id="signal-glow"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
           {compact ? <g className="machine-buses">
             <path className={'bus-line' + lit('PC')} d="M116 129 H172" />
@@ -157,12 +191,14 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
         </svg>
         <div className="current-instruction"><span>INSTRUCTION REGISTER</span><strong>{cpu.ir?.source ?? 'Awaiting first clock'}</strong>{cpu.ir && <small>Next address <b>{cpu.pc.toString(16).toUpperCase().padStart(2, '0')}</b></small>}</div>
       </div>
-      <div className="machine-memory machine-glass"><div className="machine-window-label"><span>DATA RAM</span><span>16 × 8 BIT</span></div><div className="memory-cells">{cpu.memory.map((value, i) => <div key={i} className={trace.includes('MEMORY') && cpu.ir?.args.includes(String(i)) ? 'memory-active' : ''}><small>{i.toString(16).toUpperCase()}</small><b>{dataValue(value)}</b></div>)}</div><p>OUTPUT REGISTER <strong>{dataValue(cpu.output)} <i>· {cpu.output}</i></strong></p></div>
+      <div className="machine-memory machine-glass"><div className="machine-window-label"><span>DATA RAM</span><span>16 × 8 BIT</span></div><div className="memory-cells">{cpu.memory.map((value, i) => <div key={i} role="group" aria-label={`Memory address ${i}: ${value}`} className={trace.includes('MEMORY') && cpu.ir?.args.includes(String(i)) ? 'memory-active' : ''}><small>{i.toString(16).toUpperCase()}</small><b>{dataValue(value)}</b></div>)}</div><p>OUTPUT REGISTER <strong>{dataValue(cpu.output)} <i>· {cpu.output}</i></strong></p></div>
     </div>
     <div className="machine-controls"><button className="machine-step" onClick={() => { setAutoRun(false); runCycle() }} disabled={cpu.halted||phase!=='idle'} aria-label="Execute one instruction"><span>▸</span> Step instruction</button><button className="machine-run" onClick={() => setAutoRun((value) => !value)}>{autoRun ? 'Pause clock' : 'Run program'} <span>{autoRun ? 'Ⅱ' : '▶'}</span></button><button className="machine-reset" onClick={() => reset(false)}>Reset</button><span className="machine-cycle-legend"><i className={phase === 'fetch' ? 'phase-active' : ''}>01 FETCH</i><b>→</b><i className={phase === 'decode' ? 'phase-active' : ''}>02 DECODE</i><b>→</b><i className={phase === 'execute' ? 'phase-active' : ''}>03 EXECUTE</i></span></div>
     <div className="machine-live-readout" aria-live="polite">{error ? `FAULT · ${error}` : stepNote}</div>
     <ControlPanel title="Inside the Machine" note="8-bit teaching CPU · 4 registers" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Example program" value={example} options={[...Object.entries(programs).map(([key, value]) => [key, value.name] as [string,string]), ...(example==='custom' ? [['custom','Custom program'] as [string,string]] : [])]} onChange={loadExample} />
+      <details className="machine-step-detail"><summary>How this step works</summary><p>{stepDetail}</p></details>
+      <details className="machine-step-detail"><summary>Read the machine's stored numbers</summary><p>Register A holds {cpu.registers.A} ({byteBits(cpu.registers.A)}); B holds {cpu.registers.B} ({byteBits(cpu.registers.B)}); C holds {cpu.registers.C} ({byteBits(cpu.registers.C)}); D holds {cpu.registers.D} ({byteBits(cpu.registers.D)}). The output register shows {cpu.output} ({byteBits(cpu.output)}).</p></details>
       <label className="machine-editor"><span>ASSEMBLY SOURCE</span><textarea spellCheck={false} value={source} onChange={(event) => { setSource(event.target.value); setExample('custom'); reset(false) }} aria-label="Assembly program source" /></label>
       <ActionRow><button className="small-action" onClick={() => { reset(true) }}>Reset & run</button><button className="small-action" onClick={() => { setAutoRun(false); runCycle() }} disabled={cpu.halted||phase!=='idle'}>Step</button><button className="small-action" onClick={() => reset(false)}>Clear state</button></ActionRow>
       <div className="instruction-reference"><span>INSTRUCTION SET</span><p>{instructions.map((instruction) => <code key={instruction}>{instruction}</code>)}</p></div>

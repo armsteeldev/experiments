@@ -2,11 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { patterns, placePattern, stepAutomaton, type AutomatonRule } from '../simulations/automata'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import './ExpandedExhibits.css'
 
 type PaintMode = 'paint' | 'erase' | 'pan'
 type RenderMode = 'age' | 'mono' | 'ember'
 const ruleOptions: [AutomatonRule, string][] = [['life','Conway · B3/S23'],['highlife','HighLife · B36/S23'],['seeds','Seeds · B2/S'],['brian',"Brian's Brain"]]
+const ruleExplanation = (rule: AutomatonRule) => rule === 'life'
+  ? 'A dark cell is born with 3 live neighbours. A live cell survives with 2 or 3.'
+  : rule === 'highlife'
+    ? 'Like Life, but a dark cell is also born with 6 live neighbours.'
+    : rule === 'seeds'
+      ? 'A dark cell is born with 2 live neighbours; live cells never survive the next step.'
+      : 'A live cell fades through a resting state, then empties. An empty cell is born with exactly 2 live neighbours.'
 const patternOptions: [string,string][] = [...Object.entries(patterns).map(([key, value]) => [key, value.name] as [string,string]), ['random','Random field'], ['empty','Empty board'], ['custom','Your drawing']]
 const hues = ['#92d9bd','#98d8e9','#a89be2','#f0bc88','#e7968b','#d3df9c']
 const seededField = (length: number, initialSeed: number) => {
@@ -26,6 +34,7 @@ const cellPattern = (key: string) => {
 }
 
 export default function CellularAutomata({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const hint = useDiscoveryHint('automata')
   const initialRule = ruleOptions.some(([key]) => key === stateFromUrl?.rule) ? stateFromUrl?.rule as AutomatonRule : 'life'
   const savedPattern = String(stateFromUrl?.pattern ?? '')
   const initialPattern = patterns[savedPattern] || ['random','empty','custom'].includes(savedPattern) ? savedPattern : 'acorn'
@@ -39,6 +48,7 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
   const [running, setRunning] = useState(true)
   const [generation, setGeneration] = useState(0)
   const [alive, setAlive] = useState(0)
+  const [stepNote, setStepNote] = useState('Pause the world, then advance one generation to see what changed.')
   const model = useRef({ width: 180, height: 112, cells: new Uint8Array(180 * 112), age: new Uint8Array(180 * 112), trail: new Uint8Array(180 * 112), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 4.4 : 3.4, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number } })
   const parameters = useRef({ paused, running, speed, rule, renderMode, mode }); parameters.current = { paused, running, speed, rule, renderMode, mode }
   useEffect(() => { onShareState({ pattern, rule, speed, renderMode, seed }); }, [pattern, rule, speed, renderMode, seed, onShareState])
@@ -107,18 +117,22 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
   useEffect(()=>{const canvas=canvasRef.current;if(!canvas)return;canvas.addEventListener('wheel',wheel,{passive:false});return()=>canvas.removeEventListener('wheel',wheel)},[])
   const loadPattern=(key:string)=>{const m=model.current; if(key==='empty'){m.cells.fill(0);m.age.fill(0);m.trail.fill(0);m.generation=0;setGeneration(0);setAlive(0);setPattern('empty');return} if(key==='random'){randomize();return} if(key==='custom')return;const shape=cellPattern(key);if(!shape)return;placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.age.fill(0);m.trail.fill(0);m.cells.forEach((value,index)=>{if(value)m.age[index]=1});m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setPattern(key)}
   const randomize=()=>{const m=model.current,nextSeed=(seed*1664525+1013904223)>>>0;m.cells=seededField(m.cells.length,nextSeed);m.age=m.cells.map(value=>value?1:0);m.trail.fill(0);m.generation=0;setSeed(nextSeed);setGeneration(0);setAlive(m.cells.reduce((sum,value)=>sum+value,0));setPattern('random')}
-  const step=()=>{const m=model.current;const next=stepAutomaton(m.cells,m.width,m.height,rule);for(let i=0;i<next.length;i++){const old=m.cells[i];m.age[i]=next[i]===1?(old===1?Math.min(255,m.age[i]+1):1):0;m.trail[i]=old===1&&next[i]===0?28:Math.max(0,m.trail[i]-1)}m.cells=next;m.generation++;setGeneration(m.generation);setAlive(m.cells.reduce((sum,value)=>sum+(value===1?1:0),0))}
+  const step=()=>{const m=model.current,previous=m.cells,next=stepAutomaton(previous,m.width,m.height,rule);let born=0,died=0;for(let i=0;i<next.length;i++){const old=previous[i],value=next[i];if(value===1&&old===0)born++;if(old===1&&value===0)died++;m.age[i]=value===1?(old===1?Math.min(255,m.age[i]+1):1):0;m.trail[i]=old===1&&value===0?28:Math.max(0,m.trail[i]-1)}m.cells=next;m.generation++;setGeneration(m.generation);setAlive(m.cells.reduce((sum,value)=>sum+(value===1?1:0),0));setStepNote(`Generation ${m.generation}: ${born} cells lit up and ${died} went dark.`);setRunning(false);hint.dismiss()}
+  const loadCentreGlider=()=>{const m=model.current,shape=cellPattern('glider');if(!shape)return;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setPattern('glider');setRunning(true);setStepNote('A glider begins as five cells. Follow it as the same neighbour rule moves it across the board.');hint.dismiss()}
 
   return <section className="experiment-surface automata-surface" aria-label="Cellular automata playground">
-    <canvas ref={canvasRef} className={'experiment-canvas automata-canvas tool-'+mode} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
-    <div className="automata-heading"><span className="exp-eyebrow">EMERGENT SYSTEMS <i /></span><h2>A world from <em>one rule.</em></h2><p>{ruleOptions.find(([key])=>key===rule)?.[1]} · every cell sees only its eight neighbours.</p></div>
-    <div className="automata-stats"><div><span>GENERATION</span><strong>{generation.toString().padStart(5,'0')}</strong></div><div><span>ALIVE NOW</span><strong>{alive.toString().padStart(4,'0')}</strong></div><button onClick={()=>setRunning(value=>!value)}>{running?'Ⅱ PAUSE':'▶ RESUME'}</button><button onClick={step}>STEP →</button></div>
+    <canvas ref={canvasRef} className={'experiment-canvas automata-canvas tool-'+mode} aria-label="Cell grid. Paint living cells, then step the rule to see which survive and which neighbors are born." aria-describedby={hint.visible ? 'automata-first-move' : undefined} onPointerDown={(event)=>{hint.dismiss();pointerDown(event)}} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    {hint.visible?<aside className="scene-nudge scene-nudge-high" id="automata-first-move" role="note"><span>Try this · Cellular Automata</span><p>Paint a few cells, pause, then step once. Each cell checks just its eight neighbours to decide what happens next.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={loadCentreGlider}>Start with a glider</button></aside>:<button className="scene-nudge-reopen scene-nudge-reopen-high" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
+    <div className="automata-heading"><span className="exp-eyebrow">EMERGENT SYSTEMS <i /></span><h2>A world from <em>one rule.</em></h2><p>{ruleExplanation(rule)} Every cell checks only its eight neighbours.</p></div>
+    <div className="automata-stats"><div><span>GENERATION</span><strong>{generation.toString().padStart(5,'0')}</strong></div><div><span>ALIVE NOW</span><strong>{alive.toString().padStart(4,'0')}</strong></div><button onClick={()=>setRunning(value=>!value)}>{running?'Ⅱ PAUSE':'▶ RESUME'}</button><button onClick={step} aria-label="Pause and advance exactly one generation">STEP →</button></div>
+    <div className="automata-change" aria-live="polite">{stepNote}</div>
     <div className="automata-tools"><span>TOOL</span>{(['paint','erase','pan'] as PaintMode[]).map((item)=><button key={item} className={mode===item?'tool-active':''} onClick={()=>setMode(item)}>{item.toUpperCase()}</button>)}<span className="automata-key">DRAG TO PAINT · SCROLL TO ZOOM</span></div>
     <ControlPanel title="Cellular Automata" note="Discrete local rules · wrap boundary" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Rule system" value={rule} options={ruleOptions} onChange={(value)=>setRule(value as AutomatonRule)} />
       <SelectControl label="Starting pattern" value={pattern} options={patternOptions} onChange={(value)=>value==='random'?randomize():loadPattern(value)} />
       <RangeControl label="Generation rate" value={speed} min={1} max={18} step={1} format={(value)=>`${value} gen/s`} onChange={setSpeed} />
       <SelectControl label="Rendering" value={renderMode} options={[["age","Age spectrum"],["mono","Porcelain"],["ember","Ember" ]]} onChange={(value)=>setRenderMode(value as RenderMode)} />
+      <p className="control-note">B means a dark cell is born; S means a lit cell survives. For example, B3/S23 means “born with 3 neighbours; survive with 2 or 3.” A step checks this rule for every cell at once.</p>
       <ActionRow><button className="small-action" onClick={step}>Step once</button><button className="small-action" onClick={()=>setRunning(value=>!value)}>{running?'Pause':'Resume'}</button><button className="small-action" onClick={randomize}>Randomize</button><button className="small-action" onClick={()=>{const m=model.current;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);m.generation=0;setGeneration(0);setAlive(0);setPattern('empty')}}>Clear cells</button></ActionRow>
       <p className="control-note">Life and HighLife use B/S birth and survival counts. Seeds uses B2/S. Brian’s Brain cycles firing → refractory → ready; all rules wrap at the edge.</p>
     </ControlPanel>

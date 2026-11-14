@@ -66,6 +66,33 @@ function gateFormula(gate: AdderGate, values: Record<string, boolean>, resolved:
   return `${inputs.join(` ${op} `)} = ${output}`
 }
 
+function explainGateState(gate: AdderGate, values: Record<string, boolean>, resolved: Set<string>) {
+  if (!gate.inputs.every((signal) => resolved.has(signal)) || !resolved.has(gate.id)) {
+    return 'This gate is waiting for its incoming bits.'
+  }
+  const inputs = gate.inputs.map((signal) => Number(values[signal]))
+  const output = Number(values[gate.id])
+  if (gate.role === 'propagate' && gate.stage === 0) {
+    return `The two input bits are ${inputs[0]} and ${inputs[1]}. They ${inputs[0] === inputs[1] ? 'match' : 'are different'}, so XOR outputs ${output}${output ? `; a carry arriving at bit ${gate.bit} can pass on` : ''}.`
+  }
+  if (gate.role === 'generate') {
+    return `The two input bits are ${inputs[0]} and ${inputs[1]}. ${output ? `Both are 1, so this gate sends a carry into bit ${gate.bit + 1}.` : 'They are not both 1, so these inputs do not create a carry.'}`
+  }
+  if (gate.role === 'carry-term') {
+    return `At bit ${gate.bit}, the number bits ${inputs[0] ? 'are different' : 'match'} and the incoming carry is ${inputs[1]}. ${output ? `The carry passes onward into bit ${gate.bit + 1}.` : 'No carry passes onward.'}`
+  }
+  if (gate.role === 'sum') {
+    return `The bit’s partial sum is ${inputs[0]} and its incoming carry is ${inputs[1]}; XOR combines them into sum bit ${output}.`
+  }
+  if (gate.role === 'carry') {
+    return `The carry created here is ${inputs[0]} and the carry passed from below is ${inputs[1]}. OR combines them into carry ${output} for bit ${gate.bit + 1}.`
+  }
+  if (gate.role.startsWith('prefix')) {
+    return `This ${gate.kind} combines the actual carry signals ${inputs.join(' and ')} into ${output}. Kogge–Stone uses these grouped signals to resolve carries across several bit positions.`
+  }
+  return `${gate.kind} receives ${inputs.join(' and ')} and outputs ${output}.`
+}
+
 function glyph(kind: AdderGate['kind']) {
   if (kind === 'AND') return '∧'
   if (kind === 'OR') return '≥1'
@@ -294,15 +321,19 @@ export default function Adder({ paused, controlsVisible, onCloseControls }: Expe
         <div className={`adder-result-readout${complete ? ' result-complete' : ''}`} aria-live="polite"><span>ANSWER</span><strong>{complete ? evaluation.unsignedResult : '—'}</strong><code>{complete ? binaryResult : '·'.repeat(width)}</code><small>{width} BIT · CARRY {complete ? Number(evaluation.carryOut) : '·'}</small></div>
         <button className="adder-calculate" onClick={calculate} disabled={!validInputs} aria-label="Calculate and show the signals"><span>▶</span> CALCULATE</button>
       </div>
-      <div className="adder-modes">
-        <label><span>WIDTH</span><select value={width} aria-label="Adder width" onChange={(event) => chooseWidth(Number(event.target.value))}><option value={4}>4 bit</option><option value={8}>8 bit</option><option value={16}>16 bit</option></select></label>
-        <div className="adder-architecture" role="group" aria-label="Carry architecture"><button className={architecture === 'ripple' ? 'mode-active' : ''} onClick={() => chooseArchitecture('ripple')} aria-pressed={architecture === 'ripple'}>Ripple</button><button className={architecture === 'lookahead' ? 'mode-active' : ''} onClick={() => chooseArchitecture('lookahead')} aria-pressed={architecture === 'lookahead'}>Kogge–Stone</button></div>
-      </div>
+      <details className="adder-advanced"><summary>More settings · {width}-bit · {architecture === 'ripple' ? 'Ripple carry' : 'Kogge–Stone'}</summary>
+        <div className="adder-modes">
+          <label><span>BIT WIDTH</span><select value={width} aria-label="Adder width" onChange={(event) => chooseWidth(Number(event.target.value))}><option value={4}>4 bit</option><option value={8}>8 bit</option><option value={16}>16 bit</option></select></label>
+          <div className="adder-architecture" role="group" aria-label="Carry architecture"><button className={architecture === 'ripple' ? 'mode-active' : ''} onClick={() => chooseArchitecture('ripple')} aria-pressed={architecture === 'ripple'}>Ripple carry</button><button className={architecture === 'lookahead' ? 'mode-active' : ''} onClick={() => chooseArchitecture('lookahead')} aria-pressed={architecture === 'lookahead'}>Kogge–Stone</button></div>
+          <p>Ripple sends each carry to the next bit. Kogge–Stone combines groups to resolve carries in parallel.</p>
+          <details className="adder-signed-detail"><summary>Read these bits as signed numbers</summary><p>{validInputs ? <>Two’s complement treats the leftmost bit as a sign. Here, {binaryA} means {evaluation.signedA} and {binaryB} means {evaluation.signedB}; the {width}-bit result is {evaluation.signedResult}. Signed overflow: {evaluation.signedOverflow ? 'yes' : 'no'}.</> : 'Enter whole numbers within the selected bit width to see their signed interpretation.'}</p></details>
+        </div>
+      </details>
     </header>
 
     <div className="adder-lesson-heading">
-      <div><span>BIT {String(bit).padStart(2, '0')} <i>·</i> {architecture === 'ripple' ? bit === 0 ? 'HALF ADDER' : 'FULL ADDER' : `PREFIX SPAN ${activeSpan}`}</span><strong>{runStarted ? complete ? 'The result is ready.' : activeGate ? `${activeGate.kind} decides this signal.` : 'Choose a bit to inspect.' : 'Follow the carry from right to left.'}</strong></div>
-      <p>{inspector ? gateDescription(inspector) : architecture === 'ripple' ? 'Two bits meet here. XOR decides the sum; AND creates the carry that can enter the next slice.' : 'Kogge–Stone combines carry groups in parallel. Select a bit, then watch each prefix span resolve.'}</p>
+      <div><span>BIT {String(bit).padStart(2, '0')} <i>·</i> {architecture === 'ripple' ? bit === 0 ? 'ONES PLACE' : 'NEXT PLACE LEFT' : `PREFIX SPAN ${activeSpan}`}</span><strong>{runStarted ? complete ? 'The result is ready.' : activeGate ? `Bit ${activeGate.bit} is being added.` : 'Choose a bit to inspect.' : 'Start with the rightmost bit.'}</strong></div>
+      <p>{inspector && runStarted ? explainGateState(inspector, evaluation.values, resolved) : `${a} is ${binaryA}; ${b} is ${binaryB}. Binary digits are 0 or 1. Start at the right; when a place adds to 2 or more, a 1 carries one place left.`}</p>
     </div>
 
     <svg ref={boardRef} className="adder-stage-board" viewBox={mobile ? '0 0 620 680' : '0 0 1000 500'} preserveAspectRatio="xMidYMid meet" role="img" aria-label={`${architecture === 'ripple' ? 'Ripple carry' : 'Kogge–Stone'} logic for bit ${bit}`}>
@@ -356,7 +387,7 @@ export default function Adder({ paused, controlsVisible, onCloseControls }: Expe
     </div>
 
     <div className="adder-live-explanation" aria-live="polite">
-      {activeGate && runStarted ? <><span className="explanation-phase">BIT {bitLabel(activeGate.bit)} · {activeGate.kind}</span><strong>{gateFormula(activeGate, evaluation.values, resolved)}</strong></> : complete ? <><span className="explanation-phase">COMPUTATION COMPLETE</span><strong>{a} + {b} = {evaluation.unsignedResult} · the carry has reached its final output.</strong></> : <><span className="explanation-phase">READY WHEN YOU ARE</span><strong>At each bit, XOR makes the sum. AND and OR decide whether a carry moves left.</strong></>}
+      {complete ? <><span className="explanation-phase">COMPUTATION COMPLETE</span><strong>{a} + {b} = {evaluation.unsignedResult} · {binaryA} + {binaryB} = {binaryResult}. Final carry: {Number(evaluation.carryOut)}.</strong></> : activeGate && runStarted ? <><span className="explanation-phase">BIT {bitLabel(activeGate.bit)} · {gateDescription(activeGate).split('.')[0]}</span><strong>{explainGateState(activeGate, evaluation.values, resolved)}</strong><small>{gateFormula(activeGate, evaluation.values, resolved)}</small></> : <><span className="explanation-phase">YOUR FIRST ADDITION</span><strong>Press Calculate. Each gate combines real bits; the gold carry wire shows an extra 1 moving left to the next place.</strong></>}
     </div>
 
     <ControlPanel title="The Adder" note="A real gate graph, viewed one slice at a time" visible={controlsVisible} onClose={onCloseControls}>

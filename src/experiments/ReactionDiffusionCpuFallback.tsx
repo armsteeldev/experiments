@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 
 const MAX_CELLS = 90_000
 const palettes: Record<string, [number, number, number][]> = {
@@ -34,6 +35,7 @@ function sample(field: Float32Array, w: number, h: number, x: number, y: number)
 }
 
 export default function ReactionDiffusion({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const hint = useDiscoveryHint('reaction')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const buffers = useRef<ReactionState | null>(null)
   const drawRef = useRef<() => void>(() => {})
@@ -167,7 +169,8 @@ export default function ReactionDiffusion({ paused, controlsVisible, stateFromUr
   const selectSeed = (name: string) => { setSeed(name); initialize(name) }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas reaction-canvas" aria-label="Interactive reaction diffusion simulation. Tap or drag to add a chemical seed." onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); if (event.button !== 2) seedAt(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') seedAt(event) }} onContextMenu={(event) => { event.preventDefault(); setBrush((value) => value === 'seed' ? 'erase' : 'seed') }} />
+    <canvas ref={canvasRef} className="experiment-canvas reaction-canvas" aria-label="Interactive reaction diffusion simulation. Tap or drag to add a chemical seed." aria-describedby={hint.visible ? 'reaction-cpu-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); event.currentTarget.setPointerCapture(event.pointerId); if (event.button !== 2) seedAt(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') seedAt(event) }} onContextMenu={(event) => { event.preventDefault(); setBrush((value) => value === 'seed' ? 'erase' : 'seed') }} />
+    {hint.visible ? <aside className="scene-nudge" id="reaction-cpu-first-move" role="note"><span>Try this · The Pattern Beneath</span><p>Tap the living pattern to plant a new patch. Watch nearby colours spread and settle into shapes.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <ControlPanel title="The Pattern Beneath" note="GRAY–SCOTT CHEMISTRY" visible={controlsVisible} onClose={onCloseControls}>
       <div className="preset-row"><span>INITIAL FORM</span>{[['spots', 'Spots'], ['coral', 'Coral'], ['maze', 'Maze'], ['waves', 'Waves']].map(([key, title]) => <button key={key} className={seed === key ? 'selected' : ''} onClick={() => selectSeed(key)}>{title}</button>)}</div>
       <RangeControl label="Feed rate" value={feed} min={0.018} max={0.075} step={0.001} onChange={setFeed} format={(value) => value.toFixed(3)} />

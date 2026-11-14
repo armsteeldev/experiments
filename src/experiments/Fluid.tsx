@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import FluidCpuFallback from './FluidCpuFallback'
 
 type Target = { texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number }
@@ -304,6 +305,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
   const [ambient, setAmbient] = useState(() => props.stateFromUrl?.ambient !== false)
   const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' ? props.stateFromUrl.preset : 'vortex')
   const [velocityGrid, setVelocityGrid] = useState([0, 0])
+  const hint = useDiscoveryHint('fluid')
   const presetNameRef = useRef(presetName)
   presetNameRef.current = presetName
   const params = useRef({ style, palette, viscosity, dissipation, force, brushSize, vorticity, ambient, paused: props.paused })
@@ -403,20 +405,23 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
     else pointer.current = { x, y, dx: (event.clientX - rect.left) - (pointer.current.x * rect.width), dy: (event.clientY - rect.top) - ((1 - pointer.current.y) * rect.height) }
   }
   const selectPreset = (name: string) => { setPresetName(name); seedRef.current(name) }
+  const stirFromKeyboard = () => { pointer.current = { x: 0.5, y: 0.52, dx: 76, dy: -28 }; hint.dismiss() }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas fluid-canvas" aria-label="GPU fluid dynamics. Drag to inject momentum and pigment." onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); pointer.current = null; setPoint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') setPoint(event) }} onPointerUp={() => { pointer.current = null }} onPointerCancel={() => { pointer.current = null }} />
+    <canvas ref={canvasRef} className="experiment-canvas fluid-canvas" aria-label="GPU fluid dynamics. Drag to inject momentum and pigment." aria-describedby={hint.visible ? 'fluid-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); event.currentTarget.setPointerCapture(event.pointerId); pointer.current = null; setPoint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') setPoint(event) }} onPointerUp={() => { pointer.current = null }} onPointerCancel={() => { pointer.current = null }} />
+    {hint.visible ? <aside className="scene-nudge" id="fluid-first-move" role="note"><span>Try this · A Quiet Current</span><p>Drag through the colour to stir the water. Your hand adds both a swirl and fresh pigment.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={stirFromKeyboard}>Stir the centre</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">FLOATING-POINT VELOCITY · {velocityGrid[0]} × {velocityGrid[1]}</span>
     <ControlPanel title="A Quiet Current" note="GPU INCOMPRESSIBLE FLOW" visible={props.controlsVisible} onClose={props.onCloseControls}>
       <SelectControl label="Rendering style" value={style} options={[['silk', 'Silk · flowing ribbons'], ['ink', 'Ink · dense pigment'], ['smoke', 'Smoke · soft volume'], ['electric', 'Electric · luminous folds']]} onChange={setStyle} />
       <SelectControl label="Pigment" value={palette} options={Object.entries(pigments).map(([key, item]) => [key, item.name])} onChange={setPalette} />
       <div className="preset-row"><span>FLOW</span>{[['crossing', 'Crossing'], ['vortex', 'Vortex'], ['still', 'Quiet']].map(([key, label]) => <button key={key} className={presetName === key ? 'selected' : ''} onClick={() => selectPreset(key)}>{label}</button>)}</div>
-      <Segmented label="Ambient source" value={ambient ? 'on' : 'off'} options={[['on', 'Drifting'], ['off', 'Gesture']]} onChange={(value) => setAmbient(value === 'on')} />
+      <Segmented label="Background movement" value={ambient ? 'on' : 'off'} options={[['on', 'Drifting'], ['off', 'Strokes only']]} onChange={(value) => setAmbient(value === 'on')} />
       <RangeControl label="Brush width" value={brushSize} min={12} max={110} step={2} onChange={setBrushSize} format={(value) => value + ' px'} />
-      <RangeControl label="Force" value={force} min={0.15} max={1.8} step={0.05} onChange={setForce} format={(value) => value.toFixed(2) + '×'} />
-      <RangeControl label="Vorticity" value={vorticity} min={0} max={32} step={1} onChange={setVorticity} />
-      <RangeControl label="Viscosity" value={viscosity} min={0} max={0.9} step={0.01} onChange={setViscosity} format={(value) => value < 0.1 ? 'silk' : value < 0.4 ? 'soft' : 'thick'} />
-      <RangeControl label="Dye persistence" value={dissipation} min={0.96} max={0.999} step={0.001} onChange={setDissipation} format={(value) => (value * 100).toFixed(1) + '%'} />
+      <RangeControl label="Stroke strength" value={force} min={0.15} max={1.8} step={0.05} onChange={setForce} format={(value) => value.toFixed(2) + '×'} />
+      <RangeControl label="Swirl strength · vorticity" value={vorticity} min={0} max={32} step={1} onChange={setVorticity} />
+      <RangeControl label="Flow resistance · viscosity" value={viscosity} min={0} max={0.9} step={0.01} onChange={setViscosity} format={(value) => value < 0.1 ? 'silk' : value < 0.4 ? 'soft' : 'thick'} />
+      <RangeControl label="Colour persistence" value={dissipation} min={0.96} max={0.999} step={0.001} onChange={setDissipation} format={(value) => (value * 100).toFixed(1) + '%'} />
+      <p className="control-note">Stronger strokes push the water harder. Viscosity resists motion; vorticity keeps eddies turning; persistence controls how long colour remains visible. These values shape the simulation and are not measured in physical units.</p>
       <button className="panel-action" onClick={() => clearRef.current()}><span>Clear the water</span><i>↺</i></button>
       <p className="control-note">Velocity and pressure run on a compact grid; pigment evolves at display resolution. Vorticity keeps eddies alive as color stretches and mixes.</p>
     </ControlPanel>

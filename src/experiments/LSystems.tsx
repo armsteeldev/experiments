@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { generateFernGeometry } from '../simulations/fern'
 import type { FernGeometry, FernSegment } from '../simulations/fern'
 
@@ -74,6 +75,7 @@ function generate(kind: string, iterations: number, angle: number, randomness: n
 
 export default function LSystems({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hint = useDiscoveryHint('lsystem')
   const initialKind = typeof stateFromUrl?.kind === 'string' && presets[stateFromUrl.kind] ? stateFromUrl.kind : 'fern'
   const [kind, setKind] = useState(initialKind)
   const [iterations, setIterations] = useState(() => Number(stateFromUrl?.iterations) || presets[initialKind].iterations)
@@ -272,9 +274,11 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
     return () => canvas.removeEventListener('wheel', wheel)
   }, [])
   const preset = presets[kind]
+  const replayGrowth = () => { setGrowing(true); setGrowthKey((value) => value + 1); hint.dismiss() }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative L-system artwork. Drag to pan and scroll to zoom." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative L-system artwork. Drag to pan and scroll to zoom." aria-describedby={hint.visible ? 'lsystem-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    {hint.visible ? <aside className="scene-nudge" id="lsystem-first-move" role="note"><span>Try this · A Grammar of Growth</span><p>Replay the growth to watch one small branching rule write the whole shape, generation by generation.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={replayGrowth}>Replay the growth</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{preset.name.toUpperCase()} · {geometry.segments.length.toLocaleString()} CURVES</span>
     <ControlPanel title="A Grammar of Growth" note="GENERATIVE SYSTEMS" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Generative grammar" value={kind} options={Object.entries(presets).map(([key, value]) => [key, value.name])} onChange={selectPreset} />
@@ -283,6 +287,7 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
       <RangeControl label="Wind / asymmetry" value={randomness} min={0} max={0.65} step={0.01} onChange={(value) => { setRandomness(value); setGrowing(true); setGrowthKey((current) => current + 1) }} format={(value) => Math.round(value * 100) + '%'} />
       <RangeControl label="Ink weight" value={width} min={0.6} max={4} step={0.1} onChange={setWidth} format={(value) => value.toFixed(1)} />
       <SelectControl label="Pigment" value={palette} options={[['sage', 'Moss and lichen'], ['frost', 'Winter glass'], ['ember', 'Autumn ember'], ['violet', 'Ultraviolet garden']]} onChange={setPalette} />
+      <details className="lsystem-rule"><summary>See the rule behind this shape</summary><p>Start with <code>{preset.axiom}</code>. At every generation, replace each symbol using these rules:</p>{Object.entries(preset.rules).map(([symbol, replacement]) => <code className="lsystem-rule-line" key={symbol}>{symbol} → {replacement}</code>)}<p>The new string is interpreted as forward strokes, turns and saved branches. More generations repeat the same replacement rule.</p></details>
       <ActionRow>
         <button className="panel-action" onClick={() => { setGrowing(true); setGrowthKey((value) => value + 1) }}><span>Replay the growth</span><i>↗</i></button>
         <button className="panel-action" onClick={() => setGrowing((value) => !value)}><span>{growing ? 'Pause growth' : 'Resume growth'}</span><i>{growing ? 'Ⅱ' : '▶'}</i></button>

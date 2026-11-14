@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { electricField, electricPotential, type Charge } from '../simulations/electric'
 import './ExpandedExhibits.css'
 
@@ -19,6 +20,7 @@ type Particle = { x: number; y: number; vx: number; vy: number; q: number; trail
 
 export default function InvisibleForces({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hint = useDiscoveryHint('forces')
   const initialPreset = presetOptions.some(([key]) => key === stateFromUrl?.preset) ? stateFromUrl?.preset as Preset : 'dipole'
   const [preset, setPreset] = useState<Preset>(initialPreset)
   const [showPotential, setShowPotential] = useState(true)
@@ -152,9 +154,18 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
     const charge = state.current.charges.find((item) => item.id === selectedChargeId)
     if (charge) { charge.q *= -1; setNotice(`Selected charge is now ${charge.q > 0 ? 'positive' : 'negative'}.`) }
   }
+  const placePositiveAtCentre = () => {
+    const s = state.current
+    if (s.charges.length >= 16) { setNotice('The field is full. Remove a charge before adding another.'); return }
+    const charge = { id: chargeId++, x: s.cameraX, y: s.cameraY, q: 1 }
+    s.charges.push(charge); setSelectedChargeId(charge.id); setChargeStrength(1); setAddSign(0)
+    setNotice('Positive charge placed at the centre. Field lines point away from it.')
+    hint.dismiss()
+  }
 
   return <section className="experiment-surface forces-surface" aria-label="Electrostatics field visualizer">
-    <canvas ref={canvasRef} className="experiment-canvas forces-canvas" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    <canvas ref={canvasRef} className="experiment-canvas forces-canvas" aria-label="Electric charges create a field. Positive charges send field arrows outward; negative charges draw them inward." aria-describedby={hint.visible ? 'forces-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    {hint.visible ? <aside className="scene-nudge scene-nudge-high" id="forces-first-move" role="note"><span>Try this · Invisible Forces</span><p>Add a positive charge. Arrows leave it and end at negative charges; tap open space to release a test particle.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={placePositiveAtCentre}>Place + at the centre</button></aside> : <button className="scene-nudge-reopen scene-nudge-reopen-high" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <div className="forces-heading"><span className="exp-eyebrow">ELECTROSTATICS · SUPERPOSITION <i /></span><h2>What the eye <em>cannot see.</em></h2></div>
     <div className="forces-scale"><span>NORMALIZED FIELD AT CENTRE</span><strong>{probe.strength}<small> E</small></strong><span>POTENTIAL <b>{probe.potential} Φ</b></span></div>
     <div className="forces-tools"><button className={addSign === 1 ? 'selected' : ''} onClick={() => { setSelectedChargeId(null); setAddSign((value) => value === 1 ? 0 : 1); setNotice('') }}>＋ Positive charge</button><button className={addSign === -1 ? 'selected' : ''} onClick={() => { setSelectedChargeId(null); setAddSign((value) => value === -1 ? 0 : -1); setNotice('') }}>− Negative charge</button><button onClick={() => { const p = state.current, removed = p.charges.pop(); if (removed?.id === selectedChargeId) { setSelectedChargeId(null); setChargeStrength(1) } setNotice(removed ? 'Last charge removed.' : 'There are no charges to remove.') }}>Remove last</button></div>
@@ -165,7 +176,7 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
       <RangeControl label="Test-particle charge" value={fieldScale} min={.3} max={2} step={.05} format={(value) => `${value.toFixed(2)}×`} onChange={setFieldScale} />
       <ActionRow><button className="small-action" onClick={() => setShowPotential((value) => !value)}>{showPotential ? 'Potential on' : 'Potential off'}</button><button className="small-action" onClick={() => setShowLines((value) => !value)}>{showLines ? 'Field lines on' : 'Field lines off'}</button></ActionRow>
       <ActionRow><button className="small-action" onClick={() => setShowParticles((value) => !value)}>{showParticles ? 'Trajectories on' : 'Trajectories off'}</button><button className="small-action" onClick={() => { state.current.particles = []; setNotice('Test particles cleared.') }}>Clear particles</button><button className="small-action" onClick={() => { state.current.charges = presetCharges(preset); state.current.particles = []; setSelectedChargeId(null); setNotice('Preset charges restored.') }}>Restore charges</button></ActionRow>
-      <p className="control-note">The heat and contours show electric potential; curves follow the electric field. Test particles move under qE/m. Changing a test particle's charge changes its motion, not the source field.</p>
+      <p className="control-note">Positive charges send field arrows outward; negative charges draw them inward. Heat and contours show electric potential. Test particles move under qE/m. The readout uses normalized simulation values, not physical units. Changing a test particle’s charge changes its motion, not the source field.</p>
     </ControlPanel>
   </section>
 }

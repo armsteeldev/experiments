@@ -9,6 +9,7 @@ import {
 } from '../lib/deepZoom'
 import type { Magnification } from '../lib/deepZoom'
 import { acquireMandelbrotGpuRenderer } from '../lib/mandelbrotGpu'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import type { GpuTile, MandelbrotGpuRenderer, PreviewWarp } from '../lib/mandelbrotGpu'
 
 type View = { x: string; y: string; zoom: Magnification }
@@ -223,6 +224,7 @@ function surfaceRect(canvas: HTMLCanvasElement) {
 }
 
 export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const hint = useDiscoveryHint('mandelbrot')
   const fastCanvasRef = useRef<HTMLCanvasElement>(null)
   const gpuCanvasRef = useRef<HTMLCanvasElement>(null)
   const cpuCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -1111,13 +1113,14 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
     if (rect) zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, factor)
   }
 
-  return <div className="experiment-surface">
-    <canvas ref={fastCanvasRef} className="experiment-canvas fractal-canvas fractal-fast" style={{ visibility: !deepActive ? 'visible' : 'hidden' }} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
-    <canvas ref={gpuCanvasRef} className="experiment-canvas fractal-canvas fractal-gpu" style={{ visibility: deepActive && gpuReady ? 'visible' : 'hidden' }} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
-    <canvas ref={cpuCanvasRef} className="experiment-canvas fractal-canvas fractal-cpu" style={{ visibility: deepActive && !gpuReady ? 'visible' : 'hidden' }} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+  return <div className="experiment-surface" onPointerDownCapture={hint.dismiss} onKeyDownCapture={hint.dismiss}>
+    <canvas ref={fastCanvasRef} className="experiment-canvas fractal-canvas fractal-fast" aria-label="Mandelbrot and Julia fractal. Drag to move the view; scroll or pinch to zoom into the coastline." style={{ visibility: !deepActive ? 'visible' : 'hidden' }} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    <canvas ref={gpuCanvasRef} className="experiment-canvas fractal-canvas fractal-gpu" aria-label="Deep zoom fractal view. Drag to move; scroll or pinch to zoom." style={{ visibility: deepActive && gpuReady ? 'visible' : 'hidden' }} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    <canvas ref={cpuCanvasRef} className="experiment-canvas fractal-canvas fractal-cpu" aria-label="Deep zoom fractal view. Drag to move; scroll or pinch to zoom." style={{ visibility: deepActive && !gpuReady ? 'visible' : 'hidden' }} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
     <canvas ref={repairCanvasRef} className="experiment-canvas fractal-repair" aria-hidden="true" />
     <div className="canvas-coordinate">Re {formatCoordinate(view.x)} <span>·</span> Im {formatCoordinate(view.y)} <span>·</span> ×{formatMagnification(view.zoom)}</div>
     {renderStatus && <span className="fractal-render-status" aria-live="polite">{renderStatus}</span>}
+    {hint.visible ? <aside className="scene-nudge" id="mandelbrot-first-move" role="note"><span>Try this · The Infinite Shore</span><p>Drag to move across the coastline. Scroll or pinch to zoom in and discover smaller details.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <ControlPanel title="The Infinite Shore" note="COMPLEX DYNAMICS" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Cartography" value={preset} options={[
         ['overview', 'The whole set'], ['seahorse', 'Seahorse valley'], ['spiral', 'The whirlpool'], ['mini', 'Miniature Mandelbrot'],
@@ -1127,7 +1130,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
       <Segmented label="Equation" value={mode} options={[["mandelbrot", "Mandelbrot"], ["julia", "Julia"]]} onChange={(value) => setMode(value as 'mandelbrot' | 'julia')} />
       <SelectControl label="Pigment" value={palette} options={[["abyss", "Abyss"], ["mineral", "Mineral"], ["twilight", "Twilight"], ["ice", "Ice"], ["ember", "Ember"]]} onChange={setPalette} />
       <RangeControl label="Escape detail" value={iterations} min={160} max={4000} step={40} onChange={setIterations} />
-      <p className="control-note">Wheel or pinch into the cursor · fresh detail paints in place · drag to drift.</p>
+      <p className="control-note">Each pixel starts a number that is repeatedly squared and added. Points that stay bounded belong to the set; nearby colours show how quickly other points escape. Julia mode starts at each pixel and uses one fixed added number. Wheel or pinch into the cursor; drag to move.</p>
     </ControlPanel>
   </div>
 }

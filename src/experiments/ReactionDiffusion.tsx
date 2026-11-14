@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
+import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import ReactionDiffusionCpuFallback from './ReactionDiffusionCpuFallback'
 
 type Target = { texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number }
@@ -235,6 +236,7 @@ function release(bundle: Bundle) {
 
 function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hint = useDiscoveryHint('reaction')
   const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' && presets[props.stateFromUrl.preset] ? props.stateFromUrl.preset : 'labyrinth')
   const [feed, setFeed] = useState(() => Number(props.stateFromUrl?.feed) || presets[presetName].feed)
   const [kill, setKill] = useState(() => Number(props.stateFromUrl?.kill) || presets[presetName].kill)
@@ -332,13 +334,16 @@ function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) 
     const y = 1 - (event.clientY - rect.top) / rect.height
     paintRef.current(x, y, brush === 'erase')
   }
+  const seedCentre = () => { paintRef.current(0.5, 0.5, false); hint.dismiss() }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas reaction-canvas" aria-label="Gray–Scott reaction diffusion. Paint to add or erase chemical seeds." onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); paint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') paint(event) }} />
+    <canvas ref={canvasRef} className="experiment-canvas reaction-canvas" aria-label="Gray–Scott reaction diffusion. Paint to add or erase chemical seeds." aria-describedby={hint.visible ? 'reaction-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); event.currentTarget.setPointerCapture(event.pointerId); paint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') paint(event) }} />
+    {hint.visible ? <aside className="scene-nudge" id="reaction-first-move" role="note"><span>Try this · The Pattern Beneath</span><p>Drag to plant a little seed. The two ingredients spread and react, turning that mark into a growing pattern.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={seedCentre}>Seed the centre</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <ControlPanel title="The Pattern Beneath" note="GRAY–SCOTT CHEMISTRY" visible={props.controlsVisible} onClose={props.onCloseControls}>
       <SelectControl label="Reaction regime" value={presetName} options={Object.entries(presets).map(([key, preset]) => [key, preset.name])} onChange={choosePreset} />
-      <RangeControl label="Feed rate" value={feed} min={0.012} max={0.075} step={0.0005} onChange={setFeed} format={(value) => value.toFixed(4)} />
-      <RangeControl label="Kill rate" value={kill} min={0.035} max={0.075} step={0.0005} onChange={setKill} format={(value) => value.toFixed(4)} />
+      <RangeControl label="Fresh supply · feed" value={feed} min={0.012} max={0.075} step={0.0005} onChange={setFeed} format={(value) => value.toFixed(4)} />
+      <RangeControl label="Pattern removal · kill" value={kill} min={0.035} max={0.075} step={0.0005} onChange={setKill} format={(value) => value.toFixed(4)} />
+      <p className="control-note">More feed replenishes the first ingredient. A higher kill rate removes the second faster; together they decide whether marks spread, split or fade.</p>
       <RangeControl label="Diffusion" value={diffusion} min={0.55} max={1.45} step={0.01} onChange={setDiffusion} format={(value) => value.toFixed(2)} />
       <RangeControl label="Reaction speed" value={steps} min={1} max={5} step={1} onChange={setSteps} format={(value) => value + ' steps/frame'} />
       <SelectControl label="Pigment" value={palette} options={[['mineral', 'River stone'], ['coral', 'Red coral'], ['verdigris', 'Verdigris'], ['ultraviolet', 'Ultraviolet'], ['ember', 'Warm earth']]} onChange={setPalette} />
