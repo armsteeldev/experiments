@@ -12,7 +12,8 @@
         "mode"
       ],
       "bytes": 146,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "fluid",
@@ -28,7 +29,8 @@
         "preset"
       ],
       "bytes": 172,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "boids",
@@ -41,7 +43,8 @@
         "seed"
       ],
       "bytes": 117,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "attractors",
@@ -59,7 +62,8 @@
         "camera"
       ],
       "bytes": 191,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "reaction",
@@ -76,7 +80,8 @@
         "seed"
       ],
       "bytes": 174,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "lsystem",
@@ -93,7 +98,8 @@
         "panY"
       ],
       "bytes": 148,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "gravity",
@@ -107,7 +113,8 @@
         "prediction"
       ],
       "bytes": 129,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "machine",
@@ -115,7 +122,8 @@
         "program"
       ],
       "bytes": 41,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "neural",
@@ -127,7 +135,8 @@
         "rate"
       ],
       "bytes": 94,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "logic",
@@ -135,7 +144,8 @@
         "preset"
       ],
       "bytes": 40,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "forces",
@@ -147,7 +157,8 @@
         "fieldScale"
       ],
       "bytes": 117,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "automata",
@@ -159,7 +170,8 @@
         "seed"
       ],
       "bytes": 102,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "adder",
@@ -171,7 +183,8 @@
         "b"
       ],
       "bytes": 86,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "waves",
@@ -186,7 +199,8 @@
         "phaseOffset"
       ],
       "bytes": 178,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "optics",
@@ -202,7 +216,8 @@
         "spread"
       ],
       "bytes": 280,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "sound",
@@ -214,7 +229,8 @@
         "viewMode"
       ],
       "bytes": 654,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "garden",
@@ -224,7 +240,8 @@
         "seasonal"
       ],
       "bytes": 78,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "network",
@@ -234,7 +251,8 @@
         "message"
       ],
       "bytes": 94,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     },
     {
       "id": "lensing",
@@ -246,7 +264,8 @@
         "viewMode"
       ],
       "bytes": 105,
-      "routeRestored": true
+      "routeRestored": true,
+      "invalidStateRecovery": true
     }
   ],
   "errors": []

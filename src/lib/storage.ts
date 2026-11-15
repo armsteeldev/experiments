@@ -90,10 +90,10 @@ export function decodeState(search: string): Record<string, unknown> | null {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return null
     const record = value as Record<string, unknown>
     if (Object.hasOwn(record, SHARED_STATE_MARKER)) {
-      if (record[SHARED_STATE_MARKER] !== SHARED_STATE_VERSION || !record.state || typeof record.state !== 'object' || Array.isArray(record.state)) return null
+      if (record[SHARED_STATE_MARKER] !== SHARED_STATE_VERSION || !isStateRecord(record.state)) return null
       return record.state as Record<string, unknown>
     }
-    return record
+    return isStateRecord(record) ? record : null
   } catch {
     return null
   }
@@ -101,6 +101,7 @@ export function decodeState(search: string): Record<string, unknown> | null {
 
 export function encodeState(state: Record<string, unknown>) {
   try {
+    if (!isStateRecord(state)) return ''
     const bytes = new TextEncoder().encode(JSON.stringify({ [SHARED_STATE_MARKER]: SHARED_STATE_VERSION, state }))
     if (bytes.byteLength > MAX_SHARED_STATE_BYTES) return ''
     let binary = ''
@@ -109,6 +110,10 @@ export function encodeState(state: Record<string, unknown>) {
   } catch {
     return ''
   }
+}
+
+function isStateRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === 'object' && !Array.isArray(value) && isSerializableValue(value))
 }
 
 function isSerializableValue(value: unknown, depth = 0, seen = new WeakSet<object>()): boolean {

@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Latest clean checkpoint:** `0593cea` guards development-only diagnostics from production assets. Current local changes add simulation interaction QA and repair paused Fluid input in the GPU and CPU renderers; these are not committed yet.
+- **Latest clean checkpoint:** `a259f2a` verifies state-changing interactions and fixes paused Fluid input in the WebGL and Canvas2D paths. Current local work hardens URL-state validation across all exhibits.
 
 ## Milestones
 
@@ -49,6 +49,7 @@
 - Remaining: audit each exhibit’s parameter bounds and deterministic-seed behavior; add export/import only if it can preserve the model honestly; test shared links across all exhibits and malformed state in the browser.
 - Closed the cross-exhibit support gap found during the browser sweep: The Adder now shares/restores its width, architecture, valid operands and speed. Its changed 8-bit look-ahead link restored 23 + 17 and the displayed result was 40.
 - The Living Network restores its bounded 48-character message payload as well as endpoints; the input, save form and privacy page warn that this text appears in saved/shared settings and should not contain private information.
+- Shared URL state now uses the same safe-JSON boundaries as the local notebook: plain records only, finite numbers, bounded depth/field counts, and rejection of unsafe property names and cyclic values. Legacy links receive the same validation. Unit checks cover these edge cases; the browser share/restore sweep now sends a deeply nested invalid envelope to all 19 routes and confirms each opens with safe defaults, with no error boundary or browser/network errors. Per-exhibit parameter-range and seed validation remains a separate open audit.
 
 ### 4–10 — Performance, broader accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: in progress
 
@@ -85,8 +86,10 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run verify` — passed after the Fluid pause-path changes; initial JS is 354.35 kB raw / 114.25 kB gzip, initial CSS is 108.79 kB raw / 23.66 kB gzip. Fluid is 29.76 kB raw / 10.18 kB gzip and Mandelbrot is 52.79 kB raw / 17.27 kB gzip.
 - The static built-asset scan confirms no Mandelbrot, Gravity, Attractors or Growth development diagnostic global is present in production JavaScript.
 - `npm run qa:original-interactions` — passed nine state-changing scenarios across nine exhibits against the built production bundle on isolated local port 5217, with ten captures and paired before/after canvas hashes for Fluid and reaction-diffusion; zero browser/network errors. Browser: HeadlessChrome 157, SwiftShader/Vulkan, desktop 1440×900 emulation. Port 5215 belongs to the MIDAS app and was not used.
+- `npm run qa:invisible-world` — passed the six expanded studies against the isolated local production preview: 50 captures, 12 repeated SPA entries, successful audio closure, optical source manipulation, sound harmonics, packet delivery through the live network, and keyboard lensing response. All 19 gallery pieces and concept search passed; no browser/HTTP errors. The gallery/evolved captures are committed baseline assets and were restored after the run, while dynamic packet counts were not retained as source changes.
+- `npm run qa:state-sharing` — passed share/restore plus malformed deeply nested state recovery for all 19 exhibits on the production preview; the structured evidence records the routes and restoration result. No browser/HTTP errors.
 - No dependency, service or tracking code was added; exhibit chunks remain lazy.
 
 ## Next action
 
-Next: expand state-change browser coverage to optics, sound, packet routing and lensing; then exercise repeated route/resource cleanup under realistic navigation and continue accessibility and scientific-model reviews. Physical-device and physical-GPU claims remain open until tested on real devices.
+Next: exercise repeated route/resource cleanup across all nineteen studies, then continue the per-exhibit settings-bound audit and accessibility/scientific-model reviews. Physical-device and physical-GPU claims remain open until tested on real devices.

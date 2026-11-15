@@ -7,6 +7,9 @@ const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9351)
 const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5198'
 const experiments = JSON.parse(await readFile(new URL('../src/data/experiments.json', import.meta.url), 'utf8'))
 const evidenceRoot = resolve('docs/renaissance/evidence')
+let deeplyNestedState = true
+for (let index = 0; index < 11; index++) deeplyNestedState = { nested: deeplyNestedState }
+const invalidState = Buffer.from(JSON.stringify({ $armsteel: 1, state: { nested: deeplyNestedState } })).toString('base64url')
 const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
 const page = targets.find((target) => target.type === 'page' && target.url === 'about:blank') ?? targets.find((target) => target.type === 'page')
 assert.ok(page, `No page target found on CDP port ${port}`)
@@ -138,7 +141,10 @@ for (const item of experiments) {
     await click('button[aria-label="Toggle experiment controls"]')
     await waitFor(`document.querySelector('.iw-message-input input')?.value === 'curious packet'`, 'restored network message payload')
   }
-  routeResults.push({ id: item.id, keys: Object.keys(decoded.state), bytes: stateBytes, routeRestored: true })
+  await call('Page.navigate', { url: `${base}/exhibits/${item.id}?state=${invalidState}` })
+  await waitFor(`location.pathname === ${JSON.stringify(`/exhibits/${item.id}`)} && Boolean(document.querySelector('.dock-current span')) && !document.querySelector('.experience-loading')`, `${item.id} recovery from structurally invalid shared state`)
+  assert.equal(await evaluate(`Boolean(document.querySelector('.experience-error'))`), false, `${item.id} opens with safe defaults after an invalid nested state is rejected`)
+  routeResults.push({ id: item.id, keys: Object.keys(decoded.state), bytes: stateBytes, routeRestored: true, invalidStateRecovery: true })
 }
 
 assert.deepEqual(browserErrors, [], `Browser or network errors occurred: ${browserErrors.join('; ')}`)

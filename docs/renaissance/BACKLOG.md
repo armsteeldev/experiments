@@ -15,6 +15,7 @@ Status is current to the simulation interaction QA checkpoint on `renaissance/ne
 
 - [x] Version new shared URLs; retain decoding of existing unversioned links and reject unknown future envelopes.
 - [x] Define a versioned local notebook with a 16 KiB per-state limit, twelve entries and 128 KiB aggregate limit.
+- [x] Apply bounded safe-JSON validation to shared state encoding/decoding, including finite numbers, nesting, field counts, cycles and unsafe keys; preserve safe legacy links.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
 - [ ] Audit each exhibit serializer for validation, defaults, finite numeric bounds and deterministic seed behavior.
 - [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
@@ -44,7 +45,8 @@ Status is current to the simulation interaction QA checkpoint on `renaissance/ne
 
 - [ ] Extend route tests to all 19 for direct load, refresh, controls/about, recovery and invalid URLs.
 - [x] Add browser checks that assert actual state changes for Mandelbrot zoom/reset, Fluid pointer/button input, reaction-diffusion painting, gravity orbit creation/recovery, CPU stepping, neural training, keyboard-edited logic, gate-level addition and cellular-automaton stepping.
-- [ ] Add representative browser state-change checks for geometry optics, sound synthesis, packet routing and gravitational lensing; prefer visible output or model values over fragile screenshot equality.
+- [x] Add representative browser state-change checks for geometry optics, sound synthesis, packet routing and gravitational lensing; prefer visible output or model values over fragile screenshot equality.
+- [x] On all 19 routes, reject a deeply nested shared-state envelope and recover with safe defaults without entering the error boundary.
 - [ ] Exercise the Fluid Canvas2D fallback in a browser with WebGL disabled; the fallback code now applies paused strokes synchronously, but the current browser ran its WebGL renderer.
 - [ ] Add stable visual capture and tolerant image-diff workflow for representative desktop/mobile states.
 - [ ] Review scientific claims and visible approximations, especially Fluid, Garden, Networks, geometric optics and Where Light Falls.

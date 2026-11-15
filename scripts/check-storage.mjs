@@ -75,6 +75,22 @@ const shared = { preset: 'aurora', value: 12, label: 'ström' }
 const encoded = storage.encodeState(shared)
 assert.deepEqual(storage.decodeState(`?state=${encoded}`), shared, 'shared state round-trips Unicode')
 assert.deepEqual(storage.decodeState(`?state=${Buffer.from(JSON.stringify({ preset: 'legacy' })).toString('base64url')}`), { preset: 'legacy' }, 'unversioned shared links remain readable')
+assert.equal(storage.encodeState({ value: Number.NaN }), '', 'non-finite shared values are not encoded as misleading nulls')
+assert.equal(storage.encodeState([]), '', 'shared state roots must be plain records')
+assert.equal(storage.encodeState(JSON.parse('{"__proto__":true}')), '', 'unsafe object keys cannot enter a shared URL')
+const deepState = { value: true }
+for (let index = 0; index < 11; index++) deepState.value = { next: deepState.value }
+assert.equal(storage.encodeState({ nested: deepState }), '', 'shared state nesting is bounded before encoding')
+const unsafeEnvelope = Buffer.from(JSON.stringify({ $armsteel: 1, state: JSON.parse('{"constructor":{"prototype":{"polluted":true}}}') })).toString('base64url')
+assert.equal(storage.decodeState(`?state=${unsafeEnvelope}`), null, 'unsafe keys in a versioned URL are rejected')
+const deepEnvelope = Buffer.from(JSON.stringify({ $armsteel: 1, state: { nested: deepState } })).toString('base64url')
+assert.equal(storage.decodeState(`?state=${deepEnvelope}`), null, 'excessively nested versioned URLs are rejected')
+const deepLegacy = Buffer.from(JSON.stringify(deepState)).toString('base64url')
+assert.equal(storage.decodeState(`?state=${deepLegacy}`), null, 'legacy URLs obey the same nested-state limits')
+const tooManyFields = Object.fromEntries(Array.from({ length: 257 }, (_, index) => [`field${index}`, index]))
+assert.equal(storage.encodeState(tooManyFields), '', 'shared records have a bounded field count')
+const cyclic = {}; cyclic.self = cyclic
+assert.equal(storage.encodeState(cyclic), '', 'cyclic shared state is rejected before JSON serialization')
 assert.equal(storage.decodeState('?state=%%%'), null, 'invalid state is ignored')
 assert.equal(storage.decodeState(`?state=${'A'.repeat(40_000)}`), null, 'oversized state is rejected')
 assert.equal(storage.decodeState(`?state=${storage.encodeState([])}`), null, 'arrays are not accepted as state objects')
