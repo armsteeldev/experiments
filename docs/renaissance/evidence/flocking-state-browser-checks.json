@@ -1,0 +1,25 @@
+{
+  "browser": "HeadlessChrome 157, Canvas 2D, 1440×900 and 390×844 emulation",
+  "customArrangement": {
+    "markers": 2,
+    "kinds": [
+      "food",
+      "obstacle"
+    ],
+    "exactDesktopRestore": true,
+    "exactMobileRestore": true
+  },
+  "boundedPlacement": {
+    "markers": 16,
+    "oldestReplaced": true
+  },
+  "clearing": {
+    "scenarioChange": "predator",
+    "explicitEmptyRestore": true
+  },
+  "malformedRecovery": {
+    "outOfBoundsCoordinateRejected": true,
+    "errorBoundary": false
+  },
+  "browserErrors": []
+}

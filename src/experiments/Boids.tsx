@@ -4,10 +4,11 @@ import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { boundedStateNumber, boundedStateSeed, stateChoice } from '../lib/experimentState'
+import { MAX_FLOCKING_MARKERS, restoreFlockingMarkers, type FlockingMarkerState } from '../lib/flockingState'
 
 type Species = 0 | 1 | 2
 type Agent = { x: number; y: number; vx: number; vy: number; oldX: number; oldY: number; species: Species; plumage: number; size: number }
-type Marker = { x: number; y: number; kind: 'attract' | 'repel' | 'obstacle' | 'food' }
+type Marker = FlockingMarkerState
 type Scenario = 'murmuration' | 'predator' | 'vortex' | 'competition' | 'migration'
 const scenarios: Record<Scenario, string> = {
   murmuration: 'Silver murmuration',
@@ -29,7 +30,9 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const hint = useDiscoveryHint('boids')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const agents = useRef<Agent[]>([])
-  const markers = useRef<Marker[]>([])
+  const restoredMarkers = restoreFlockingMarkers(stateFromUrl?.markers)
+  const markers = useRef<Marker[]>(restoredMarkers ?? [])
+  const [markerSnapshot, setMarkerSnapshot] = useState<FlockingMarkerState[] | null>(() => restoredMarkers)
   const drawRef = useRef<() => void>(() => {})
   const [scenario, setScenario] = useState<Scenario>(() => stateChoice(stateFromUrl?.scenario, Object.keys(scenarios) as Scenario[], 'murmuration'))
   const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || (window.matchMedia('(max-width: 720px)').matches ? 130 : 230), 120, 1400))
@@ -39,7 +42,20 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 17))
   const params = useRef({ scenario, population, speed, radius, tool, seed, paused })
   params.current = { scenario, population, speed, radius, tool, seed, paused }
-  useEffect(() => { onShareState({ scenario, population, speed, radius, tool, seed }) }, [scenario, population, speed, radius, tool, seed, onShareState])
+  const shareSettings = useRef({ scenario, population, speed, radius, tool, seed, markers: markerSnapshot })
+  shareSettings.current = { scenario, population, speed, radius, tool, seed, markers: markerSnapshot }
+  const publishShareState = (nextMarkers = shareSettings.current.markers, overrides: Partial<typeof shareSettings.current> = {}) => {
+    const settings = { ...shareSettings.current, ...overrides }
+    onShareState({ scenario: settings.scenario, population: settings.population, speed: settings.speed, radius: settings.radius, tool: settings.tool, seed: settings.seed, ...(nextMarkers === null ? {} : { markers: nextMarkers }) })
+  }
+  const commitMarkers = (nextMarkers: Marker[], overrides: Partial<typeof shareSettings.current> = {}) => {
+    markers.current = nextMarkers
+    const snapshot = nextMarkers.map(({ x, y, kind }) => ({ x, y, kind }))
+    setMarkerSnapshot(snapshot)
+    publishShareState(snapshot, overrides)
+    drawRef.current()
+  }
+  useEffect(() => { publishShareState() }, [scenario, population, speed, radius, tool, seed, markerSnapshot, onShareState])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -123,14 +139,15 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
       ctx.fillStyle = leaveTrail ? 'rgba(7,12,20,0.26)' : '#080d16'
       ctx.fillRect(0, 0, width, height)
       for (const marker of markers.current) {
+        const x = marker.x * width, y = marker.y * height
         const isObstacle = marker.kind === 'obstacle'
         const color = marker.kind === 'repel' ? '#d7918a' : marker.kind === 'food' ? '#d3c87e' : marker.kind === 'obstacle' ? '#8094a2' : '#89c9c6'
         ctx.beginPath()
-        ctx.arc(marker.x, marker.y, isObstacle ? 28 : marker.kind === 'food' ? 9 : 6, 0, Math.PI * 2)
+        ctx.arc(x, y, isObstacle ? 28 : marker.kind === 'food' ? 9 : 6, 0, Math.PI * 2)
         ctx.fillStyle = isObstacle ? 'rgba(96,118,132,.12)' : color + '2a'
         ctx.fill()
         ctx.beginPath()
-        ctx.arc(marker.x, marker.y, isObstacle ? 28 : 13, 0, Math.PI * 2)
+        ctx.arc(x, y, isObstacle ? 28 : 13, 0, Math.PI * 2)
         ctx.strokeStyle = color + '88'
         ctx.lineWidth = 0.9
         ctx.stroke()
@@ -293,7 +310,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
           else if (bird.y > height - margin) fy -= (bird.y - (height - margin)) / margin * 0.14
         }
         for (const marker of markers.current) {
-          let dx = marker.x - bird.x, dy = marker.y - bird.y
+          let dx = marker.x * width - bird.x, dy = marker.y * height - bird.y
           if (dx > width / 2) dx -= width; else if (dx < -width / 2) dx += width
           if (dy > height / 2) dy -= height; else if (dy < -height / 2) dy += height
           const distance = Math.hypot(dx, dy) || 1
@@ -334,9 +351,10 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   }, [])
 
   const placeMarker = (x: number, y: number, kind: Marker['kind'] = tool as Marker['kind']) => {
-    markers.current.push({ x, y, kind })
-    if (markers.current.length > 16) markers.current.shift()
-    drawRef.current()
+    const rect = canvasRef.current?.getBoundingClientRect()
+    if (!rect?.width || !rect.height) return
+    const marker = { x: clamp(x / rect.width, 0, 1), y: clamp(y / rect.height, 0, 1), kind }
+    commitMarkers([...markers.current, marker].slice(-MAX_FLOCKING_MARKERS))
   }
   const addMarker = (event: PointerEvent<HTMLCanvasElement>) => {
     if (event.button !== 0) return
@@ -349,21 +367,25 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
     if (rect) placeMarker(rect.width / 2, rect.height / 2, 'food')
     hint.dismiss()
   }
-  const randomize = () => { setSeed((value) => (value * 1664525 + 1013904223) >>> 0 || 1); markers.current = [] }
+  const randomize = () => {
+    const nextSeed = (seed * 1664525 + 1013904223) >>> 0 || 1
+    setSeed(nextSeed)
+    commitMarkers([], { seed: nextSeed })
+  }
 
   return <div className="experiment-surface">
     <canvas ref={canvasRef} className="experiment-canvas boids-canvas" aria-label="Interactive artificial life. Tap to place food that attracts the flock; change the field in controls." aria-describedby={hint.visible ? 'boids-first-move' : undefined} onPointerDown={addMarker} onContextMenu={(event) => event.preventDefault()} />
     {hint.visible ? <aside className="scene-nudge" id="boids-first-move" role="note"><span>Try this · A Murmuration</span><p>Drop food into the flock and watch nearby birds turn toward it. Every bird follows only its local neighbours.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={placeFoodAtCentre}>Drop food here</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{scenarios[scenario].toUpperCase()} · {population.toLocaleString()} AGENTS</span>
     <ControlPanel title={scenario === 'vortex' ? 'An Emergent Vortex' : 'A Murmuration'} note="SPATIAL ECOLOGY" visible={controlsVisible} onClose={onCloseControls}>
-      <SelectControl label="Behavioural scene" value={scenario} options={Object.entries(scenarios).map(([key, name]) => [key, name])} onChange={(value) => { setScenario(value as Scenario); markers.current = [] }} />
+      <SelectControl label="Behavioural scene" value={scenario} options={Object.entries(scenarios).map(([key, name]) => [key, name])} onChange={(value) => { const nextScenario = value as Scenario; setScenario(nextScenario); commitMarkers([], { scenario: nextScenario }) }} />
       <RangeControl label="Population" value={population} min={120} max={1400} step={20} onChange={setPopulation} />
       <RangeControl label="Pace" value={speed} min={0.55} max={4.2} step={0.05} onChange={setSpeed} format={(value) => value.toFixed(1) + '×'} />
       <RangeControl label="Awareness" value={radius} min={28} max={132} step={2} onChange={setRadius} format={(value) => value + ' px'} />
       <Segmented label="Place into the field" value={tool} options={[['attract', 'Attract'], ['repel', 'Repel'], ['obstacle', 'Barrier'], ['food', 'Food']]} onChange={setTool} />
       <p className="control-note">Each bird reacts to nearby flockmates: it keeps space, matches their heading and turns toward the group. Awareness sets how far it looks; food, attractors, repellers and barriers change the surroundings.</p>
       <ActionRow>
-        <button className="panel-action" onClick={() => { markers.current = []; drawRef.current() }}><span>Clear field marks</span><i>×</i></button>
+        <button className="panel-action" onClick={() => commitMarkers([])}><span>Clear field marks</span><i>×</i></button>
         <button className="panel-action" onClick={randomize}><span>Re-seed system</span><i>↻</i></button>
       </ActionRow>
       <p className="control-note">{scenario === 'predator' ? 'Hunters pursue nearby prey; prey align, gather and flee from danger.' : scenario === 'competition' ? 'Two groups flock by their own local rules and repel the other population.' : scenario === 'vortex' ? 'A gentle rotating field seeds the circulation; local separation, alignment and cohesion reshape the flock. Hue shifts with speed.' : 'Separation, alignment and cohesion turn local sensing into collective movement. Hue shifts with speed.'} Place a field to alter the flow.</p>
