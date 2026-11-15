@@ -44,9 +44,12 @@ Canvas quality is capped below native device-pixel ratio where needed. The brows
 ```sh
 npm run test:invisible-world
 npm run verify
+npm run qa:existing
 ```
 
 The focused checks cover wave propagation, the Courant boundary, long-run boundedness, barrier flux and linear superposition; ray intersections, reflection, Snell refraction, total internal reflection and dispersion; harmonic bins, `PeriodicWave` phase, low-pass magnitude and phase; seeded inheritance, bounded mutation, energy costs, population limits and sustained births/deaths; deterministic route choices, link failure, delivery and queue overflow; and Schwarzschild weak-field agreement, step-halving convergence, critical capture and mass scaling. The full verify suite additionally checks the original 13 studies and the 19-route page metadata/sitemap.
+
+`npm run qa:existing` adds direct Chrome checks for all 13 pre-expansion routes at 1440 × 900 and 390 × 844. It verifies a mounted titled canvas, stage bounds, document overflow and browser errors, then writes `evidence/existing-route-regression.json`.
 
 `scripts/qa-invisible-world.mjs` runs the six routes through Chrome DevTools Protocol. It captures opening, evolved, interaction, advanced, mobile interaction and mobile controls states, checks viewport overflow, exercises mobile touch and keyboard input, revisits each route twice through the SPA gallery, and captures both groups of new artwork previews plus collection search. The evidence set contains 45 PNGs. Start an isolated local Chromium first, with a fresh profile and the CDP port expected by the script:
 
