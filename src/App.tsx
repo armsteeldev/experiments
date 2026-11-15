@@ -5,6 +5,7 @@ import ArtworkPreview from './components/ArtworkPreview'
 import ExperimentBoundary from './components/ExperimentBoundary'
 import { Icon } from './components/Icon'
 import { experiments } from './registry'
+import journeyData from './data/journeys.json'
 import siteCopy from './data/site-copy.json'
 import { decodeState, encodeState, getFavorites, getRecent, rememberVisit, toggleFavorite } from './lib/storage'
 import { SITE_ORIGIN, updatePageMetadata } from './lib/metadata'
@@ -12,6 +13,15 @@ import type { ExperimentDefinition } from './types'
 
 const experimentIds = experiments.map((item) => item.id)
 const homeDescription = siteCopy.home.description
+
+type JourneyStop = { exhibit: string; note: string }
+type Journey = { id: string; shortTitle: string; title: string; description: string; stops: JourneyStop[] }
+const journeys = journeyData as Journey[]
+
+function journeyHref(journeyId: string, exhibitId: string) {
+  const query = new URLSearchParams({ journey: journeyId })
+  return `/exhibits/${encodeURIComponent(exhibitId)}?${query.toString()}`
+}
 
 function collectionStructuredData() {
   return {
@@ -107,6 +117,7 @@ function Exhibition() {
   const [query, setQuery] = useState('')
   const [favorites, setFavorites] = useState<string[]>(() => getFavorites(experimentIds))
   const [searchOpen, setSearchOpen] = useState(false)
+  const [selectedJourneyId, setSelectedJourneyId] = useState(journeys[0]?.id ?? '')
   const navigate = useNavigate()
   const searchRef = useRef<HTMLInputElement>(null)
   const searchButtonRef = useRef<HTMLButtonElement>(null)
@@ -121,6 +132,12 @@ function Exhibition() {
     })
   }, [filter, query, favorites])
   const recentlyViewed = recent.map((id) => experiments.find((item) => item.id === id)).filter((item): item is ExperimentDefinition => !!item)
+  const selectedJourney = journeys.find((journey) => journey.id === selectedJourneyId) ?? journeys[0]
+  const selectedJourneyStops = selectedJourney?.stops.map((stop) => ({
+    ...stop,
+    experiment: experiments.find((item) => item.id === stop.exhibit),
+  })).filter((stop): stop is JourneyStop & { experiment: ExperimentDefinition } => Boolean(stop.experiment)) ?? []
+  const showJourneys = filter === 'All works' && !query.trim()
   const featured = filter === 'All works' && !query.trim() ? experiments.find((item) => item.featured) : undefined
   const gridItems = featured ? shown.filter((item) => item.id !== featured.id) : shown
 
@@ -211,6 +228,38 @@ function Exhibition() {
         <FavoriteButton id={featured.id} favorites={favorites} onToggle={favorite} />
       </article>}
 
+      {showJourneys && selectedJourney && selectedJourneyStops.length > 0 && <section className="journey-section" id="journeys" aria-labelledby="journeys-heading">
+        <div className="journey-intro">
+          <p className="eyebrow"><span className="eyebrow-rule" /> CURATED PATHS</p>
+          <h2 id="journeys-heading">Follow an idea.</h2>
+          <p>Short walks through connected worlds. Start at the beginning or open any stop that catches your eye.</p>
+        </div>
+        <div className="journey-content">
+          <div className="journey-tabs" role="group" aria-label="Choose a curated path">
+            {journeys.map((journey) => <button key={journey.id} type="button" onClick={() => setSelectedJourneyId(journey.id)} aria-pressed={selectedJourney.id === journey.id}>
+              {journey.shortTitle}
+            </button>)}
+          </div>
+          <div className="journey-panel" aria-labelledby="journey-title" data-journey-id={selectedJourney.id}>
+            <div className="journey-panel-heading">
+              <div><span>{selectedJourneyStops.length} stops</span><h3 id="journey-title">{selectedJourney.title}</h3></div>
+              <p>{selectedJourney.description}</p>
+            </div>
+            <ol className="journey-route" style={{ '--journey-stop-count': selectedJourneyStops.length } as React.CSSProperties}>
+              {selectedJourneyStops.map(({ note, experiment }, index) => <li key={experiment.id}>
+                <Link to={journeyHref(selectedJourney.id, experiment.id)} aria-label={`Open stop ${index + 1} of ${selectedJourneyStops.length}: ${experiment.title}. ${note}`}>
+                  <span className="journey-step-number">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="journey-step-copy"><strong>{experiment.title}</strong><small>{note}</small></span>
+                </Link>
+              </li>)}
+            </ol>
+            <Link className="journey-begin" to={journeyHref(selectedJourney.id, selectedJourneyStops[0].experiment.id)}>
+              Begin with {selectedJourneyStops[0].experiment.title} <Icon name="arrow" />
+            </Link>
+          </div>
+        </div>
+      </section>}
+
       {gridItems.length ? <div className="gallery-grid" id="gallery-grid" aria-live="polite">
         {gridItems.map((item, index) => <article className="gallery-card" key={item.id} style={{ '--card-index': index } as React.CSSProperties}>
           <div className="card-art">
@@ -258,6 +307,7 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
   const stageRef = useRef<HTMLElement>(null)
   const stateRef = useRef<Record<string, unknown>>({})
   const overlayReturnFocus = useRef<HTMLElement | null>(null)
+  const keepJourneyOpen = useRef(false)
   const [paused, setPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [documentVisible, setDocumentVisible] = useState(() => !document.hidden)
   const [activeOverlay, setActiveOverlay] = useState<Overlay | null>(null)
@@ -265,12 +315,20 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
   const [isFavorite, setIsFavorite] = useState(() => getFavorites(experimentIds).includes(experiment.id))
   const [fullscreen, setFullscreen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const requestedJourneyId = new URLSearchParams(location.search).get('journey')
+  const activeJourney = journeys.find((journey) => journey.id === requestedJourneyId && journey.stops.some((stop) => stop.exhibit === experiment.id))
+  const journeyIndex = activeJourney?.stops.findIndex((stop) => stop.exhibit === experiment.id) ?? -1
+  const previousJourneyStop = journeyIndex > 0 ? activeJourney?.stops[journeyIndex - 1] : undefined
+  const nextJourneyStop = activeJourney && journeyIndex >= 0 ? activeJourney.stops[journeyIndex + 1] : undefined
+  const previousJourneyExperiment = previousJourneyStop ? experiments.find((item) => item.id === previousJourneyStop.exhibit) : undefined
+  const nextJourneyExperiment = nextJourneyStop ? experiments.find((item) => item.id === nextJourneyStop.exhibit) : undefined
 
   useEffect(() => {
     rememberVisit(experiment.id, experimentIds)
     setIsFavorite(getFavorites(experimentIds).includes(experiment.id))
     setPaused(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-    setActiveOverlay(null)
+    if (!keepJourneyOpen.current) setActiveOverlay(null)
+    keepJourneyOpen.current = false
     setInterfaceVisible(true)
     stateRef.current = {}
     const path = `/exhibits/${experiment.id}`
@@ -422,6 +480,20 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
       <span className="info-category">{experiment.category} <i>·</i> {experiment.number} / {String(experiments.length).padStart(2, '0')}</span>
       <h1 id="experiment-info-title">{experiment.title}</h1>
       <p>{experiment.description}</p>
+      {activeJourney && journeyIndex >= 0 && <section className="journey-current" aria-label={`Curated path ${activeJourney.title}`} data-journey-id={activeJourney.id} data-journey-step={journeyIndex + 1}>
+        <div className="journey-current-heading">
+          <span>{activeJourney.shortTitle} · {String(journeyIndex + 1).padStart(2, '0')} / {String(activeJourney.stops.length).padStart(2, '0')}</span>
+          <div role="progressbar" aria-label={`Progress through ${activeJourney.title}`} aria-valuemin={1} aria-valuemax={activeJourney.stops.length} aria-valuenow={journeyIndex + 1} style={{ '--journey-progress': `${((journeyIndex + 1) / activeJourney.stops.length) * 100}%` } as React.CSSProperties} />
+        </div>
+        <h2>{activeJourney.title}</h2>
+        <p>{activeJourney.stops[journeyIndex].note}</p>
+        <nav aria-label={`Navigate ${activeJourney.title}`}>
+          {previousJourneyExperiment && <Link to={journeyHref(activeJourney.id, previousJourneyExperiment.id)} onClick={(event) => { if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) keepJourneyOpen.current = true }} aria-label={`Previous in this thread: ${previousJourneyExperiment.title}`}><span>←</span> Previous</Link>}
+          {nextJourneyExperiment && <Link to={journeyHref(activeJourney.id, nextJourneyExperiment.id)} onClick={(event) => { if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) keepJourneyOpen.current = true }} aria-label={`Continue this thread to ${nextJourneyExperiment.title}`}>Next · {nextJourneyExperiment.title} <span>→</span></Link>}
+          {!nextJourneyExperiment && <Link to="/" aria-label="Return to the collection after completing this thread">Thread complete · Return to the collection <span>→</span></Link>}
+          <Link to={`/exhibits/${experiment.id}`} className="journey-exit" aria-label="Continue exploring without this curated path">Explore freely</Link>
+        </nav>
+      </section>}
       <details className="info-reading"><summary>Read the underlying idea</summary><p>{experiment.about}</p></details>
       {experiment.related?.length ? <nav className="related-studies" aria-label="Related experiments"><span>FOLLOW THIS THREAD</span><div>{experiment.related.map((id) => experiments.find((item) => item.id === id)).filter((item): item is ExperimentDefinition => !!item).map((item) => <Link key={item.id} to={'/exhibits/' + item.id}><small>{item.number}</small><strong>{item.title}</strong><Icon name="arrow" /></Link>)}</div></nav> : null}
       <div className="info-method"><span>UNDERLYING IDEA</span><strong>{experiment.method}</strong></div>

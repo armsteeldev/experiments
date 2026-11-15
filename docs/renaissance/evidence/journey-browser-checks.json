@@ -1,0 +1,55 @@
+{
+  "desktopGallery": {
+    "width": 1440,
+    "documentWidth": 1425,
+    "pathCount": 4,
+    "stops": 5
+  },
+  "reactionState": {
+    "route": "/exhibits/reaction",
+    "search": "?journey=patterns",
+    "title": "The Pattern Beneath",
+    "journey": "patterns",
+    "step": "2",
+    "next": "Continue this thread to A Grammar of Growth"
+  },
+  "mobileGallery": {
+    "width": 390,
+    "documentWidth": 390,
+    "sectionLeft": 20,
+    "sectionRight": 370,
+    "columns": "171.5px 171.5px"
+  },
+  "narrowGallery": {
+    "width": 320,
+    "documentWidth": 320,
+    "columns": "280px"
+  },
+  "mobileState": {
+    "width": 390,
+    "documentWidth": 390,
+    "panelWidth": 366,
+    "panelRight": 378,
+    "step": "1"
+  },
+  "landscapeState": {
+    "width": 844,
+    "height": 390,
+    "documentWidth": 844,
+    "panelBottom": 289,
+    "panelHeight": 270,
+    "panelScrolls": true
+  },
+  "browserErrors": [],
+  "scenarios": [
+    "four selectable path themes",
+    "keyboard path selection",
+    "skip directly to a stop",
+    "complete five-stop path in both directions",
+    "deep-link refresh",
+    "invalid path association recovery",
+    "touch navigation on mobile",
+    "320px gallery",
+    "mobile portrait and landscape layouts"
+  ]
+}

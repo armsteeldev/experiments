@@ -1,0 +1,52 @@
+[
+  {
+    "id": "patterns",
+    "shortTitle": "Patterns",
+    "title": "Patterns from simplicity",
+    "description": "Follow a few local rules as they turn into living forms.",
+    "stops": [
+      { "exhibit": "automata", "note": "A grid follows one small rule. Give it time, and repetition begins to make structure." },
+      { "exhibit": "reaction", "note": "Two virtual chemicals spread and react; a narrow balance lets patterns hold their shape." },
+      { "exhibit": "lsystem", "note": "A rewriting grammar grows a sentence. A drawing turtle turns its repeated symbols into branches." },
+      { "exhibit": "garden", "note": "Now simple organisms spend energy, seek food and inherit small variations. The population becomes the pattern." },
+      { "exhibit": "boids", "note": "Each bird responds only to nearby neighbours. The flock’s larger movement has no conductor." }
+    ]
+  },
+  {
+    "id": "forces",
+    "shortTitle": "Forces",
+    "title": "The invisible forces",
+    "description": "Trace how a field changes motion, waves and the path of light.",
+    "stops": [
+      { "exhibit": "gravity", "note": "Every mass pulls on every other mass. Move one body and the whole orbital system responds." },
+      { "exhibit": "forces", "note": "Charge is the source; field lines and potential reveal how another charge would be pushed or pulled." },
+      { "exhibit": "waves", "note": "A disturbance travels through a field, then meets its own echoes at boundaries and openings." },
+      { "exhibit": "optics", "note": "At a surface, geometry and material decide whether a ray bends, reflects or stays inside." },
+      { "exhibit": "lensing", "note": "Near a black hole, gravity can curve a photon’s path until it escapes or is captured." }
+    ]
+  },
+  {
+    "id": "machines",
+    "shortTitle": "Machines",
+    "title": "How machines think",
+    "description": "Build from a switch to a complete machine, then let connections learn.",
+    "stops": [
+      { "exhibit": "logic", "note": "Start with gates: simple truth rules turn high and low signals into a useful circuit." },
+      { "exhibit": "adder", "note": "The same gates add binary numbers. Follow each bit and watch a carry move through the machine." },
+      { "exhibit": "machine", "note": "A stored program gives circuits a sequence: fetch an instruction, decode it, then move data." },
+      { "exhibit": "neural", "note": "A neural network changes the strengths of its connections until examples shape a decision boundary." }
+    ]
+  },
+  {
+    "id": "signals",
+    "shortTitle": "Signals",
+    "title": "Information in motion",
+    "description": "From a travelling wave to a message finding its way across a network.",
+    "stops": [
+      { "exhibit": "waves", "note": "A signal moves through space as a wave, carrying phase and energy from one place to another." },
+      { "exhibit": "sound", "note": "Sound is periodic motion you can hear. Add harmonics and see how their mixture changes its shape." },
+      { "exhibit": "logic", "note": "Digital circuits encode information as distinct states and transform it one operation at a time." },
+      { "exhibit": "network", "note": "Packets carry a message from node to node, meeting delay, congestion and broken links along the way." }
+    ]
+  }
+]
