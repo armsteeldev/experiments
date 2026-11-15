@@ -468,7 +468,10 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
         setActiveOverlay(null)
         return
       }
-      if (editing || element?.closest('button, a')) return
+      const interactiveTarget = element?.closest('button, a, input, textarea, select, [role="slider"], [role="button"], [tabindex]:not([tabindex="-1"])')
+      const canvasTarget = element?.closest('canvas[tabindex]:not([tabindex="-1"])')
+      if (event.defaultPrevented || editing || (interactiveTarget && !canvasTarget)) return
+      if (canvasTarget && event.code !== 'Space' && event.key !== ' ') return
       if (activeOverlay && activeOverlay !== 'selector' && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) return
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.preventDefault()

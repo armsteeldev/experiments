@@ -44,7 +44,9 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Add a reduced-motion browser matrix; confirm all 19 studies begin paused when that preference is active at three viewport sizes.
 - [x] Give shared segmented and preset choices a named group and `aria-pressed` state matching the selected visual option.
 - [x] Add an automated Controls/About typography and target-size check; see `npm run qa:accessibility` and `evidence/accessibility-readability-review.json`.
-- [ ] Add keyboard alternatives for pointer-only primary canvas actions, then verify state changes from actual key events.
+- [x] Make L-system and attractor cameras focusable; support arrows, plus/minus and Home with a visible keyboard-only instruction and focus ring; preserve those keys from global exhibit navigation.
+- [x] Test Tab, keyboard panning/rotation, zoom and exact camera restore in a rendered Canvas2D browser at phone and desktop sizes.
+- [ ] Add non-pointer placement/editing for pointer-led simulation objects where it improves the core task, beginning with Boids and cellular boards; then review Gravity and Neural Networks.
 - [ ] Review formal contrast, reading order, dialog semantics, status announcements and screen-reader descriptions with assistive technology.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
 - [x] Keep simulation diagnostics development-only and verify they are absent from production JavaScript.

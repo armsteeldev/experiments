@@ -1,0 +1,215 @@
+{
+  "browser": "HeadlessChrome 157 with SwiftShader; 390×844 phone touch emulation and 1024×768 desktop viewport",
+  "method": "CDP Tab and key events move and zoom real Canvas 2D scenes. Sampled pixel fingerprints confirm rendered view changes; Home must exactly restore the paused starting image. Space must still resume and pause the focused exhibit through the shared shell. The browser preference is reduced motion so each experiment begins paused.",
+  "cases": [
+    {
+      "study": "lsystem",
+      "viewport": {
+        "name": "phone",
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "title": "A Grammar of Growth",
+      "canvasState": {
+        "tabIndex": 0,
+        "label": "Generative botanical and L-system artwork. Drag to pan and scroll to zoom. With the canvas focused, use arrow keys to pan, plus or minus to zoom, and Home to restore the framing.",
+        "focusRing": false,
+        "outline": "3px"
+      },
+      "focus": {
+        "onCanvas": true,
+        "visible": true,
+        "outline": "2px",
+        "instructionsVisible": true,
+        "instructions": "ARROWS · PAN　　+ / − · ZOOM　　HOME · RESTORE"
+      },
+      "before": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 2069070239
+      },
+      "panned": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 930697660
+      },
+      "zoomed": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 4138056262
+      },
+      "reset": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 2069070239
+      },
+      "keyboardPan": true,
+      "keyboardZoom": true,
+      "homeRestore": true,
+      "spacePauseResume": true,
+      "screenshot": "canvas-keyboard-lsystem-phone.png"
+    },
+    {
+      "study": "attractors",
+      "viewport": {
+        "name": "phone",
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "title": "Weather, Remembered",
+      "canvasState": {
+        "tabIndex": 0,
+        "label": "Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom. With the canvas focused, use arrow keys to rotate, plus or minus to zoom, and Home to restore the view.",
+        "focusRing": false,
+        "outline": "3px"
+      },
+      "focus": {
+        "onCanvas": true,
+        "visible": true,
+        "outline": "2px",
+        "instructionsVisible": true,
+        "instructions": "ARROWS · ROTATE　　+ / − · ZOOM　　HOME · RESTORE"
+      },
+      "before": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 3563594491
+      },
+      "panned": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 334633530
+      },
+      "zoomed": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 2896386272
+      },
+      "reset": {
+        "width": 394,
+        "height": 854,
+        "sampledPixels": 56080,
+        "hash": 3563594491
+      },
+      "keyboardPan": true,
+      "keyboardZoom": true,
+      "homeRestore": true,
+      "spacePauseResume": true,
+      "screenshot": "canvas-keyboard-attractors-phone.png"
+    },
+    {
+      "study": "lsystem",
+      "viewport": {
+        "name": "desktop",
+        "width": 1024,
+        "height": 768,
+        "mobile": false
+      },
+      "title": "A Grammar of Growth",
+      "canvasState": {
+        "tabIndex": 0,
+        "label": "Generative botanical and L-system artwork. Drag to pan and scroll to zoom. With the canvas focused, use arrow keys to pan, plus or minus to zoom, and Home to restore the framing.",
+        "focusRing": false,
+        "outline": "3px"
+      },
+      "focus": {
+        "onCanvas": true,
+        "visible": true,
+        "outline": "2px",
+        "instructionsVisible": true,
+        "instructions": "ARROWS · PAN　　+ / − · ZOOM　　HOME · RESTORE"
+      },
+      "before": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 3071682703
+      },
+      "panned": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 1047484219
+      },
+      "zoomed": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 829434581
+      },
+      "reset": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 3071682703
+      },
+      "keyboardPan": true,
+      "keyboardZoom": true,
+      "homeRestore": true,
+      "spacePauseResume": true,
+      "screenshot": null
+    },
+    {
+      "study": "attractors",
+      "viewport": {
+        "name": "desktop",
+        "width": 1024,
+        "height": 768,
+        "mobile": false
+      },
+      "title": "Weather, Remembered",
+      "canvasState": {
+        "tabIndex": 0,
+        "label": "Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom. With the canvas focused, use arrow keys to rotate, plus or minus to zoom, and Home to restore the view.",
+        "focusRing": false,
+        "outline": "3px"
+      },
+      "focus": {
+        "onCanvas": true,
+        "visible": true,
+        "outline": "2px",
+        "instructionsVisible": true,
+        "instructions": "ARROWS · ROTATE　　+ / − · ZOOM　　HOME · RESTORE"
+      },
+      "before": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 2196904250
+      },
+      "panned": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 434918036
+      },
+      "zoomed": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 6208860
+      },
+      "reset": {
+        "width": 1036,
+        "height": 777,
+        "sampledPixels": 50311,
+        "hash": 2196904250
+      },
+      "keyboardPan": true,
+      "keyboardZoom": true,
+      "homeRestore": true,
+      "spacePauseResume": true,
+      "screenshot": null
+    }
+  ],
+  "browserErrors": []
+}

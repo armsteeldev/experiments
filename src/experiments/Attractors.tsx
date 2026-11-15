@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent } from 'react'
+import type { KeyboardEvent, PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
@@ -327,6 +327,25 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
     setCameraState({ ...camera.current })
     drawRef.current()
   }
+  const cameraKeyDown = (event: KeyboardEvent<HTMLCanvasElement>) => {
+    const next = { ...camera.current }
+    const turn = event.shiftKey ? 0.16 : 0.08
+    if (event.key === 'ArrowLeft') next.y -= turn
+    else if (event.key === 'ArrowRight') next.y += turn
+    else if (event.key === 'ArrowUp') next.x = Math.max(-1.3, next.x - turn)
+    else if (event.key === 'ArrowDown') next.x = Math.min(1.3, next.x + turn)
+    else if (['+', '=', 'Add'].includes(event.key)) next.zoom = Math.min(4.5, next.zoom * 1.2)
+    else if (['-', '_', 'Subtract'].includes(event.key)) next.zoom = Math.max(0.45, next.zoom / 1.2)
+    else if (event.key === 'Home') {
+      Object.assign(next, cameraFor(system))
+    } else return
+    event.preventDefault()
+    hint.dismiss()
+    drag.current = null
+    camera.current = next
+    setCameraState(next)
+    drawRef.current()
+  }
   const wheel = (event: WheelEvent) => { event.preventDefault(); camera.current.zoom = Math.max(0.45, Math.min(4.5, camera.current.zoom * Math.exp(-event.deltaY * 0.001))); setCameraState({ ...camera.current }); drawRef.current() }
   useEffect(() => {
     const canvas = canvasRef.current
@@ -342,7 +361,8 @@ export default function Attractors({ paused, controlsVisible, stateFromUrl, onSh
       : [['classic', 'Canonical orbit'], ['soft', 'Alternative orbit'], ['custom', 'Custom']]
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas attractor-canvas" aria-label="Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom." aria-describedby={hint.visible ? 'attractors-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    <canvas ref={canvasRef} className="experiment-canvas attractor-canvas" tabIndex={0} aria-label="Interactive three-dimensional strange attractor. Drag to rotate; scroll to zoom. With the canvas focused, use arrow keys to rotate, plus or minus to zoom, and Home to restore the view." aria-describedby={hint.visible ? 'attractors-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} onKeyDown={cameraKeyDown} />
+    <span className="canvas-keyboard-hint" aria-hidden="true">ARROWS · ROTATE　　+ / − · ZOOM　　HOME · RESTORE</span>
     {hint.visible ? <aside className="scene-nudge" id="attractors-first-move" role="note"><span>Try this · Weather, Remembered</span><p>Drag the butterfly to turn it. Change ρ in Controls to see how a small change can reshape its path.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{systemNames[system].toUpperCase()} · RK4 · {trail.toLocaleString()} POINT TRAIL</span>
     <ControlPanel title="Weather, Remembered" note="STRANGE ATTRACTORS" visible={controlsVisible} onClose={onCloseControls}>

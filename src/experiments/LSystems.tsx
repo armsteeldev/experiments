@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { PointerEvent } from 'react'
+import type { KeyboardEvent, PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
@@ -342,6 +342,32 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
     setCamera(next)
     drawRef.current(next)
   }
+  const cameraKeyDown = (event: KeyboardEvent<HTMLCanvasElement>) => {
+    const current = cameraRef.current
+    const distance = event.shiftKey ? 56 : 28
+    let next: Camera | null = null
+    if (event.key === 'ArrowLeft') next = { ...current, x: current.x - distance }
+    else if (event.key === 'ArrowRight') next = { ...current, x: current.x + distance }
+    else if (event.key === 'ArrowUp') next = { ...current, y: current.y - distance }
+    else if (event.key === 'ArrowDown') next = { ...current, y: current.y + distance }
+    else if (event.key === 'Home') next = { zoom: 1, x: 0, y: 0 }
+    else if (['+', '=', 'Add'].includes(event.key)) {
+      const zoom = Math.min(24, current.zoom * 1.25)
+      const scale = zoom / current.zoom
+      next = { zoom, x: current.x * scale, y: current.y * scale }
+    } else if (['-', '_', 'Subtract'].includes(event.key)) {
+      const zoom = Math.max(0.15, current.zoom / 1.25)
+      const scale = zoom / current.zoom
+      next = { zoom, x: current.x * scale, y: current.y * scale }
+    }
+    if (!next) return
+    event.preventDefault()
+    hint.dismiss()
+    drag.current = null
+    cameraRef.current = next
+    setCamera(next)
+    drawRef.current(next)
+  }
   const wheel = (event: WheelEvent) => {
     event.preventDefault()
     const rect = canvasRef.current?.getBoundingClientRect()
@@ -366,7 +392,8 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
   const replayGrowth = () => { setGrowing(true); setGrowthKey((value) => value + 1); hint.dismiss() }
 
   return <div className="experiment-surface">
-    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" aria-label="Generative botanical and L-system artwork. Drag to pan and scroll to zoom." aria-describedby={hint.visible ? 'lsystem-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} />
+    <canvas ref={canvasRef} className="experiment-canvas lsystem-canvas" tabIndex={0} aria-label="Generative botanical and L-system artwork. Drag to pan and scroll to zoom. With the canvas focused, use arrow keys to pan, plus or minus to zoom, and Home to restore the framing." aria-describedby={hint.visible ? 'lsystem-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); pointerDown(event) }} onPointerMove={pointerMove} onPointerUp={() => { drag.current = null }} onPointerCancel={() => { drag.current = null }} onKeyDown={cameraKeyDown} />
+    <span className="canvas-keyboard-hint" aria-hidden="true">ARROWS · PAN　　+ / − · ZOOM　　HOME · RESTORE</span>
     {hint.visible ? <aside className="scene-nudge" id="lsystem-first-move" role="note"><span>Try this · A Grammar of Growth</span><p>Watch the fern unfurl, then switch to a tree or coral and follow the branching rule.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={replayGrowth}>Replay the growth</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{preset.name.toUpperCase()} · {geometry.segments.length.toLocaleString()} CURVES</span>
     <ControlPanel title="A Grammar of Growth" note="GENERATIVE SYSTEMS" visible={controlsVisible} onClose={onCloseControls}>
