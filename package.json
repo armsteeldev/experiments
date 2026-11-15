@@ -42,6 +42,7 @@
     "qa:collection-discovery": "node scripts/qa-collection-discovery.mjs",
     "qa:original-interactions": "node scripts/qa-original-interactions.mjs",
     "qa:invisible-world": "node scripts/qa-invisible-world.mjs",
+    "qa:lensing-lifecycle": "node scripts/qa-lensing-lifecycle.mjs",
     "test": "npm run test:numerics && npm run test:simulations && npm run test:adder && npm run test:fern && npm run test:attractors && npm run test:invisible-world && npm run test:journeys && npm run test:buttons && npm run test:storage && npm run test:experiment-state && npm run test:automata-state && npm run test:circuit-state && npm run test:forces-state && npm run test:gravity-state && npm run test:flocking-state && npm run test:flocking-grid && npm run test:neural-state",
     "check:site": "node scripts/check-site-pages.mjs",
     "verify": "npm run build && npm test && npm run check:site",

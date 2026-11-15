@@ -170,8 +170,10 @@ for (const item of experiments) {
     assert.equal(decoded.state.dataset, 'custom', 'Neural Networks shares the custom lesson kind')
     assert.equal(decoded.state.weightSeed, 3, 'Neural Networks shares the seed of its latest weight reset')
     assert.deepEqual(decoded.state.examples.map((sample) => sample.y), [0, 1], 'Neural Networks shares both example labels')
+    // Canvas geometry is rounded across CSS/device pixels; allow at most about three plot pixels.
+    const pointTolerance = 0.02
     for (const [index, expected] of [[-0.56, 0.7], [0.57, 0.4]].entries()) {
-      assert.ok(Math.abs(decoded.state.examples[index].x[0] - expected[0]) < 0.01 && Math.abs(decoded.state.examples[index].x[1] - expected[1]) < 0.01, `Neural Networks restores example ${index + 1} coordinates`)
+      assert.ok(Math.abs(decoded.state.examples[index].x[0] - expected[0]) <= pointTolerance && Math.abs(decoded.state.examples[index].x[1] - expected[1]) <= pointTolerance, `Neural Networks restores example ${index + 1} coordinates`)
     }
   }
   const stateBytes = Buffer.byteLength(JSON.stringify(decoded), 'utf8')

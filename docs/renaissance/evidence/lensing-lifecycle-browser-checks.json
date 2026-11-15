@@ -1,0 +1,135 @@
+{
+  "browser": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "renderer": "Headless Chromium software renderer; CPU throttling used only for the cancellation race",
+  "initial": {
+    "url": "http://127.0.0.1:5230/assets/lensing.worker-BfOu5MkA.js",
+    "requests": [
+      {
+        "type": "table",
+        "target": null,
+        "requestId": 1,
+        "width": null,
+        "height": null,
+        "sourceRatio": null
+      },
+      {
+        "type": "sky",
+        "target": null,
+        "requestId": 4,
+        "width": 620,
+        "height": 388,
+        "sourceRatio": 0.58
+      }
+    ],
+    "responses": [
+      {
+        "type": "table",
+        "requestId": 1,
+        "width": null,
+        "height": null,
+        "bytes": null
+      },
+      {
+        "type": "sky",
+        "requestId": 4,
+        "width": 620,
+        "height": 388,
+        "bytes": 962240
+      }
+    ]
+  },
+  "mobileResize": {
+    "viewport": [
+      390,
+      844
+    ],
+    "canvas": [
+      448,
+      971
+    ],
+    "sky": {
+      "type": "sky",
+      "requestId": 6,
+      "width": 240,
+      "height": 500,
+      "bytes": 480000
+    }
+  },
+  "desktopResize": {
+    "viewport": [
+      1440,
+      900
+    ],
+    "canvas": [
+      1440,
+      900
+    ],
+    "sky": {
+      "type": "sky",
+      "requestId": 8,
+      "width": 620,
+      "height": 388,
+      "bytes": 962240
+    }
+  },
+  "backgroundSuspension": {
+    "before": {
+      "table": 1,
+      "sky": 8,
+      "calculations": 4
+    },
+    "hidden": {
+      "hidden": true,
+      "calculations": 4,
+      "cancelled": true
+    },
+    "resumed": {
+      "hidden": false,
+      "table": 3,
+      "sky": 12,
+      "calculations": 7
+    }
+  },
+  "cancellation": {
+    "candidate": 14,
+    "cancelled": true,
+    "staleResponseReturned": false,
+    "latest": {
+      "type": "sky",
+      "requestId": 16,
+      "width": 620,
+      "height": 388,
+      "bytes": 962240
+    },
+    "latestSkyRequest": {
+      "type": "sky",
+      "target": null,
+      "requestId": 16,
+      "width": 620,
+      "height": 388,
+      "sourceRatio": 0.76
+    },
+    "requestedSourceRatio": "0.76"
+  },
+  "noWorkerFallback": {
+    "forced": true,
+    "workers": 0,
+    "loadingFrames": 3,
+    "longTasks": [
+      {
+        "duration": 75,
+        "startTime": 900
+      },
+      {
+        "duration": 56,
+        "startTime": 1482.6999998092651
+      }
+    ],
+    "canvas": [
+      1457,
+      911
+    ]
+  },
+  "browserErrors": [],
+  "caveat": "Viewport values are emulation, not a physical phone. The cooperative worker and main-thread paths preserve exact synchronous raster output in unit checks. Long-task entries are recorded for inspection and include route loading, not only fallback computation."
+}

@@ -61,22 +61,56 @@ export function traceSchwarzschildPhoton(impact: number, mass = 1, options: { st
 export function weakFieldDeflection(impact: number, mass = 1): number { return 4 * mass / impact }
 
 export type LensingTable = { mass: number; observerDistance: number; sourceRatio: number; criticalImpact: number; impacts: Float32Array; deflections: Float32Array; captured: Uint8Array }
-export function createLensingTable(mass = 1, maxImpact = 30, samples = 320): LensingTable {
+function createLensingTableBuffer(mass: number, maxImpact: number, samples: number) {
   if (!Number.isFinite(mass) || mass <= 0) throw new RangeError('Table mass must be finite and positive')
   if (!Number.isFinite(maxImpact) || maxImpact <= criticalImpact(mass) + 0.008 * mass) throw new RangeError('Maximum impact must extend beyond the capture boundary')
   if (!Number.isFinite(samples) || samples < 2) throw new RangeError('A deflection table needs at least two samples')
   samples = Math.max(2, Math.min(512, Math.floor(samples)))
-  const impacts = new Float32Array(samples), deflections = new Float32Array(samples), captured = new Uint8Array(samples), critical = criticalImpact(mass)
-  for (let i = 0; i < samples; i++) {
-    const t = i / (samples - 1)
-    // Dense sampling near the capture boundary preserves the rapidly growing strong-field deflection.
-    const impact = critical + 0.008 * mass + (maxImpact - critical - 0.008 * mass) * t * t
-    const trace = traceSchwarzschildPhoton(impact, mass, { step: 0.009, radius: 110 * mass, maxAngle: 36, maxPoints: 7000 })
-    impacts[i] = impact
-    deflections[i] = trace.deflection ?? Math.PI
-    captured[i] = trace.captured ? 1 : 0
+  const critical = criticalImpact(mass)
+  return {
+    maxImpact,
+    samples,
+    table: { mass, observerDistance: 36 * mass, sourceRatio: 0.58, criticalImpact: critical, impacts: new Float32Array(samples), deflections: new Float32Array(samples), captured: new Uint8Array(samples) },
   }
-  return { mass, observerDistance: 36 * mass, sourceRatio: 0.58, criticalImpact: critical, impacts, deflections, captured }
+}
+
+function fillLensingTableSample(table: LensingTable, maxImpact: number, index: number) {
+  const t = index / (table.impacts.length - 1), { mass, criticalImpact: critical } = table
+  // Dense sampling near the capture boundary preserves the rapidly growing strong-field deflection.
+  const impact = critical + 0.008 * mass + (maxImpact - critical - 0.008 * mass) * t * t
+  const trace = traceSchwarzschildPhoton(impact, mass, { step: 0.009, radius: 110 * mass, maxAngle: 36, maxPoints: 7000 })
+  table.impacts[index] = impact
+  table.deflections[index] = trace.deflection ?? Math.PI
+  table.captured[index] = trace.captured ? 1 : 0
+}
+
+export function createLensingTable(mass = 1, maxImpact = 30, samples = 320): LensingTable {
+  const input = createLensingTableBuffer(mass, maxImpact, samples)
+  for (let index = 0; index < input.samples; index++) fillLensingTableSample(input.table, input.maxImpact, index)
+  return input.table
+}
+
+const yieldToEventLoop = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
+
+/** Worker-friendly table build that lets newer requests cancel between rays. */
+export async function createLensingTableCooperative(
+  mass = 1,
+  maxImpact = 30,
+  samples = 320,
+  shouldCancel: () => boolean = () => false,
+  raysPerYield = 4,
+): Promise<LensingTable | null> {
+  const input = createLensingTableBuffer(mass, maxImpact, samples)
+  const batchSize = Math.max(1, Math.min(32, Math.floor(raysPerYield) || 1))
+  for (let index = 0; index < input.samples; index++) {
+    if (shouldCancel()) return null
+    fillLensingTableSample(input.table, input.maxImpact, index)
+    if ((index + 1) % batchSize === 0 && index + 1 < input.samples) {
+      await yieldToEventLoop()
+      if (shouldCancel()) return null
+    }
+  }
+  return shouldCancel() ? null : input.table
 }
 
 export function lookupDeflection(table: LensingTable, impact: number): number | null {
@@ -97,12 +131,22 @@ function skyRandom(seed: number) {
 
 export function createLensingSourcePixels(width: number, height: number, seed = 72143): Uint8ClampedArray {
   if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > 1_200_000) throw new RangeError('Source image dimensions exceed the lensing raster budget')
-  const pixels = new Uint8ClampedArray(width * height * 4), cx = width * 0.47, cy = height * 0.52
-  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+  const pixels = new Uint8ClampedArray(width * height * 4)
+  fillLensingSourceRows(pixels, width, height, 0, height)
+  addLensingSourceStars(pixels, width, height, seed)
+  return pixels
+}
+
+function fillLensingSourceRows(pixels: Uint8ClampedArray, width: number, height: number, startY: number, endY: number) {
+  const cx = width * 0.47, cy = height * 0.52
+  for (let y = startY; y < endY; y++) for (let x = 0; x < width; x++) {
     const radius = Math.hypot((x - cx) / width, (y - cy) / height)
     const cloud = Math.exp(-radius * radius * 15), index = (y * width + x) * 4
     pixels[index] = Math.round(5 + cloud * 19); pixels[index + 1] = Math.round(8 + cloud * 18); pixels[index + 2] = Math.round(17 + cloud * 36); pixels[index + 3] = 255
   }
+}
+
+function addLensingSourceStars(pixels: Uint8ClampedArray, width: number, height: number, seed: number) {
   const random = skyRandom(seed), count = Math.max(240, Math.round(width * height * 0.0018))
   for (let i = 0; i < count; i++) {
     const x = Math.floor(random() * width), y = Math.floor(random() * height), warm = random() > 0.81
@@ -116,15 +160,48 @@ export function createLensingSourcePixels(width: number, height: number, seed = 
       pixels[index + 2] = Math.max(pixels[index + 2], warm ? Math.round(value * 0.71) : value)
     }
   }
-  return pixels
 }
 
-export function rasterizeLensedSky(table: LensingTable, width: number, height: number, distance: number, sourceRatio: number): Uint8ClampedArray {
+/** Main-thread recovery path: preserve the seeded source field while yielding between pixel rows. */
+export async function createLensingSourcePixelsCooperative(
+  width: number,
+  height: number,
+  seed = 72143,
+  shouldCancel: () => boolean = () => false,
+  rowsPerYield = 8,
+): Promise<Uint8ClampedArray | null> {
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > 1_200_000) throw new RangeError('Source image dimensions exceed the lensing raster budget')
+  const pixels = new Uint8ClampedArray(width * height * 4), batchSize = Math.max(1, Math.min(64, Math.floor(rowsPerYield) || 1))
+  for (let row = 0; row < height; row += batchSize) {
+    if (shouldCancel()) return null
+    fillLensingSourceRows(pixels, width, height, row, Math.min(height, row + batchSize))
+    if (row + batchSize < height) {
+      await yieldToEventLoop()
+      if (shouldCancel()) return null
+    }
+  }
+  if (shouldCancel()) return null
+  addLensingSourceStars(pixels, width, height, seed)
+  return shouldCancel() ? null : pixels
+}
+
+function createLensingRasterBuffer(width: number, height: number, distance: number, sourceRatio: number) {
   if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > 1_200_000) throw new RangeError('Lensing image dimensions exceed the raster budget')
   if (!Number.isFinite(distance) || distance <= 0 || !Number.isFinite(sourceRatio) || sourceRatio < 0 || sourceRatio > 1.5) throw new RangeError('Observer distance and source-plane ratio are outside the model range')
-  const source = createLensingSourcePixels(width, height), output = new Uint8ClampedArray(width * height * 4)
+  return { width, height, distance, sourceRatio, source: new Uint8ClampedArray(width * height * 4), output: new Uint8ClampedArray(width * height * 4) }
+}
+
+function createLensingRaster(width: number, height: number, distance: number, sourceRatio: number) {
+  const raster = createLensingRasterBuffer(width, height, distance, sourceRatio)
+  fillLensingSourceRows(raster.source, width, height, 0, height)
+  addLensingSourceStars(raster.source, width, height, 72143)
+  return raster
+}
+
+function rasterizeLensingRows(table: LensingTable, raster: ReturnType<typeof createLensingRaster>, startY: number, endY: number) {
+  const { width, height, distance, sourceRatio, source, output } = raster
   const cx = (width - 1) * 0.5, cy = (height - 1) * 0.5, focal = height * 1.27, capture = table.criticalImpact
-  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+  for (let y = startY; y < endY; y++) for (let x = 0; x < width; x++) {
     const dx = x - cx, dy = y - cy, radius = Math.hypot(dx, dy), theta = Math.atan(radius / focal), impact = distance * Math.tan(theta), index = (y * width + x) * 4
     if (impact < capture) {
       const edge = Math.max(0, Math.min(1, (impact - capture + 0.05) / 0.05))
@@ -151,5 +228,36 @@ export function rasterizeLensedSky(table: LensingTable, width: number, height: n
     }
     output[index + 3] = 255
   }
-  return output
+}
+
+export function rasterizeLensedSky(table: LensingTable, width: number, height: number, distance: number, sourceRatio: number): Uint8ClampedArray {
+  const raster = createLensingRaster(width, height, distance, sourceRatio)
+  rasterizeLensingRows(table, raster, 0, height)
+  return raster.output
+}
+
+/** Worker-friendly image projection that can stop between row batches. */
+export async function rasterizeLensedSkyCooperative(
+  table: LensingTable,
+  width: number,
+  height: number,
+  distance: number,
+  sourceRatio: number,
+  shouldCancel: () => boolean = () => false,
+  rowsPerYield = 8,
+): Promise<Uint8ClampedArray | null> {
+  const raster = createLensingRasterBuffer(width, height, distance, sourceRatio)
+  const source = await createLensingSourcePixelsCooperative(width, height, 72143, shouldCancel, rowsPerYield)
+  if (!source || shouldCancel()) return null
+  raster.source = source
+  const batchSize = Math.max(1, Math.min(64, Math.floor(rowsPerYield) || 1))
+  for (let row = 0; row < height; row += batchSize) {
+    if (shouldCancel()) return null
+    rasterizeLensingRows(table, raster, row, Math.min(height, row + batchSize))
+    if (row + batchSize < height) {
+      await yieldToEventLoop()
+      if (shouldCancel()) return null
+    }
+  }
+  return shouldCancel() ? null : raster.output
 }

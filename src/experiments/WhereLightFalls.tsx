@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { ActionRow, ControlPanel, RangeControl, Segmented } from '../components/Controls'
 import type { ExperimentControls } from '../types'
-import { createLensingTable, rasterizeLensedSky, traceSchwarzschildPhoton } from '../simulations/lensing'
+import { createLensingTableCooperative, rasterizeLensedSkyCooperative, traceSchwarzschildPhoton } from '../simulations/lensing'
 import type { LensingTable, PhotonTrace } from '../simulations/lensing'
 import { boundedStateNumber, stateChoice } from '../lib/experimentState'
 import { clamp, resizeCanvas } from './invisibleWorld'
@@ -39,6 +39,7 @@ function makeStarfield(width: number, height: number): HTMLCanvasElement {
 
 export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null), workerRef = useRef<Worker | null>(null), requestId = useRef(0), skyRequestId = useRef(0)
+  const tableTimerRef = useRef<number | null>(null), skyTimerRef = useRef<number | null>(null)
   const sizeRef = useRef({ width: 800, height: 560, dpr: 1 }), backgroundRef = useRef<HTMLCanvasElement | null>(null), baseSkyRef = useRef<HTMLCanvasElement | null>(null), traceRef = useRef<PhotonTrace | null>(null)
   const initialMass = boundedStateNumber(stateFromUrl?.mass, 1, 0.55, 1.45)
   const initialImpact = boundedStateNumber(stateFromUrl?.impact, 5.45, 3.1 * initialMass, 28 * initialMass)
@@ -47,7 +48,7 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
   const [sourceRatio, setSourceRatio] = useState(() => boundedStateNumber(stateFromUrl?.sourceRatio, 0.58, 0.25, 0.88))
   const [impact, setImpact] = useState(initialImpact)
   const [viewMode, setViewMode] = useState<ViewMode>(() => stateChoice(stateFromUrl?.viewMode, ['lensed sky', 'trajectories'], 'lensed sky'))
-  const [table, setTable] = useState<LensingTable | null>(null)
+  const [table, setTable] = useState<LensingTable | null>(null), [visibilityRevision, setVisibilityRevision] = useState(0)
   const [loading, setLoading] = useState(true), [advanced, setAdvanced] = useState(false), [stats, setStats] = useState<LensingStats>({ outcome: 'escaped', deflection: 0, impact: 5.45, radius: 0 })
   const massRef = useRef(mass); massRef.current = mass
   const bCrit = 3 * Math.sqrt(3) * mass
@@ -55,6 +56,10 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
   const trajectoryBundle = useMemo(() => [1.004, 1.016, 1.04, 1.12, 1.35].map((factor) => traceSchwarzschildPhoton(3 * Math.sqrt(3) * mass * factor, mass, { step: 0.016, radius: 82 * mass, maxAngle: 24, maxPoints: 2600 })), [mass])
 
   useEffect(() => { onShareState({ mass, distance, sourceRatio, impact, viewMode }) }, [mass, distance, sourceRatio, impact, viewMode, onShareState])
+
+  const cancelWorker = (target: 'table' | 'sky' | 'all') => {
+    try { workerRef.current?.postMessage({ type: 'cancel', target }) } catch { /* the worker may already be terminating */ }
+  }
 
   useEffect(() => {
     let worker: Worker
@@ -72,25 +77,57 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
         backgroundRef.current = surface
       }
     }
-    let disposed = false, fallbackTimer = 0
+    let disposed = false
     worker.onerror = () => {
-      worker.terminate(); workerRef.current = null; setLoading(false)
-      fallbackTimer = window.setTimeout(() => { if (!disposed) setTable(createLensingTable(massRef.current, 90, 180)) }, 0)
+      if (disposed) return
+      worker.terminate()
+      if (workerRef.current === worker) workerRef.current = null
+      const id = ++requestId.current, fallbackMass = massRef.current
+      setLoading(true)
+      void createLensingTableCooperative(fallbackMass, 90, 180, () => disposed || document.hidden || requestId.current !== id, 4)
+        .then((created) => { if (created && !disposed && !document.hidden && requestId.current === id) { setTable(created); setLoading(false) } })
+        .catch(() => { if (!disposed && requestId.current === id) setLoading(false) })
     }
-    return () => { disposed = true; clearTimeout(fallbackTimer); worker.terminate(); workerRef.current = null }
+    return () => { disposed = true; requestId.current++; skyRequestId.current++; worker.terminate(); workerRef.current = null }
     // The worker is a per-exhibit resource and is recreated only on unmount/remount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        if (tableTimerRef.current !== null) window.clearTimeout(tableTimerRef.current)
+        if (skyTimerRef.current !== null) window.clearTimeout(skyTimerRef.current)
+        tableTimerRef.current = null; skyTimerRef.current = null
+        requestId.current++; skyRequestId.current++
+        cancelWorker('all')
+      } else setVisibilityRevision((revision) => revision + 1)
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange)
+  }, [])
+
+  useEffect(() => {
     const id = ++requestId.current
+    let disposed = false
     setLoading(true)
     const timer = window.setTimeout(() => {
+      tableTimerRef.current = null
+      if (disposed || document.hidden || id !== requestId.current) return
       if (workerRef.current) workerRef.current.postMessage({ type: 'table', requestId: id, mass, maxImpact: 90, samples: 340 })
-      else setTable(createLensingTable(mass, 90, 180))
+      else void createLensingTableCooperative(mass, 90, 180, () => disposed || document.hidden || id !== requestId.current, 4)
+        .then((created) => { if (created && !disposed && !document.hidden && id === requestId.current) { setTable(created); setLoading(false) } })
+        .catch(() => { if (!disposed && id === requestId.current) setLoading(false) })
     }, 85)
-    return () => clearTimeout(timer)
-  }, [mass])
+    tableTimerRef.current = timer
+    return () => {
+      disposed = true
+      window.clearTimeout(timer)
+      if (tableTimerRef.current === timer) tableTimerRef.current = null
+      if (id === requestId.current) requestId.current++
+      cancelWorker('table')
+    }
+  }, [mass, visibilityRevision])
 
   useEffect(() => {
     traceRef.current = trace
@@ -116,18 +153,30 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
   }, [size])
 
   useEffect(() => {
+    const id = ++skyRequestId.current
     if (!table || table.mass !== mass || !size.width || !size.height) { backgroundRef.current = null; return }
     const scale = Math.min(1, 620 / (size.width * sizeRef.current.dpr), 500 / (size.height * sizeRef.current.dpr))
     const width = Math.max(240, Math.round(size.width * sizeRef.current.dpr * scale)), height = Math.max(160, Math.round(size.height * sizeRef.current.dpr * scale))
-    const id = ++skyRequestId.current
     const timer = window.setTimeout(() => {
+      skyTimerRef.current = null
+      if (document.hidden) return
       if (workerRef.current) { workerRef.current.postMessage({ type: 'sky', requestId: id, width, height, distance, sourceRatio }); return }
-      const pixels = rasterizeLensedSky(table, width, height, distance, sourceRatio), surface = document.createElement('canvas')
-      surface.width = width; surface.height = height; surface.getContext('2d')?.putImageData(new ImageData(pixels, width, height), 0, 0)
-      if (id === skyRequestId.current) backgroundRef.current = surface
+      void rasterizeLensedSkyCooperative(table, width, height, distance, sourceRatio, () => document.hidden || id !== skyRequestId.current, 8)
+        .then((pixels) => {
+          if (!pixels || document.hidden || id !== skyRequestId.current) return
+          const surface = document.createElement('canvas'); surface.width = width; surface.height = height
+          surface.getContext('2d')?.putImageData(new ImageData(pixels, width, height), 0, 0)
+          backgroundRef.current = surface
+        })
     }, 90)
-    return () => clearTimeout(timer)
-  }, [table, size, distance, sourceRatio, mass])
+    skyTimerRef.current = timer
+    return () => {
+      window.clearTimeout(timer)
+      if (skyTimerRef.current === timer) skyTimerRef.current = null
+      if (id === skyRequestId.current) skyRequestId.current++
+      cancelWorker('sky')
+    }
+  }, [table, size, distance, sourceRatio, mass, visibilityRevision])
 
   useEffect(() => {
     const canvas = canvasRef.current, context = canvas?.getContext('2d', { alpha: false })
@@ -135,6 +184,7 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
     let animation = 0, time = 0, last = 0, disposed = false
     const draw = (now: number) => {
       if (disposed) return
+      if (document.hidden) { animation = 0; return }
       const { width, height, dpr } = sizeRef.current
       if (!paused && now - last > 20) { time += (now - last) * 0.001; last = now }
       context.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -188,8 +238,17 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
       if (loading) { context.fillStyle = 'rgba(211,227,240,.7)'; context.fillText('COMPUTING SCHWARZSCHILD DEFLECTION TABLE…', 24, height - 28) }
       animation = requestAnimationFrame(draw)
     }
-    animation = requestAnimationFrame(draw)
-    return () => { disposed = true; cancelAnimationFrame(animation) }
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animation); animation = 0
+      } else if (!animation) {
+        last = performance.now()
+        animation = requestAnimationFrame(draw)
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    if (!document.hidden) animation = requestAnimationFrame(draw)
+    return () => { disposed = true; document.removeEventListener('visibilitychange', onVisibilityChange); cancelAnimationFrame(animation) }
   }, [paused, mass, distance, bCrit, loading, size, viewMode, trajectoryBundle])
 
   const setImpactFromPointer = (event: ReactPointerEvent<HTMLCanvasElement>) => {

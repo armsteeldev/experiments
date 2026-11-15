@@ -140,7 +140,7 @@
         "weightSeed",
         "examples"
       ],
-      "bytes": 231,
+      "bytes": 230,
       "routeRestored": true,
       "invalidStateRecovery": true,
       "neuralReplay": {

@@ -295,13 +295,32 @@ const [waves, optics, sound, garden, network, lensing] = await Promise.all([
   assert.equal(lensing.lookupDeflection(table, table.criticalImpact - 0.1), null)
   assert.ok((lensing.lookupDeflection(table, 12) ?? 0) > 0)
   assert.equal(lensing.lookupDeflection(table, NaN), null, 'Non-finite lookups do not poison the projection')
+  const cooperativeTable = await lensing.createLensingTableCooperative(1, 24, 48, () => false, 3)
+  assert.deepEqual(cooperativeTable, table, 'Cooperative table preparation preserves every synchronous ray sample')
   assert.throws(() => lensing.traceSchwarzschildPhoton(Infinity, 1), RangeError, 'Non-finite impact parameters are rejected')
   assert.throws(() => lensing.traceSchwarzschildPhoton(8, 1, { radius: 1 }), RangeError, 'Integration cannot begin inside the horizon')
   assert.throws(() => lensing.createLensingTable(1, 24, 1), RangeError, 'A table needs a valid interpolation interval')
   assert.throws(() => lensing.rasterizeLensedSky(table, 2000, 1000, 36, 0.58), RangeError, 'The CPU raster has an explicit pixel budget')
   const rasterA = lensing.rasterizeLensedSky(table, 48, 36, 36, 0.58), rasterB = lensing.rasterizeLensedSky(table, 48, 36, 36, 0.58)
   assert.deepEqual(rasterA, rasterB, 'The same source field and deflection table produce deterministic image samples')
+  const cooperativeRaster = await lensing.rasterizeLensedSkyCooperative(table, 48, 36, 36, 0.58, () => false, 4)
+  assert.deepEqual(cooperativeRaster, rasterA, 'Cooperative rasterization preserves deterministic pixel output')
+  const sourcePixels = lensing.createLensingSourcePixels(48, 36)
+  const cooperativeSource = await lensing.createLensingSourcePixelsCooperative(48, 36, 72143, () => false, 4)
+  assert.deepEqual(cooperativeSource, sourcePixels, 'Cooperative source-field generation preserves seeded stars and every cloud pixel')
   assert.ok(rasterA.every((value, index) => index % 4 !== 3 || value === 255), 'Every lensed source pixel has opaque coverage')
+  let cancelTable = false
+  const cancelledTable = lensing.createLensingTableCooperative(1, 90, 340, () => cancelTable, 1)
+  setTimeout(() => { cancelTable = true }, 0)
+  assert.equal(await cancelledTable, null, 'A new request cancels a deflection table between ray integrations')
+  let cancelRaster = false
+  const cancelledRaster = lensing.rasterizeLensedSkyCooperative(table, 320, 220, 36, 0.58, () => cancelRaster, 2)
+  setTimeout(() => { cancelRaster = true }, 0)
+  assert.equal(await cancelledRaster, null, 'A new request cancels sky projection between row batches')
+  let cancelSource = false
+  const cancelledSource = lensing.createLensingSourcePixelsCooperative(320, 220, 72143, () => cancelSource, 2)
+  setTimeout(() => { cancelSource = true }, 0)
+  assert.equal(await cancelledSource, null, 'A new request cancels source-field preparation between row batches')
 }
 
-console.log('Invisible World checks passed: finite-difference waves, geometric optics, Fourier synthesis, evolutionary ecology, packet routing, and Schwarzschild null geodesics.')
+console.log('Invisible World checks passed: finite-difference waves, geometric optics, Fourier synthesis, evolutionary ecology, packet routing, and Schwarzschild null geodesics with cancellable lensing work.')
