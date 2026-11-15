@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the bounded CPU share/replay and repeated-route lifecycle QA checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
+Status is current to `e9bfaa7` on `renaissance/next-generation`: compact custom-cellular replay, Canvas 2D/GPU state parity, and two complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -21,9 +21,12 @@ Status is current to the bounded CPU share/replay and repeated-route lifecycle Q
 - [x] Bound imported Mandelbrot zoom to its supported 0.72×–10^500 range and reject overlong camera coordinates before fixed-point conversion.
 - [x] Share bounded CPU operands and up to 2,000 characters of custom assembly; restart safely at the first instruction and disclose that program text is included in the public link.
 - [x] Restore all Shape of Sound shareable settings and reject invalid Fourier partials by number, amplitude, phase, and duplicate order; sound remains off on entry.
+- [x] Serialize cellular drawings compactly, including Brian’s Brain refractory cells; reject malformed grids and browser-test a drawn still-life share/reload.
+- [x] Restore Fluid preset and clear state in its Canvas 2D fallback; align Reaction Diffusion fallback presets, palettes, seeds and bounds with GPU state.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
-- [ ] Finish the route-by-route audit of deterministic seeds and replay limits, and document custom state that intentionally starts fresh.
+- [ ] Finish the route-by-route audit of deterministic seeds and replay limits. Current scope is documented in `STATE-REPLAY.md`; built logic circuits and some custom placements still do not replay.
 - [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
+- [ ] Share and restore user-built Logic Laboratory circuits with validated node/wire limits, switch values and goal state.
 - [x] Ensure malformed/unsupported versions and corrupted local notebook data are recoverable without preventing exhibit entry.
 - [x] Test supported share links and route restoration across all 19 exhibits in the browser; exercise malformed/future-version entry recovery.
 
@@ -53,8 +56,8 @@ Status is current to the bounded CPU share/replay and repeated-route lifecycle Q
 - [x] Add browser checks that assert actual state changes for Mandelbrot zoom/reset, Fluid pointer/button input, reaction-diffusion painting, gravity orbit creation/recovery, CPU stepping, neural training, keyboard-edited logic, gate-level addition and cellular-automaton stepping.
 - [x] Add representative browser state-change checks for geometry optics, sound synthesis, packet routing and gravitational lensing; prefer visible output or model values over fragile screenshot equality.
 - [x] On all 19 routes, reject a deeply nested shared-state envelope and recover with safe defaults without entering the error boundary.
-- [x] Exercise fifteen extreme/invalid shared-state cases across thirteen routes; cover enum/default recovery, model bounds, optical placements, oversized fractal zoom/coordinates, and execution of a restored custom CPU program.
-- [ ] Exercise the Fluid Canvas2D fallback in a browser with WebGL disabled; the fallback code now applies paused strokes synchronously, but the current browser ran its WebGL renderer.
+- [x] Exercise seventeen extreme/invalid shared-state cases across thirteen routes; cover enum/default recovery, model bounds, optical placements, oversized fractal zoom/coordinates, CPU source execution, and browser-painted cellular-board replay.
+- [x] Exercise Fluid and Reaction Diffusion Canvas 2D fallbacks with WebGL disabled; restore WebGL2 and verify a fallback-created Reaction setup keeps its preset and pigment.
 - [ ] Add stable visual capture and tolerant image-diff workflow for representative desktop/mobile states.
 - [ ] Review scientific claims and visible approximations, especially Fluid, Garden, Networks, geometric optics and Where Light Falls.
 - [ ] Test limits, invalid parameters, resets, deterministic seeds, worker cancellation, and numerical invariants.
