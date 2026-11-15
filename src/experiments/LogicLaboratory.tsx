@@ -3,11 +3,9 @@ import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, SelectControl } from '../components/Controls'
 import { evaluateCircuit, type CircuitNode, type CircuitWire, type GateType } from '../simulations/circuit'
+import { MAX_CIRCUIT_NODES, restoreCircuitSnapshot, type CircuitGoal, type CircuitPreset, type CircuitSnapshot } from '../lib/circuitState'
 import './ComputingRethink.css'
 
-type CircuitPreset = 'and' | 'or' | 'xor' | 'half' | 'full' | 'mux' | 'adder' | 'custom'
-type CircuitGoal = 'and' | 'or' | 'xor' | null
-type CircuitSnapshot = { nodes: CircuitNode[]; wires: CircuitWire[]; preset: CircuitPreset; goal: CircuitGoal }
 const presetNames: [CircuitPreset, string][] = [['and', 'Both switches · AND'], ['or', 'Either switch · OR'], ['xor', 'Different switches · XOR'], ['half', 'Half adder'], ['full', 'Full adder'], ['mux', '2-to-1 multiplexer'], ['adder', 'Two-bit adder']]
 let serial = 0
 const input = (id: string, x: number, y: number, value: boolean): CircuitNode => ({ id, type: 'input', x, y, value })
@@ -38,6 +36,7 @@ function makeCircuit(preset: CircuitPreset): [CircuitNode[], CircuitWire[]] {
   ]
 }
 const size = (type: GateType, compact = false) => type === 'input' || type === 'output' ? (compact ? [112, 76] : [148, 88]) : (compact ? [132, 92] : [166, 112])
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
 function displayX(n: CircuitNode, compact: boolean) { return compact ? n.x * .52 : n.x }
 function outputPort(n: CircuitNode, compact = false) { const [w, h] = size(n.type, compact); return [displayX(n, compact) + w, n.y + h / 2] }
 function inputPort(n: CircuitNode, index: number, compact = false) { const [, h] = size(n.type, compact), count = n.type === 'not' || n.type === 'output' ? 1 : 2; return [displayX(n, compact), n.y + h * (index + 1) / (count + 1)] }
@@ -54,10 +53,11 @@ const gateRule = (type: GateType) => ({
 }[type])
 
 export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
-  const initialPreset = presetNames.some(([key]) => key === stateFromUrl?.preset) ? stateFromUrl?.preset as CircuitPreset : 'and'
+  const restoredCircuit = restoreCircuitSnapshot(stateFromUrl?.circuit)
+  const initialPreset = restoredCircuit?.preset ?? (presetNames.some(([key]) => key === stateFromUrl?.preset) ? stateFromUrl?.preset as CircuitPreset : 'and')
   const [preset, setPreset] = useState<CircuitPreset>(initialPreset)
-  const [nodes, setNodes] = useState<CircuitNode[]>(() => makeCircuit(initialPreset)[0])
-  const [wires, setWires] = useState<CircuitWire[]>(() => makeCircuit(initialPreset)[1])
+  const [nodes, setNodes] = useState<CircuitNode[]>(() => restoredCircuit?.nodes ?? makeCircuit(initialPreset)[0])
+  const [wires, setWires] = useState<CircuitWire[]>(() => restoredCircuit?.wires ?? makeCircuit(initialPreset)[1])
   const [connecting, setConnecting] = useState<string | null>(null)
   const [pointer, setPointer] = useState<[number, number] | null>(null)
   const [hoveredPort, setHoveredPort] = useState<string | null>(null)
@@ -68,7 +68,7 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
   const [placing, setPlacing] = useState<GateType | null>(null)
   const [statusText, setStatusText] = useState('Tap a switch to see the lamp respond. Drag a signal socket to connect parts.')
   const [selectedGateId, setSelectedGateId] = useState<string | null>(null)
-  const [goal, setGoal] = useState<CircuitGoal>(null)
+  const [goal, setGoal] = useState<CircuitGoal>(restoredCircuit?.goal ?? null)
   const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 720px)').matches)
   const [undoCount, setUndoCount] = useState(0)
   const [redoCount, setRedoCount] = useState(0)
@@ -91,7 +91,7 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
     })
   }, [goal, nodes, wires])
   useEffect(() => { const media=window.matchMedia('(max-width: 720px)'),update=()=>setCompact(media.matches);media.addEventListener('change',update);return()=>media.removeEventListener('change',update) }, [])
-  useEffect(() => { onShareState({ preset }); }, [preset, onShareState])
+  useEffect(() => { onShareState({ preset, circuit: { nodes, wires, preset, goal } }) }, [nodes, wires, preset, goal, onShareState])
   const copyScene = (source: CircuitSnapshot): CircuitSnapshot => ({ nodes: source.nodes.map((item) => ({ ...item })), wires: source.wires.map((edge) => ({ ...edge })), preset: source.preset, goal: source.goal })
   const applyScene = (next: CircuitSnapshot, remember = true, before = scene.current) => {
     if (remember) {
@@ -123,6 +123,7 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
   }
   const startGoal = (nextGoal: Exclude<CircuitGoal, null>) => {
     applyScene({ nodes: [input('a', 95, 206, false), input('b', 95, 423, false), node('lamp', 'output', 950, 337)], wires: [], preset: 'custom', goal: nextGoal })
+    document.querySelectorAll<HTMLDetailsElement>('.logic-challenge-menu, .logic-goal-picker').forEach((picker) => { picker.open = false })
     setSelectedGateId(null); setConnecting(null); setPlacing(null)
     setStatusText(`Goal: make the lamp turn on ${nextGoal === 'and' ? 'only when both switches are on' : nextGoal === 'or' ? 'when either switch is on' : 'when the switches are different'}. Add a gate and connect it.`)
     onCloseControls()
@@ -133,7 +134,14 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
     const transformed = point.matrixTransform(svg.getScreenCTM()?.inverse()); return [transformed.x, transformed.y]
   }
   const addComponent = (type: GateType, at?: [number, number]) => {
-    const id = `${type}-${++serial}`, offset = (serial % 6) * 20
+    if (scene.current.nodes.length >= MAX_CIRCUIT_NODES) {
+      setStatusText(`This board holds up to ${MAX_CIRCUIT_NODES} parts. Remove one before adding another.`)
+      return null
+    }
+    const existingIds = new Set(scene.current.nodes.map((item) => item.id))
+    let id = ''
+    do { id = `${type}-${++serial}` } while (existingIds.has(id))
+    const offset = (serial % 6) * 20
     let x = 390 + offset, y = 330 + offset
     if (at) {
       const factor = compact ? .52 : 1, viewWidth = compact ? 640 : 1200, [w, h] = size(type, compact)
@@ -141,12 +149,13 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
       y = Math.max(8, Math.min(760 - h - 8, at[1] - h / 2))
     }
     const before = scene.current
-    applyScene({ ...before, preset: 'custom', goal: null, nodes: [...before.nodes, { id, type, x, y, ...(type === 'input' ? { value: false } : {}) }] })
+    applyScene({ ...before, preset: 'custom', nodes: [...before.nodes, { id, type, x, y, ...(type === 'input' ? { value: false } : {}) }] })
     setStatusText(`${labels[type]} placed. Drag its output pin ● to an input pin ○ to connect it.`)
     return id
   }
   const addAtCentre = () => {
     const id = addComponent(tool, [compact ? 320 : 600, 380])
+    if (!id) return
     if (tool === 'input') setWireFrom(id)
     else setWireTo(id)
     setSelectedGateId(tool === 'input' || tool === 'output' ? null : id)
@@ -161,7 +170,7 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
       return
     }
     const before = scene.current
-    applyScene({ ...before, preset: 'custom', goal: null, wires: [...before.wires.filter((edge) => edge.to !== target.id || edge.input !== port), { from: source.id, to: target.id, input: port }] })
+    applyScene({ ...before, preset: 'custom', wires: [...before.wires.filter((edge) => edge.to !== target.id || edge.input !== port), { from: source.id, to: target.id, input: port }] })
     setSelectedGateId(target.type === 'input' || target.type === 'output' ? null : target.id)
     setStatusText(`Connected ${source.id.toUpperCase()} to ${target.id.toUpperCase()} input ${port + 1}. Values now recalculate from the switches.`)
   }
@@ -191,9 +200,15 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
       if (Math.hypot(dx, dy) > 2) active.moved = true
       if (active.moved) {
         const snap = 24
-        const nextNodes = scene.current.nodes.map((item) => item.id === active.id ? { ...item, x: Math.max(8, Math.round(((x - active.dx) / (compact ? .52 : 1)) / snap) * snap), y: Math.max(8, Math.round((y - active.dy) / snap) * snap) } : item)
-        scene.current = { ...scene.current, preset: 'custom', goal: null, nodes: nextNodes }
-        setNodes(nextNodes); setPreset('custom'); setGoal(null)
+        const nextNodes = scene.current.nodes.map((item) => {
+          if (item.id !== active.id) return item
+          const factor = compact ? .52 : 1, [nodeWidth, nodeHeight] = size(item.type, compact), viewWidth = compact ? 640 : 1200
+          const nextX = Math.round(((x - active.dx) / factor) / snap) * snap
+          const nextY = Math.round((y - active.dy) / snap) * snap
+          return { ...item, x: clamp(nextX, 8, Math.floor((viewWidth - nodeWidth - 8) / factor)), y: clamp(nextY, 8, 760 - nodeHeight - 8) }
+        })
+        scene.current = { ...scene.current, preset: 'custom', nodes: nextNodes }
+        setNodes(nextNodes); setPreset('custom')
       }
     }
   }
@@ -207,7 +222,7 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
     const inputIndex = targetPort?.index ?? Number(target.closest('[data-input-index]')?.getAttribute('data-input-index'))
     if (connecting && inputId && inputId !== connecting) {
       const before = scene.current
-      applyScene({ ...before, preset: 'custom', goal: null, wires: [...before.wires.filter((edge) => edge.to !== inputId || edge.input !== inputIndex), { from: connecting, to: inputId, input: inputIndex }] }, true, drag.current?.before ?? before)
+      applyScene({ ...before, preset: 'custom', wires: [...before.wires.filter((edge) => edge.to !== inputId || edge.input !== inputIndex), { from: connecting, to: inputId, input: inputIndex }] }, true, drag.current?.before ?? before)
       setStatusText('Connected. Signal values update through the circuit from source to output.')
     } else if (connecting) setStatusText('No input pin reached. The circuit stayed unchanged; start again from a glowing output pin.')
     if (drag.current && !drag.current.moved) {
@@ -238,7 +253,7 @@ export default function LogicLaboratory({ controlsVisible, stateFromUrl, onShare
   }
   const removeNode = (id: string) => {
     const before = scene.current, removed = before.nodes.find((item) => item.id === id)
-    applyScene({ ...before, preset: 'custom', goal: null, nodes: before.nodes.filter((entry) => entry.id !== id), wires: before.wires.filter((edge) => edge.from !== id && edge.to !== id) })
+    applyScene({ ...before, preset: 'custom', nodes: before.nodes.filter((entry) => entry.id !== id), wires: before.wires.filter((edge) => edge.from !== id && edge.to !== id) })
     setSelectedGateId(null); setStatusText(`${labels[removed?.type ?? 'and']} removed. Undo will restore the part and its wires.`)
   }
   const nodeValue = (id: string) => result.values[id] === true ? '1' : result.values[id] === false ? '0' : '·'

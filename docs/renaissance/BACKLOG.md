@@ -24,9 +24,9 @@ Status is current to `e9bfaa7` on `renaissance/next-generation`: compact custom-
 - [x] Serialize cellular drawings compactly, including Brian’s Brain refractory cells; reject malformed grids and browser-test a drawn still-life share/reload.
 - [x] Restore Fluid preset and clear state in its Canvas 2D fallback; align Reaction Diffusion fallback presets, palettes, seeds and bounds with GPU state.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
-- [ ] Finish the route-by-route audit of deterministic seeds and replay limits. Current scope is documented in `STATE-REPLAY.md`; built logic circuits and some custom placements still do not replay.
+- [ ] Finish the route-by-route audit of deterministic seeds and replay limits. Current scope is documented in `STATE-REPLAY.md`; moved/placed Gravity bodies, Invisible Forces charges and Flocking markers remain outside shared state.
 - [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
-- [ ] Share and restore user-built Logic Laboratory circuits with validated node/wire limits, switch values and goal state.
+- [x] Share and restore user-built Logic Laboratory circuits with validated node/wire limits, switch values and goal state; verify a custom XOR build and challenge after reload.
 - [x] Ensure malformed/unsupported versions and corrupted local notebook data are recoverable without preventing exhibit entry.
 - [x] Test supported share links and route restoration across all 19 exhibits in the browser; exercise malformed/future-version entry recovery.
 

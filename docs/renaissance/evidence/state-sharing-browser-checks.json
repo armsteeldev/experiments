@@ -144,9 +144,10 @@
     {
       "id": "logic",
       "keys": [
-        "preset"
+        "preset",
+        "circuit"
       ],
-      "bytes": 40,
+      "bytes": 406,
       "routeRestored": true,
       "invalidStateRecovery": true
     },

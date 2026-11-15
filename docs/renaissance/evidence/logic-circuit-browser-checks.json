@@ -1,0 +1,22 @@
+{
+  "browser": "HeadlessChrome 157, 1440×900, SwiftShader/Vulkan",
+  "realSwitchInteraction": {
+    "bothInputsTurnedOn": true,
+    "andOutputLit": true,
+    "shareReloadPreservedResult": true
+  },
+  "customCircuit": {
+    "builtThroughWorkbench": true,
+    "nodes": 4,
+    "wires": 3,
+    "goal": "xor",
+    "passesAllFourInputPairs": true,
+    "shareReloadStateExact": true,
+    "uniqueIdsAfterFullReload": true
+  },
+  "malformedRecovery": {
+    "duplicateIdFallsBackToStarter": true,
+    "errorBoundary": false
+  },
+  "browserErrors": []
+}

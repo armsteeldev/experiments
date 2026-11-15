@@ -13,7 +13,7 @@ Share links and named notebook entries store validated exhibit settings. Most li
 | Gravity Playground | Scene and simulation controls | Custom bodies, their histories and camera framing |
 | Inside the Machine | Task or up to 2,000 characters of assembly, plus operands | Execution restarts at line one; output and machine history |
 | Neural Networks | Dataset, layer shape, activation and learning rate | Trained weights and training history |
-| Logic Laboratory | Selected starter circuit | Custom gates, wires, switch values and goal state (custom circuit sharing remains open) |
+| Logic Laboratory | Starter or built circuit: component types/positions, wires, switch values and goal | Signal values recalculate; malformed or oversized boards fall back to a safe starter |
 | Invisible Forces | Field preset, displayed layers and field scale | Moved or placed charges and particle histories |
 | Cellular Automata | Rule, rate, rendering, seed and either a named pattern or the last drawn board | Generation count, cell ages and fading trails |
 | The Adder | Width, architecture, operands and playback speed | Playback position and trace history are recalculated |
@@ -26,4 +26,4 @@ Share links and named notebook entries store validated exhibit settings. Most li
 
 The Canvas 2D Fluid and reaction-diffusion fallbacks accept the same shared presets and model settings as their GPU paths; fallback resolution and rendering detail are lower. Where renderer-specific options do not apply, the fallback omits those options. Reproducibility means recreating the listed starting setup, not guaranteeing identical pixels across devices or renderers.
 
-The codec and bounds checks reject malformed or unsupported state safely. Browser checks currently cover share/reload for all nineteen exhibits, malformed state recovery for all nineteen, a painted cellular still life, CPU source execution after restoration, and Canvas 2D/GPU fallback settings. See the evidence files named in `PROGRESS.md` for the exact test scope and renderer.
+The codec and bounds checks reject malformed or unsupported state safely. Logic boards are limited to 32 parts and 64 wires, and restored IDs, gate types, coordinates, switch values and input sockets are validated before evaluation. Browser checks cover share/reload for all nineteen exhibits, malformed state recovery for all nineteen, a painted cellular still life, CPU source execution, a built XOR circuit and goal after restoration, and Canvas 2D/GPU fallback settings. Signal values and simulation histories are recomputed rather than serialized. See the evidence files named in `PROGRESS.md` for the exact test scope and renderer.
