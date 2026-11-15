@@ -86,3 +86,19 @@ The overlay regression also applies a DOM naming heuristic to visible buttons, l
 The first full overlay review covered all nineteen exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. It exposed a mobile dock that placed some controls beyond the glass frame and a selector stylesheet whose direct-child selector did not reach the nested option list. Phone layouts now keep the home action, current-study chooser, Controls, About, pause and fullscreen visible as 44×44 px targets; the selector contains all nineteen destinations with 44 px scrollable rows. Sequential previous/next actions remain available on wider screens and the chooser exposes all destinations on phones.
 
 The same browser sweep found that a control overlay could open before a lazy exhibit module mounted its controls, so a one-frame focus attempt could miss. The shell now observes the active exhibit until its panel exists and is focusable, then disconnects after focusing, closing, route change or a 2.5-second failure timeout. The rerun passed 456 dock/panel checks with no findings and no browser or network errors. Its capture of the narrow mobile chooser is [`evidence/exhibit-selector-320-mobile.png`](evidence/exhibit-selector-320-mobile.png), and full measurements are in [`evidence/exhibit-overlay-review.json`](evidence/exhibit-overlay-review.json). The review uses HeadlessChrome 157 with SwiftShader and touch/viewport emulation; it does not establish screen-reader or physical-phone behavior.
+
+## Fourth validated change: high-density Flocking
+
+The `Predator and prey` scenario previously created and populated a per-agent `Set` to deduplicate wrapped grid cells and searched 49 mixed-species cells for each prey bird on every update. It now walks the same unique toroidal neighborhood without a per-agent allocation, keeps predators in a compact list for prey-nearest searches, and scales steering vectors without creating temporary arrays. Neighborhood ordering, wrap seams, vector limiting, and the predator radius are checked against the former grid algorithm in `test:flocking-grid`.
+
+`qa:flocking-performance` compares the exact pre-change commit `611ee7a` with the optimized build in the same HeadlessChrome 157 setup: Canvas 2D via SwiftShader/Vulkan, 1440×900, the `Predator and prey` scenario, 1,400 agents and 132 px awareness. Both runs configure the same visible controls, pause/resume once, then record three 2.2-second trials. The table reports the median of those three trial-level statistics.
+
+| Measurement | Before | After | Change |
+|---|---:|---:|---:|
+| Page animation-callback median | 32.9 ms | 11.3 ms | 65.7% lower |
+| Page animation-callback p95 | 79.7 ms | 21.1 ms | 73.5% lower |
+| RAF timestamp interval median | 66.6 ms | 50.0 ms | 24.9% lower |
+| RAF timestamp interval p95 | 116.8 ms | 66.7 ms | 42.9% lower |
+| Long tasks over 50 ms / 2.2-second trial | 33 | 6 | 81.8% fewer |
+
+The callback and long-task timings are page-level measurements, not isolated simulation-only profiles. The resulting median 50 ms frame interval still falls well short of 60 Hz. These are software-rendered headless figures and do not establish performance on a physical GPU or phone. Exact trials and caveats are recorded in [`evidence/flocking-performance-before.json`](evidence/flocking-performance-before.json) and [`evidence/flocking-performance-after.json`](evidence/flocking-performance-after.json); the evolved scene is [`evidence/flocking-predator-evolved.png`](evidence/flocking-predator-evolved.png). The new helper and regression scripts add 0.34 kB raw / 0.21 kB gzip to the lazy Boids chunk; the initial JavaScript bundle is unchanged.
