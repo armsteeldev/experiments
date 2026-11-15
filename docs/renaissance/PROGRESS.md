@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Latest clean checkpoint:** `8b708b7` applies bounded, exhibit-specific restoration to nine high-risk routes and completes Shape of Sound sharing. Current local work adds repeated-route resource instrumentation for all nineteen exhibits.
+- **Latest implementation checkpoint:** `585f5ce` completes bounded restoration on twelve high-risk routes, recovers oversized Mandelbrot states safely, closes three incomplete exhibit share serializers, and adds two-pass worker/audio lifecycle QA. Full verification and browser checks pass; the remaining program work is tracked below.
 
 ## Milestones
 
