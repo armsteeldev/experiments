@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to `edd658f` on `renaissance/next-generation`: compact cellular and custom Logic/Invisible Forces/Gravity/Flocking replay, Canvas 2D/GPU state parity, a measured high-density Flocking optimization, and two complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
+Status is current to `0c2050c` on `renaissance/next-generation`: compact cellular and custom Logic/Invisible Forces/Gravity/Flocking replay, Canvas 2D/GPU state parity, a measured high-density Flocking optimization, background-tab suspension for the network and deep fractal renderer, and complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -51,7 +51,8 @@ Status is current to `edd658f` on `renaissance/next-generation`: compact cellula
 - [ ] Measure lazy exhibit chunks, mounting duration, frame cadence and worker/AudioContext/WebGL cleanup after repeated route changes.
 - [x] Instrument workers and audio contexts during two complete nineteen-route SPA passes; confirm every route-owned worker terminates and each explicitly started audio context closes on exit.
 - [x] Profile the 1,400-agent Flocking predator scenario before/after optimization under a fixed headless browser and workload; preserve exact trial data and the software-renderer caveat.
-- [ ] Test idle/background suspension, resize/context loss and cancellation during heavy Mandelbrot/lensing work.
+- [x] Test a real background-tab switch: network ticks ignore throttled hidden callbacks; deep Mandelbrot worker work cancels, stays idle, and resumes in a newer generation.
+- [ ] Test resize/context loss and cancellation during heavy Mandelbrot/lensing work.
 - [ ] Repeat suitable performance samples on a physical GPU and mid-range mobile; keep SwiftShader results separate.
 
 ## P2 — Automated QA and scientific quality

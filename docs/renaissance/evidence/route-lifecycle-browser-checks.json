@@ -256,15 +256,15 @@
   "heapSamples": [
     {
       "route": "/exhibits/logic",
-      "usedBytes": 9091529
+      "usedBytes": 9012815
     },
     {
       "route": "/exhibits/lensing",
-      "usedBytes": 10301049
+      "usedBytes": 11191218
     },
     {
       "route": "/exhibits/lensing",
-      "usedBytes": 10557237
+      "usedBytes": 10391922
     }
   ],
   "transitionChecks": [
