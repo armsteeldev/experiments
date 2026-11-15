@@ -111,9 +111,10 @@
         "mass",
         "launchSpeed",
         "trails",
-        "prediction"
+        "prediction",
+        "view"
       ],
-      "bytes": 129,
+      "bytes": 159,
       "routeRestored": true,
       "invalidStateRecovery": true
     },

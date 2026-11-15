@@ -109,7 +109,6 @@ assert.ok(await evaluate(`(() => { const button = [...document.querySelectorAll(
 await waitFor(`document.querySelector('.forces-caption')?.textContent.includes('now negative')`, 'negative source polarity')
 await click('button[aria-label="Toggle experiment controls"]')
 await call('Input.dispatchMouseEvent', { type: 'mouseWheel', x: canvasPoint.x, y: canvasPoint.y, deltaX: 0, deltaY: -260 })
-await sleep(320)
 
 let shared = await copiedState()
 const screenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { MAX_GRAVITY_BODIES, nextGravityBodyId, restoreGravitySnapshot, restoreGravityView, type GravityBodyState } from '../lib/gravityState'
 import { boundedStateNumber, stateChoice } from '../lib/experimentState'
 import { bodyRadius, circularOrbitVelocity, estimateGravityThrowVelocity, gravityEnergy, integrateGravity, pickGravityBodyAtWorld, type CollisionMode, type GravityBody, type GravityPointerSample } from '../simulations/gravity'
 import './ExpandedExhibits.css'
@@ -51,16 +52,31 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
   const [launchSpeed, setLaunchSpeed] = useState(() => boundedStateNumber(stateFromUrl?.launchSpeed, 4, 0.5, 9))
   const [trails, setTrails] = useState(() => stateFromUrl?.trails !== false)
   const [prediction, setPrediction] = useState(() => stateFromUrl?.prediction === true)
+  const restoredGravity = Array.isArray(stateFromUrl?.bodies) ? restoreGravitySnapshot(stateFromUrl.bodies, stateFromUrl.view) : null
+  const restoredView = restoreGravityView(stateFromUrl?.view)
+  const initialBodies = useMemo(() => restoredGravity?.bodies.map((body) => ({ ...body, trail: [] })) ?? makeScene(scene), [])
+  const [bodySnapshot, setBodySnapshot] = useState<GravityBodyState[] | null>(() => restoredGravity?.bodies ?? null)
   const [launchMode, setLaunchMode] = useState(false)
   const [throwMode, setThrowMode] = useState(false)
   const [hovered, setHovered] = useState<number | null>(null)
   const [launchFeedback, setLaunchFeedback] = useState('')
   const [selected, setSelected] = useState<number | null>(null)
-  const [readout, setReadout] = useState({ bodies: 6, energy: '—' })
+  const [readout, setReadout] = useState({ bodies: initialBodies.length, energy: '—' })
   const params = useRef<Params>({ paused, speed, collision, trails, prediction })
   params.current = { paused, speed, collision, trails, prediction }
-  const state = useRef({ bodies: makeScene(scene), width: 0, height: 0, dpr: 1, scale: 70, cameraX: 0, cameraY: 0, raf: 0, last: 0, accumulator: 0, tick: 0, revision:0, pointer: null as GravityPointer | null })
+  const state = useRef({ bodies: initialBodies, width: 0, height: 0, dpr: 1, scale: 70, zoom: restoredView?.zoom ?? 1, cameraX: restoredView?.x ?? 0, cameraY: restoredView?.y ?? 0, raf: 0, last: 0, accumulator: 0, tick: 0, revision:0, pointer: null as GravityPointer | null })
   const view = useRef({ mass, selected, hovered, throwMode }); view.current = { mass, selected, hovered, throwMode }
+  const shareSettings = useRef({ scene, speed, collision, mass, launchSpeed, trails, prediction, bodySnapshot })
+  shareSettings.current = { scene, speed, collision, mass, launchSpeed, trails, prediction, bodySnapshot }
+  const publishShareState = (bodies: GravityBodyState[] | null = shareSettings.current.bodySnapshot) => {
+    const s = state.current, settings = shareSettings.current
+    onShareState({ scene: settings.scene, speed: settings.speed, collision: settings.collision, mass: settings.mass, launchSpeed: settings.launchSpeed, trails: settings.trails, prediction: settings.prediction, view: { x: s.cameraX, y: s.cameraY, zoom: s.zoom }, ...(bodies === null ? {} : { bodies }) })
+  }
+  const captureBodies = () => {
+    const bodies = state.current.bodies.map(({ id, x, y, vx, vy, mass: bodyMass, color }) => ({ id, x, y, vx, vy, mass: bodyMass, color }))
+    setBodySnapshot(bodies)
+    publishShareState(bodies)
+  }
 
   useEffect(() => {
     if (!import.meta.env.DEV) return
@@ -73,7 +89,7 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     return () => { delete (window as Window & { __ARMSTEEL_GRAVITY__?: typeof inspect }).__ARMSTEEL_GRAVITY__ }
   }, [])
 
-  useEffect(() => { onShareState({ scene, speed, collision, mass, launchSpeed, trails, prediction }) }, [scene, speed, collision, mass, launchSpeed, trails, prediction, onShareState])
+  useEffect(() => { publishShareState() }, [scene, speed, collision, mass, launchSpeed, trails, prediction, bodySnapshot, onShareState])
   const resetScene = () => {
     const s = state.current
     s.bodies = makeScene(scene)
@@ -83,6 +99,9 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     s.cameraX = 0
     s.cameraY = 0
     s.scale = s.width && s.height ? Math.min(s.width, s.height) / 10.4 : 70
+    s.zoom = 1
+    setBodySnapshot(null)
+    publishShareState(null)
     setSelected(null)
     setReadout({ bodies: s.bodies.length, energy: '—' })
     setLaunchMode(false)
@@ -91,14 +110,16 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
   const launchCircularBody = () => {
     const s = state.current
     const source = s.bodies.reduce<GravityBody | null>((largest, body) => !largest || body.mass > largest.mass ? body : largest, null)
-    if (s.bodies.length >= 32) { setLaunchFeedback('This scene is full. Reset it to launch another body.'); return }
+    if (s.bodies.length >= MAX_GRAVITY_BODIES) { setLaunchFeedback('This scene is full. Reset it to launch another body.'); return }
     const child = { id: 0, x: 0, y: 0, vx: 0, vy: 0, mass, color: '' }
     const radius = source ? Math.max(bodyRadius(source) + bodyRadius(child) + .16, source.mass / (22 * 22) * 1.1) : 1
     const x = source ? source.x + radius : 0, y = source?.y ?? 0
     const velocity = source ? circularOrbitVelocity(source, x, y) : { vx: launchSpeed, vy: 0 }
-    const body = { id: nextId++, x, y, ...velocity, mass, color: planetColors[nextId % planetColors.length], trail: [] }
+    const id = nextGravityBodyId(s.bodies, nextId); nextId = id + 1
+    const body = { id, x, y, ...velocity, mass, color: planetColors[id % planetColors.length], trail: [] }
     s.bodies.push(body); s.revision++; setSelected(body.id)
     setReadout({ bodies: s.bodies.length, energy: gravityEnergy(s.bodies).toFixed(1) })
+    captureBodies()
     setLaunchFeedback('Circular orbit launched around the most massive body.')
     hint.dismiss()
   }
@@ -109,13 +130,13 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     let stars: { x: number; y: number; r: number; a: number }[] = []
     const resize = () => {
       const rect = canvas.getBoundingClientRect(); if (!rect.width || !rect.height) return
-      const oldW = s.width, oldH = s.height
       s.width = rect.width; s.height = rect.height
       s.dpr = Math.min(devicePixelRatio || 1, 1.6, Math.sqrt(2_200_000 / (rect.width * rect.height)))
       canvas.width = Math.max(1, Math.floor(rect.width * s.dpr)); canvas.height = Math.max(1, Math.floor(rect.height * s.dpr))
       ctx.setTransform(s.dpr, 0, 0, s.dpr, 0, 0)
-      if (oldW && oldH) s.scale *= Math.min(s.width, s.height) / Math.min(oldW, oldH)
-      else s.scale = Math.min(s.width, s.height) / 10.4
+      const baseScale = Math.min(s.width, s.height) / 10.4
+      s.zoom = clamp(s.zoom, 20 / baseScale, 480 / baseScale)
+      s.scale = baseScale * s.zoom
       let seed = 987
       const random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647 }
       stars = Array.from({ length: Math.floor(rect.width * rect.height / 6200) }, () => ({ x: random() * s.width, y: random() * s.height, r: .35 + random() * .8, a: .14 + random() * .42 }))
@@ -219,7 +240,12 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     return () => { cancelAnimationFrame(s.raf); resizeObserver.disconnect() }
   }, [])
 
-  useEffect(() => { resetScene() }, [scene])
+  const mountedScene = useRef(scene)
+  useEffect(() => {
+    if (mountedScene.current === scene) return
+    mountedScene.current = scene
+    resetScene()
+  }, [scene])
 
   const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
     hint.dismiss()
@@ -268,6 +294,8 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
   const pointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {
     pointerMove(event)
     const s = state.current, p = s.pointer; if (!p || p.id !== event.pointerId) return
+    let bodyChanged = false
+    let cameraChanged = false
     if (p.mode === 'body') {
       const body = s.bodies.find((item) => item.id === p.bodyId)
       if (body) {
@@ -279,6 +307,7 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
         } else setLaunchFeedback('Repositioned · original momentum kept.')
       }
       s.revision++
+      bodyChanged = true
     }
     if (p.mode === 'launch') {
       const dragged = Math.hypot(p.worldX - p.startWorldX, p.worldY - p.startWorldY) > .08
@@ -291,15 +320,20 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
       const orbital = source ? circularOrbitVelocity(source, x, y) : { vx: launchSpeed, vy: 0 }
       const vx = dragged ? clamp((p.worldX - p.startWorldX) * launchSpeed, -22, 22) : orbital.vx
       const vy = dragged ? clamp((p.worldY - p.startWorldY) * launchSpeed, -22, 22) : orbital.vy
-      if (s.bodies.length < 32) {
-        const body = { id: nextId++, x, y, vx, vy, mass, color: planetColors[nextId % planetColors.length], trail: [] }
+      if (s.bodies.length < MAX_GRAVITY_BODIES) {
+        const id = nextGravityBodyId(s.bodies, nextId); nextId = id + 1
+        const body = { id, x, y, vx, vy, mass, color: planetColors[id % planetColors.length], trail: [] }
         s.bodies.push(body); s.revision++; setSelected(body.id); setReadout({ bodies: s.bodies.length, energy: gravityEnergy(s.bodies).toFixed(1) })
         setLaunchFeedback(dragged ? 'Custom velocity released · select the body to refine its orbit.' : 'Circular orbit launched around the most massive body.')
+        bodyChanged = true
       } else setLaunchFeedback('This scene is full. Reset it to launch another body.')
       setLaunchMode(false)
     }
+    if (p.mode === 'pan') cameraChanged = true
     s.pointer = null
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+    if (bodyChanged) captureBodies()
+    if (cameraChanged) publishShareState()
   }
   const cancelPointer = (pointerId: number) => {
     const s = state.current, p = s.pointer
@@ -309,6 +343,7 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
       if (body) { body.x = p.originalX; body.y = p.originalY; body.vx = p.originalVx; body.vy = p.originalVy }
       s.revision++
     }
+    if (p.mode === 'pan') publishShareState()
     if (p.mode === 'launch') setLaunchMode(false)
     s.pointer = null
     const canvas = canvasRef.current
@@ -318,15 +353,18 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     event.preventDefault(); const s = state.current, rect = canvasRef.current?.getBoundingClientRect(); if (!rect) return; const x = event.clientX - rect.left, y = event.clientY - rect.top
     const beforeX = s.cameraX + (x - s.width / 2) / s.scale, beforeY = s.cameraY + (y - s.height / 2) / s.scale
     s.scale = clamp(s.scale * Math.exp(-event.deltaY * .001), 20, 480)
+    s.zoom = s.scale / (Math.min(s.width, s.height) / 10.4)
     s.cameraX = beforeX - (x - s.width / 2) / s.scale; s.cameraY = beforeY - (y - s.height / 2) / s.scale
+    publishShareState()
   }
   useEffect(() => { const canvas = canvasRef.current; if (!canvas) return; canvas.addEventListener('wheel', wheel, { passive: false }); return () => canvas.removeEventListener('wheel', wheel) }, [])
   const selectedBody = state.current.bodies.find((body) => body.id === selected)
-  const adjustSelected = (key: 'mass' | 'vx' | 'vy', value: number) => { const body=state.current.bodies.find((item)=>item.id===selected);if(!body)return;body[key]=value;state.current.revision++;setReadout({bodies:state.current.bodies.length,energy:gravityEnergy(state.current.bodies).toFixed(1)}) }
+  const adjustSelected = (key: 'mass' | 'vx' | 'vy', value: number) => { const body=state.current.bodies.find((item)=>item.id===selected);if(!body)return;body[key]=value;state.current.revision++;setReadout({bodies:state.current.bodies.length,energy:gravityEnergy(state.current.bodies).toFixed(1)});captureBodies() }
   const removeSelected = () => {
     if (selected === null) return
     state.current.bodies = state.current.bodies.filter((body) => body.id !== selected)
     state.current.revision++; setSelected(null); setReadout({ bodies: state.current.bodies.length, energy: gravityEnergy(state.current.bodies).toFixed(1) })
+    captureBodies()
     setLaunchFeedback('Selected body removed.')
   }
 

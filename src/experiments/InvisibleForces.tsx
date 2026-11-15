@@ -47,12 +47,7 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
   const state = useRef(initialEngineState)
   const parameters = useRef({ paused, showPotential, showLines, showParticles, fieldScale, selectedChargeId }); parameters.current = { paused, showPotential, showLines, showParticles, fieldScale, selectedChargeId }
   const [sceneRevision, setSceneRevision] = useState(0)
-  const cameraShareTimer = useRef<number | null>(null)
   const markSceneChanged = () => setSceneRevision((revision) => revision + 1)
-  const scheduleCameraShare = () => {
-    if (cameraShareTimer.current !== null) window.clearTimeout(cameraShareTimer.current)
-    cameraShareTimer.current = window.setTimeout(() => { cameraShareTimer.current = null; markSceneChanged() }, 180)
-  }
   useEffect(() => {
     const s = state.current
     const charges = s.charges.map(({ x, y, q }) => ({ x, y, q }))
@@ -176,9 +171,9 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
   }
   const wheel = (event: WheelEvent) => {
     event.preventDefault(); const canvas = canvasRef.current; if (!canvas) return; const s = state.current, rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top, beforeX = s.cameraX + (x - s.width / 2) / s.scale, beforeY = s.cameraY + (y - s.height / 2) / s.scale
-    s.scale = clamp(s.scale * Math.exp(-event.deltaY * .001), Math.min(s.width,s.height)/14, Math.min(s.width,s.height)*1.4); s.zoom = s.scale / (Math.min(s.width, s.height) / 5.4); s.cameraX = beforeX - (x - s.width / 2) / s.scale; s.cameraY = beforeY - (y - s.height / 2) / s.scale; scheduleCameraShare()
+    s.scale = clamp(s.scale * Math.exp(-event.deltaY * .001), Math.min(s.width,s.height)/14, Math.min(s.width,s.height)*1.4); s.zoom = s.scale / (Math.min(s.width, s.height) / 5.4); s.cameraX = beforeX - (x - s.width / 2) / s.scale; s.cameraY = beforeY - (y - s.height / 2) / s.scale; markSceneChanged()
   }
-  useEffect(() => { const canvas = canvasRef.current; if (!canvas) return; canvas.addEventListener('wheel', wheel, { passive: false }); return () => { canvas.removeEventListener('wheel', wheel); if (cameraShareTimer.current !== null) window.clearTimeout(cameraShareTimer.current) } }, [])
+  useEffect(() => { const canvas = canvasRef.current; if (!canvas) return; canvas.addEventListener('wheel', wheel, { passive: false }); return () => canvas.removeEventListener('wheel', wheel) }, [])
   const selectedCharge = state.current.charges.find((charge) => charge.id === selectedChargeId)
   const adjustChargeStrength = (value: number) => {
     setChargeStrength(value)

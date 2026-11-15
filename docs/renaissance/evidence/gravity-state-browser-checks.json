@@ -1,0 +1,20 @@
+{
+  "browser": "HeadlessChrome 157, 1440×900, SwiftShader/Vulkan",
+  "customScene": {
+    "bodies": 7,
+    "addedBodyId": 20,
+    "focusedMass": 3.2,
+    "collision": "bounce",
+    "zoom": 1.2712491503214047,
+    "exactReload": true
+  },
+  "appendedAfterFullReload": {
+    "bodyId": 21,
+    "allIdsUnique": true
+  },
+  "malformedRecovery": {
+    "extremeMassUsesSolarStarter": true,
+    "errorBoundary": false
+  },
+  "browserErrors": []
+}
