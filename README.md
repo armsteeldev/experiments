@@ -1,6 +1,6 @@
 # Armsteel Experiments
 
-A browser-based digital museum of thirteen interactive studies in mathematics, physics, computing, electronics, artificial life, and generative art. The client uses React, TypeScript, and Vite with Canvas 2D, WebGL2, WebGPU, and Web Workers where available. Production is a static site served by Caddy; it has no application server or account system.
+A browser-based digital museum of nineteen interactive studies in mathematics, physics, computing, electronics, artificial life, and generative art. The client uses React, TypeScript, and Vite with Canvas 2D, WebGL2, WebGPU, and Web Workers where available. Production is a static site served by Caddy; it has no application server or account system.
 
 ## Local development
 
@@ -18,9 +18,9 @@ npm run preview
 
 ## Verification
 
-`npm run verify` runs the TypeScript and production build, deep-zoom numerical checks, simulation checks, exhaustive Adder checks, browser-storage checks, and generated SEO/site-file checks. It creates `dist/`, including a static HTML entry for each exhibit and the privacy page.
+`npm run verify` runs the TypeScript and production build, deep-zoom numerical checks, simulation checks, exhaustive Adder checks, the six Invisible World model checks, browser-storage checks, and generated SEO/site-file checks. It creates `dist/`, including a static HTML entry for each exhibit and the privacy page.
 
-Focused checks are available as `npm run test:numerics`, `npm run test:simulations`, `npm run test:adder`, `npm run test:storage`, and `npm run check:site`. The numerical suite covers coordinates and rendering details through very deep zooms; actual render speed depends on the visitor's graphics hardware.
+Focused checks are available as `npm run test:numerics`, `npm run test:simulations`, `npm run test:adder`, `npm run test:invisible-world`, `npm run test:storage`, and `npm run check:site`. The numerical suite covers coordinates and rendering details through very deep zooms; actual render speed depends on the visitor's graphics hardware.
 
 ## The collection
 
@@ -39,8 +39,14 @@ The public routes are generated from `src/data/experiments.json`:
 11. Invisible Forces — electrostatic fields
 12. Cellular Automata — local rules on a wrapped grid
 13. The Adder — ripple-carry and Kogge–Stone circuits
+14. The Wave Chamber — finite-difference waves, interference, and diffraction
+15. A Geometry of Light — geometric rays, refraction, mirrors, and thin lenses
+16. The Shape of Sound — Fourier synthesis, FFT spectra, and Web Audio
+17. The Living Garden — inherited traits, resources, energy, and reproduction
+18. The Living Network — packet routing, queues, latency, and link failure
+19. Where Light Falls — Schwarzschild null geodesics and gravitational lensing
 
-Each study is lazy-loaded as its own route chunk. The shared shell handles navigation, descriptions, favourites, and browser history. WebGL2 studies have Canvas or CPU fallbacks where implemented; WebGPU accelerates deep Mandelbrot views when supported and available.
+Each study is lazy-loaded as its own route chunk. The shared shell handles navigation, descriptions, favourites, and browser history; related-study links connect the new physics, mathematics, life, and computing threads. WebGL2 studies have Canvas or CPU fallbacks where implemented; WebGPU accelerates deep Mandelbrot views when supported and available.
 
 ## Add an exhibit
 

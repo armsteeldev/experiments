@@ -423,6 +423,7 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
       <h1 id="experiment-info-title">{experiment.title}</h1>
       <p>{experiment.description}</p>
       <details className="info-reading"><summary>Read the underlying idea</summary><p>{experiment.about}</p></details>
+      {experiment.related?.length ? <nav className="related-studies" aria-label="Related experiments"><span>FOLLOW THIS THREAD</span><div>{experiment.related.map((id) => experiments.find((item) => item.id === id)).filter((item): item is ExperimentDefinition => !!item).map((item) => <Link key={item.id} to={'/exhibits/' + item.id}><small>{item.number}</small><strong>{item.title}</strong><Icon name="arrow" /></Link>)}</div></nav> : null}
       <div className="info-method"><span>UNDERLYING IDEA</span><strong>{experiment.method}</strong></div>
       <div className="info-actions">
         <button onClick={() => setIsFavorite(toggleFavorite(experiment.id, experimentIds).includes(experiment.id))} aria-pressed={isFavorite}><Icon name="heart" />{isFavorite ? 'Saved to exhibition' : 'Save to exhibition'}</button>

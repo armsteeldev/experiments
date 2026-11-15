@@ -536,6 +536,14 @@ body.immersive-active { height: 100%; min-height: 0; }
 .info-category i { padding: 0 5px; color: #627d8d; font-style: normal; }
 .info-panel h1 { margin: 12px 36px 8px 0; color: #edf3f7; font: 500 26px/1.12 var(--serif); letter-spacing: -.025em; }
 .info-panel > p { margin: 0 0 18px; max-width: 270px; color: #b4c2cc; font-size: 11px; line-height: 1.65; }
+.related-studies { margin: -4px 0 15px; }
+.related-studies > span { display: block; margin-bottom: 7px; color: #8195a5; font: 7px var(--mono); letter-spacing: .12em; }
+.related-studies > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.related-studies a { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 8px; color: #b9cbd5; border: 1px solid rgba(218,234,246,.1); border-radius: 8px; background: rgba(210,231,244,.045); text-decoration: none; transition: color .18s, border-color .18s, background .18s; }
+.related-studies a:hover, .related-studies a:focus-visible { color: #edf7fa; border-color: rgba(204,231,243,.25); background: rgba(195,223,237,.1); }
+.related-studies a small { color: #829bab; font: 7px var(--mono); }
+.related-studies a strong { font-size: 8px; font-weight: 500; }
+.related-studies a svg { width: 11px; height: 11px; }
 .info-method { display: grid; grid-template-columns: 1fr; gap: 7px; padding-top: 13px; border-top: 1px solid rgba(222,235,245,.1); }
 .info-method span { color: #8197a7; font: 7px var(--mono); letter-spacing: .12em; }
 .info-method strong { color: #d3e0e7; font-size: 10px; font-weight: 450; line-height: 1.5; }

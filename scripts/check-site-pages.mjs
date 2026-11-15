@@ -8,7 +8,8 @@ const site = 'https://experiments.armsteel.dev'
 const metadata = JSON.parse(await readFile(resolve(root, 'src/data/experiments.json'), 'utf8'))
 const registry = await readFile(resolve(root, 'src/registry.ts'), 'utf8')
 
-assert.equal(metadata.length, 13, 'the registry contains thirteen published exhibits')
+assert.equal(metadata.length, 19, 'the registry contains the thirteen established exhibits and six Invisible World studies')
+assert.deepEqual(metadata.slice(13).map((item) => item.id), ['waves', 'optics', 'sound', 'garden', 'network', 'lensing'], 'the new studies have stable numbered collection order')
 assert.equal(new Set(metadata.map((item) => item.id)).size, metadata.length, 'exhibit IDs are unique')
 assert.equal(new Set(metadata.map((item) => item.number)).size, metadata.length, 'exhibit numbers are unique')
 for (const item of metadata) {
@@ -16,6 +17,7 @@ for (const item of metadata) {
   assert.ok(item.title.trim(), `${item.id} has a title`)
   assert.ok(item.metaDescription.trim().length >= 60 && item.metaDescription.length <= 180, `${item.id} has a useful search description`)
   assert.match(registry, new RegExp(`\\b${item.id}:\\s*lazy\\(`), `${item.id} has a lazy component registration`)
+  assert.ok((item.related ?? []).every((id) => id !== item.id && metadata.some((candidate) => candidate.id === id)), `${item.id} has valid related-study links`)
 }
 
 const readPage = (route) => readFile(resolve(dist, route), 'utf8')

@@ -17,6 +17,12 @@ const components = {
   forces: lazy(() => import('./experiments/InvisibleForces')),
   automata: lazy(() => import('./experiments/CellularAutomata')),
   adder: lazy(() => import('./experiments/Adder')),
+  waves: lazy(() => import('./experiments/WaveChamber')),
+  optics: lazy(() => import('./experiments/GeometryOfLight')),
+  sound: lazy(() => import('./experiments/ShapeOfSound')),
+  garden: lazy(() => import('./experiments/LivingGarden')),
+  network: lazy(() => import('./experiments/LivingNetwork')),
+  lensing: lazy(() => import('./experiments/WhereLightFalls')),
 } satisfies Record<string, LazyExoticComponent<ComponentType<ExperimentControls>>>
 
 type ExperimentMetadata = Omit<ExperimentDefinition, 'Component'> & { metaDescription: string }

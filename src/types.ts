@@ -23,5 +23,6 @@ export type ExperimentDefinition = {
   year: string
   updated: string
   featured?: boolean
+  related?: string[]
   Component: ComponentType<ExperimentControls> | LazyExoticComponent<ComponentType<ExperimentControls>>
 }

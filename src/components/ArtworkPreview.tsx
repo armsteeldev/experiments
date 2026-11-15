@@ -18,6 +18,12 @@ const palettes: Record<string, Palette> = {
   electric: ['#9ec9d7', '#d3b67f', '#a78cbd'],
   automata: ['#a8c0a0', '#82b5b2', '#d0a77b'],
   adder: ['#9bbbc8', '#d0ae76', '#a49ac6'],
+  waves: ['#e0c18a', '#74c9d6', '#a6dbe0'],
+  optics: ['#a7d9e5', '#dce9ed', '#f0ba78'],
+  sound: ['#d6b9f2', '#9f88d2', '#f1c997'],
+  garden: ['#a8d09b', '#82bea7', '#d2c783'],
+  network: ['#96d9df', '#8aadc6', '#e8bf86'],
+  lensing: ['#bddaf2', '#a991c8', '#edc69f'],
 }
 const previewModes: Record<string, string> = {
   machine: 'cpu',
@@ -396,6 +402,104 @@ function drawAutomata(ctx: CanvasRenderingContext2D, w: number, h: number, palet
   }
 }
 
+function drawWaves(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
+  const cols = Math.max(160, Math.round(w / 2.6)), rows = Math.max(90, Math.round(h / 2.6)), cellW = w / cols, cellH = h / rows
+  const a = [w * 0.34, h * 0.42], b = [w * 0.34, h * 0.58], k = 0.17
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+    const px = x * cellW, py = y * cellH, d1 = Math.hypot(px - a[0], py - a[1]), d2 = Math.hypot(px - b[0], py - b[1])
+    let value = Math.cos(d1 * k - time * 0.08) + Math.cos(d2 * k - time * 0.08)
+    if (px < w * 0.53) value = Math.cos(d1 * k - time * 0.08) * 0.55
+    const amp = Math.min(1, Math.pow(Math.abs(value) * 0.5, 0.76)), color = value >= 0 ? palette[0] : palette[1]
+    ctx.fillStyle = color + Math.round(amp * 166).toString(16).padStart(2, '0')
+    ctx.fillRect(px, py, cellW + 0.3, cellH + 0.3)
+  }
+  const barrier = ctx.createLinearGradient(w * 0.53 - 3, 0, w * 0.53 + 3, 0)
+  barrier.addColorStop(0, '#0c1721'); barrier.addColorStop(0.5, '#344955'); barrier.addColorStop(1, '#0b121c')
+  ctx.fillStyle = barrier; ctx.fillRect(w * 0.53 - 3, h * 0.08, 6, h * 0.84)
+  ctx.clearRect(w * 0.53 - 3, h * 0.34, 6, h * 0.065); ctx.clearRect(w * 0.53 - 3, h * 0.60, 6, h * 0.065)
+  for (const [x, y] of [a, b]) {
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, h * 0.065)
+    glow.addColorStop(0, palette[0] + '8c'); glow.addColorStop(1, palette[0] + '00')
+    ctx.fillStyle = glow; ctx.fillRect(x - h * 0.065, y - h * 0.065, h * 0.13, h * 0.13)
+    ctx.beginPath(); ctx.arc(x, y, 2.1, 0, Math.PI * 2); ctx.fillStyle = '#e5f8f5'; ctx.fill()
+  }
+}
+
+function drawOptics(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
+  const left = w * 0.49, cy = h * 0.5, r = h * 0.25
+  const prism = [{ x: left, y: cy - r }, { x: left + r * 0.88, y: cy + r * 0.5 }, { x: left - r * 0.88, y: cy + r * 0.5 }]
+  const wavelengths = ['#8e9bff', '#7dc7ff', '#86ead4', '#f1edaa', '#ffc67e', '#ff9d9e']
+  wavelengths.forEach((color, index) => {
+    const spread = (index - 2.5) * 0.008
+    ctx.beginPath(); ctx.moveTo(w * 0.1, cy); ctx.lineTo(prism[2].x - 3, cy); ctx.lineTo(prism[1].x, cy + h * 0.018 + spread * h * 3); ctx.lineTo(w * 0.9, cy + h * 0.08 + spread * h * 7)
+    ctx.strokeStyle = color + (index % 2 ? '72' : 'a2'); ctx.lineWidth = 1; ctx.shadowColor = color; ctx.shadowBlur = 5; ctx.stroke(); ctx.shadowBlur = 0
+  })
+  ctx.beginPath(); ctx.moveTo(prism[0].x, prism[0].y); ctx.lineTo(prism[1].x, prism[1].y); ctx.lineTo(prism[2].x, prism[2].y); ctx.closePath()
+  const glass = ctx.createLinearGradient(prism[0].x, prism[0].y, prism[1].x, prism[1].y)
+  glass.addColorStop(0, palette[0] + '44'); glass.addColorStop(1, palette[1] + '28'); ctx.fillStyle = glass; ctx.fill(); ctx.strokeStyle = palette[0] + 'ad'; ctx.lineWidth = 1.2; ctx.stroke()
+  const mirrorX = w * 0.83, mirrorY = h * 0.36
+  ctx.beginPath(); ctx.moveTo(mirrorX - h * 0.12, mirrorY - h * 0.12); ctx.lineTo(mirrorX + h * 0.12, mirrorY + h * 0.12); ctx.strokeStyle = palette[2] + '8a'; ctx.lineWidth = 2; ctx.stroke()
+  const glintX = ((time * 0.12) % 1) * w
+  ctx.beginPath(); ctx.arc(glintX, cy + h * 0.04, 2, 0, Math.PI * 2); ctx.fillStyle = '#fff2cf'; ctx.fill()
+}
+
+function drawSound(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
+  const mid = h * 0.43, amplitude = h * 0.24
+  ctx.strokeStyle = 'rgba(210,198,236,.13)'; ctx.lineWidth = 0.7
+  for (let line = 0; line < 5; line++) { const y = h * (0.17 + line * 0.13); ctx.beginPath(); ctx.moveTo(w * 0.08, y); ctx.lineTo(w * 0.92, y); ctx.stroke() }
+  ctx.beginPath()
+  for (let x = 0; x <= w * 0.84; x++) {
+    const phase = x / (w * 0.84) * Math.PI * 2
+    const value = 0.62 * Math.sin(phase) + 0.16 * Math.sin(phase * 2) + 0.2 * Math.sin(phase * 3 + time * 0.015)
+    const y = mid - value * amplitude
+    if (x === 0) ctx.moveTo(w * 0.08 + x, y); else ctx.lineTo(w * 0.08 + x, y)
+  }
+  ctx.strokeStyle = palette[0] + 'dc'; ctx.lineWidth = 1.7; ctx.shadowColor = palette[0]; ctx.shadowBlur = 7; ctx.stroke(); ctx.shadowBlur = 0
+  for (let i = 1; i <= 14; i++) {
+    const x = w * (0.08 + i * 0.06), bar = h * 0.28 * (i === 1 ? 0.76 : i === 2 ? 0.22 : i === 3 ? 0.3 : 0.018 + (Math.sin(i * 6.8) + 1) * 0.012)
+    const gradient = ctx.createLinearGradient(x, h * 0.87 - bar, x, h * 0.87)
+    gradient.addColorStop(0, palette[1] + 'd0'); gradient.addColorStop(1, palette[2] + '26')
+    ctx.fillStyle = gradient; ctx.fillRect(x, h * 0.87 - bar, w * 0.022, bar)
+  }
+}
+
+function drawGarden(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
+  for (let i = 0; i < 28; i++) {
+    const x = w * (0.11 + randomAt(i + 14) * 0.78), y = h * (0.15 + randomAt(i + 42) * 0.7), r = 1.4 + randomAt(i + 77) * 2.4
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, r * 4); glow.addColorStop(0, palette[2] + 'b2'); glow.addColorStop(1, palette[2] + '00'); ctx.fillStyle = glow; ctx.fillRect(x-r*4,y-r*4,r*8,r*8)
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = palette[2] + 'd0'; ctx.fill()
+  }
+  for (let i = 0; i < 52; i++) {
+    const x = w * (0.12 + randomAt(i + 92) * 0.76) + Math.sin(time * 0.001 + i) * w * 0.012
+    const y = h * (0.17 + randomAt(i + 210) * 0.67) + Math.sin(time * 0.0014 + i * 0.7) * h * 0.012
+    const angle = randomAt(i + 400) * Math.PI * 2, radius = 2.1 + randomAt(i + 310) * 2.7
+    ctx.save(); ctx.translate(x, y); ctx.rotate(angle)
+    ctx.beginPath(); ctx.ellipse(0, 0, radius * 1.5, radius * 0.72, 0, 0, Math.PI * 2); ctx.fillStyle = palette[i % 3] + 'b5'; ctx.shadowColor = palette[i % 3]; ctx.shadowBlur = 5; ctx.fill(); ctx.shadowBlur = 0
+    ctx.beginPath(); ctx.arc(radius * 0.65, -radius * 0.12, 0.7, 0, Math.PI * 2); ctx.fillStyle = '#e8f4d0'; ctx.fill(); ctx.restore()
+  }
+}
+
+function drawLivingNetwork(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
+  const points = [[.13,.5],[.34,.2],[.34,.8],[.55,.48],[.76,.2],[.76,.78],[.9,.5]].map(([x,y])=>[x*w,y*h])
+  const edges = [[0,1],[0,2],[1,3],[2,3],[3,4],[3,5],[4,6],[5,6],[1,5]]
+  for (const [a,b] of edges) {
+    const [ax,ay]=points[a], [bx,by]=points[b]
+    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.strokeStyle=palette[1]+'43'; ctx.lineWidth=1; ctx.stroke()
+    const t=(time*0.00008+a*0.137)%1, x=ax+(bx-ax)*t, y=ay+(by-ay)*t
+    const glow=ctx.createRadialGradient(x,y,0,x,y,10); glow.addColorStop(0,palette[0]+'b0'); glow.addColorStop(1,palette[0]+'00'); ctx.fillStyle=glow; ctx.fillRect(x-10,y-10,20,20)
+    ctx.beginPath(); ctx.arc(x,y,1.8,0,Math.PI*2); ctx.fillStyle=palette[0]; ctx.fill()
+  }
+  points.forEach(([x,y],index)=>{const r=index===0||index===6?5:3.6;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle='#10202b';ctx.fill();ctx.strokeStyle=palette[index%3]+'cb';ctx.lineWidth=1.2;ctx.stroke()})
+}
+
+function drawLensing(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
+  const cx=w*.51,cy=h*.51,r=h*.19
+  for(let i=0;i<115;i++){const x=randomAt(i+33)*w,y=randomAt(i+111)*h,size=.3+randomAt(i+47)*1.15;ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);ctx.fillStyle=`rgba(207,220,255,${.14+randomAt(i+218)*.5})`;ctx.fill()}
+  for(let ring=0;ring<7;ring++){const radius=r*(1.05+ring*.042);ctx.beginPath();ctx.ellipse(cx,cy,radius*1.65,radius*.45,time*.00008+ring*.025,0,Math.PI*2);ctx.strokeStyle=palette[ring%3]+(ring%2?'4d':'75');ctx.lineWidth=ring===2?1.45:.7;ctx.shadowColor=palette[ring%3];ctx.shadowBlur=7;ctx.stroke()}
+  ctx.shadowBlur=0;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#010207';ctx.fill()
+  for(let ray=0;ray<5;ray++){const y=h*(.22+ray*.14);ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(w*.46,y+h*.18,w*.55,y-h*.21,w,y+h*.035);ctx.strokeStyle=palette[ray%3]+'59';ctx.lineWidth=.85;ctx.stroke()}
+}
+
 function drawDefault(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
   ctx.save()
   ctx.translate(w * 0.5, h * 0.5)
@@ -433,6 +537,12 @@ function render(ctx: CanvasRenderingContext2D, id: string, w: number, h: number,
     case 'circuit': case 'adder': drawCircuit(ctx, w, h, palette, time); break
     case 'electric': drawElectric(ctx, w, h, palette, time); break
     case 'automata': drawAutomata(ctx, w, h, palette, time); break
+    case 'waves': drawWaves(ctx, w, h, palette, time); break
+    case 'optics': drawOptics(ctx, w, h, palette, time); break
+    case 'sound': drawSound(ctx, w, h, palette, time); break
+    case 'garden': drawGarden(ctx, w, h, palette, time); break
+    case 'network': drawLivingNetwork(ctx, w, h, palette, time); break
+    case 'lensing': drawLensing(ctx, w, h, palette, time); break
     default: drawDefault(ctx, w, h, palette, time)
   }
 }
