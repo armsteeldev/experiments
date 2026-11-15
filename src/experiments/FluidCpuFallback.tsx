@@ -278,10 +278,16 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
     if (!state) return
     const x = (event.clientX - rect.left) / rect.width * state.w
     const y = (event.clientY - rect.top) / rect.height * state.h
+    const previous = pointer.current
+    const dx = previous ? x - previous.x : 0
+    const dy = previous ? y - previous.y : 0
     if (!pointer.current) pointer.current = { x, y, oldX: x, oldY: y }
-    else {
-      pointer.current.x = x; pointer.current.y = y
-      if (paused) { pointer.current.oldX = x; pointer.current.oldY = y }
+    else { pointer.current.x = x; pointer.current.y = y }
+    if (params.current.paused) {
+      const color = pigment[params.current.palette] || pigment.aurora
+      inject(state, x, y, dx, dy, color, Math.max(4, Math.round(Math.min(state.w, state.h) * 0.04)), 0.78)
+      if (pointer.current) { pointer.current.oldX = x; pointer.current.oldY = y }
+      drawRef.current()
     }
   }
   const clear = () => {

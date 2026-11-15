@@ -1,0 +1,129 @@
+{
+  "browser": {
+    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "server": "http://127.0.0.1:5217",
+  "note": "State-changing browser interactions; canvas evidence is HeadlessChrome/SwiftShader with desktop viewport emulation, not physical GPU or mobile-device evidence.",
+  "interactions": [
+    {
+      "exhibit": "mandelbrot",
+      "action": "Zoom in then reset",
+      "before": "Re -0.5 · Im 0 · ×1.28",
+      "after": "Re -0.5 · Im 0 · ×2.18",
+      "reset": "Re -0.5 · Im 0 · ×1.28"
+    },
+    {
+      "exhibit": "fluid",
+      "action": "Pause, drag and use the Stir the centre button",
+      "dragBeforeFrame": "a5fa8fae38c18d3f875ed95df347b185cccf76bcf95c38e5db1ade5879f7ccbb",
+      "dragAfterFrame": "3e82d081d94395736fdd8179c52cf8c8980c73ad875408448666341c7d5de842",
+      "buttonBeforeFrame": "38497c9e246b76bd81ade034b2ba1d9b5a616569eba1eb4fe42e2ebb508c9400",
+      "buttonAfterFrame": "003ecf7a0a13cb87d6c26e6db9b7e31f1f0cc1299b7e9e3054a8f31a1d6c96fd",
+      "changed": true
+    },
+    {
+      "exhibit": "reaction",
+      "action": "Plant a seed by dragging on the canvas",
+      "beforeFrame": "6054d436001698094ca93eb76d20c0b718b08f2f017fec87dad511d52432cef4",
+      "afterFrame": "1a120a67b730d238e64e0181162e165e76f7abe232d8714aea49ca783507fc5c",
+      "changed": true
+    },
+    {
+      "exhibit": "gravity",
+      "action": "Launch and remove an orbiting body",
+      "beforeBodies": 6,
+      "launchedBodies": 7,
+      "launchedReadout": "SELECTED BODY2.0 massv 20.97 units / time",
+      "recoveredBodies": 6
+    },
+    {
+      "exhibit": "machine",
+      "action": "Step one CPU instruction",
+      "clockBefore": 0,
+      "clockAfter": 1
+    },
+    {
+      "exhibit": "neural",
+      "action": "Train the labelled examples",
+      "lossBefore": 0.506,
+      "lossAfter": 0.554
+    },
+    {
+      "exhibit": "logic",
+      "action": "Turn on both switches by keyboard",
+      "result": {
+        "switches": [
+          "Switch A is on, 1",
+          "Switch B is on, 1"
+        ],
+        "lamp": "Switch B changed · every connected value recalculated.OUTPUT LAMP 1"
+      }
+    },
+    {
+      "exhibit": "adder",
+      "action": "Run a gate-level addition",
+      "result": "16",
+      "binary": "1 0000"
+    },
+    {
+      "exhibit": "automata",
+      "action": "Pause and step once",
+      "generationBefore": 0,
+      "generationAfter": 1
+    }
+  ],
+  "screenshots": [
+    {
+      "exhibit": "mandelbrot",
+      "file": "interaction-mandelbrot-zoom.png",
+      "sha256": "37918f02b9e7b329357cadba04b3df92e471011aed677bad630b8b63da5f0f72"
+    },
+    {
+      "exhibit": "fluid",
+      "file": "interaction-fluid-injected.png",
+      "sha256": "3e82d081d94395736fdd8179c52cf8c8980c73ad875408448666341c7d5de842"
+    },
+    {
+      "exhibit": "fluid",
+      "file": "interaction-fluid-action.png",
+      "sha256": "003ecf7a0a13cb87d6c26e6db9b7e31f1f0cc1299b7e9e3054a8f31a1d6c96fd"
+    },
+    {
+      "exhibit": "reaction",
+      "file": "interaction-reaction-seed.png",
+      "sha256": "1a120a67b730d238e64e0181162e165e76f7abe232d8714aea49ca783507fc5c"
+    },
+    {
+      "exhibit": "gravity",
+      "file": "interaction-gravity-launched.png",
+      "sha256": "7955c7d6e3940fb3e7f955ee1cf128a48077423030a1a898b5fdee0dd4cbd60a"
+    },
+    {
+      "exhibit": "machine",
+      "file": "interaction-cpu-first-instruction.png",
+      "sha256": "8fa07d4a7e8c49985557427f0d640a606cf8bb72659eeeb300856e60d8112054"
+    },
+    {
+      "exhibit": "neural",
+      "file": "interaction-neural-training.png",
+      "sha256": "cfd02377c17ac7e9dae49c55300896878bdde43ebff352ce767bfc41559313dc"
+    },
+    {
+      "exhibit": "logic",
+      "file": "interaction-logic-and.png",
+      "sha256": "b23d927bf5d2063000bacef38f38151d5e2b848e82373fca5429f96c4998b133"
+    },
+    {
+      "exhibit": "adder",
+      "file": "interaction-adder-7-plus-9.png",
+      "sha256": "f63f7a541cc0c73435c6deb07729eafd8d55b4cfa1e90b540fd2f40039e609e0"
+    },
+    {
+      "exhibit": "automata",
+      "file": "interaction-automata-one-generation.png",
+      "sha256": "b21e0f9da43bbc5ffa907ce084e8bda271afe909550fbc7d2fd84fbd778ce09c"
+    }
+  ],
+  "browserErrors": []
+}

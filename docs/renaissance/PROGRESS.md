@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Working tree:** Includes the verified production diagnostic boundary fix, pending its checkpoint commit; curated paths, local experiment notebook, shared navigation/overlays, gallery preview cleanup, concept search and the panel naming audit are committed and browser-verified.
+- **Latest clean checkpoint:** `0593cea` guards development-only diagnostics from production assets. Current local changes add simulation interaction QA and repair paused Fluid input in the GPU and CPU renderers; these are not committed yet.
 
 ## Milestones
 
@@ -36,6 +36,8 @@
 - Added curated concept tags for all nineteen studies. The optional search panel offers six idea prompts—Emergence, Recursion, Waves, Learning, Fields and Computation—and concept searches include editorial terms absent from titles. Every study now links to two or three hand-picked related works; the lensing panel intentionally has two to avoid a weaker third connection.
 - `qa:collection-discovery` passed all six concept queries against expected result sets, no-result recovery and Escape/focus return, favourites, recent visits, six 40 px mobile targets without overflow, all nineteen About-panel recommendation lists, and a real related-link transition. It recorded no browser/network errors. Desktop and phone captures plus the full result matrix are in [`evidence/`](evidence/).
 - A production bundle check now rejects development-only simulation diagnostics. The Mandelbrot metrics hook was the remaining unguarded global; it is DEV-only and removed when its exhibit unmounts. This reduces the lazy fractal chunk and prevents internal render telemetry from becoming a production surface. `npm run verify` passes with the new static guard.
+- Added `qa:original-interactions`, which drives the rendered application and checks nine actual state transitions: fractal zoom/reset; paused Fluid drag and its visible “Stir the centre” action; reaction-diffusion painting; gravity orbit launch/removal; one CPU instruction; neural training loss; keyboard-operated logic switches; a completed 7 + 9 gate-level sum; and one automaton generation. Ten current-state captures and canvas hashes are recorded in [`evidence/original-interaction-browser-checks.json`](evidence/original-interaction-browser-checks.json). The run used HeadlessChrome 157 with SwiftShader, had no browser/network errors, and does not establish physical GPU or phone performance.
+- That sweep found paused Fluid strokes were queued for the simulation loop, which stops while paused. Both the WebGL and Canvas2D fallback paths now apply a stroke immediately to the visible field while leaving time evolution paused; the “Stir the centre” action uses the same path. Browser checks confirm visible changes after both pointer and button input.
 - The gallery continues to expose its category and favourites filters alongside idea search and editorial paths. Remaining for this milestone: review the gallery’s first-visit hierarchy and improve card legibility only where further browser evidence shows a clear need.
 
 ### 3 — New product capabilities: in progress
@@ -48,9 +50,12 @@
 - Closed the cross-exhibit support gap found during the browser sweep: The Adder now shares/restores its width, architecture, valid operands and speed. Its changed 8-bit look-ahead link restored 23 + 17 and the displayed result was 40.
 - The Living Network restores its bounded 48-character message payload as well as endpoints; the input, save form and privacy page warn that this text appears in saved/shared settings and should not contain private information.
 
-### 4–10 — Performance, broader accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: queued
+### 4–10 — Performance, broader accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: in progress
 
 Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpoint does not claim completion of these milestones.
+
+- Automated QA now covers all nineteen overlay/selector routes and gallery previews plus nine representative state-changing interactions. Remaining coverage is prioritized in [`BACKLOG.md`](BACKLOG.md).
+- Creative collection capabilities include optional curated journeys, concept discovery, and local reproducible settings. Additional milestones remain open; this is not a release candidate.
 
 ## Design decisions
 
@@ -77,10 +82,11 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run qa:state-sharing` — passed share → reload for all 19 exhibits, state-size and current-envelope checks, including edited Adder values; no browser or HTTP errors. The harness also verifies restored Adder controls and calculated result.
 - `npm run verify` — passed after the shared-shell changes and again after the structured discovery update, including all simulations, exhaustive 4-/8-bit Adder cases, storage validation, 19 exhibit metadata/routes and static SEO/sitemap checks.
 - `npm run qa:exhibit-overlays` — passed 456 checks for the dock, Controls, About and selector over 19 exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. All focus movement, Escape close/return, panel bounds, scroll reach, selector row height, mobile dock target size, 4,452 visible-control name observations, and browser/network-error checks passed. This is headless SwiftShader plus viewport/touch emulation, not a physical phone or screen-reader test.
-- `npm run verify` — passed after adding the production diagnostic bundle guard; initial JS is 354.35 kB raw / 114.24 kB gzip, initial CSS is 108.79 kB raw / 23.66 kB gzip. Mandelbrot is 52.79 kB raw / 17.27 kB gzip.
+- `npm run verify` — passed after the Fluid pause-path changes; initial JS is 354.35 kB raw / 114.25 kB gzip, initial CSS is 108.79 kB raw / 23.66 kB gzip. Fluid is 29.76 kB raw / 10.18 kB gzip and Mandelbrot is 52.79 kB raw / 17.27 kB gzip.
 - The static built-asset scan confirms no Mandelbrot, Gravity, Attractors or Growth development diagnostic global is present in production JavaScript.
+- `npm run qa:original-interactions` — passed nine state-changing scenarios across nine exhibits against the built production bundle on isolated local port 5217, with ten captures and paired before/after canvas hashes for Fluid and reaction-diffusion; zero browser/network errors. Browser: HeadlessChrome 157, SwiftShader/Vulkan, desktop 1440×900 emulation. Port 5215 belongs to the MIDAS app and was not used.
 - No dependency, service or tracking code was added; exhibit chunks remain lazy.
 
 ## Next action
 
-Next: add browser checks for actual simulation state changes in original exhibits, then continue the full accessibility and mobile review and prioritize measured route/resource lifecycle and scientific-model gaps. Physical-device claims remain open until a real device is available.
+Next: expand state-change browser coverage to optics, sound, packet routing and lensing; then exercise repeated route/resource cleanup under realistic navigation and continue accessibility and scientific-model reviews. Physical-device and physical-GPU claims remain open until tested on real devices.

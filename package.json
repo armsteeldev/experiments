@@ -23,6 +23,7 @@
     "qa:exhibit-overlays": "node scripts/qa-exhibit-overlays.mjs",
     "qa:gallery-previews": "node scripts/qa-gallery-previews.mjs",
     "qa:collection-discovery": "node scripts/qa-collection-discovery.mjs",
+    "qa:original-interactions": "node scripts/qa-original-interactions.mjs",
     "qa:invisible-world": "node scripts/qa-invisible-world.mjs",
     "test": "npm run test:numerics && npm run test:simulations && npm run test:adder && npm run test:fern && npm run test:attractors && npm run test:invisible-world && npm run test:journeys && npm run test:buttons && npm run test:storage",
     "check:site": "node scripts/check-site-pages.mjs",

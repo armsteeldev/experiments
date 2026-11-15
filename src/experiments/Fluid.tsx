@@ -289,6 +289,7 @@ function releaseBundle(bundle: Bundle) {
 function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pointer = useRef<PointerSample | null>(null)
+  const applyPausedStrokeRef = useRef<(trace: PointerSample) => void>(() => {})
   const seedRef = useRef<(name: string) => void>(() => {})
   const clearRef = useRef<() => void>(() => {})
   const [style, setStyle] = useState(() => typeof props.stateFromUrl?.style === 'string' ? props.stateFromUrl.style : 'silk')
@@ -344,6 +345,17 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
         uStyle: mode, uTime: now / 1000,
       })
     }
+    const applyStroke = (trace: PointerSample) => {
+      const current = currentVelocity(bundle)
+      const rect = canvas.getBoundingClientRect()
+      const scale = current.height / Math.max(1, rect.height)
+      const impulse: [number, number] = [trace.dx * scale * 24 * params.current.force, -trace.dy * scale * 24 * params.current.force]
+      const pigment = pigments[params.current.palette].dye
+      const radius = params.current.brushSize / Math.max(1, rect.height)
+      splat(bundle, 'velocity', trace.x, trace.y, radius, impulse, pigment)
+      splat(bundle, 'dye', trace.x, trace.y, radius, [0, 0], pigment, 1.3)
+    }
+    applyPausedStrokeRef.current = (trace) => { applyStroke(trace); render() }
     seedRef.current = (name) => { seed(bundle, name, pigments[params.current.palette].dye); render() }
     clearRef.current = () => { clearFields(bundle); pointer.current = null; render() }
     const observer = new ResizeObserver(resize)
@@ -356,14 +368,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
       last = now
       const trace = pointer.current
       if (trace) {
-        const current = currentVelocity(bundle)
-        const rect = canvas.getBoundingClientRect()
-        const scale = current.height / Math.max(1, rect.height)
-        const impulse: [number, number] = [trace.dx * scale * 24 * params.current.force, -trace.dy * scale * 24 * params.current.force]
-        const pigment = pigments[params.current.palette].dye
-        const radius = params.current.brushSize / Math.max(1, rect.height)
-        splat(bundle, 'velocity', trace.x, trace.y, radius, impulse, pigment)
-        splat(bundle, 'dye', trace.x, trace.y, radius, [0, 0], pigment, 1.3)
+        applyStroke(trace)
         pointer.current = { ...trace, dx: 0, dy: 0 }
       }
       if (params.current.ambient && now - lastAmbient > 160) {
@@ -391,6 +396,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
       releaseBundle(bundle)
       seedRef.current = () => {}
       clearRef.current = () => {}
+      applyPausedStrokeRef.current = () => {}
       pointer.current = null
     }
   }, [failed])
@@ -399,11 +405,19 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
     const rect = event.currentTarget.getBoundingClientRect()
     const x = (event.clientX - rect.left) / rect.width
     const y = 1 - (event.clientY - rect.top) / rect.height
-    if (!pointer.current) pointer.current = { x, y, dx: 0, dy: 0 }
-    else pointer.current = { x, y, dx: (event.clientX - rect.left) - (pointer.current.x * rect.width), dy: (event.clientY - rect.top) - ((1 - pointer.current.y) * rect.height) }
+    const trace = !pointer.current
+      ? { x, y, dx: 0, dy: 0 }
+      : { x, y, dx: (event.clientX - rect.left) - (pointer.current.x * rect.width), dy: (event.clientY - rect.top) - ((1 - pointer.current.y) * rect.height) }
+    pointer.current = trace
+    if (params.current.paused) applyPausedStrokeRef.current(trace)
   }
   const selectPreset = (name: string) => { setPresetName(name); seedRef.current(name) }
-  const stirFromKeyboard = () => { pointer.current = { x: 0.5, y: 0.52, dx: 76, dy: -28 }; hint.dismiss() }
+  const stirFromKeyboard = () => {
+    const trace = { x: 0.5, y: 0.52, dx: 76, dy: -28 }
+    pointer.current = trace
+    if (params.current.paused) { applyPausedStrokeRef.current(trace); pointer.current = null }
+    hint.dismiss()
+  }
 
   return <div className="experiment-surface">
     <canvas ref={canvasRef} className="experiment-canvas fluid-canvas" aria-label="GPU fluid dynamics. Drag to inject momentum and pigment." aria-describedby={hint.visible ? 'fluid-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); event.currentTarget.setPointerCapture(event.pointerId); pointer.current = null; setPoint(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') setPoint(event) }} onPointerUp={() => { pointer.current = null }} onPointerCancel={() => { pointer.current = null }} />
