@@ -70,6 +70,9 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
     let animation = 0, stepTimer = 0, statsTimer = 0, disposed = false
     const render = () => {
       if (disposed) return
+      // Hidden tabs may still receive throttled animation frames. Keep the
+      // canvas work idle until the visitor returns.
+      if (document.hidden) { animation = requestAnimationFrame(render); return }
       const { width, height, dpr } = sizeRef.current
       const sim = networkRef.current!
       context.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -134,8 +137,9 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
       animation = requestAnimationFrame(render)
     }
     animation = requestAnimationFrame(render)
-    stepTimer = window.setInterval(() => { if (!paused) stepNetwork(networkRef.current!) }, 78)
+    stepTimer = window.setInterval(() => { if (!paused && !document.hidden) stepNetwork(networkRef.current!) }, 78)
     statsTimer = window.setInterval(() => {
+      if (document.hidden) return
       const sim = networkRef.current!, delivered = sim.packets.filter((packet) => packet.status === 'delivered').length
       const dropped = sim.packets.filter((packet) => packet.status === 'dropped').length
       const inFlight = sim.packets.filter((packet) => ['routing', 'queued', 'transit', 'waiting'].includes(packet.status)).length

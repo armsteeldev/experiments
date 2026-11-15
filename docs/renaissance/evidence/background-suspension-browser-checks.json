@@ -1,0 +1,53 @@
+{
+  "browser": {
+    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "visibility": "visible",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "network": {
+    "before": {
+      "tick": 8,
+      "visibleSteps": 8,
+      "hiddenSteps": 0
+    },
+    "hidden": {
+      "hidden": true,
+      "intervals": {
+        "total": 14,
+        "visible": 9,
+        "hidden": 5
+      },
+      "rafHidden": 0
+    },
+    "after": {
+      "tick": 13,
+      "visibleSteps": 14,
+      "hiddenSteps": 5
+    },
+    "tickDelta": 5,
+    "visibleStepDelta": 6,
+    "hiddenStepDelta": 5,
+    "method": "A real second browser tab backgrounds the page for 5 seconds; interval callbacks are counted by visibility and the next rendered tick is reconciled against foreground callbacks."
+  },
+  "mandelbrot": {
+    "before": {
+      "prepare": 29,
+      "workers": 2,
+      "highestPrepareGeneration": 10
+    },
+    "hidden": {
+      "hidden": true,
+      "prepare": 29,
+      "cancel": 22,
+      "highestCancelGeneration": 11
+    },
+    "heldPrepareCount": 29,
+    "resumed": {
+      "prepare": 31,
+      "highestPrepareGeneration": 12
+    },
+    "method": "Worker postMessage calls are recorded in the page; hide during deep preset work, confirm explicit cancellation and no new requests, then reactivate and verify a later generation resumes."
+  },
+  "browserErrors": [],
+  "caveat": "Headless Chromium background-tab behavior does not establish physical-device power use; WebGPU context-loss recovery is a separate, still-open check."
+}

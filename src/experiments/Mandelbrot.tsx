@@ -459,6 +459,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
   }, [])
 
   queueGpuRef.current = (request, reference) => {
+    if (document.hidden || request.generation !== currentGenerationRef.current) return
     const scale = binaryScaleForPixel(request.zoom, request.height)
     const tile: GpuTile = {
       cacheKey: request.tileKey,
@@ -479,6 +480,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
   }
 
   flushGpuRef.current = async () => {
+    if (document.hidden) { gpuBatchRef.current = []; return }
     if (gpuFlushingRef.current) return
     if (gpuBatchTimerRef.current !== null) { window.clearTimeout(gpuBatchTimerRef.current); gpuBatchTimerRef.current = null }
     const renderer = gpuRendererRef.current
@@ -539,7 +541,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
 
   pumpWorkersRef.current = () => {
     const slots = workerSlotsRef.current
-    if (!slots.length) return
+    if (!slots.length || document.hidden) return
     // During active navigation, leave CPU headroom for camera transforms and
     // input. Restore the full worker pool as soon as the gesture settles.
     const navigating = transitionActiveRef.current || navigationInputAtRef.current !== null
@@ -629,6 +631,31 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
       pendingRequestsRef.current = []
     }
   }, [])
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      const needsTiles = !fastSupported || deepView(config.current.view)
+      if (document.hidden) {
+        if (!needsTiles) return
+        const generation = ++currentGenerationRef.current
+        pendingRequestsRef.current = []
+        gpuBatchRef.current = []
+        completedSlotsRef.current = new Set()
+        repairPendingRef.current.clear()
+        if (throttleTimerRef.current !== null) { window.clearTimeout(throttleTimerRef.current); throttleTimerRef.current = null }
+        if (gpuBatchTimerRef.current !== null) { window.clearTimeout(gpuBatchTimerRef.current); gpuBatchTimerRef.current = null }
+        // Deep reference and CPU tile jobs yield cooperatively. Invalidate the
+        // generation and cancel in-flight work instead of relying on browser
+        // background-tab throttling to eventually stop it.
+        for (const slot of workerSlotsRef.current) slot.worker.postMessage({ action: 'cancel', generation })
+        setRenderStatus('Deep rendering pauses while this tab is hidden.')
+        return
+      }
+      if (needsTiles) scheduleRenderRef.current(true)
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange)
+  }, [fastSupported])
 
   useEffect(() => {
     let canceled = false
@@ -751,7 +778,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
   }, [gpuReady, raster])
 
   const scheduleRender = (force = false) => {
-    if (!workersReady || !raster.width || !raster.height || !deepView(config.current.view) && fastSupported) return
+    if (document.hidden || !workersReady || !raster.width || !raster.height || !deepView(config.current.view) && fastSupported) return
     const now = performance.now()
     if (!force && now - lastScheduleAtRef.current < 84) {
       if (throttleTimerRef.current !== null) window.clearTimeout(throttleTimerRef.current)

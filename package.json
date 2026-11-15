@@ -33,6 +33,7 @@
     "qa:gravity-sharing": "node scripts/qa-gravity-sharing.mjs",
     "qa:flocking-sharing": "node scripts/qa-flocking-sharing.mjs",
     "qa:flocking-performance": "node scripts/qa-flocking-performance.mjs",
+    "qa:background-suspension": "node scripts/qa-background-suspension.mjs",
     "qa:fallback-restoration": "node scripts/qa-fallback-restoration.mjs",
     "qa:route-lifecycle": "node scripts/qa-route-lifecycle.mjs",
     "qa:exhibit-overlays": "node scripts/qa-exhibit-overlays.mjs",
