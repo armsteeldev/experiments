@@ -312,7 +312,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
       <RangeControl label="Learning rate" value={rate} min={.01} max={.22} step={.005} format={(value) => value.toFixed(3)} onChange={setRate} />
       <div className="neural-advanced-metrics"><span>TRAINING EXAMPLES <b>{samples.length}</b></span><span>ACCURACY <b>{Math.round(correct * 100)}%</b></span><span>MEAN SQUARED LOSS <b>{metrics.loss.toFixed(4)}</b></span><span>LIVE PREDICTION <b>{prediction.toFixed(4)}</b></span></div>
       <button className="small-action" onClick={() => resetWeights()}>Reset the weights</button>
-      <p className="control-note">The canvas colours come from the actual network output at each location. It learns from labelled examples with backpropagation. New test points are never added to training unless you place them in draw mode. Custom lessons share up to {MAX_SHARED_NEURAL_SAMPLES} examples; trained weights restart from the saved initialization seed.</p>
+      <p className="control-note">The canvas colours come from the actual network output at each location. It learns from labelled examples with backpropagation. New test points are never added to training unless you place them in draw mode. Custom lesson positions and labels are included in the public share URL, up to {MAX_SHARED_NEURAL_SAMPLES} examples; trained weights restart from the saved initialization seed.</p>
     </ControlPanel>
   </section>
 }

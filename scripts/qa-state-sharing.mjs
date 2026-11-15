@@ -141,13 +141,15 @@ for (const item of experiments) {
     await waitFor(`document.querySelector('.neural-score span')?.textContent.startsWith('2 EXAMPLES')`, 'two user-drawn neural examples')
     await click('button[aria-label="Toggle experiment controls"]')
     await waitFor(`Boolean([...document.querySelectorAll('.control-panel button')].find((node) => node.textContent.includes('Reset the weights')))`, 'neural reset control')
+    const publicUrlDisclosure = await evaluate(`Boolean([...document.querySelectorAll('.control-note')].find((node) => node.textContent.includes('public share URL')))`)
+    assert.equal(publicUrlDisclosure, true, 'the custom lesson disclosure names the public share URL')
     await click('.control-panel button.small-action')
     await waitFor(`Boolean(document.querySelector('.neural-score span')?.textContent.includes('2 EXAMPLES'))`, 'neural lesson retained after weight reset')
     await click('.neural-inspect-button')
     await waitFor(`Boolean(document.querySelector('.weight-inspection'))`, 'neural weight inspection')
     const initialWeight = await evaluate(`document.querySelector('.weight-inspection')?.getAttribute('aria-label')`)
     assert.ok(initialWeight, 'reset network exposes a weight for reproducibility')
-    neuralReplay = { initialWeight, examples: 2 }
+    neuralReplay = { initialWeight, examples: 2, publicUrlDisclosure }
     await click('.neural-inspect-button')
     await click('button[aria-label="Toggle experiment controls"]')
   }

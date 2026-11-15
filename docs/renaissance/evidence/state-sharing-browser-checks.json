@@ -140,12 +140,13 @@
         "weightSeed",
         "examples"
       ],
-      "bytes": 229,
+      "bytes": 231,
       "routeRestored": true,
       "invalidStateRecovery": true,
       "neuralReplay": {
         "initialWeight": "Inspect weight from neuron 1 in layer 1 to neuron 1 in layer 2: -0.526",
         "examples": 2,
+        "publicUrlDisclosure": true,
         "sharedWeightSeed": 3,
         "restoredWeight": "Inspect weight from neuron 1 in layer 1 to neuron 1 in layer 2: -0.526",
         "malformedExamplesRecoverBlank": true
