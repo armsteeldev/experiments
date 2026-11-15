@@ -435,6 +435,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
   }
 
   function publishMetrics() {
+    if (!import.meta.env.DEV) return
     const target = window as unknown as { __ARMSTEEL_MANDELBROT__?: Record<string, unknown> }
     target.__ARMSTEEL_MANDELBROT__ = {
       ...metricRef.current,
@@ -445,6 +446,12 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
       center: { x: viewRef.current.x, y: viewRef.current.y },
     }
   }
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    const target = window as unknown as { __ARMSTEEL_MANDELBROT__?: Record<string, unknown> }
+    return () => { delete target.__ARMSTEEL_MANDELBROT__ }
+  }, [])
 
   queueGpuRef.current = (request, reference) => {
     const scale = binaryScaleForPixel(request.zoom, request.height)

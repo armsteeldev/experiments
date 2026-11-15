@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the collection-discovery checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
+Status is current to the shared-control accessibility checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -30,6 +30,7 @@ Status is current to the collection-discovery checkpoint on `renaissance/next-ge
 - [ ] Review label size, contrast, reading order, dialog semantics and screen-reader descriptions with assistive technology.
 - [ ] Verify keyboard and touch equivalents for primary actions and support reduced-motion preferences.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
+- [x] Keep simulation diagnostics development-only and verify they are absent from production JavaScript.
 
 ## P1 — Performance and lifecycle
 
@@ -41,7 +42,7 @@ Status is current to the collection-discovery checkpoint on `renaissance/next-ge
 ## P2 — Automated QA and scientific quality
 
 - [ ] Extend route tests to all 19 for direct load, refresh, controls/about, recovery and invalid URLs.
-- [ ] Add exhibit interaction checks for fluid injection, gravity orbit, logic circuit editing, Adder, CPU, neural training, optics, sound, packet routing and lensing.
+- [ ] Add browser checks that assert actual state changes for fluid injection, gravity orbit, logic circuit editing, Adder, CPU, neural training, optics, sound, packet routing and lensing.
 - [ ] Add stable visual capture and tolerant image-diff workflow for representative desktop/mobile states.
 - [ ] Review scientific claims and visible approximations, especially Fluid, Garden, Networks, geometric optics and Where Light Falls.
 - [ ] Test limits, invalid parameters, resets, deterministic seeds, worker cancellation, and numerical invariants.

@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Working tree:** Clean at the shared-shell accessibility audit checkpoint; curated paths, local experiment notebook, shared navigation/overlays, gallery preview cleanup, concept search and the panel naming audit are committed and browser-verified.
+- **Working tree:** Includes the verified production diagnostic boundary fix, pending its checkpoint commit; curated paths, local experiment notebook, shared navigation/overlays, gallery preview cleanup, concept search and the panel naming audit are committed and browser-verified.
 
 ## Milestones
 
@@ -35,6 +35,7 @@
 - Added a pixel-signature regression check for visibility-driven scheduling: the live attractor preview evolves while visible, becomes static outside the viewport, and resumes on return. The full gallery preview harness still passes all 38 first-paint checks with no browser/network errors.
 - Added curated concept tags for all nineteen studies. The optional search panel offers six idea prompts—Emergence, Recursion, Waves, Learning, Fields and Computation—and concept searches include editorial terms absent from titles. Every study now links to two or three hand-picked related works; the lensing panel intentionally has two to avoid a weaker third connection.
 - `qa:collection-discovery` passed all six concept queries against expected result sets, no-result recovery and Escape/focus return, favourites, recent visits, six 40 px mobile targets without overflow, all nineteen About-panel recommendation lists, and a real related-link transition. It recorded no browser/network errors. Desktop and phone captures plus the full result matrix are in [`evidence/`](evidence/).
+- A production bundle check now rejects development-only simulation diagnostics. The Mandelbrot metrics hook was the remaining unguarded global; it is DEV-only and removed when its exhibit unmounts. This reduces the lazy fractal chunk and prevents internal render telemetry from becoming a production surface. `npm run verify` passes with the new static guard.
 - The gallery continues to expose its category and favourites filters alongside idea search and editorial paths. Remaining for this milestone: review the gallery’s first-visit hierarchy and improve card legibility only where further browser evidence shows a clear need.
 
 ### 3 — New product capabilities: in progress
@@ -76,8 +77,10 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run qa:state-sharing` — passed share → reload for all 19 exhibits, state-size and current-envelope checks, including edited Adder values; no browser or HTTP errors. The harness also verifies restored Adder controls and calculated result.
 - `npm run verify` — passed after the shared-shell changes and again after the structured discovery update, including all simulations, exhaustive 4-/8-bit Adder cases, storage validation, 19 exhibit metadata/routes and static SEO/sitemap checks.
 - `npm run qa:exhibit-overlays` — passed 456 checks for the dock, Controls, About and selector over 19 exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. All focus movement, Escape close/return, panel bounds, scroll reach, selector row height, mobile dock target size, 4,452 visible-control name observations, and browser/network-error checks passed. This is headless SwiftShader plus viewport/touch emulation, not a physical phone or screen-reader test.
-- Current build payload: initial JS 354.35 kB raw / 114.25 kB gzip; initial CSS 108.79 / 23.66 kB gzip. Exhibit chunks remain lazy; no dependency or service was added.
+- `npm run verify` — passed after adding the production diagnostic bundle guard; initial JS is 354.35 kB raw / 114.24 kB gzip, initial CSS is 108.79 kB raw / 23.66 kB gzip. Mandelbrot is 52.79 kB raw / 17.27 kB gzip.
+- The static built-asset scan confirms no Mandelbrot, Gravity, Attractors or Growth development diagnostic global is present in production JavaScript.
+- No dependency, service or tracking code was added; exhibit chunks remain lazy.
 
 ## Next action
 
-Next: continue the full accessibility and mobile review, then prioritize measured route/resource lifecycle and scientific-model gaps. Physical-device claims remain open until a real device is available.
+Next: add browser checks for actual simulation state changes in original exhibits, then continue the full accessibility and mobile review and prioritize measured route/resource lifecycle and scientific-model gaps. Physical-device claims remain open until a real device is available.

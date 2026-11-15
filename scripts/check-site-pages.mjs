@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { access, readFile } from 'node:fs/promises'
+import { access, readFile, readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
 const root = resolve(import.meta.dirname, '..')
@@ -73,6 +73,13 @@ for (const item of metadata) {
   const schema = structuredData(html)
   assert.ok(schema?.['@graph']?.some((entry) => entry['@type'] === 'WebApplication'))
   assert.ok(schema?.['@graph']?.some((entry) => entry['@type'] === 'BreadcrumbList'))
+}
+
+const builtJavaScript = (await readdir(resolve(dist, 'assets'))).filter((asset) => asset.endsWith('.js'))
+const debugHookNames = /__ARMSTEEL_(?:MANDELBROT|GRAVITY|ATTRACTORS|GROWTH)__/
+for (const asset of builtJavaScript) {
+  const javascript = await readFile(resolve(dist, 'assets', asset), 'utf8')
+  assert.doesNotMatch(javascript, debugHookNames, `${asset} does not expose development-only simulation diagnostics`)
 }
 
 const privacyHtml = await readPage('privacy/index.html')
