@@ -203,6 +203,8 @@
 .forces-canvas { cursor:crosshair; }
 
 .automata-surface { background:#080e13; }
+.automata-surface .canvas-keyboard-hint { top:auto; right:auto; bottom:78px; left:50%; transform:translateX(-50%); padding:7px 9px; font-size:8px; white-space:nowrap; }
+.automata-canvas:focus-visible + .canvas-keyboard-hint { opacity:1; }
 .automata-heading { top:38px; left:37px; }
 .automata-heading h2 em { color:#b3d5bd; }
 .automata-stats { position:absolute; top:42px; right:35px; display:flex; align-items:center; gap:10px; }
@@ -225,6 +227,12 @@
   .neural-metrics { gap:12px; right:20px; }
   .logic-toolbar { gap:1px; }
   .logic-toolbar button { padding-inline:6px; }
+  .automata-stats button,.automata-tools button { min-height:44px; font-size:8px; }
+  .automata-surface .canvas-keyboard-hint { bottom:86px; }
+}
+@media (pointer:coarse) {
+  .automata-stats button,.automata-tools button { min-height:44px; font-size:8px; }
+  .automata-surface .canvas-keyboard-hint { bottom:86px; }
 }
 @media (max-width:720px) {
   .exp-prompt { left:14px; bottom:76px; max-width:calc(100% - 28px); font-size:6px; line-height:1.6; }
@@ -292,10 +300,11 @@
   .automata-stats > div { min-width:53px; gap:5px; }
   .automata-stats > div span { font-size:5px; }
   .automata-stats > div strong { font-size:11px; }
-  .automata-stats button { min-height:36px; padding-inline:6px; font-size:6px; }
+  .automata-stats button { min-height:44px; padding-inline:8px; font-size:8px; }
   .automata-tools { left:12px; right:12px; bottom:98px; justify-content:center; gap:4px; }
-  .automata-tools button { min-height:36px; padding-inline:10px; font-size:7px; }
+  .automata-tools button { min-height:44px; padding-inline:10px; font-size:8px; }
   .automata-tools > span:first-child,.automata-tools .automata-key { display:none; }
+  .automata-surface .canvas-keyboard-hint { bottom:184px; max-width:calc(100% - 16px); padding:7px 8px; font-size:7px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .circuit-wire,.machine-block rect,.node-body { transition:none; }

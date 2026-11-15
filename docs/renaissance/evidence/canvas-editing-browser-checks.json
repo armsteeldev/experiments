@@ -1,0 +1,439 @@
+{
+  "browser": "HeadlessChrome 157 with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation",
+  "method": "Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero.",
+  "cases": [
+    {
+      "exhibit": "boids",
+      "viewport": {
+        "name": "narrow",
+        "width": 320,
+        "height": 740,
+        "mobile": true
+      },
+      "placement": {
+        "name": "Place barrier at the centre",
+        "height": 44,
+        "selected": "Barrier"
+      },
+      "before": {
+        "hash": 2044396899,
+        "width": 323,
+        "height": 748
+      },
+      "afterPlacement": {
+        "hash": 304087703,
+        "width": 323,
+        "height": 748
+      },
+      "afterClear": {
+        "hash": 2044396899,
+        "width": 323,
+        "height": 748
+      },
+      "centerPlacement": true,
+      "clearRecovery": true,
+      "screenshot": null
+    },
+    {
+      "exhibit": "automata",
+      "viewport": {
+        "name": "narrow",
+        "width": 320,
+        "height": 740,
+        "mobile": true
+      },
+      "focus": {
+        "onCanvas": true,
+        "tabIndex": 0,
+        "label": "Cellular automaton grid. With focus, use arrow keys to choose a cell, Enter to apply Paint or Erase, and Home to return to the board centre. In Pan mode, Enter adds or clears one cell.",
+        "ring": true,
+        "outline": "3px",
+        "hintVisible": true,
+        "hint": "ARROWS · SELECT CELL　　ENTER · APPLY TOOL　　HOME · CENTRE",
+        "hintStatusOverlap": false
+      },
+      "targets": [
+        {
+          "name": "Ⅱ PAUSE",
+          "height": 44
+        },
+        {
+          "name": "STEP →",
+          "height": 44
+        },
+        {
+          "name": "PAINT",
+          "height": 44
+        },
+        {
+          "name": "ERASE",
+          "height": 44
+        },
+        {
+          "name": "PAN",
+          "height": 44
+        }
+      ],
+      "before": {
+        "hash": 3973388309,
+        "width": 323,
+        "height": 748
+      },
+      "oneCell": {
+        "hash": 3518901076,
+        "width": 323,
+        "height": 748
+      },
+      "twoCells": {
+        "hash": 3880168953,
+        "width": 323,
+        "height": 748
+      },
+      "erased": {
+        "hash": 3391958469,
+        "width": 323,
+        "height": 748
+      },
+      "restingState": {
+        "hash": 3926607604,
+        "width": 323,
+        "height": 748
+      },
+      "clearedRestingState": {
+        "hash": 3743350705,
+        "width": 323,
+        "height": 748
+      },
+      "keyboardPaint": true,
+      "keyboardErase": true,
+      "refractoryEraseKeepsCount": true,
+      "liveStatus": true,
+      "screenshot": null
+    },
+    {
+      "exhibit": "boids",
+      "viewport": {
+        "name": "phone",
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "placement": {
+        "name": "Place barrier at the centre",
+        "height": 44,
+        "selected": "Barrier"
+      },
+      "before": {
+        "hash": 1375834762,
+        "width": 394,
+        "height": 854
+      },
+      "afterPlacement": {
+        "hash": 575765032,
+        "width": 394,
+        "height": 854
+      },
+      "afterClear": {
+        "hash": 1375834762,
+        "width": 394,
+        "height": 854
+      },
+      "centerPlacement": true,
+      "clearRecovery": true,
+      "screenshot": "canvas-placement-boids-phone.png"
+    },
+    {
+      "exhibit": "automata",
+      "viewport": {
+        "name": "phone",
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "focus": {
+        "onCanvas": true,
+        "tabIndex": 0,
+        "label": "Cellular automaton grid. With focus, use arrow keys to choose a cell, Enter to apply Paint or Erase, and Home to return to the board centre. In Pan mode, Enter adds or clears one cell.",
+        "ring": true,
+        "outline": "3px",
+        "hintVisible": true,
+        "hint": "ARROWS · SELECT CELL　　ENTER · APPLY TOOL　　HOME · CENTRE",
+        "hintStatusOverlap": false
+      },
+      "targets": [
+        {
+          "name": "Ⅱ PAUSE",
+          "height": 44
+        },
+        {
+          "name": "STEP →",
+          "height": 44
+        },
+        {
+          "name": "PAINT",
+          "height": 44
+        },
+        {
+          "name": "ERASE",
+          "height": 44
+        },
+        {
+          "name": "PAN",
+          "height": 44
+        }
+      ],
+      "before": {
+        "hash": 3823375392,
+        "width": 394,
+        "height": 854
+      },
+      "oneCell": {
+        "hash": 3001153544,
+        "width": 394,
+        "height": 854
+      },
+      "twoCells": {
+        "hash": 2984757103,
+        "width": 394,
+        "height": 854
+      },
+      "erased": {
+        "hash": 598018203,
+        "width": 394,
+        "height": 854
+      },
+      "restingState": {
+        "hash": 80523367,
+        "width": 394,
+        "height": 854
+      },
+      "clearedRestingState": {
+        "hash": 1147599382,
+        "width": 394,
+        "height": 854
+      },
+      "keyboardPaint": true,
+      "keyboardErase": true,
+      "refractoryEraseKeepsCount": true,
+      "liveStatus": true,
+      "screenshot": "canvas-editing-automata-phone.png"
+    },
+    {
+      "exhibit": "boids",
+      "viewport": {
+        "name": "phone landscape",
+        "width": 844,
+        "height": 390,
+        "mobile": true
+      },
+      "placement": {
+        "name": "Place barrier at the centre",
+        "height": 44,
+        "selected": "Barrier"
+      },
+      "before": {
+        "hash": 3658865743,
+        "width": 854,
+        "height": 394
+      },
+      "afterPlacement": {
+        "hash": 3462657026,
+        "width": 854,
+        "height": 394
+      },
+      "afterClear": {
+        "hash": 3658865743,
+        "width": 854,
+        "height": 394
+      },
+      "centerPlacement": true,
+      "clearRecovery": true,
+      "screenshot": null
+    },
+    {
+      "exhibit": "automata",
+      "viewport": {
+        "name": "phone landscape",
+        "width": 844,
+        "height": 390,
+        "mobile": true
+      },
+      "focus": {
+        "onCanvas": true,
+        "tabIndex": 0,
+        "label": "Cellular automaton grid. With focus, use arrow keys to choose a cell, Enter to apply Paint or Erase, and Home to return to the board centre. In Pan mode, Enter adds or clears one cell.",
+        "ring": true,
+        "outline": "3px",
+        "hintVisible": true,
+        "hint": "ARROWS · SELECT CELL　　ENTER · APPLY TOOL　　HOME · CENTRE",
+        "hintStatusOverlap": false
+      },
+      "targets": [
+        {
+          "name": "Ⅱ PAUSE",
+          "height": 44
+        },
+        {
+          "name": "STEP →",
+          "height": 44
+        },
+        {
+          "name": "PAINT",
+          "height": 44
+        },
+        {
+          "name": "ERASE",
+          "height": 44
+        },
+        {
+          "name": "PAN",
+          "height": 44
+        }
+      ],
+      "before": {
+        "hash": 1441116353,
+        "width": 854,
+        "height": 394
+      },
+      "oneCell": {
+        "hash": 1487025864,
+        "width": 854,
+        "height": 394
+      },
+      "twoCells": {
+        "hash": 2317546921,
+        "width": 854,
+        "height": 394
+      },
+      "erased": {
+        "hash": 506400617,
+        "width": 854,
+        "height": 394
+      },
+      "restingState": {
+        "hash": 3143291866,
+        "width": 854,
+        "height": 394
+      },
+      "clearedRestingState": {
+        "hash": 4056133230,
+        "width": 854,
+        "height": 394
+      },
+      "keyboardPaint": true,
+      "keyboardErase": true,
+      "refractoryEraseKeepsCount": true,
+      "liveStatus": true,
+      "screenshot": null
+    },
+    {
+      "exhibit": "boids",
+      "viewport": {
+        "name": "desktop",
+        "width": 1024,
+        "height": 768,
+        "mobile": false
+      },
+      "placement": {
+        "name": "Place barrier at the centre",
+        "height": 40,
+        "selected": "Barrier"
+      },
+      "before": {
+        "hash": 4069243947,
+        "width": 1036,
+        "height": 777
+      },
+      "afterPlacement": {
+        "hash": 2629068549,
+        "width": 1036,
+        "height": 777
+      },
+      "afterClear": {
+        "hash": 4069243947,
+        "width": 1036,
+        "height": 777
+      },
+      "centerPlacement": true,
+      "clearRecovery": true,
+      "screenshot": null
+    },
+    {
+      "exhibit": "automata",
+      "viewport": {
+        "name": "desktop",
+        "width": 1024,
+        "height": 768,
+        "mobile": false
+      },
+      "focus": {
+        "onCanvas": true,
+        "tabIndex": 0,
+        "label": "Cellular automaton grid. With focus, use arrow keys to choose a cell, Enter to apply Paint or Erase, and Home to return to the board centre. In Pan mode, Enter adds or clears one cell.",
+        "ring": true,
+        "outline": "3px",
+        "hintVisible": true,
+        "hint": "ARROWS · SELECT CELL　　ENTER · APPLY TOOL　　HOME · CENTRE",
+        "hintStatusOverlap": false
+      },
+      "targets": [
+        {
+          "name": "Ⅱ PAUSE",
+          "height": 36
+        },
+        {
+          "name": "STEP →",
+          "height": 36
+        },
+        {
+          "name": "PAINT",
+          "height": 36
+        },
+        {
+          "name": "ERASE",
+          "height": 36
+        },
+        {
+          "name": "PAN",
+          "height": 36
+        }
+      ],
+      "before": {
+        "hash": 2345506365,
+        "width": 1036,
+        "height": 777
+      },
+      "oneCell": {
+        "hash": 3166746840,
+        "width": 1036,
+        "height": 777
+      },
+      "twoCells": {
+        "hash": 2531363779,
+        "width": 1036,
+        "height": 777
+      },
+      "erased": {
+        "hash": 2439474384,
+        "width": 1036,
+        "height": 777
+      },
+      "restingState": {
+        "hash": 3996578084,
+        "width": 1036,
+        "height": 777
+      },
+      "clearedRestingState": {
+        "hash": 3598302534,
+        "width": 1036,
+        "height": 777
+      },
+      "keyboardPaint": true,
+      "keyboardErase": true,
+      "refractoryEraseKeepsCount": true,
+      "liveStatus": true,
+      "screenshot": null
+    }
+  ],
+  "browserErrors": []
+}

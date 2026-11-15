@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { KeyboardEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { patterns, placePattern, stepAutomaton, type AutomatonRule } from '../simulations/automata'
@@ -55,7 +56,7 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
   const [generation, setGeneration] = useState(0)
   const [alive, setAlive] = useState(0)
   const [stepNote, setStepNote] = useState('Pause the world, then advance one generation to see what changed.')
-  const model = useRef({ width: 180, height: 112, cells: new Uint8Array(AUTOMATA_CELL_COUNT), age: new Uint8Array(AUTOMATA_CELL_COUNT), trail: new Uint8Array(AUTOMATA_CELL_COUNT), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 3.5 : 3.4, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number; changed: boolean } })
+  const model = useRef({ width: 180, height: 112, cells: new Uint8Array(AUTOMATA_CELL_COUNT), age: new Uint8Array(AUTOMATA_CELL_COUNT), trail: new Uint8Array(AUTOMATA_CELL_COUNT), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 3.5 : 3.4, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, keyboardCursor: { x: 90, y: 56, visible: false }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number; changed: boolean } })
   const parameters = useRef({ paused, running, speed, rule, renderMode, mode }); parameters.current = { paused, running, speed, rule, renderMode, mode }
   useEffect(() => { onShareState({ pattern, rule, speed, renderMode, seed, ...(pattern === 'custom' && customCells ? { cells: customCells } : {}) }); }, [pattern, rule, speed, renderMode, seed, customCells, onShareState])
   useEffect(() => {
@@ -101,6 +102,14 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
         else if(trail){ctx.globalAlpha=trail/105;ctx.fillStyle=q.renderMode==='ember'?'#b47c65':'#8aaea8';ctx.fillRect(sx+pad,sy+pad,Math.max(1,cellSize-pad*2),Math.max(1,cellSize-pad*2))}
       }
       ctx.globalAlpha=1
+      if (m.keyboardCursor.visible) {
+        const stroke = Math.max(1.5, Math.min(2.5, cellSize * .24))
+        const inset = stroke / 2 + .5
+        ctx.shadowBlur = 0
+        ctx.strokeStyle = q.mode === 'erase' ? '#f0b9a4' : '#f4e1a6'
+        ctx.lineWidth = stroke
+        ctx.strokeRect(offsetX + m.keyboardCursor.x * cellSize + inset, offsetY + m.keyboardCursor.y * cellSize + inset, Math.max(1, cellSize - inset * 2), Math.max(1, cellSize - inset * 2))
+      }
       ctx.fillStyle='#879a9b';ctx.font='9px monospace';ctx.fillText(`${m.width} × ${m.height} · WRAP BOUNDARY`,18,height-21)
       last=now;lastRender=now
     }
@@ -118,10 +127,52 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
     if(index<0||mode==='pan')return false
     const m=model.current, value=mode==='paint'
     if(m.cells[index]===(value?1:0))return false
+    const wasLive=m.cells[index]===1
     if(value)m.age[index]=1
     m.cells[index]=value?1:0;m.trail[index]=0
-    setAlive((count)=>count+(value?1:-1));setPattern('custom')
+    setAlive((count)=>count+(value?1:0)-(wasLive?1:0));setPattern('custom')
     return true
+  }
+  const keepKeyboardCellVisible = () => {
+    const m = model.current, geometry = m.geometry
+    if (!geometry) return
+    const { cellSize, offsetX, offsetY, width, height } = geometry
+    const screenX = offsetX + (m.keyboardCursor.x + .5) * cellSize
+    const screenY = offsetY + (m.keyboardCursor.y + .5) * cellSize
+    if (screenX < 20) m.panX += 20 - screenX
+    else if (screenX > width - 20) m.panX -= screenX - (width - 20)
+    if (screenY < 20) m.panY += 20 - screenY
+    else if (screenY > height - 20) m.panY -= screenY - (height - 20)
+  }
+  const keyboardEdit = (event: KeyboardEvent<HTMLCanvasElement>) => {
+    const m = model.current, cursor = m.keyboardCursor
+    if (event.key === 'Home') {
+      event.preventDefault()
+      cursor.x = Math.floor(m.width / 2)
+      cursor.y = Math.floor(m.height / 2)
+      keepKeyboardCellVisible()
+      return
+    }
+    const directions: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }
+    const direction = directions[event.key]
+    if (direction) {
+      event.preventDefault()
+      cursor.x = Math.max(0, Math.min(m.width - 1, cursor.x + direction[0]))
+      cursor.y = Math.max(0, Math.min(m.height - 1, cursor.y + direction[1]))
+      keepKeyboardCellVisible()
+      return
+    }
+    if (event.key !== 'Enter') return
+    event.preventDefault()
+    const index = cursor.y * m.width + cursor.x
+    const wasLive = m.cells[index] === 1, wasOccupied = m.cells[index] !== 0
+    const brush: PaintMode = mode === 'pan' ? wasOccupied ? 'erase' : 'paint' : mode
+    const changed = applyBrush(index, brush)
+    const aliveAfter = alive + (brush === 'paint' ? 1 : 0) - (wasLive ? 1 : 0)
+    setStepNote(changed
+      ? `${brush === 'paint' ? 'Lit' : 'Cleared'} cell at column ${cursor.x + 1}, row ${cursor.y + 1}. ${aliveAfter} cells alive.`
+      : `Cell at column ${cursor.x + 1}, row ${cursor.y + 1} is already ${wasLive ? 'lit' : wasOccupied ? 'resting' : 'empty'}. ${alive} cells alive.`)
+    if (changed) { setCustomCells(encodeAutomataCells(m.cells)); hint.dismiss() }
   }
   const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,index=gridAt(event),pointer={id:event.pointerId,mode,x:event.clientX,y:event.clientY,last:index,changed:false};m.pointer=pointer;event.currentTarget.setPointerCapture(event.pointerId);if(mode!=='pan')pointer.changed=applyBrush(index,mode)}
   const pointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,p=m.pointer;if(!p||p.id!==event.pointerId)return;if(p.mode==='pan'){const dx=event.clientX-p.x,dy=event.clientY-p.y;m.panX+=dx;m.panY+=dy;if(m.geometry){m.geometry.offsetX+=dx;m.geometry.offsetY+=dy}p.x=event.clientX;p.y=event.clientY}else{const index=gridAt(event);if(index>=0&&index!==p.last){p.changed=applyBrush(index,p.mode)||p.changed;p.last=index}}}
@@ -134,12 +185,13 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
   const loadCentreGlider=()=>{const m=model.current,shape=cellPattern('glider');if(!shape)return;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setCustomCells(null);setPattern('glider');setRunning(true);setStepNote('A glider begins as five cells. Follow it as the same neighbour rule moves it across the board.');hint.dismiss()}
 
   return <section className="experiment-surface automata-surface" aria-label="Cellular automata playground">
-    <canvas ref={canvasRef} className={'experiment-canvas automata-canvas tool-'+mode} aria-label="Cell grid. Paint living cells, then step the rule to see which survive and which neighbors are born." aria-describedby={hint.visible ? 'automata-first-move' : undefined} onPointerDown={(event)=>{hint.dismiss();pointerDown(event)}} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    <canvas ref={canvasRef} className={'experiment-canvas automata-canvas tool-'+mode} tabIndex={0} aria-label="Cellular automaton grid. With focus, use arrow keys to choose a cell, Enter to apply Paint or Erase, and Home to return to the board centre. In Pan mode, Enter adds or clears one cell." aria-describedby={hint.visible ? 'automata-first-move' : undefined} onFocus={()=>{model.current.keyboardCursor.visible=true}} onBlur={()=>{model.current.keyboardCursor.visible=false}} onKeyDown={keyboardEdit} onPointerDown={(event)=>{hint.dismiss();pointerDown(event)}} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
+    <span className="canvas-keyboard-hint" aria-hidden="true">ARROWS · SELECT CELL　　ENTER · APPLY TOOL　　HOME · CENTRE</span>
     {hint.visible?<aside className="scene-nudge scene-nudge-high" id="automata-first-move" role="note"><span>Try this · Cellular Automata</span><p>Paint a few cells, pause, then step once. Each cell checks just its eight neighbours to decide what happens next.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={loadCentreGlider}>Start with a glider</button></aside>:<button className="scene-nudge-reopen scene-nudge-reopen-high" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <div className="automata-heading"><span className="exp-eyebrow">EMERGENT SYSTEMS <i /></span><h2>A world from <em>one rule.</em></h2><p>{ruleExplanation(rule)} Every cell checks only its eight neighbours.</p></div>
     <div className="automata-stats"><div><span>GENERATION</span><strong>{generation.toString().padStart(5,'0')}</strong></div><div><span>ALIVE NOW</span><strong>{alive.toString().padStart(4,'0')}</strong></div><button onClick={()=>setRunning(value=>!value)}>{running?'Ⅱ PAUSE':'▶ RESUME'}</button><button onClick={step} aria-label="Pause and advance exactly one generation">STEP →</button></div>
     <div className="automata-change" aria-live="polite">{stepNote}</div>
-    <div className="automata-tools"><span>TOOL</span>{(['paint','erase','pan'] as PaintMode[]).map((item)=><button key={item} className={mode===item?'tool-active':''} onClick={()=>setMode(item)}>{item.toUpperCase()}</button>)}<span className="automata-key">DRAG TO PAINT · SCROLL TO ZOOM</span></div>
+    <div className="automata-tools" role="group" aria-label="Cell editing tool"><span aria-hidden="true">TOOL</span>{(['paint','erase','pan'] as PaintMode[]).map((item)=><button key={item} type="button" className={mode===item?'tool-active':''} aria-pressed={mode===item} onClick={()=>setMode(item)}>{item.toUpperCase()}</button>)}<span className="automata-key">DRAG TO PAINT · SCROLL TO ZOOM</span></div>
     <ControlPanel title="Cellular Automata" note="Discrete local rules · wrap boundary" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Rule system" value={rule} options={ruleOptions} onChange={(value)=>setRule(value as AutomatonRule)} />
       <SelectControl label="Starting pattern" value={pattern} options={patternOptions} onChange={(value)=>value==='random'?randomize():loadPattern(value)} />

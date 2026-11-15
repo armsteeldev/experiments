@@ -72,7 +72,7 @@
   },
   "accessibleNames": {
     "method": "DOM heuristic: aria-label, aria-labelledby, associated labels, text content or title; not the browser accessibility tree or a screen-reader test.",
-    "controlObservations": 4452,
+    "controlObservations": 4458,
     "unnamedControls": 0
   },
   "representative": {

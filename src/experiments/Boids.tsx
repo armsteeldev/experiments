@@ -21,6 +21,7 @@ const scenarios: Record<Scenario, string> = {
 const palettes = {
   flock: ['#d8d5c4', '#8dc5ca', '#e4bc8a'],
 }
+const fieldToolNames: Record<Marker['kind'], string> = { attract: 'attractor', repel: 'repeller', obstacle: 'barrier', food: 'food' }
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
 export default function Boids({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const hint = useDiscoveryHint('boids')
@@ -36,6 +37,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const [radius, setRadius] = useState(() => boundedStateNumber(stateFromUrl?.radius, 104, 28, 132))
   const [tool, setTool] = useState<string>(() => stateChoice(stateFromUrl?.tool, ['attract', 'repel', 'obstacle', 'food'], 'food'))
   const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 17))
+  const [fieldNote, setFieldNote] = useState('')
   const params = useRef({ scenario, population, speed, radius, tool, seed, paused })
   params.current = { scenario, population, speed, radius, tool, seed, paused }
   const shareSettings = useRef({ scenario, population, speed, radius, tool, seed, markers: markerSnapshot })
@@ -365,11 +367,12 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
     return () => { cancelAnimationFrame(raf); resizeObserver.disconnect(); agents.current = []; markers.current = []; drawRef.current = () => {} }
   }, [])
 
-  const placeMarker = (x: number, y: number, kind: Marker['kind'] = tool as Marker['kind']) => {
+  const placeMarker = (x: number, y: number, kind: Marker['kind'] = tool as Marker['kind'], location = 'in the field') => {
     const rect = canvasRef.current?.getBoundingClientRect()
     if (!rect?.width || !rect.height) return
     const marker = { x: clamp(x / rect.width, 0, 1), y: clamp(y / rect.height, 0, 1), kind }
     commitMarkers([...markers.current, marker].slice(-MAX_FLOCKING_MARKERS))
+    setFieldNote(`${fieldToolNames[kind]} placed ${location}.`)
   }
   const addMarker = (event: PointerEvent<HTMLCanvasElement>) => {
     if (event.button !== 0) return
@@ -379,8 +382,17 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   }
   const placeFoodAtCentre = () => {
     const rect = canvasRef.current?.getBoundingClientRect()
-    if (rect) placeMarker(rect.width / 2, rect.height / 2, 'food')
+    if (rect) placeMarker(rect.width / 2, rect.height / 2, 'food', 'at the centre of the field')
     hint.dismiss()
+  }
+  const placeSelectedToolAtCentre = () => {
+    const rect = canvasRef.current?.getBoundingClientRect()
+    if (rect) placeMarker(rect.width / 2, rect.height / 2, tool as Marker['kind'], 'at the centre of the field')
+    hint.dismiss()
+  }
+  const clearFieldMarks = () => {
+    commitMarkers([])
+    setFieldNote('Field marks cleared.')
   }
   const randomize = () => {
     const nextSeed = (seed * 1664525 + 1013904223) >>> 0 || 1
@@ -390,6 +402,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
 
   return <div className="experiment-surface">
     <canvas ref={canvasRef} className="experiment-canvas boids-canvas" aria-label="Interactive artificial life. Tap to place food that attracts the flock; change the field in controls." aria-describedby={hint.visible ? 'boids-first-move' : undefined} onPointerDown={addMarker} onContextMenu={(event) => event.preventDefault()} />
+    <span className="visually-hidden" aria-live="polite" aria-atomic="true">{fieldNote}</span>
     {hint.visible ? <aside className="scene-nudge" id="boids-first-move" role="note"><span>Try this · A Murmuration</span><p>Drop food into the flock and watch nearby birds turn toward it. Every bird follows only its local neighbours.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={placeFoodAtCentre}>Drop food here</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <span className="canvas-coordinate">{scenarios[scenario].toUpperCase()} · {population.toLocaleString()} AGENTS</span>
     <ControlPanel title={scenario === 'vortex' ? 'An Emergent Vortex' : 'A Murmuration'} note="SPATIAL ECOLOGY" visible={controlsVisible} onClose={onCloseControls}>
@@ -400,7 +413,10 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
       <Segmented label="Place into the field" value={tool} options={[['attract', 'Attract'], ['repel', 'Repel'], ['obstacle', 'Barrier'], ['food', 'Food']]} onChange={setTool} />
       <p className="control-note">Each bird reacts to nearby flockmates: it keeps space, matches their heading and turns toward the group. Awareness sets how far it looks; food, attractors, repellers and barriers change the surroundings.</p>
       <ActionRow>
-        <button className="panel-action" onClick={() => commitMarkers([])}><span>Clear field marks</span><i>×</i></button>
+        <button className="panel-action" onClick={placeSelectedToolAtCentre} aria-label={`Place ${fieldToolNames[tool as Marker['kind']] ?? 'field marker'} at the centre`}><span>Place {fieldToolNames[tool as Marker['kind']] ?? 'field marker'} at centre</span><i>◎</i></button>
+      </ActionRow>
+      <ActionRow>
+        <button className="panel-action" onClick={clearFieldMarks} aria-label="Clear field marks"><span>Clear field marks</span><i>×</i></button>
         <button className="panel-action" onClick={randomize}><span>Re-seed system</span><i>↻</i></button>
       </ActionRow>
       <p className="control-note">{scenario === 'predator' ? 'Hunters pursue nearby prey; prey align, gather and flee from danger.' : scenario === 'competition' ? 'Two groups flock by their own local rules and repel the other population.' : scenario === 'vortex' ? 'A gentle rotating field seeds the circulation; local separation, alignment and cohesion reshape the flock. Hue shifts with speed.' : 'Separation, alignment and cohesion turn local sensing into collective movement. Hue shifts with speed.'} Place a field to alter the flow.</p>

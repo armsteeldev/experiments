@@ -68,9 +68,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 565,
+        "bottom": 575,
         "width": 296,
-        "height": 553
+        "height": 563
       },
       "documentWidth": 320,
       "text": [
@@ -86,7 +86,7 @@
           "text": "The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Sat",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -102,7 +102,7 @@
           "text": "−",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -110,7 +110,7 @@
           "text": "+",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -118,7 +118,7 @@
           "text": "Reset",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -134,7 +134,7 @@
           "text": "Mandelbrot",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -142,7 +142,7 @@
           "text": "Julia",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -158,7 +158,7 @@
           "text": "Abyss Mineral Twilight Ice Ember",
           "fontPx": 12,
           "width": 80,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -192,7 +192,7 @@
           "text": "The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Sat",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -200,7 +200,7 @@
           "text": "−",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -208,7 +208,7 @@
           "text": "+",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -216,7 +216,7 @@
           "text": "Reset",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -224,7 +224,7 @@
           "text": "Mandelbrot",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -232,7 +232,7 @@
           "text": "Julia",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -240,7 +240,7 @@
           "text": "Abyss Mineral Twilight Ice Ember",
           "fontPx": 12,
           "width": 80,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -526,9 +526,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 516,
+        "bottom": 526,
         "width": 366,
-        "height": 504
+        "height": 514
       },
       "documentWidth": 390,
       "text": [
@@ -544,7 +544,7 @@
           "text": "The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Sat",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -560,7 +560,7 @@
           "text": "−",
           "fontPx": 12,
           "width": 109,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -568,7 +568,7 @@
           "text": "+",
           "fontPx": 12,
           "width": 109,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -576,7 +576,7 @@
           "text": "Reset",
           "fontPx": 12,
           "width": 109,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -592,7 +592,7 @@
           "text": "Mandelbrot",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -600,7 +600,7 @@
           "text": "Julia",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -616,7 +616,7 @@
           "text": "Abyss Mineral Twilight Ice Ember",
           "fontPx": 12,
           "width": 80,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -650,7 +650,7 @@
           "text": "The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Sat",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -658,7 +658,7 @@
           "text": "−",
           "fontPx": 12,
           "width": 109,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -666,7 +666,7 @@
           "text": "+",
           "fontPx": 12,
           "width": 109,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -674,7 +674,7 @@
           "text": "Reset",
           "fontPx": 12,
           "width": 109,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -682,7 +682,7 @@
           "text": "Mandelbrot",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -690,7 +690,7 @@
           "text": "Julia",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -698,7 +698,7 @@
           "text": "Abyss Mineral Twilight Ice Ember",
           "fontPx": 12,
           "width": 80,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -1460,7 +1460,7 @@
           "text": "Silk · flowing ribbons Ink · dense pigment Smoke · soft volume Electric · luminous folds",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -1476,7 +1476,7 @@
           "text": "Aurora Wild petal Ember Violet hour Moon pearl",
           "fontPx": 12,
           "width": 100,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -1492,7 +1492,7 @@
           "text": "Crossing",
           "fontPx": 12,
           "width": 67,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -1500,7 +1500,7 @@
           "text": "Vortex",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -1508,7 +1508,7 @@
           "text": "Quiet",
           "fontPx": 12,
           "width": 49,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -1524,7 +1524,7 @@
           "text": "Drifting",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -1532,7 +1532,7 @@
           "text": "Strokes only",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -1588,7 +1588,7 @@
           "text": "Clear the water ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -1614,7 +1614,7 @@
           "text": "Silk · flowing ribbons Ink · dense pigment Smoke · soft volume Electric · luminous folds",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -1622,7 +1622,7 @@
           "text": "Aurora Wild petal Ember Violet hour Moon pearl",
           "fontPx": 12,
           "width": 100,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -1630,7 +1630,7 @@
           "text": "Crossing",
           "fontPx": 12,
           "width": 67,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -1638,7 +1638,7 @@
           "text": "Vortex",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -1646,7 +1646,7 @@
           "text": "Quiet",
           "fontPx": 12,
           "width": 49,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -1654,7 +1654,7 @@
           "text": "Drifting",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -1662,7 +1662,7 @@
           "text": "Strokes only",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -1710,7 +1710,7 @@
           "text": "Clear the water ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -1988,9 +1988,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 758,
+        "bottom": 766,
         "width": 366,
-        "height": 746
+        "height": 754
       },
       "documentWidth": 390,
       "text": [
@@ -2006,7 +2006,7 @@
           "text": "Silk · flowing ribbons Ink · dense pigment Smoke · soft volume Electric · luminous folds",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -2022,7 +2022,7 @@
           "text": "Aurora Wild petal Ember Violet hour Moon pearl",
           "fontPx": 12,
           "width": 100,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -2038,7 +2038,7 @@
           "text": "Crossing",
           "fontPx": 12,
           "width": 67,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -2046,7 +2046,7 @@
           "text": "Vortex",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -2054,7 +2054,7 @@
           "text": "Quiet",
           "fontPx": 12,
           "width": 49,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -2070,7 +2070,7 @@
           "text": "Drifting",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -2078,7 +2078,7 @@
           "text": "Strokes only",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -2134,7 +2134,7 @@
           "text": "Clear the water ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -2160,7 +2160,7 @@
           "text": "Silk · flowing ribbons Ink · dense pigment Smoke · soft volume Electric · luminous folds",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -2168,7 +2168,7 @@
           "text": "Aurora Wild petal Ember Violet hour Moon pearl",
           "fontPx": 12,
           "width": 100,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -2176,7 +2176,7 @@
           "text": "Crossing",
           "fontPx": 12,
           "width": 67,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -2184,7 +2184,7 @@
           "text": "Vortex",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -2192,7 +2192,7 @@
           "text": "Quiet",
           "fontPx": 12,
           "width": 49,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -2200,7 +2200,7 @@
           "text": "Drifting",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -2208,7 +2208,7 @@
           "text": "Strokes only",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -2256,7 +2256,7 @@
           "text": "Clear the water ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -3080,9 +3080,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 592,
+        "bottom": 655,
         "width": 296,
-        "height": 580
+        "height": 643
       },
       "documentWidth": 320,
       "text": [
@@ -3098,7 +3098,7 @@
           "text": "Silver murmuration Predator and prey Emergent vortex Competing populations Chaotic migration",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -3138,7 +3138,7 @@
           "text": "Attract",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3146,7 +3146,7 @@
           "text": "Repel",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3154,7 +3154,7 @@
           "text": "Barrier",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3162,7 +3162,7 @@
           "text": "Food",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -3175,10 +3175,18 @@
           "selector": "control-note"
         },
         {
+          "text": "Place food at centre ◎",
+          "fontPx": 12,
+          "width": 264,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
           "text": "Clear field marks ×",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -3186,7 +3194,7 @@
           "text": "Re-seed system ↻",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -3212,7 +3220,7 @@
           "text": "Silver murmuration Predator and prey Emergent vortex Competing populations Chaotic migration",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -3244,7 +3252,7 @@
           "text": "Attract",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3252,7 +3260,7 @@
           "text": "Repel",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3260,7 +3268,7 @@
           "text": "Barrier",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3268,15 +3276,23 @@
           "text": "Food",
           "fontPx": 12,
           "width": 63,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
+        },
+        {
+          "text": "Place food at centre ◎",
+          "fontPx": 12,
+          "width": 264,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-action"
         },
         {
           "text": "Clear field marks ×",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -3284,7 +3300,7 @@
           "text": "Re-seed system ↻",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -3550,9 +3566,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 572,
+        "bottom": 635,
         "width": 366,
-        "height": 560
+        "height": 623
       },
       "documentWidth": 390,
       "text": [
@@ -3568,7 +3584,7 @@
           "text": "Silver murmuration Predator and prey Emergent vortex Competing populations Chaotic migration",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -3608,7 +3624,7 @@
           "text": "Attract",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3616,7 +3632,7 @@
           "text": "Repel",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3624,7 +3640,7 @@
           "text": "Barrier",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3632,7 +3648,7 @@
           "text": "Food",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -3645,10 +3661,18 @@
           "selector": "control-note"
         },
         {
+          "text": "Place food at centre ◎",
+          "fontPx": 12,
+          "width": 334,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
           "text": "Clear field marks ×",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -3656,7 +3680,7 @@
           "text": "Re-seed system ↻",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -3682,7 +3706,7 @@
           "text": "Silver murmuration Predator and prey Emergent vortex Competing populations Chaotic migration",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -3714,7 +3738,7 @@
           "text": "Attract",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3722,7 +3746,7 @@
           "text": "Repel",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3730,7 +3754,7 @@
           "text": "Barrier",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -3738,15 +3762,23 @@
           "text": "Food",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
+        },
+        {
+          "text": "Place food at centre ◎",
+          "fontPx": 12,
+          "width": 334,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-action"
         },
         {
           "text": "Clear field marks ×",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -3754,7 +3786,7 @@
           "text": "Re-seed system ↻",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -4020,9 +4052,9 @@
         "x": 1065,
         "y": 19,
         "right": 1421,
-        "bottom": 619,
+        "bottom": 669,
         "width": 356,
-        "height": 600
+        "height": 650
       },
       "documentWidth": 1440,
       "text": [
@@ -4113,6 +4145,14 @@
           "height": 77,
           "tag": "P",
           "selector": "control-note"
+        },
+        {
+          "text": "Place food at centre ◎",
+          "fontPx": 12,
+          "width": 316,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
         },
         {
           "text": "Clear field marks ×",
@@ -4211,6 +4251,14 @@
           "height": 40,
           "tag": "BUTTON",
           "selector": "chosen"
+        },
+        {
+          "text": "Place food at centre ◎",
+          "fontPx": 12,
+          "width": 316,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
         },
         {
           "text": "Clear field marks ×",
@@ -4490,9 +4538,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 643,
+        "bottom": 650,
         "width": 296,
-        "height": 631
+        "height": 638
       },
       "documentWidth": 320,
       "text": [
@@ -4508,7 +4556,7 @@
           "text": "Lorenz · butterfly Rössler · ribbon Thomas · cyclic Aizawa · tangled torus Halvorsen · three-fold",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4524,7 +4572,7 @@
           "text": "Classic butterfly Near transition Wide wings Custom",
           "fontPx": 12,
           "width": 125,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4572,7 +4620,7 @@
           "text": "Polar light Northern green Ember Glacial glass",
           "fontPx": 12,
           "width": 124,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4596,7 +4644,7 @@
           "text": "Begin the orbit again ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -4622,7 +4670,7 @@
           "text": "Lorenz · butterfly Rössler · ribbon Thomas · cyclic Aizawa · tangled torus Halvorsen · three-fold",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4630,7 +4678,7 @@
           "text": "Classic butterfly Near transition Wide wings Custom",
           "fontPx": 12,
           "width": 125,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4662,7 +4710,7 @@
           "text": "Polar light Northern green Ember Glacial glass",
           "fontPx": 12,
           "width": 124,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4686,7 +4734,7 @@
           "text": "Begin the orbit again ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -4924,9 +4972,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 623,
+        "bottom": 630,
         "width": 366,
-        "height": 611
+        "height": 618
       },
       "documentWidth": 390,
       "text": [
@@ -4942,7 +4990,7 @@
           "text": "Lorenz · butterfly Rössler · ribbon Thomas · cyclic Aizawa · tangled torus Halvorsen · three-fold",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -4958,7 +5006,7 @@
           "text": "Classic butterfly Near transition Wide wings Custom",
           "fontPx": 12,
           "width": 125,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5006,7 +5054,7 @@
           "text": "Polar light Northern green Ember Glacial glass",
           "fontPx": 12,
           "width": 124,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5030,7 +5078,7 @@
           "text": "Begin the orbit again ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -5056,7 +5104,7 @@
           "text": "Lorenz · butterfly Rössler · ribbon Thomas · cyclic Aizawa · tangled torus Halvorsen · three-fold",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5064,7 +5112,7 @@
           "text": "Classic butterfly Near transition Wide wings Custom",
           "fontPx": 12,
           "width": 125,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5096,7 +5144,7 @@
           "text": "Polar light Northern green Ember Glacial glass",
           "fontPx": 12,
           "width": 124,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5120,7 +5168,7 @@
           "text": "Begin the orbit again ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -5810,7 +5858,7 @@
           "text": "Pearl field Coral branching Labyrinth Traveling pulses Replication",
           "fontPx": 12,
           "width": 126,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5866,7 +5914,7 @@
           "text": "River stone Red coral Verdigris Ultraviolet Warm earth",
           "fontPx": 12,
           "width": 103,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5882,7 +5930,7 @@
           "text": "High detail Balanced",
           "fontPx": 12,
           "width": 97,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5898,7 +5946,7 @@
           "text": "Seed",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -5906,7 +5954,7 @@
           "text": "Erase",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -5922,7 +5970,7 @@
           "text": "Begin a new pattern ↻",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -5948,7 +5996,7 @@
           "text": "Pearl field Coral branching Labyrinth Traveling pulses Replication",
           "fontPx": 12,
           "width": 126,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5988,7 +6036,7 @@
           "text": "River stone Red coral Verdigris Ultraviolet Warm earth",
           "fontPx": 12,
           "width": 103,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -5996,7 +6044,7 @@
           "text": "High detail Balanced",
           "fontPx": 12,
           "width": 97,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6004,7 +6052,7 @@
           "text": "Seed",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -6012,7 +6060,7 @@
           "text": "Erase",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -6028,7 +6076,7 @@
           "text": "Begin a new pattern ↻",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -6284,9 +6332,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 740,
+        "bottom": 751,
         "width": 366,
-        "height": 728
+        "height": 739
       },
       "documentWidth": 390,
       "text": [
@@ -6302,7 +6350,7 @@
           "text": "Pearl field Coral branching Labyrinth Traveling pulses Replication",
           "fontPx": 12,
           "width": 126,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6358,7 +6406,7 @@
           "text": "River stone Red coral Verdigris Ultraviolet Warm earth",
           "fontPx": 12,
           "width": 103,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6374,7 +6422,7 @@
           "text": "High detail Balanced",
           "fontPx": 12,
           "width": 97,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6390,7 +6438,7 @@
           "text": "Seed",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -6398,7 +6446,7 @@
           "text": "Erase",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -6414,7 +6462,7 @@
           "text": "Begin a new pattern ↻",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -6440,7 +6488,7 @@
           "text": "Pearl field Coral branching Labyrinth Traveling pulses Replication",
           "fontPx": 12,
           "width": 126,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6480,7 +6528,7 @@
           "text": "River stone Red coral Verdigris Ultraviolet Warm earth",
           "fontPx": 12,
           "width": 103,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6488,7 +6536,7 @@
           "text": "High detail Balanced",
           "fontPx": 12,
           "width": 97,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -6496,7 +6544,7 @@
           "text": "Seed",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -6504,7 +6552,7 @@
           "text": "Erase",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -6520,7 +6568,7 @@
           "text": "Begin a new pattern ↻",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -7268,9 +7316,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 595,
+        "bottom": 605,
         "width": 296,
-        "height": 583
+        "height": 593
       },
       "documentWidth": 320,
       "text": [
@@ -7286,7 +7334,7 @@
           "text": "Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passag",
           "fontPx": 12,
           "width": 141,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7334,7 +7382,7 @@
           "text": "Moss and lichen Winter glass Autumn ember Ultraviolet garden",
           "fontPx": 12,
           "width": 137,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7342,7 +7390,7 @@
           "text": "Replay the growth ↗",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7350,7 +7398,7 @@
           "text": "Pause growth Ⅱ",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7358,7 +7406,7 @@
           "text": "Let the wind decide ↻",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7384,7 +7432,7 @@
           "text": "Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passag",
           "fontPx": 12,
           "width": 141,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7424,7 +7472,7 @@
           "text": "Moss and lichen Winter glass Autumn ember Ultraviolet garden",
           "fontPx": 12,
           "width": 137,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7440,7 +7488,7 @@
           "text": "Replay the growth ↗",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7448,7 +7496,7 @@
           "text": "Pause growth Ⅱ",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7456,7 +7504,7 @@
           "text": "Let the wind decide ↻",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -7694,9 +7742,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 566,
+        "bottom": 576,
         "width": 366,
-        "height": 554
+        "height": 564
       },
       "documentWidth": 390,
       "text": [
@@ -7712,7 +7760,7 @@
           "text": "Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passag",
           "fontPx": 12,
           "width": 141,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7760,7 +7808,7 @@
           "text": "Moss and lichen Winter glass Autumn ember Ultraviolet garden",
           "fontPx": 12,
           "width": 137,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7768,7 +7816,7 @@
           "text": "Replay the growth ↗",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7776,7 +7824,7 @@
           "text": "Pause growth Ⅱ",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7784,7 +7832,7 @@
           "text": "Let the wind decide ↻",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7810,7 +7858,7 @@
           "text": "Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passag",
           "fontPx": 12,
           "width": 141,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7850,7 +7898,7 @@
           "text": "Moss and lichen Winter glass Autumn ember Ultraviolet garden",
           "fontPx": 12,
           "width": 137,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -7866,7 +7914,7 @@
           "text": "Replay the growth ↗",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7874,7 +7922,7 @@
           "text": "Pause growth Ⅱ",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -7882,7 +7930,7 @@
           "text": "Let the wind decide ↻",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -8546,9 +8594,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 591,
+        "bottom": 593,
         "width": 296,
-        "height": 579
+        "height": 581
       },
       "documentWidth": 320,
       "text": [
@@ -8564,7 +8612,7 @@
           "text": "A small solar system Binary stars Three-body chaos Orbital instability",
           "fontPx": 12,
           "width": 150,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -8604,7 +8652,7 @@
           "text": "Merge · conserve momentum Elastic bounce Ignore collisions",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -8654,7 +8702,7 @@
           "text": "A small solar system Binary stars Three-body chaos Orbital instability",
           "fontPx": 12,
           "width": 150,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -8686,7 +8734,7 @@
           "text": "Merge · conserve momentum Elastic bounce Ignore collisions",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -8948,9 +8996,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 542,
+        "bottom": 544,
         "width": 366,
-        "height": 530
+        "height": 532
       },
       "documentWidth": 390,
       "text": [
@@ -8966,7 +9014,7 @@
           "text": "A small solar system Binary stars Three-body chaos Orbital instability",
           "fontPx": 12,
           "width": 150,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -9006,7 +9054,7 @@
           "text": "Merge · conserve momentum Elastic bounce Ignore collisions",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -9056,7 +9104,7 @@
           "text": "A small solar system Binary stars Three-body chaos Orbital instability",
           "fontPx": 12,
           "width": 150,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -9088,7 +9136,7 @@
           "text": "Merge · conserve momentum Elastic bounce Ignore collisions",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -9770,7 +9818,7 @@
           "text": "Add two numbers Check whether equal Store and retrieve Count in a loop",
           "fontPx": 12,
           "width": 154,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -9796,7 +9844,7 @@
           "text": "Add two numbers Check whether equal Store and retrieve Count in a loop",
           "fontPx": 12,
           "width": 154,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10060,7 +10108,7 @@
           "text": "Add two numbers Check whether equal Store and retrieve Count in a loop",
           "fontPx": 12,
           "width": 154,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10086,7 +10134,7 @@
           "text": "Add two numbers Check whether equal Store and retrieve Count in a loop",
           "fontPx": 12,
           "width": 154,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10622,9 +10670,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 631,
+        "bottom": 639,
         "width": 296,
-        "height": 619
+        "height": 627
       },
       "documentWidth": 320,
       "text": [
@@ -10640,7 +10688,7 @@
           "text": "Opposite corners Inside the ring Across a diagonal My own examples",
           "fontPx": 12,
           "width": 136,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10656,7 +10704,7 @@
           "text": "3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
           "fontPx": 12,
           "width": 92,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10672,7 +10720,7 @@
           "text": "One layer Two layers",
           "fontPx": 12,
           "width": 95,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10688,7 +10736,7 @@
           "text": "tanh sigmoid ReLU",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10704,7 +10752,7 @@
           "text": "Reset the weights",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -10730,7 +10778,7 @@
           "text": "Opposite corners Inside the ring Across a diagonal My own examples",
           "fontPx": 12,
           "width": 136,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10738,7 +10786,7 @@
           "text": "3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
           "fontPx": 12,
           "width": 92,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10746,7 +10794,7 @@
           "text": "One layer Two layers",
           "fontPx": 12,
           "width": 95,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10754,7 +10802,7 @@
           "text": "tanh sigmoid ReLU",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -10770,7 +10818,7 @@
           "text": "Reset the weights",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         }
@@ -11008,9 +11056,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 582,
+        "bottom": 590,
         "width": 366,
-        "height": 570
+        "height": 578
       },
       "documentWidth": 390,
       "text": [
@@ -11026,7 +11074,7 @@
           "text": "Opposite corners Inside the ring Across a diagonal My own examples",
           "fontPx": 12,
           "width": 136,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11042,7 +11090,7 @@
           "text": "3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
           "fontPx": 12,
           "width": 92,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11058,7 +11106,7 @@
           "text": "One layer Two layers",
           "fontPx": 12,
           "width": 95,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11074,7 +11122,7 @@
           "text": "tanh sigmoid ReLU",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11090,7 +11138,7 @@
           "text": "Reset the weights",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -11116,7 +11164,7 @@
           "text": "Opposite corners Inside the ring Across a diagonal My own examples",
           "fontPx": 12,
           "width": 136,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11124,7 +11172,7 @@
           "text": "3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
           "fontPx": 12,
           "width": 92,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11132,7 +11180,7 @@
           "text": "One layer Two layers",
           "fontPx": 12,
           "width": 95,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11140,7 +11188,7 @@
           "text": "tanh sigmoid ReLU",
           "fontPx": 12,
           "width": 81,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11156,7 +11204,7 @@
           "text": "Reset the weights",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         }
@@ -11780,9 +11828,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 517,
+        "bottom": 519,
         "width": 296,
-        "height": 505
+        "height": 507
       },
       "documentWidth": 320,
       "text": [
@@ -11798,7 +11846,7 @@
           "text": "Both switches · AND Either switch · OR Different switches · XOR Half adder Full adder 2-to-1 multipl",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11814,7 +11862,7 @@
           "text": "AND OR NOT XOR NAND NOR",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11838,7 +11886,7 @@
           "text": "",
           "fontPx": 12,
           "width": 178,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -11904,7 +11952,7 @@
           "text": "",
           "fontPx": 12,
           "width": 244,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -11912,7 +11960,7 @@
           "text": "",
           "fontPx": 12,
           "width": 244,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -11920,7 +11968,7 @@
           "text": "",
           "fontPx": 12,
           "width": 244,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -11928,7 +11976,7 @@
           "text": "Both switches · AND Either switch · OR Different switches · XOR Half adder Full adder 2-to-1 multipl",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11936,7 +11984,7 @@
           "text": "AND OR NOT XOR NAND NOR",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -11968,7 +12016,7 @@
           "text": "",
           "fontPx": 12,
           "width": 178,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -12238,9 +12286,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 469,
+        "bottom": 471,
         "width": 366,
-        "height": 457
+        "height": 459
       },
       "documentWidth": 390,
       "text": [
@@ -12256,7 +12304,7 @@
           "text": "Both switches · AND Either switch · OR Different switches · XOR Half adder Full adder 2-to-1 multipl",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -12272,7 +12320,7 @@
           "text": "AND OR NOT XOR NAND NOR",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -12295,56 +12343,8 @@
         {
           "text": "",
           "fontPx": 12,
-          "width": 65,
-          "height": 17,
-          "tag": "SPAN",
-          "selector": "span"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 93,
-          "height": 40,
-          "tag": "SELECT",
-          "selector": "select"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 61,
-          "height": 17,
-          "tag": "SPAN",
-          "selector": "span"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 118,
-          "height": 40,
-          "tag": "SELECT",
-          "selector": "select"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 59,
-          "height": 17,
-          "tag": "SPAN",
-          "selector": "span"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 76,
-          "height": 40,
-          "tag": "SELECT",
-          "selector": "select"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
           "width": 178,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -12410,7 +12410,7 @@
           "text": "",
           "fontPx": 12,
           "width": 314,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -12418,7 +12418,7 @@
           "text": "",
           "fontPx": 12,
           "width": 314,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -12426,7 +12426,7 @@
           "text": "",
           "fontPx": 12,
           "width": 314,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -12434,7 +12434,7 @@
           "text": "Both switches · AND Either switch · OR Different switches · XOR Half adder Full adder 2-to-1 multipl",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -12442,7 +12442,7 @@
           "text": "AND OR NOT XOR NAND NOR",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -12473,32 +12473,8 @@
         {
           "text": "",
           "fontPx": 12,
-          "width": 93,
-          "height": 40,
-          "tag": "SELECT",
-          "selector": "select"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 118,
-          "height": 40,
-          "tag": "SELECT",
-          "selector": "select"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
-          "width": 76,
-          "height": 40,
-          "tag": "SELECT",
-          "selector": "select"
-        },
-        {
-          "text": "",
-          "fontPx": 12,
           "width": 178,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -12892,7 +12868,7 @@
           "text": "",
           "fontPx": 12,
           "width": 296,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -12900,7 +12876,7 @@
           "text": "",
           "fontPx": 12,
           "width": 296,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -12908,7 +12884,7 @@
           "text": "",
           "fontPx": 12,
           "width": 296,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -13226,9 +13202,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 449,
+        "bottom": 454,
         "width": 296,
-        "height": 437
+        "height": 442
       },
       "documentWidth": 320,
       "text": [
@@ -13244,7 +13220,7 @@
           "text": "Electric dipole Quadrupole A charged ring Uneven cluster",
           "fontPx": 12,
           "width": 120,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -13260,7 +13236,7 @@
           "text": "Potential on",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13268,7 +13244,7 @@
           "text": "Field lines on",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13318,7 +13294,7 @@
           "text": "Electric dipole Quadrupole A charged ring Uneven cluster",
           "fontPx": 12,
           "width": 120,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -13334,7 +13310,7 @@
           "text": "Potential on",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13342,7 +13318,7 @@
           "text": "Field lines on",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13604,9 +13580,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 420,
+        "bottom": 425,
         "width": 366,
-        "height": 408
+        "height": 413
       },
       "documentWidth": 390,
       "text": [
@@ -13622,7 +13598,7 @@
           "text": "Electric dipole Quadrupole A charged ring Uneven cluster",
           "fontPx": 12,
           "width": 120,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -13638,7 +13614,7 @@
           "text": "Potential on",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13646,7 +13622,7 @@
           "text": "Field lines on",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13696,7 +13672,7 @@
           "text": "Electric dipole Quadrupole A charged ring Uneven cluster",
           "fontPx": 12,
           "width": 120,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -13712,7 +13688,7 @@
           "text": "Potential on",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -13720,7 +13696,7 @@
           "text": "Field lines on",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "small-action"
         },
@@ -14360,9 +14336,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 556,
+        "bottom": 559,
         "width": 296,
-        "height": 544
+        "height": 547
       },
       "documentWidth": 320,
       "text": [
@@ -14378,7 +14354,7 @@
           "text": "Conway · B3/S23 HighLife · B36/S23 Seeds · B2/S Brian's Brain",
           "fontPx": 12,
           "width": 138,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14394,7 +14370,7 @@
           "text": "Glider Lightweight spaceship Pulsar R-pentomino Acorn Pulsar garden Pulsar trio Random field Empty b",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14418,7 +14394,7 @@
           "text": "Age spectrum Porcelain Ember",
           "fontPx": 12,
           "width": 114,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14484,7 +14460,7 @@
           "text": "Conway · B3/S23 HighLife · B36/S23 Seeds · B2/S Brian's Brain",
           "fontPx": 12,
           "width": 138,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14492,7 +14468,7 @@
           "text": "Glider Lightweight spaceship Pulsar R-pentomino Acorn Pulsar garden Pulsar trio Random field Empty b",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14508,7 +14484,7 @@
           "text": "Age spectrum Porcelain Ember",
           "fontPx": 12,
           "width": 114,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14778,9 +14754,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 488,
+        "bottom": 491,
         "width": 366,
-        "height": 476
+        "height": 479
       },
       "documentWidth": 390,
       "text": [
@@ -14796,7 +14772,7 @@
           "text": "Conway · B3/S23 HighLife · B36/S23 Seeds · B2/S Brian's Brain",
           "fontPx": 12,
           "width": 138,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14812,7 +14788,7 @@
           "text": "Glider Lightweight spaceship Pulsar R-pentomino Acorn Pulsar garden Pulsar trio Random field Empty b",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14836,7 +14812,7 @@
           "text": "Age spectrum Porcelain Ember",
           "fontPx": 12,
           "width": 114,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14902,7 +14878,7 @@
           "text": "Conway · B3/S23 HighLife · B36/S23 Seeds · B2/S Brian's Brain",
           "fontPx": 12,
           "width": 138,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14910,7 +14886,7 @@
           "text": "Glider Lightweight spaceship Pulsar R-pentomino Acorn Pulsar garden Pulsar trio Random field Empty b",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -14926,7 +14902,7 @@
           "text": "Age spectrum Porcelain Ember",
           "fontPx": 12,
           "width": 114,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -15614,9 +15590,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 483,
+        "bottom": 485,
         "width": 296,
-        "height": 471
+        "height": 473
       },
       "documentWidth": 320,
       "text": [
@@ -15640,7 +15616,7 @@
           "text": "4-bit · 0–15 8-bit · 0–255 16-bit · 0–65,535",
           "fontPx": 12,
           "width": 128,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -15656,7 +15632,7 @@
           "text": "Ripple carry Kogge–Stone look-ahead",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -15690,7 +15666,7 @@
           "text": "4-bit · 0–15 8-bit · 0–255 16-bit · 0–65,535",
           "fontPx": 12,
           "width": 128,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -15698,7 +15674,7 @@
           "text": "Ripple carry Kogge–Stone look-ahead",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -15952,9 +15928,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 444,
+        "bottom": 446,
         "width": 366,
-        "height": 432
+        "height": 434
       },
       "documentWidth": 390,
       "text": [
@@ -15978,7 +15954,7 @@
           "text": "4-bit · 0–15 8-bit · 0–255 16-bit · 0–65,535",
           "fontPx": 12,
           "width": 128,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -15994,7 +15970,7 @@
           "text": "Ripple carry Kogge–Stone look-ahead",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -16028,7 +16004,7 @@
           "text": "4-bit · 0–15 8-bit · 0–255 16-bit · 0–65,535",
           "fontPx": 12,
           "width": 128,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -16036,7 +16012,7 @@
           "text": "Ripple carry Kogge–Stone look-ahead",
           "fontPx": 12,
           "width": 155,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -16646,7 +16622,7 @@
           "text": "Amplitude",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -16654,7 +16630,7 @@
           "text": "Energy",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16670,7 +16646,7 @@
           "text": "Phase locked",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -16678,7 +16654,7 @@
           "text": "Phase wander",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16726,7 +16702,7 @@
           "text": "Absorbing sponge Reflective · no flux",
           "fontPx": 12,
           "width": 139,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -16742,7 +16718,7 @@
           "text": "Advance one stable step →",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -16750,7 +16726,7 @@
           "text": "Reset field ↺",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -16758,7 +16734,7 @@
           "text": "Remove emitters",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -16766,7 +16742,7 @@
           "text": "Clear barriers",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -16784,7 +16760,7 @@
           "text": "Double slit",
           "fontPx": 12,
           "width": 80,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16792,7 +16768,7 @@
           "text": "In phase",
           "fontPx": 12,
           "width": 69,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -16800,7 +16776,7 @@
           "text": "Standing",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16808,7 +16784,7 @@
           "text": "Resonant chamber",
           "fontPx": 12,
           "width": 127,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16816,7 +16792,7 @@
           "text": "Amplitude",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -16824,7 +16800,7 @@
           "text": "Energy",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16832,7 +16808,7 @@
           "text": "Phase locked",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -16840,7 +16816,7 @@
           "text": "Phase wander",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -16880,7 +16856,7 @@
           "text": "Absorbing sponge Reflective · no flux",
           "fontPx": 12,
           "width": 139,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -16888,7 +16864,7 @@
           "text": "Advance one stable step →",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -16896,7 +16872,7 @@
           "text": "Reset field ↺",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -16904,7 +16880,7 @@
           "text": "Remove emitters",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -16912,7 +16888,7 @@
           "text": "Clear barriers",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -17203,7 +17179,7 @@
           "text": "Amplitude",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -17211,7 +17187,7 @@
           "text": "Energy",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17227,7 +17203,7 @@
           "text": "Phase locked",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -17235,7 +17211,7 @@
           "text": "Phase wander",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17283,7 +17259,7 @@
           "text": "Absorbing sponge Reflective · no flux",
           "fontPx": 12,
           "width": 139,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -17299,7 +17275,7 @@
           "text": "Advance one stable step →",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -17307,7 +17283,7 @@
           "text": "Reset field ↺",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -17315,7 +17291,7 @@
           "text": "Remove emitters",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -17323,7 +17299,7 @@
           "text": "Clear barriers",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -17341,7 +17317,7 @@
           "text": "Double slit",
           "fontPx": 12,
           "width": 80,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17349,7 +17325,7 @@
           "text": "In phase",
           "fontPx": 12,
           "width": 69,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -17357,7 +17333,7 @@
           "text": "Standing",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17365,7 +17341,7 @@
           "text": "Resonant chamber",
           "fontPx": 12,
           "width": 127,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17373,7 +17349,7 @@
           "text": "Amplitude",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -17381,7 +17357,7 @@
           "text": "Energy",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17389,7 +17365,7 @@
           "text": "Phase locked",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -17397,7 +17373,7 @@
           "text": "Phase wander",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -17437,7 +17413,7 @@
           "text": "Absorbing sponge Reflective · no flux",
           "fontPx": 12,
           "width": 139,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -17445,7 +17421,7 @@
           "text": "Advance one stable step →",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -17453,7 +17429,7 @@
           "text": "Reset field ↺",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -17461,7 +17437,7 @@
           "text": "Remove emitters",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -17469,7 +17445,7 @@
           "text": "Clear barriers",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -18317,7 +18293,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -18325,7 +18301,7 @@
           "text": "One λ",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18341,7 +18317,7 @@
           "text": "Crown · n 1.52 Flint · n 1.62 Ice · n 1.31",
           "fontPx": 12,
           "width": 115,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -18405,7 +18381,7 @@
           "text": "Restore arrangement ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -18423,7 +18399,7 @@
           "text": "Prism table",
           "fontPx": 12,
           "width": 84,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18431,7 +18407,7 @@
           "text": "Focusing",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18439,7 +18415,7 @@
           "text": "Periscope",
           "fontPx": 12,
           "width": 75,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18447,7 +18423,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -18455,7 +18431,7 @@
           "text": "One λ",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18463,7 +18439,7 @@
           "text": "Crown · n 1.52 Flint · n 1.62 Ice · n 1.31",
           "fontPx": 12,
           "width": 115,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -18519,7 +18495,7 @@
           "text": "Restore arrangement ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -18775,9 +18751,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 754,
+        "bottom": 766,
         "width": 366,
-        "height": 742
+        "height": 754
       },
       "documentWidth": 390,
       "text": [
@@ -18793,7 +18769,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -18801,7 +18777,7 @@
           "text": "One λ",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18817,7 +18793,7 @@
           "text": "Crown · n 1.52 Flint · n 1.62 Ice · n 1.31",
           "fontPx": 12,
           "width": 115,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -18881,7 +18857,7 @@
           "text": "Restore arrangement ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -18899,7 +18875,7 @@
           "text": "Prism table",
           "fontPx": 12,
           "width": 84,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18907,7 +18883,7 @@
           "text": "Focusing",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18915,7 +18891,7 @@
           "text": "Periscope",
           "fontPx": 12,
           "width": 75,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18923,7 +18899,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -18931,7 +18907,7 @@
           "text": "One λ",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -18939,7 +18915,7 @@
           "text": "Crown · n 1.52 Flint · n 1.62 Ice · n 1.31",
           "fontPx": 12,
           "width": 115,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -18995,7 +18971,7 @@
           "text": "Restore arrangement ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -19533,7 +19509,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -19541,7 +19517,7 @@
           "text": "Spectrogram",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19565,7 +19541,7 @@
           "text": "Reset instrument ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -19583,7 +19559,7 @@
           "text": "Sine",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19591,7 +19567,7 @@
           "text": "Triangle",
           "fontPx": 12,
           "width": 66,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -19599,7 +19575,7 @@
           "text": "Square",
           "fontPx": 12,
           "width": 60,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19607,7 +19583,7 @@
           "text": "Saw",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19623,7 +19599,7 @@
           "text": "2nd",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19631,7 +19607,7 @@
           "text": "3th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -19639,7 +19615,7 @@
           "text": "4th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19647,7 +19623,7 @@
           "text": "5th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -19655,7 +19631,7 @@
           "text": "6th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19663,7 +19639,7 @@
           "text": "8th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19671,7 +19647,7 @@
           "text": "1×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -19679,7 +19655,7 @@
           "text": "3×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19687,7 +19663,7 @@
           "text": "5×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19695,7 +19671,7 @@
           "text": "7×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19703,7 +19679,7 @@
           "text": "9×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19711,7 +19687,7 @@
           "text": "11×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19719,7 +19695,7 @@
           "text": "13×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19727,7 +19703,7 @@
           "text": "15×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19735,7 +19711,7 @@
           "text": "17×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19759,7 +19735,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -19767,7 +19743,7 @@
           "text": "Spectrogram",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -19791,7 +19767,7 @@
           "text": "Reset instrument ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -20089,7 +20065,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -20097,7 +20073,7 @@
           "text": "Spectrogram",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20121,7 +20097,7 @@
           "text": "Reset instrument ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -20139,7 +20115,7 @@
           "text": "Sine",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20147,7 +20123,7 @@
           "text": "Triangle",
           "fontPx": 12,
           "width": 66,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -20155,7 +20131,7 @@
           "text": "Square",
           "fontPx": 12,
           "width": 60,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20163,7 +20139,7 @@
           "text": "Saw",
           "fontPx": 12,
           "width": 54,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20179,7 +20155,7 @@
           "text": "2nd",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20187,7 +20163,7 @@
           "text": "3th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -20195,7 +20171,7 @@
           "text": "4th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20203,7 +20179,7 @@
           "text": "5th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -20211,7 +20187,7 @@
           "text": "6th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20219,7 +20195,7 @@
           "text": "8th",
           "fontPx": 12,
           "width": 44,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20227,7 +20203,7 @@
           "text": "1×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "selected"
         },
@@ -20235,7 +20211,7 @@
           "text": "3×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20243,7 +20219,7 @@
           "text": "5×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20251,7 +20227,7 @@
           "text": "7×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20259,7 +20235,7 @@
           "text": "9×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20267,7 +20243,7 @@
           "text": "11×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20275,7 +20251,7 @@
           "text": "13×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20283,7 +20259,7 @@
           "text": "15×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20291,7 +20267,7 @@
           "text": "17×",
           "fontPx": 12,
           "width": 42,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20315,7 +20291,7 @@
           "text": "Spectrum",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -20323,7 +20299,7 @@
           "text": "Spectrogram",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -20347,7 +20323,7 @@
           "text": "Reset instrument ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -21193,7 +21169,7 @@
           "text": "Save this condition",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21201,7 +21177,7 @@
           "text": "Restore saved world",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21209,7 +21185,7 @@
           "text": "Restart seeded garden ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -21227,7 +21203,7 @@
           "text": "Balanced",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -21235,7 +21211,7 @@
           "text": "Cool bloom",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -21243,7 +21219,7 @@
           "text": "Lean soil",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -21251,7 +21227,7 @@
           "text": "Cycle the seasons",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "iw-season-toggle "
         },
@@ -21275,7 +21251,7 @@
           "text": "Save this condition",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21283,7 +21259,7 @@
           "text": "Restore saved world",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21291,7 +21267,7 @@
           "text": "Restart seeded garden ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -21529,9 +21505,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 714,
+        "bottom": 730,
         "width": 366,
-        "height": 702
+        "height": 718
       },
       "documentWidth": 390,
       "text": [
@@ -21563,7 +21539,7 @@
           "text": "Save this condition",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21571,7 +21547,7 @@
           "text": "Restore saved world",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21579,7 +21555,7 @@
           "text": "Restart seeded garden ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -21597,7 +21573,7 @@
           "text": "Balanced",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -21605,7 +21581,7 @@
           "text": "Cool bloom",
           "fontPx": 12,
           "width": 85,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -21613,7 +21589,7 @@
           "text": "Lean soil",
           "fontPx": 12,
           "width": 70,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -21621,7 +21597,7 @@
           "text": "Cycle the seasons",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "iw-season-toggle "
         },
@@ -21645,7 +21621,7 @@
           "text": "Save this condition",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21653,7 +21629,7 @@
           "text": "Restore saved world",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -21661,7 +21637,7 @@
           "text": "Restart seeded garden ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -22269,9 +22245,9 @@
         "x": 12,
         "y": 12,
         "right": 308,
-        "bottom": 646,
+        "bottom": 656,
         "width": 296,
-        "height": 634
+        "height": 644
       },
       "documentWidth": 320,
       "text": [
@@ -22287,7 +22263,7 @@
           "text": "Origin North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22303,7 +22279,7 @@
           "text": "North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22319,7 +22295,7 @@
           "text": "Send a message ↗",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22327,7 +22303,7 @@
           "text": "Send a burst »",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22343,7 +22319,7 @@
           "text": "Step network once",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22351,7 +22327,7 @@
           "text": "Reset network ↺",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -22369,7 +22345,7 @@
           "text": "Origin North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22377,7 +22353,7 @@
           "text": "North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22393,7 +22369,7 @@
           "text": "Send a message ↗",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22401,7 +22377,7 @@
           "text": "Send a burst »",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22409,7 +22385,7 @@
           "text": "Step network once",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22417,7 +22393,7 @@
           "text": "Reset network ↺",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -22655,9 +22631,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 584,
+        "bottom": 594,
         "width": 366,
-        "height": 572
+        "height": 582
       },
       "documentWidth": 390,
       "text": [
@@ -22673,7 +22649,7 @@
           "text": "Origin North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22689,7 +22665,7 @@
           "text": "North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22705,7 +22681,7 @@
           "text": "Send a message ↗",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22713,7 +22689,7 @@
           "text": "Send a burst »",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22729,7 +22705,7 @@
           "text": "Step network once",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22737,7 +22713,7 @@
           "text": "Reset network ↺",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -22755,7 +22731,7 @@
           "text": "Origin North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22763,7 +22739,7 @@
           "text": "North West Relay East South Arrival",
           "fontPx": 12,
           "width": 72,
-          "height": 40,
+          "height": 44,
           "tag": "SELECT",
           "selector": "select"
         },
@@ -22779,7 +22755,7 @@
           "text": "Send a message ↗",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22787,7 +22763,7 @@
           "text": "Send a burst »",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22795,7 +22771,7 @@
           "text": "Step network once",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -22803,7 +22779,7 @@
           "text": "Reset network ↺",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -23445,7 +23421,7 @@
           "text": "Lensed sky",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -23453,7 +23429,7 @@
           "text": "Ray path",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -23501,7 +23477,7 @@
           "text": "Near-critical flyby",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -23509,7 +23485,7 @@
           "text": "Captured path",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -23517,7 +23493,7 @@
           "text": "Reset observer ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -23535,7 +23511,7 @@
           "text": "Lensed sky",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -23543,7 +23519,7 @@
           "text": "Ray path",
           "fontPx": 12,
           "width": 130,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -23583,7 +23559,7 @@
           "text": "Inspect the mathematical model",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "iw-subtle-toggle"
         },
@@ -23591,7 +23567,7 @@
           "text": "Near-critical flyby",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -23599,7 +23575,7 @@
           "text": "Captured path",
           "fontPx": 12,
           "width": 129,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -23607,7 +23583,7 @@
           "text": "Reset observer ↺",
           "fontPx": 12,
           "width": 264,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -23839,9 +23815,9 @@
         "x": 12,
         "y": 12,
         "right": 378,
-        "bottom": 749,
+        "bottom": 765,
         "width": 366,
-        "height": 737
+        "height": 753
       },
       "documentWidth": 390,
       "text": [
@@ -23857,7 +23833,7 @@
           "text": "Lensed sky",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -23865,7 +23841,7 @@
           "text": "Ray path",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -23913,7 +23889,7 @@
           "text": "Near-critical flyby",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -23921,7 +23897,7 @@
           "text": "Captured path",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -23929,7 +23905,7 @@
           "text": "Reset observer ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }
@@ -23947,7 +23923,7 @@
           "text": "Lensed sky",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "chosen"
         },
@@ -23955,7 +23931,7 @@
           "text": "Ray path",
           "fontPx": 12,
           "width": 165,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "button"
         },
@@ -23995,7 +23971,7 @@
           "text": "Inspect the mathematical model",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "iw-subtle-toggle"
         },
@@ -24003,7 +23979,7 @@
           "text": "Near-critical flyby",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -24011,7 +23987,7 @@
           "text": "Captured path",
           "fontPx": 12,
           "width": 164,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         },
@@ -24019,7 +23995,7 @@
           "text": "Reset observer ↺",
           "fontPx": 12,
           "width": 334,
-          "height": 40,
+          "height": 44,
           "tag": "BUTTON",
           "selector": "panel-action"
         }

@@ -40,6 +40,7 @@
     "qa:exhibit-overlays": "node scripts/qa-exhibit-overlays.mjs",
     "qa:accessibility": "node scripts/qa-accessibility.mjs",
     "qa:canvas-keyboard": "node scripts/qa-canvas-keyboard.mjs",
+    "qa:canvas-editing": "node scripts/qa-canvas-editing.mjs",
     "qa:gallery-previews": "node scripts/qa-gallery-previews.mjs",
     "qa:collection-performance": "node scripts/qa-collection-performance.mjs",
     "qa:collection-discovery": "node scripts/qa-collection-discovery.mjs",

@@ -46,7 +46,11 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Add an automated Controls/About typography and target-size check; see `npm run qa:accessibility` and `evidence/accessibility-readability-review.json`.
 - [x] Make L-system and attractor cameras focusable; support arrows, plus/minus and Home with a visible keyboard-only instruction and focus ring; preserve those keys from global exhibit navigation.
 - [x] Test Tab, keyboard panning/rotation, zoom and exact camera restore in a rendered Canvas2D browser at phone and desktop sizes.
-- [ ] Add non-pointer placement/editing for pointer-led simulation objects where it improves the core task, beginning with Boids and cellular boards; then review Gravity and Neural Networks.
+- [x] Give Boids an always-available Controls action to place the selected field mark at centre; announce placement/clear and verify raster change plus exact paused-state recovery.
+- [x] Make the cellular grid Tab-focusable and editable with arrows, Enter and Home; show its active cell and announce row, column and population changes.
+- [x] Name the cellular Paint/Erase/Pan group and expose pressed state; size its tools, Step/Pause and shared-panel buttons to 44px on mobile, tablet and coarse-pointer layouts.
+- [x] Exercise the flock and automaton tasks in Chromium at 320×740, 390×844, 844×390 and 1024×768; check rendered state changes, recovery, status and mobile instruction spacing.
+- [ ] Review other pointer-led object tasks in Gravity and Neural Networks and add non-pointer alternatives where they materially help.
 - [ ] Review formal contrast, reading order, dialog semantics, status announcements and screen-reader descriptions with assistive technology.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
 - [x] Keep simulation diagnostics development-only and verify they are absent from production JavaScript.
