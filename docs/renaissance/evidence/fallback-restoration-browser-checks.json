@@ -1,0 +1,16 @@
+{
+  "browser": "HeadlessChrome 157; WebGL APIs deliberately disabled for Canvas 2D checks, then restored for an actual WebGL2 mount at 1440×900.",
+  "fluid": {
+    "flowAndSettingsRestored": true,
+    "emptyConditionSurvivesReload": true,
+    "replayDisclosure": true
+  },
+  "reaction": {
+    "presetAndModelSettingsRestored": true,
+    "legacyPresetAndPaletteRemainCompatibleAcrossRenderers": true,
+    "seededScatterReplays": true,
+    "replayDisclosure": true
+  },
+  "webglRendererAfterFallbackChecks": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "browserErrors": []
+}

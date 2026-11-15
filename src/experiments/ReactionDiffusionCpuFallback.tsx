@@ -3,17 +3,18 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
-import { boundedStateInteger, boundedStateNumber, stateChoice } from '../lib/experimentState'
+import { boundedStateInteger, boundedStateNumber, boundedStateSeed, stateChoice } from '../lib/experimentState'
 
 const MAX_CELLS = 90_000
 const palettes: Record<string, [number, number, number][]> = {
   mineral: [[6, 11, 18], [56, 112, 132], [174, 205, 192], [233, 226, 194]],
-  desert: [[14, 12, 14], [119, 74, 55], [208, 140, 92], [240, 210, 154]],
-  garden: [[7, 15, 13], [51, 100, 76], [133, 172, 113], [223, 218, 158]],
-  dusk: [[10, 10, 22], [75, 66, 136], [166, 116, 181], [231, 174, 177]],
+  coral: [[14, 8, 18], [104, 38, 66], [220, 106, 116], [255, 208, 158]],
+  verdigris: [[6, 20, 25], [42, 104, 93], [165, 196, 153], [235, 225, 192]],
+  ultraviolet: [[13, 8, 30], [71, 48, 143], [177, 105, 210], [247, 190, 222]],
+  ember: [[18, 9, 15], [115, 43, 31], [222, 108, 48], [255, 214, 132]],
 }
 const seeds: Record<string, { feed: number; kill: number }> = {
-  spots: { feed: 0.037, kill: 0.061 }, coral: { feed: 0.054, kill: 0.062 }, maze: { feed: 0.029, kill: 0.057 }, waves: { feed: 0.026, kill: 0.051 },
+  spots: { feed: 0.0367, kill: 0.0649 }, coral: { feed: 0.0545, kill: 0.062 }, labyrinth: { feed: 0.029, kill: 0.057 }, waves: { feed: 0.025, kill: 0.05 },
 }
 type ReactionState = { w: number; h: number; n: number; a: Float32Array; b: Float32Array; aa: Float32Array; bb: Float32Array; image: ImageData }
 
@@ -40,30 +41,37 @@ export default function ReactionDiffusion({ paused, controlsVisible, stateFromUr
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const buffers = useRef<ReactionState | null>(null)
   const drawRef = useRef<() => void>(() => {})
-  const [feed, setFeed] = useState(() => boundedStateNumber(stateFromUrl?.feed, seeds.spots.feed, 0.018, 0.075))
-  const [kill, setKill] = useState(() => boundedStateNumber(stateFromUrl?.kill, seeds.spots.kill, 0.035, 0.075))
-  const [diffusion, setDiffusion] = useState(() => boundedStateNumber(stateFromUrl?.diffusion, 1, 0.5, 1.45))
-  const [steps, setSteps] = useState(() => boundedStateInteger(stateFromUrl?.steps, 2, 1, 5))
-  const [palette, setPalette] = useState(() => stateChoice(stateFromUrl?.palette, Object.keys(palettes), 'mineral'))
-  const [seed, setSeed] = useState('spots')
-  const [brush, setBrush] = useState('seed')
-  const params = useRef({ feed, kill, diffusion, steps, palette, paused })
-  params.current = { feed, kill, diffusion, steps, palette, paused }
-  useEffect(() => { onShareState({ feed, kill, diffusion, steps, palette }) }, [feed, kill, diffusion, steps, palette, onShareState])
+  const requestedPreset = stateFromUrl?.preset === 'maze' ? 'labyrinth' : stateFromUrl?.preset
+  const initialPreset = stateChoice(requestedPreset, Object.keys(seeds), 'coral')
+  const [presetName, setPresetName] = useState(initialPreset)
+  const [feed, setFeed] = useState(() => boundedStateNumber(stateFromUrl?.feed, seeds[initialPreset].feed, 0.018, 0.075))
+  const [kill, setKill] = useState(() => boundedStateNumber(stateFromUrl?.kill, seeds[initialPreset].kill, 0.035, 0.075))
+  const [diffusion, setDiffusion] = useState(() => boundedStateNumber(stateFromUrl?.diffusion, 1, 0.55, 1.45))
+  const [steps, setSteps] = useState(() => boundedStateInteger(stateFromUrl?.steps, 3, 1, 5))
+  const [palette, setPalette] = useState(() => stateChoice(stateFromUrl?.palette, Object.keys(palettes), 'verdigris'))
+  const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 42))
+  const [scatter, setScatter] = useState(() => stateFromUrl?.scatter === true)
+  const [brush, setBrush] = useState<string>(() => stateChoice(stateFromUrl?.brush, ['seed', 'erase'], 'seed'))
+  const [brushSize, setBrushSize] = useState(() => boundedStateNumber(stateFromUrl?.brushSize, 28, 8, 72))
+  const params = useRef({ feed, kill, diffusion, steps, palette, presetName, seed, scatter, paused })
+  params.current = { feed, kill, diffusion, steps, palette, presetName, seed, scatter, paused }
+  useEffect(() => { onShareState({ preset: presetName, feed, kill, diffusion, steps, palette, seed, scatter, brush, brushSize }) }, [presetName, feed, kill, diffusion, steps, palette, seed, scatter, brush, brushSize, onShareState])
   useEffect(() => { drawRef.current() }, [palette])
 
-  const initialize = (kind: string, random = false, updateRates = true) => {
+  const initialize = (kind: string, random = false, updateRates = true, seedValue = seed) => {
     const state = buffers.current
     if (!state) return
     const { w, h, n } = state, scale = Math.min(w, h) / 128
     state.a.fill(1); state.b.fill(0)
     if (random) {
-      for (let i = 0; i < n; i++) if (Math.random() < 0.023) state.b[i] = 0.75 + Math.random() * 0.25
+      let value = seedValue >>> 0
+      const nextRandom = () => { value = (Math.imul(value, 1664525) + 1013904223) >>> 0; return value / 4294967296 }
+      for (let i = 0; i < n; i++) if (nextRandom() < 0.023) state.b[i] = 0.75 + nextRandom() * 0.25
     } else if (kind === 'waves') {
       for (let y = 5; y < h - 5; y++) for (let x = 5; x < w - 5; x++) {
         if (Math.sin(x * 0.2 / scale + Math.sin(y * 0.23 / scale) * 4) > 0.68) state.b[y * w + x] = 0.92
       }
-    } else if (kind === 'maze') {
+    } else if (kind === 'labyrinth') {
       for (let y = 5; y < h - 5; y++) for (let x = 5; x < w - 5; x++) {
         const value = Math.sin(x * 0.12 / scale + Math.cos(y * 0.11 / scale) * 2) * Math.cos(y * 0.17 / scale - x * 0.07 / scale)
         if (value > 0.65) state.b[y * w + x] = 0.96
@@ -125,7 +133,7 @@ export default function ReactionDiffusion({ paused, controlsVisible, stateFromUr
         buffers.current = next
         offscreen.width = next.w; offscreen.height = next.h
         previousAspect = aspect
-        if (!old) initialize(seed, false, false)
+        if (!old) initialize(params.current.presetName, params.current.scatter, false, params.current.seed)
       }
       drawRef.current()
     }
@@ -159,7 +167,7 @@ export default function ReactionDiffusion({ paused, controlsVisible, stateFromUr
     const rect = event.currentTarget.getBoundingClientRect(), state = buffers.current
     if (!state) return
     const cx = Math.round((event.clientX - rect.left) / rect.width * state.w), cy = Math.round((event.clientY - rect.top) / rect.height * state.h)
-    const scale = Math.min(state.w, state.h) / 128, radius = Math.max(3, Math.round((brush === 'seed' ? 8 : 18) * scale))
+    const scale = Math.min(state.w, state.h) / 128, radius = Math.max(3, Math.round(brushSize * 0.28 * scale * (brush === 'seed' ? 1 : 2.25)))
     for (let y = -radius; y <= radius; y++) for (let x = -radius; x <= radius; x++) {
       const px = cx + x, py = cy + y
       if (px < 1 || py < 1 || px >= state.w - 1 || py >= state.h - 1 || x * x + y * y > radius * radius) continue
@@ -167,21 +175,26 @@ export default function ReactionDiffusion({ paused, controlsVisible, stateFromUr
     }
     drawRef.current()
   }
-  const selectSeed = (name: string) => { setSeed(name); initialize(name) }
+  const selectSeed = (name: string) => { setPresetName(name); setScatter(false); initialize(name, false, true, seed) }
+  const beginNewPattern = () => {
+    const nextSeed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+    setSeed(nextSeed); setScatter(true); initialize(presetName, true, true, nextSeed)
+  }
 
   return <div className="experiment-surface">
     <canvas ref={canvasRef} className="experiment-canvas reaction-canvas" aria-label="Interactive reaction diffusion simulation. Tap or drag to add a chemical seed." aria-describedby={hint.visible ? 'reaction-cpu-first-move' : undefined} onPointerDown={(event) => { hint.dismiss(); event.currentTarget.setPointerCapture(event.pointerId); if (event.button !== 2) seedAt(event) }} onPointerMove={(event) => { if (event.buttons || event.pointerType === 'touch') seedAt(event) }} onContextMenu={(event) => { event.preventDefault(); setBrush((value) => value === 'seed' ? 'erase' : 'seed') }} />
     {hint.visible ? <aside className="scene-nudge" id="reaction-cpu-first-move" role="note"><span>Try this · The Pattern Beneath</span><p>Tap the living pattern to plant a new patch. Watch nearby colours spread and settle into shapes.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button></aside> : <button className="scene-nudge-reopen" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <ControlPanel title="The Pattern Beneath" note="GRAY–SCOTT CHEMISTRY" visible={controlsVisible} onClose={onCloseControls}>
-      <div className="preset-row"><span>INITIAL FORM</span>{[['spots', 'Spots'], ['coral', 'Coral'], ['maze', 'Maze'], ['waves', 'Waves']].map(([key, title]) => <button key={key} className={seed === key ? 'selected' : ''} onClick={() => selectSeed(key)}>{title}</button>)}</div>
-      <RangeControl label="Feed rate" value={feed} min={0.018} max={0.075} step={0.001} onChange={setFeed} format={(value) => value.toFixed(3)} />
+      <div className="preset-row"><span>INITIAL FORM</span>{[['spots', 'Spots'], ['coral', 'Coral'], ['labyrinth', 'Labyrinth'], ['waves', 'Waves']].map(([key, title]) => <button key={key} className={presetName === key && !scatter ? 'selected' : ''} onClick={() => selectSeed(key)}>{title}</button>)}</div>
+      <RangeControl label="Feed rate" value={feed} min={0.012} max={0.075} step={0.001} onChange={setFeed} format={(value) => value.toFixed(3)} />
       <RangeControl label="Kill rate" value={kill} min={0.035} max={0.075} step={0.001} onChange={setKill} format={(value) => value.toFixed(3)} />
-      <RangeControl label="Diffusion" value={diffusion} min={0.5} max={1.45} step={0.01} onChange={setDiffusion} format={(value) => value.toFixed(2)} />
+      <RangeControl label="Diffusion" value={diffusion} min={0.55} max={1.45} step={0.01} onChange={setDiffusion} format={(value) => value.toFixed(2)} />
       <RangeControl label="Time steps" value={steps} min={1} max={5} step={1} onChange={setSteps} format={(value) => value + '×'} />
-      <SelectControl label="Pigment" value={palette} options={[['mineral', 'River stone'], ['desert', 'Warm earth'], ['garden', 'Understory'], ['dusk', 'Blue hour']]} onChange={setPalette} />
+      <SelectControl label="Pigment" value={palette} options={[['mineral', 'River stone'], ['coral', 'Red coral'], ['verdigris', 'Verdigris'], ['ultraviolet', 'Ultraviolet'], ['ember', 'Warm earth']]} onChange={setPalette} />
       <Segmented label="Brush" value={brush} options={[['seed', 'Seed'], ['erase', 'Erase']]} onChange={setBrush} />
-      <button className="panel-action" onClick={() => { initialize(seed, true) }}><span>Scatter new beginnings</span><i>↻</i></button>
-      <p className="control-note">Paint a chemical seed with a tap, or choose erase to lift it away.</p>
+      <RangeControl label="Brush radius" value={brushSize} min={8} max={72} step={2} onChange={setBrushSize} format={(value) => `${value} px`} />
+      <button className="panel-action" onClick={beginNewPattern}><span>Scatter new beginnings</span><i>↻</i></button>
+      <p className="control-note">Paint a chemical seed with a tap, or choose erase to lift it away. Shared links restore the preset, seed and controls; drawn marks and evolved chemistry start fresh. The Canvas 2D fallback uses a smaller field than the GPU version.</p>
     </ControlPanel>
   </div>
 }

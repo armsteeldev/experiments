@@ -77,9 +77,10 @@
         "brush",
         "brushSize",
         "quality",
-        "seed"
+        "seed",
+        "scatter"
       ],
-      "bytes": 174,
+      "bytes": 190,
       "routeRestored": true,
       "invalidStateRecovery": true
     },

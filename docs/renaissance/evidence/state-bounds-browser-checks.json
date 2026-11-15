@@ -8,7 +8,7 @@
     ],
     "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
   },
-  "method": "Fifteen state cases across thirteen exhibit routes check bounded URL recovery and actual shared output. A restored custom CPU program executes four instructions and produces 12; an oversized program falls back safely.",
+  "method": "Seventeen restored-state cases across thirteen exhibit routes check bounded URL recovery and actual shared output. A restored custom CPU program executes four instructions and produces 12; a compact four-cell automaton board loads four live cells; a real 2×2 still life is painted, shared and restored with all cells intact; malformed custom grids and oversized CPU programs fall back safely.",
   "cases": [
     {
       "id": "mandelbrot",
@@ -30,6 +30,32 @@
         "seed"
       ],
       "boundedStateRemounted": true
+    },
+    {
+      "id": "automata",
+      "checkedSettings": [
+        "pattern",
+        "cells",
+        "rule",
+        "speed",
+        "renderMode",
+        "seed"
+      ],
+      "boundedStateRemounted": true,
+      "restoredAutomataPopulation": "0004",
+      "compactShareLink": true
+    },
+    {
+      "id": "automata",
+      "checkedSettings": [
+        "pattern",
+        "rule",
+        "speed",
+        "renderMode",
+        "seed"
+      ],
+      "boundedStateRemounted": true,
+      "invalidCustomGridFallsBack": true
     },
     {
       "id": "lsystem",
@@ -192,6 +218,13 @@
         "b"
       ],
       "boundedStateRemounted": true
+    },
+    {
+      "id": "automata",
+      "action": "paint a still life, share, reload",
+      "paintedCells": 4,
+      "compactShareLink": true,
+      "replayDisclosure": true
     }
   ],
   "errors": []

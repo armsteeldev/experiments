@@ -132,6 +132,7 @@ function inject(s: FluidState, x: number, y: number, dx: number, dy: number, col
 function seedScene(s: FluidState, mode: string, colorName: string) {
   s.u.fill(0); s.v.fill(0); s.pressure.fill(0); s.pressure2.fill(0)
   for (const channel of [...s.dye, ...s.dye0]) channel.fill(0)
+  if (mode === 'empty') return
   const base = pigment[colorName] || pigment.aurora, second = accent[colorName] || accent.aurora
   const scale = Math.min(s.w, s.h), radius = Math.max(5, Math.round(scale * 0.105))
   const blob = (cx: number, cy: number, color: [number, number, number], direction: number, spin: number, size = radius) => {
@@ -169,10 +170,10 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
   const [palette, setPalette] = useState(() => stateChoice(stateFromUrl?.palette, Object.keys(pigment), 'aurora'))
   const [viscosity, setViscosity] = useState(() => boundedStateNumber(stateFromUrl?.viscosity, 0.13, 0, 0.9))
   const [dissipation, setDissipation] = useState(() => boundedStateNumber(stateFromUrl?.dissipation, 0.996, 0.94, 0.999))
-  const [presetName, setPresetName] = useState('crossing')
-  const params = useRef({ palette, viscosity, dissipation, paused })
-  params.current = { palette, viscosity, dissipation, paused }
-  useEffect(() => { onShareState({ palette, viscosity, dissipation }) }, [palette, viscosity, dissipation, onShareState])
+  const [presetName, setPresetName] = useState<string>(() => stateChoice(stateFromUrl?.preset, ['crossing', 'vortex', 'still', 'empty'], 'vortex'))
+  const params = useRef({ palette, viscosity, dissipation, presetName, paused })
+  params.current = { palette, viscosity, dissipation, presetName, paused }
+  useEffect(() => { onShareState({ palette, viscosity, dissipation, preset: presetName }) }, [palette, viscosity, dissipation, presetName, onShareState])
 
   useEffect(() => {
     const canvas = canvasRef.current, ctx = canvas?.getContext('2d', { alpha: false })
@@ -220,7 +221,7 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
         simulation.current = next
         off.width = next.w; off.height = next.h
         previousAspect = aspect
-        if (!old) seedScene(next, 'crossing', params.current.palette)
+        if (!old) seedScene(next, params.current.presetName, params.current.palette)
       }
       drawRef.current()
     }
@@ -295,7 +296,7 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
       for (const channel of [...s.dye, ...s.dye0]) channel.fill(0)
     }
     pointer.current = null
-    setPresetName('still')
+    setPresetName('empty')
     drawRef.current()
   }
   const seed = (name: string) => {
@@ -312,7 +313,7 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
       <RangeControl label="Flow resistance · viscosity" value={viscosity} min={0} max={0.9} step={0.01} onChange={setViscosity} format={(value) => value < 0.1 ? 'silk' : value < 0.4 ? 'soft' : 'thick'} />
       <RangeControl label="Colour persistence" value={dissipation} min={0.94} max={0.999} step={0.001} onChange={setDissipation} format={(value) => (value * 100).toFixed(1) + '%'} />
       <button className="panel-action" onClick={clear}><span>Clear the water</span><i>↺</i></button>
-      <p className="control-note">Drag to inject momentum and pigment. Opposing strokes fold into vortices and mix as they travel.</p>
+      <p className="control-note">Drag to inject momentum and pigment. Opposing strokes fold into vortices and mix as they travel. Shared links restore the flow preset, pigment and physical settings; hand-drawn strokes start fresh.</p>
     </ControlPanel>
   </div>
 }

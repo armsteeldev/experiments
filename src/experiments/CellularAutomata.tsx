@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { patterns, placePattern, stepAutomaton, type AutomatonRule } from '../simulations/automata'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { boundedStateSeed, stateChoice } from '../lib/experimentState'
+import { AUTOMATA_CELL_COUNT, decodeAutomataCells, encodeAutomataCells } from '../lib/automataState'
 import './ExpandedExhibits.css'
 
 type PaintMode = 'paint' | 'erase' | 'pan'
@@ -37,24 +38,34 @@ const cellPattern = (key: string) => {
 export default function CellularAutomata({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const hint = useDiscoveryHint('automata')
   const initialRule = ruleOptions.some(([key]) => key === stateFromUrl?.rule) ? stateFromUrl?.rule as AutomatonRule : 'life'
-  const savedPattern = String(stateFromUrl?.pattern ?? '')
-  const initialPattern = patterns[savedPattern] || ['random','empty','custom'].includes(savedPattern) ? savedPattern : 'pulsarTrio'
+  const savedPattern = typeof stateFromUrl?.pattern === 'string' ? stateFromUrl.pattern : ''
+  const knownPattern = Object.prototype.hasOwnProperty.call(patterns, savedPattern) || ['random','empty','custom'].includes(savedPattern)
+  const requestedPattern = knownPattern ? savedPattern : 'pulsarTrio'
+  const importedCells = useMemo(() => decodeAutomataCells(stateFromUrl?.cells), [stateFromUrl?.cells])
+  const initialPattern = requestedPattern === 'custom' && !importedCells ? 'pulsarTrio' : requestedPattern
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [rule, setRule] = useState<AutomatonRule>(initialRule)
   const [pattern, setPattern] = useState(initialPattern)
   const [speed, setSpeed] = useState(() => Number.isInteger(Number(stateFromUrl?.speed)) && Number(stateFromUrl?.speed) >= 1 && Number(stateFromUrl?.speed) <= 18 ? Number(stateFromUrl?.speed) : 8)
   const [renderMode, setRenderMode] = useState<RenderMode>(() => stateChoice(stateFromUrl?.renderMode, ['age', 'mono', 'ember'], 'age'))
   const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 919))
+  const [customCells, setCustomCells] = useState<string | null>(() => initialPattern === 'custom' && importedCells ? encodeAutomataCells(importedCells) : null)
   const [mode, setMode] = useState<PaintMode>('paint')
   const [running, setRunning] = useState(true)
   const [generation, setGeneration] = useState(0)
   const [alive, setAlive] = useState(0)
   const [stepNote, setStepNote] = useState('Pause the world, then advance one generation to see what changed.')
-  const model = useRef({ width: 180, height: 112, cells: new Uint8Array(180 * 112), age: new Uint8Array(180 * 112), trail: new Uint8Array(180 * 112), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 3.5 : 3.4, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number } })
+  const model = useRef({ width: 180, height: 112, cells: new Uint8Array(AUTOMATA_CELL_COUNT), age: new Uint8Array(AUTOMATA_CELL_COUNT), trail: new Uint8Array(AUTOMATA_CELL_COUNT), generation: 0, zoom: window.matchMedia('(max-width: 720px)').matches ? 3.5 : 3.4, panX: 0, panY: 0, geometry: null as null | { width:number;height:number;cellSize:number;offsetX:number;offsetY:number }, pointer: null as null | { id: number; mode: PaintMode; x: number; y: number; last: number; changed: boolean } })
   const parameters = useRef({ paused, running, speed, rule, renderMode, mode }); parameters.current = { paused, running, speed, rule, renderMode, mode }
-  useEffect(() => { onShareState({ pattern, rule, speed, renderMode, seed }); }, [pattern, rule, speed, renderMode, seed, onShareState])
+  useEffect(() => { onShareState({ pattern, rule, speed, renderMode, seed, ...(pattern === 'custom' && customCells ? { cells: customCells } : {}) }); }, [pattern, rule, speed, renderMode, seed, customCells, onShareState])
   useEffect(() => {
     const m = model.current
+    if (initialPattern === 'custom' && importedCells) {
+      m.cells = importedCells.slice()
+      m.cells.forEach((cell, index) => { if (cell) m.age[index] = 1 })
+      setAlive(m.cells.reduce((sum, value) => sum + (value === 1 ? 1 : 0), 0))
+      return
+    }
     if (initialPattern === 'empty') { setAlive(0); return }
     if (initialPattern === 'random') { m.cells = seededField(m.cells.length, seed); m.cells.forEach((cell,index) => { if (cell) m.age[index]=1 }); setAlive(m.cells.reduce((sum,value)=>sum+(value===1?1:0),0)); return }
     const shape = cellPattern(initialPattern)
@@ -104,22 +115,23 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
     return x>=0&&x<m.width&&y>=0&&y<m.height?y*m.width+x:-1
   }
   const applyBrush = (index: number, mode: PaintMode) => {
-    if(index<0||mode==='pan')return
-    const m=model.current, previous=m.cells[index]===1, value=mode==='paint'
-    if(previous===value)return
+    if(index<0||mode==='pan')return false
+    const m=model.current, value=mode==='paint'
+    if(m.cells[index]===(value?1:0))return false
     if(value)m.age[index]=1
     m.cells[index]=value?1:0;m.trail[index]=0
     setAlive((count)=>count+(value?1:-1));setPattern('custom')
+    return true
   }
-  const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,index=gridAt(event);m.pointer={id:event.pointerId,mode,x:event.clientX,y:event.clientY,last:index};event.currentTarget.setPointerCapture(event.pointerId);if(mode!=='pan')applyBrush(index,mode)}
-  const pointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,p=m.pointer;if(!p||p.id!==event.pointerId)return;if(p.mode==='pan'){const dx=event.clientX-p.x,dy=event.clientY-p.y;m.panX+=dx;m.panY+=dy;if(m.geometry){m.geometry.offsetX+=dx;m.geometry.offsetY+=dy}p.x=event.clientX;p.y=event.clientY}else{const index=gridAt(event);if(index>=0&&index!==p.last){applyBrush(index,p.mode);p.last=index}}}
-  const pointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,p=m.pointer;if(!p||p.id!==event.pointerId)return;m.pointer=null}
+  const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,index=gridAt(event),pointer={id:event.pointerId,mode,x:event.clientX,y:event.clientY,last:index,changed:false};m.pointer=pointer;event.currentTarget.setPointerCapture(event.pointerId);if(mode!=='pan')pointer.changed=applyBrush(index,mode)}
+  const pointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,p=m.pointer;if(!p||p.id!==event.pointerId)return;if(p.mode==='pan'){const dx=event.clientX-p.x,dy=event.clientY-p.y;m.panX+=dx;m.panY+=dy;if(m.geometry){m.geometry.offsetX+=dx;m.geometry.offsetY+=dy}p.x=event.clientX;p.y=event.clientY}else{const index=gridAt(event);if(index>=0&&index!==p.last){p.changed=applyBrush(index,p.mode)||p.changed;p.last=index}}}
+  const pointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {const m=model.current,p=m.pointer;if(!p||p.id!==event.pointerId)return;if(p.changed)setCustomCells(encodeAutomataCells(m.cells));m.pointer=null}
   const wheel = (event: WheelEvent) => {event.preventDefault();const canvas=canvasRef.current;if(!canvas)return;const m=model.current,g=m.geometry;if(!g)return;const rect=canvas.getBoundingClientRect(),x=event.clientX-rect.left,y=event.clientY-rect.top,beforeX=(x-g.offsetX)/g.cellSize,beforeY=(y-g.offsetY)/g.cellSize;m.zoom=Math.max(.45,Math.min(5,m.zoom*Math.exp(-event.deltaY*.001)));g.cellSize=Math.min(g.width/m.width,g.height/m.height)*.82*m.zoom;g.offsetX=x-beforeX*g.cellSize;g.offsetY=y-beforeY*g.cellSize;m.panX=g.offsetX-(g.width-m.width*g.cellSize)/2;m.panY=g.offsetY-(g.height-m.height*g.cellSize)/2;}
   useEffect(()=>{const canvas=canvasRef.current;if(!canvas)return;canvas.addEventListener('wheel',wheel,{passive:false});return()=>canvas.removeEventListener('wheel',wheel)},[])
-  const loadPattern=(key:string)=>{const m=model.current; if(key==='empty'){m.cells.fill(0);m.age.fill(0);m.trail.fill(0);m.generation=0;setGeneration(0);setAlive(0);setPattern('empty');return} if(key==='random'){randomize();return} if(key==='custom')return;const shape=cellPattern(key);if(!shape)return;placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.age.fill(0);m.trail.fill(0);m.cells.forEach((value,index)=>{if(value)m.age[index]=1});m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setPattern(key)}
-  const randomize=()=>{const m=model.current,nextSeed=(seed*1664525+1013904223)>>>0;m.cells=seededField(m.cells.length,nextSeed);m.age=m.cells.map(value=>value?1:0);m.trail.fill(0);m.generation=0;setSeed(nextSeed);setGeneration(0);setAlive(m.cells.reduce((sum,value)=>sum+value,0));setPattern('random')}
+  const loadPattern=(key:string)=>{const m=model.current; if(key==='empty'){m.cells.fill(0);m.age.fill(0);m.trail.fill(0);m.generation=0;setGeneration(0);setAlive(0);setCustomCells(null);setPattern('empty');return} if(key==='random'){randomize();return} if(key==='custom')return;const shape=cellPattern(key);if(!shape)return;placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.age.fill(0);m.trail.fill(0);m.cells.forEach((value,index)=>{if(value)m.age[index]=1});m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setCustomCells(null);setPattern(key)}
+  const randomize=()=>{const m=model.current,nextSeed=(seed*1664525+1013904223)>>>0;m.cells=seededField(m.cells.length,nextSeed);m.age=m.cells.map(value=>value?1:0);m.trail.fill(0);m.generation=0;setSeed(nextSeed);setGeneration(0);setAlive(m.cells.reduce((sum,value)=>sum+value,0));setCustomCells(null);setPattern('random')}
   const step=()=>{const m=model.current,previous=m.cells,next=stepAutomaton(previous,m.width,m.height,rule);let born=0,died=0;for(let i=0;i<next.length;i++){const old=previous[i],value=next[i];if(value===1&&old===0)born++;if(old===1&&value===0)died++;m.age[i]=value===1?(old===1?Math.min(255,m.age[i]+1):1):0;m.trail[i]=old===1&&value===0?28:Math.max(0,m.trail[i]-1)}m.cells=next;m.generation++;setGeneration(m.generation);setAlive(m.cells.reduce((sum,value)=>sum+(value===1?1:0),0));setStepNote(`Generation ${m.generation}: ${born} cells lit up and ${died} went dark.`);setRunning(false);hint.dismiss()}
-  const loadCentreGlider=()=>{const m=model.current,shape=cellPattern('glider');if(!shape)return;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setPattern('glider');setRunning(true);setStepNote('A glider begins as five cells. Follow it as the same neighbour rule moves it across the board.');hint.dismiss()}
+  const loadCentreGlider=()=>{const m=model.current,shape=cellPattern('glider');if(!shape)return;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);placePattern(m.cells,m.width,m.height,shape.pattern,Math.floor((m.width-shape.width)/2)-shape.minX,Math.floor((m.height-shape.height)/2)-shape.minY,true);m.generation=0;setGeneration(0);setAlive(shape.pattern.cells.length);setCustomCells(null);setPattern('glider');setRunning(true);setStepNote('A glider begins as five cells. Follow it as the same neighbour rule moves it across the board.');hint.dismiss()}
 
   return <section className="experiment-surface automata-surface" aria-label="Cellular automata playground">
     <canvas ref={canvasRef} className={'experiment-canvas automata-canvas tool-'+mode} aria-label="Cell grid. Paint living cells, then step the rule to see which survive and which neighbors are born." aria-describedby={hint.visible ? 'automata-first-move' : undefined} onPointerDown={(event)=>{hint.dismiss();pointerDown(event)}} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
@@ -134,8 +146,8 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
       <RangeControl label="Generation rate" value={speed} min={1} max={18} step={1} format={(value)=>`${value} gen/s`} onChange={setSpeed} />
       <SelectControl label="Rendering" value={renderMode} options={[["age","Age spectrum"],["mono","Porcelain"],["ember","Ember" ]]} onChange={(value)=>setRenderMode(value as RenderMode)} />
       <p className="control-note">B means a dark cell is born; S means a lit cell survives. For example, B3/S23 means “born with 3 neighbours; survive with 2 or 3.” A step checks this rule for every cell at once.</p>
-      <ActionRow><button className="small-action" onClick={step}>Step once</button><button className="small-action" onClick={()=>setRunning(value=>!value)}>{running?'Pause':'Resume'}</button><button className="small-action" onClick={randomize}>Randomize</button><button className="small-action" onClick={()=>{const m=model.current;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);m.generation=0;setGeneration(0);setAlive(0);setPattern('empty')}}>Clear cells</button></ActionRow>
-      <p className="control-note">Life and HighLife use B/S birth and survival counts. Seeds uses B2/S. Brian’s Brain cycles firing → refractory → ready; all rules wrap at the edge.</p>
+      <ActionRow><button className="small-action" onClick={step}>Step once</button><button className="small-action" onClick={()=>setRunning(value=>!value)}>{running?'Pause':'Resume'}</button><button className="small-action" onClick={randomize}>Randomize</button><button className="small-action" onClick={()=>{const m=model.current;m.cells.fill(0);m.age.fill(0);m.trail.fill(0);m.generation=0;setGeneration(0);setAlive(0);setCustomCells(null);setPattern('empty')}}>Clear cells</button></ActionRow>
+      <p className="control-note">Life and HighLife use B/S birth and survival counts. Seeds uses B2/S. Brian’s Brain cycles firing → refractory → ready; all rules wrap at the edge. Your drawing is saved as a new starting board; age, trails and generations restart.</p>
     </ControlPanel>
   </section>
 }

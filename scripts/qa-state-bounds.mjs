@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import ts from 'typescript'
 
 const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9362)
 const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5217'
@@ -65,6 +66,15 @@ await call('Log.enable')
 await call('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false, screenWidth: 1440, screenHeight: 900 })
 await call('Page.addScriptToEvaluateOnNewDocument', { source: `Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async (text) => { window.__armsteelCopied = text } } })` })
 
+const automataCodecSource = await readFile(new URL('../src/lib/automataState.ts', import.meta.url), 'utf8')
+const automataCodecModule = ts.transpileModule(automataCodecSource, {
+  compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
+}).outputText
+const automataCodec = await import(`data:text/javascript;base64,${Buffer.from(automataCodecModule).toString('base64')}`)
+const customBlock = new Uint8Array(automataCodec.AUTOMATA_CELL_COUNT)
+for (const index of [10 * automataCodec.AUTOMATA_WIDTH + 10, 10 * automataCodec.AUTOMATA_WIDTH + 11, 11 * automataCodec.AUTOMATA_WIDTH + 10, 11 * automataCodec.AUTOMATA_WIDTH + 11]) customBlock[index] = 1
+const customBlockState = automataCodec.encodeAutomataCells(customBlock)
+assert.ok(customBlockState?.startsWith('s:'), 'The test fixture uses the application sparse board format')
 const cases = [
   {
     id: 'mandelbrot',
@@ -75,6 +85,18 @@ const cases = [
     id: 'automata',
     state: { pattern: 'unknown', rule: 'unknown', speed: 1e100, renderMode: 'unknown', seed: 1e100 },
     expected: { pattern: 'pulsarTrio', rule: 'life', speed: 8, renderMode: 'age', seed: 0xffff_ffff },
+  },
+  {
+    id: 'automata',
+    state: { pattern: 'custom', cells: customBlockState, rule: 'life', speed: 1, renderMode: 'mono', seed: 919 },
+    expected: { pattern: 'custom', cells: customBlockState, rule: 'life', speed: 1, renderMode: 'mono', seed: 919 },
+    automataGrid: true,
+  },
+  {
+    id: 'automata',
+    state: { pattern: 'custom', cells: 'b1:AAAA', rule: 'life', speed: 1, renderMode: 'mono', seed: 919 },
+    expected: { pattern: 'pulsarTrio', rule: 'life', speed: 1, renderMode: 'mono', seed: 919 },
+    invalidAutomataGrid: true,
   },
   {
     id: 'lsystem',
@@ -153,6 +175,12 @@ for (const test of cases) {
   await waitFor(`location.pathname === ${JSON.stringify(`/exhibits/${test.id}`)} && Boolean(document.querySelector('.dock-current span')) && !document.querySelector('.experience-loading')`, `${test.id} restored and mounted under extreme settings`)
   assert.equal(await evaluate(`Boolean(document.querySelector('.experience-error'))`), false, `${test.id} remains usable with bounded settings`)
   let machineOutputAfterFourInstructions = null
+  let restoredAutomataPopulation = null
+  if (test.automataGrid) {
+    await waitFor(`document.querySelectorAll('.automata-stats > div strong')[1]?.textContent === '0004'`, 'four-cell custom board restoration')
+    restoredAutomataPopulation = await evaluate(`document.querySelectorAll('.automata-stats > div strong')[1]?.textContent`)
+    assert.equal(restoredAutomataPopulation, '0004', 'The restored bit-packed board loads four live cells into the automaton')
+  }
   if (test.machineRun) {
     for (let step = 1; step <= 4; step++) {
       await click('.machine-step-button')
@@ -164,9 +192,11 @@ for (const test of cases) {
   await click('button[aria-label="Toggle experiment information"]')
   await waitFor(`Boolean(document.querySelector('.info-actions button:last-child'))`, `${test.id} share action`)
   if (test.id === 'machine') assert.ok((await evaluate(`document.querySelector('#saved-experiment-note')?.textContent`)).includes('avoid private comments'), 'The About panel warns that custom assembly is shared as public URL text')
+  if (test.automataGrid) assert.ok((await evaluate(`document.querySelector('#saved-experiment-note')?.textContent`)).includes('restarts at generation zero'), 'The About panel discloses that the shared grid restarts without its generation history')
   await click('.info-actions button:last-child')
   await waitFor(`typeof window.__armsteelCopied === 'string' && window.__armsteelCopied.length > 0`, `${test.id} sanitized share link`)
   const copied = await evaluate('window.__armsteelCopied')
+  if (test.automataGrid) assert.ok(copied.length < 10_000, 'A custom cellular board stays within a reasonable share-link length')
   const state = JSON.parse(Buffer.from(new URL(copied).searchParams.get('state'), 'base64url').toString('utf8')).state
   for (const [key, expected] of Object.entries(test.expected)) {
     assert.deepEqual(state[key], expected, `${test.id}.${key} is sanitized and shareable`)
@@ -177,14 +207,48 @@ for (const test of cases) {
   }
   if (test.id === 'sound' && test.harmonicRestore === 'custom') assert.deepEqual(state.harmonics, test.state.harmonics, 'valid custom Fourier partials restore exactly')
   if (test.id === 'sound') assert.equal(await evaluate(`document.querySelector('.iw-sound-actions span')?.textContent.trim()`), 'AUDIO OFF', 'Restored audio settings remain silent until explicitly started')
-  results.push({ id: test.id, checkedSettings: Object.keys(test.expected), boundedStateRemounted: true, ...(test.machineRun ? { machineOutputAfterFourInstructions, publicProgramDisclosure: true } : {}) })
+  results.push({ id: test.id, checkedSettings: Object.keys(test.expected), boundedStateRemounted: true, ...(test.machineRun ? { machineOutputAfterFourInstructions, publicProgramDisclosure: true } : {}), ...(test.automataGrid ? { restoredAutomataPopulation, compactShareLink: true } : {}), ...(test.invalidAutomataGrid ? { invalidCustomGridFallsBack: true } : {}) })
 }
+
+await call('Page.navigate', { url: `${base}/exhibits/automata` })
+await waitFor(`location.pathname === '/exhibits/automata' && document.querySelector('.automata-canvas') && !document.querySelector('.experience-loading')`, 'automaton ready for a drawn-board share')
+await click('.automata-stats > button:first-of-type')
+await click('button[aria-label="Toggle experiment controls"]')
+await waitFor(`document.querySelectorAll('#experiment-controls select').length === 3`, 'automaton pattern selector')
+assert.equal(await evaluate(`(() => { const select = document.querySelectorAll('#experiment-controls select')[1]; select.value = 'empty'; select.dispatchEvent(new Event('change', { bubbles: true })); return select.value })()`), 'empty', 'A clean board is selected for the actual drawing round-trip')
+await waitFor(`document.querySelectorAll('.automata-stats > div strong')[1]?.textContent === '0000'`, 'empty automaton board')
+await click('button[aria-label="Toggle experiment controls"]')
+await sleep(250)
+const automataCellPoints = await evaluate(`(() => { const canvas = document.querySelector('.automata-canvas'), r = canvas.getBoundingClientRect(), size = Math.min(r.width / 180, r.height / 112) * .82 * 3.4, ox = (r.width - 180 * size) / 2, oy = (r.height - 112 * size) / 2; return [[90, 56], [91, 56], [90, 57], [91, 57]].map(([cx, cy]) => ({ x: r.left + ox + (cx + .5) * size, y: r.top + oy + (cy + .5) * size, canvasIsInteractive: document.elementFromPoint(r.left + ox + (cx + .5) * size, r.top + oy + (cy + .5) * size) === canvas })) })()`)
+assert.ok(automataCellPoints.every((point) => point.canvasIsInteractive), 'All four still-life cells are reachable on the uncovered canvas')
+for (const point of automataCellPoints) {
+  await call('Input.dispatchMouseEvent', { type: 'mousePressed', x: point.x, y: point.y, button: 'left', clickCount: 1 })
+  await call('Input.dispatchMouseEvent', { type: 'mouseReleased', x: point.x, y: point.y, button: 'left', clickCount: 1 })
+}
+await waitFor(`document.querySelectorAll('.automata-stats > div strong')[1]?.textContent === '0004'`, 'four painted cells')
+const previousCopied = await evaluate('window.__armsteelCopied || ""')
+await click('button[aria-label="Toggle experiment information"]')
+await waitFor(`document.querySelector('#saved-experiment-note')?.textContent.includes('restarts at generation zero')`, 'automaton replay disclosure')
+await click('.info-actions button:last-child')
+await waitFor(`typeof window.__armsteelCopied === 'string' && window.__armsteelCopied !== ${JSON.stringify(previousCopied)}`, 'newly copied custom board link')
+const drawnLink = await evaluate('window.__armsteelCopied')
+const drawnState = JSON.parse(Buffer.from(new URL(drawnLink).searchParams.get('state'), 'base64url').toString('utf8')).state
+assert.equal(drawnState.pattern, 'custom', 'The drawn board is marked as a custom starting pattern')
+assert.ok(drawnState.cells.startsWith('s:'), 'A painted Life board uses the compact sparse format')
+assert.ok(drawnLink.length < 10_000, 'A painted board produces a reasonably sized share link')
+const decodedDrawnCells = automataCodec.decodeAutomataCells(drawnState.cells)
+assert.ok(decodedDrawnCells, 'The shared drawing payload decodes as a valid board')
+const drawnPopulation = [...decodedDrawnCells].reduce((sum, cell) => sum + (cell === 1 ? 1 : 0), 0)
+assert.equal(drawnPopulation, 4, 'The four actual painted cells are present in the shared board')
+await call('Page.navigate', { url: drawnLink })
+await waitFor(`location.pathname === '/exhibits/automata' && document.querySelectorAll('.automata-stats > div strong')[1]?.textContent === '0004' && !document.querySelector('.experience-loading')`, 'painted automaton block after shared-link reload')
+results.push({ id: 'automata', action: 'paint a still life, share, reload', paintedCells: drawnPopulation, compactShareLink: true, replayDisclosure: true })
 
 assert.deepEqual(errors, [], `Browser errors occurred: ${errors.join('; ')}`)
 const browser = await evaluate(`(() => { const gl = document.createElement('canvas').getContext('webgl2'); const debug = gl?.getExtension('WEBGL_debug_renderer_info'); return { userAgent: navigator.userAgent, devicePixelRatio, viewport: [innerWidth, innerHeight], renderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl?.getParameter(gl.RENDERER) ?? 'unavailable' } })()`)
 const summary = {
   browser,
-  method: 'Fifteen state cases across thirteen exhibit routes check bounded URL recovery and actual shared output. A restored custom CPU program executes four instructions and produces 12; an oversized program falls back safely.',
+  method: 'Seventeen restored-state cases across thirteen exhibit routes check bounded URL recovery and actual shared output. A restored custom CPU program executes four instructions and produces 12; a compact four-cell automaton board loads four live cells; a real 2×2 still life is painted, shared and restored with all cells intact; malformed custom grids and oversized CPU programs fall back safely.',
   cases: results,
   errors,
 }

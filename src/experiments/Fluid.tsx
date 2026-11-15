@@ -176,6 +176,7 @@ function splat(bundle: Bundle, kind: 'velocity' | 'dye', x: number, y: number, r
 
 function seed(bundle: Bundle, name: string, color: [number, number, number]) {
   clearFields(bundle)
+  if (name === 'empty') return
   const radius = name === 'still' ? 0.052 : name === 'vortex' ? 0.09 : 0.062
   const source = (x: number, y: number, dx: number, dy: number, tint: [number, number, number], size = radius, pigmentLoad = 1.55) => {
     splat(bundle, 'velocity', x, y, size, [dx, dy], tint, 1)
@@ -303,7 +304,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
   const [brushSize, setBrushSize] = useState(() => boundedStateNumber(props.stateFromUrl?.brushSize, 42, 12, 110))
   const [vorticity, setVorticity] = useState(() => boundedStateNumber(props.stateFromUrl?.vorticity, 16, 0, 32))
   const [ambient, setAmbient] = useState(() => props.stateFromUrl?.ambient !== false)
-  const [presetName, setPresetName] = useState<string>(() => stateChoice(props.stateFromUrl?.preset, ['crossing', 'vortex', 'still'], 'vortex'))
+  const [presetName, setPresetName] = useState<string>(() => stateChoice(props.stateFromUrl?.preset, ['crossing', 'vortex', 'still', 'empty'], 'vortex'))
   const [velocityGrid, setVelocityGrid] = useState([0, 0])
   const hint = useDiscoveryHint('fluid')
   const presetNameRef = useRef(presetName)
@@ -358,7 +359,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
     }
     applyPausedStrokeRef.current = (trace) => { applyStroke(trace); render() }
     seedRef.current = (name) => { seed(bundle, name, pigments[params.current.palette].dye); render() }
-    clearRef.current = () => { clearFields(bundle); pointer.current = null; render() }
+    clearRef.current = () => { clearFields(bundle); pointer.current = null; setPresetName('empty'); render() }
     const observer = new ResizeObserver(resize)
     observer.observe(canvas)
     resize()

@@ -55,7 +55,7 @@ const updateShader = [
 ].join('\n')
 const initShader = [
   '#version 300 es', 'precision highp float;', 'in vec2 vUv;', 'out vec2 outState;',
-  'uniform int uPreset;', 'uniform float uSeed;', 'uniform float uAspect;',
+  'uniform int uPreset;', 'uniform int uScatter;', 'uniform float uSeed;', 'uniform float uAspect;',
   'float hash(vec2 p){p=fract(p*vec2(123.34,456.21)+uSeed);p+=dot(p,p+45.32);return fract(p.x*p.y);}',
   'float cellHash(vec2 p,vec2 period){p=mod(mod(p,period)+period,period);return hash(p);}',
   'float valueNoise(vec2 uv,vec2 scale){vec2 p=uv*scale;vec2 i=floor(p);vec2 f=fract(p);f=f*f*(3.0-2.0*f);float a=cellHash(i,scale);float b=cellHash(i+vec2(1,0),scale);float c=cellHash(i+vec2(0,1),scale);float d=cellHash(i+vec2(1,1),scale);return mix(mix(a,b,f.x),mix(c,d,f.x),f.y);}',
@@ -71,11 +71,12 @@ const initShader = [
   '  vec2 organicScale=vec2(cellsX*1.45,23.0);',
   '  float organic=valueNoise(vUv,organicScale)*0.24+valueNoise(vUv,organicScale*2.0)*0.36+valueNoise(vUv,organicScale*4.0)*0.40;',
   '  float b=0.0;',
-  '  if(uPreset==0)b=spot*step(0.36,h);',
-  '  if(uPreset==1)b=smoothstep(0.54,0.68,organic)*0.96;',
-  '  if(uPreset==2){float ridge=abs(organic-0.51);b=(1.0-smoothstep(0.035,0.095,ridge))*0.94;}',
-  '  if(uPreset==3){float d=length((vUv-0.5)*vec2(uAspect,1.0));b=(1.0-smoothstep(0.035,0.055,d))*0.95+spot*step(0.84,h)*0.48;}',
-  '  if(uPreset==4){float ring=abs(length((vUv-0.5)*vec2(uAspect,1.0))-0.23);b=max(spot*step(0.7,h),1.0-smoothstep(0.012,0.028,ring));}',
+  '  if(uScatter==1)b=spot*step(0.62,h);',
+  '  else if(uPreset==0)b=spot*step(0.36,h);',
+  '  else if(uPreset==1)b=smoothstep(0.54,0.68,organic)*0.96;',
+  '  else if(uPreset==2){float ridge=abs(organic-0.51);b=(1.0-smoothstep(0.035,0.095,ridge))*0.94;}',
+  '  else if(uPreset==3){float d=length((vUv-0.5)*vec2(uAspect,1.0));b=(1.0-smoothstep(0.035,0.055,d))*0.95+spot*step(0.84,h)*0.48;}',
+  '  else if(uPreset==4){float ring=abs(length((vUv-0.5)*vec2(uAspect,1.0))-0.23);b=max(spot*step(0.7,h),1.0-smoothstep(0.012,0.028,ring));}',
   '  b=clamp(b,0.0,0.98);',
   '  outState=vec2(1.0-b*0.96,b);',
   '}',
@@ -166,7 +167,7 @@ function pass(bundle: Bundle, p: Program, destination: Target | null, source: We
     const loc = location(p, gl, name)
     if (Array.isArray(value)) {
       if (value.length === 2) gl.uniform2f(loc, value[0], value[1])
-    } else if (name === 'uPreset' || name === 'uPalette' || name === 'uErase') gl.uniform1i(loc, value)
+    } else if (name === 'uPreset' || name === 'uScatter' || name === 'uPalette' || name === 'uErase') gl.uniform1i(loc, value)
     else gl.uniform1f(loc, value)
   }
   gl.drawArrays(gl.TRIANGLES, 0, 3)
@@ -174,8 +175,8 @@ function pass(bundle: Bundle, p: Program, destination: Target | null, source: We
 function current(bundle: Bundle) { return bundle.fields[bundle.index] }
 function next(bundle: Bundle) { return bundle.fields[1 - bundle.index] }
 function swap(bundle: Bundle) { bundle.index = 1 - bundle.index }
-function initialize(bundle: Bundle, preset: Preset, seed: number, aspect: number) {
-  pass(bundle, bundle.initialize, bundle.fields[0], null, { uPreset: preset.code, uSeed: seed, uAspect: aspect })
+function initialize(bundle: Bundle, preset: Preset, seed: number, aspect: number, scatter = false) {
+  pass(bundle, bundle.initialize, bundle.fields[0], null, { uPreset: preset.code, uScatter: scatter ? 1 : 0, uSeed: seed, uAspect: aspect })
   pass(bundle, bundle.update, bundle.fields[1], bundle.fields[0].texture, {
     uTexel: [1 / bundle.fields[0].width, 1 / bundle.fields[0].height],
     uFeed: 0, uKill: 0, uDiffA: 0, uDiffB: 0, uDt: 0,
@@ -249,14 +250,15 @@ function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) 
   const [brushSize, setBrushSize] = useState(() => boundedStateNumber(props.stateFromUrl?.brushSize, 28, 8, 72))
   const [quality, setQuality] = useState<string>(() => stateChoice(props.stateFromUrl?.quality, ['detail', 'balanced'], 'detail'))
   const [seed, setSeed] = useState(() => boundedStateSeed(props.stateFromUrl?.seed, 42))
+  const [scatter, setScatter] = useState(() => props.stateFromUrl?.scatter === true)
   const bundleRef = useRef<Bundle | null>(null)
-  const resetRef = useRef<(kind: string, seedValue: number) => void>(() => {})
+  const resetRef = useRef<(kind: string, seedValue: number, scatterValue?: boolean) => void>(() => {})
   const resizeRef = useRef<() => void>(() => {})
   const paintRef = useRef<(x: number, y: number, erase: boolean) => void>(() => {})
-  const params = useRef({ presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, paused: props.paused })
-  params.current = { presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, paused: props.paused }
+  const params = useRef({ presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, scatter, paused: props.paused })
+  params.current = { presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, scatter, paused: props.paused }
 
-  useEffect(() => { props.onShareState({ preset: presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed }) }, [presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, props.onShareState])
+  useEffect(() => { props.onShareState({ preset: presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, scatter }) }, [presetName, feed, kill, diffusion, steps, palette, brush, brushSize, quality, seed, scatter, props.onShareState])
   const failed = useCallback(() => props.onUnsupported(), [props.onUnsupported])
   useEffect(() => {
     const canvas = canvasRef.current
@@ -272,9 +274,9 @@ function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) 
         uTime: time / 1000,
       })
     }
-    const reset = (kind: string, seedValue: number) => {
+    const reset = (kind: string, seedValue: number, scatterValue = params.current.scatter) => {
       const preset = presets[kind] || presets.spots
-      initialize(bundle, preset, seedValue, bundle.width / bundle.height)
+      initialize(bundle, preset, seedValue, bundle.width / bundle.height, scatterValue)
       clock = 0
       render(0)
     }
@@ -287,7 +289,7 @@ function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) 
     const resize = () => {
       try {
         if (resizeBundle(bundle, canvas, params.current.quality)) {
-          initialize(bundle, presets[params.current.presetName] || presets.spots, params.current.seed, bundle.width / bundle.height)
+          initialize(bundle, presets[params.current.presetName] || presets.spots, params.current.seed, bundle.width / bundle.height, params.current.scatter)
           render(0)
         }
       } catch { failed() }
@@ -319,16 +321,17 @@ function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) 
 
   useEffect(() => {
     if (bundleRef.current?.width && bundleRef.current.width > 1) resetRef.current(presetName, seed)
-  }, [presetName, seed])
+  }, [presetName, seed, scatter])
   useEffect(() => { resizeRef.current() }, [quality])
 
   const choosePreset = (name: string) => {
     const preset = presets[name]
     if (!preset) return
     setPresetName(name)
+    setScatter(false)
     setFeed(preset.feed)
     setKill(preset.kill)
-    resetRef.current(name, seed)
+    resetRef.current(name, seed, false)
   }
   const paint = (event: PointerEvent<HTMLCanvasElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -352,8 +355,8 @@ function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) 
       <SelectControl label="Simulation detail" value={quality} options={[['detail', 'High detail'], ['balanced', 'Balanced']]} onChange={setQuality} />
       <Segmented label="Brush" value={brush} options={[['seed', 'Seed'], ['erase', 'Erase']]} onChange={setBrush} />
       <RangeControl label="Brush radius" value={brushSize} min={8} max={72} step={2} onChange={setBrushSize} format={(value) => value + ' px'} />
-      <button className="panel-action" onClick={() => setSeed((value) => (value * 1664525 + 1013904223) >>> 0)}><span>Begin a new pattern</span><i>↻</i></button>
-      <p className="control-note">A 32-bit Gray–Scott field evolves at high resolution. Paint localized chemical disturbances into the periodic surface.</p>
+      <button className="panel-action" onClick={() => { setScatter(true); setSeed((value) => (value * 1664525 + 1013904223) >>> 0) }}><span>Begin a new pattern</span><i>↻</i></button>
+      <p className="control-note">A 32-bit Gray–Scott field evolves at high resolution. Paint localized chemical disturbances into the periodic surface. Shared settings recreate the selected starting field; painted marks and later chemistry are not included.</p>
     </ControlPanel>
   </div>
 }
