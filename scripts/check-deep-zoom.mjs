@@ -13,6 +13,8 @@ const {
   fixedToBinary,
   fixedToNumber,
   formatFixed,
+  MAX_MAGNIFICATION,
+  MIN_MAGNIFICATION,
   magnification,
   magnificationLog10,
   multiplyMagnification,
@@ -46,11 +48,20 @@ for (const zoomText of ['1e20', '1e30', '1e50', '1e100', '1e250', '1e500']) {
   const cursorWorldAfter = liftedCenter + coordinateOffset(173.25, 1000, nextZoom, nextDigits)
   const nextCenter = oldCursorWorld - coordinateOffset(173.25, 1000, nextZoom, nextDigits)
   assert.equal(nextCenter + coordinateOffset(173.25, 1000, nextZoom, nextDigits), oldCursorWorld, 'pointer-centered zoom preserves the selected world point')
-  assert.notEqual(cursorWorldAfter, oldCursorWorld, 'zoom changes screen-space sampling while retaining the center coordinate')
+  if (Number(zoomText.slice(2)) === MAX_MAGNIFICATION.exponent) {
+    assert.deepEqual(nextZoom, MAX_MAGNIFICATION, 'interactive zoom stays at the supported maximum')
+    assert.equal(cursorWorldAfter, oldCursorWorld, 'zoom at the maximum does not change screen-space sampling')
+  } else assert.notEqual(cursorWorldAfter, oldCursorWorld, 'zoom changes screen-space sampling while retaining the center coordinate')
 }
 
 const deepest = magnification('1e500')
 const deepestDigits = precisionDigits(deepest)
+assert.deepEqual(magnification('1e501'), { mantissa: 1, exponent: 0 }, 'shared zooms beyond the supported precision budget recover to overview')
+assert.deepEqual(magnification({ mantissa: 1, exponent: 1_000_000 }), { mantissa: 1, exponent: 0 }, 'oversized object zooms recover without allocating huge fixed-point coordinates')
+assert.deepEqual(magnification('1e-20'), MIN_MAGNIFICATION, 'imported zooms below the navigable range clamp to the minimum view')
+assert.equal(precisionDigits(MAX_MAGNIFICATION), 548, 'the supported maximum keeps fixed-point precision bounded')
+assert.throws(() => precisionDigits({ mantissa: 1, exponent: 1_000_000 }), /coordinate budget/, 'direct oversized precision requests fail before allocating BigInts')
+assert.deepEqual(multiplyMagnification(deepest, 10), MAX_MAGNIFICATION, 'interactive zoom stops at the validated maximum')
 const negativeOffset = coordinateOffset(-1, 1000, deepest, deepestDigits)
 assert.ok(negativeOffset < 0n)
 assert.equal(coordinateOffset(1, 1000, deepest, deepestDigits), -negativeOffset)

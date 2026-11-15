@@ -2,16 +2,21 @@ export type Magnification = { mantissa: number; exponent: number }
 
 export const MIN_MAGNIFICATION: Magnification = { mantissa: 7.2, exponent: -1 }
 export const OVERVIEW_MAGNIFICATION: Magnification = { mantissa: 1, exponent: 0 }
+export const MAX_MAGNIFICATION: Magnification = { mantissa: 1, exponent: 500 }
+const MIN_LOG_MAGNIFICATION = Math.log10(MIN_MAGNIFICATION.mantissa) + MIN_MAGNIFICATION.exponent
+const MAX_LOG_MAGNIFICATION = MAX_MAGNIFICATION.exponent
+const MAX_COORDINATE_DIGITS = MAX_MAGNIFICATION.exponent + 48
 
 /** Parse both legacy numeric zooms and the scientific zoom format used by the viewer. */
 export function magnification(value: unknown): Magnification {
   if (value && typeof value === 'object') {
     const candidate = value as Partial<Magnification>
     if (Number.isFinite(candidate.mantissa) && Number.isSafeInteger(candidate.exponent) && (candidate.mantissa as number) > 0) {
-      return normalizeMagnification(candidate.mantissa as number, candidate.exponent as number)
+      return importedMagnification(normalizeMagnification(candidate.mantissa as number, candidate.exponent as number))
     }
   }
   const text = String(value ?? '1').trim().toLowerCase()
+  if (text.length > 64) return OVERVIEW_MAGNIFICATION
   const match = /^(\+?\d*\.?\d+)(?:e([+-]?\d+))?$/.exec(text)
   if (!match) return OVERVIEW_MAGNIFICATION
   const number = Number(match[1])
@@ -19,18 +24,34 @@ export function magnification(value: unknown): Magnification {
   if (!(number > 0) || !Number.isFinite(number) || !Number.isSafeInteger(exponent)) return OVERVIEW_MAGNIFICATION
   const decimalExponent = Math.floor(Math.log10(number)) + exponent
   const mantissa = number / Math.pow(10, Math.floor(Math.log10(number)))
-  return normalizeMagnification(mantissa, decimalExponent)
+  return importedMagnification(normalizeMagnification(mantissa, decimalExponent))
 }
 
 export function normalizeMagnification(mantissa: number, exponent: number): Magnification {
   if (!(mantissa > 0) || !Number.isFinite(mantissa) || !Number.isSafeInteger(exponent)) return OVERVIEW_MAGNIFICATION
   const adjustment = Math.floor(Math.log10(mantissa))
-  return { mantissa: mantissa / Math.pow(10, adjustment), exponent: exponent + adjustment }
+  const normalizedExponent = exponent + adjustment
+  if (!Number.isSafeInteger(normalizedExponent)) return OVERVIEW_MAGNIFICATION
+  return { mantissa: mantissa / Math.pow(10, adjustment), exponent: normalizedExponent }
+}
+
+function importedMagnification(value: Magnification): Magnification {
+  const log10 = magnificationLog10(value)
+  if (!Number.isFinite(log10) || log10 > MAX_LOG_MAGNIFICATION) return OVERVIEW_MAGNIFICATION
+  if (log10 < MIN_LOG_MAGNIFICATION) return MIN_MAGNIFICATION
+  return value
+}
+
+function boundedInteractiveMagnification(value: Magnification): Magnification {
+  const log10 = magnificationLog10(value)
+  if (!Number.isFinite(log10) || log10 > MAX_LOG_MAGNIFICATION) return MAX_MAGNIFICATION
+  if (log10 < MIN_LOG_MAGNIFICATION) return MIN_MAGNIFICATION
+  return value
 }
 
 export function multiplyMagnification(value: Magnification, factor: number): Magnification {
   if (!(factor > 0) || !Number.isFinite(factor)) return value
-  return normalizeMagnification(value.mantissa * factor, value.exponent)
+  return boundedInteractiveMagnification(normalizeMagnification(value.mantissa * factor, value.exponent))
 }
 
 export function magnificationLog10(value: Magnification) {
@@ -38,8 +59,11 @@ export function magnificationLog10(value: Magnification) {
 }
 
 export function magnificationFromLog10(log10: number): Magnification {
+  if (!Number.isFinite(log10)) return OVERVIEW_MAGNIFICATION
+  if (log10 > MAX_LOG_MAGNIFICATION) return MAX_MAGNIFICATION
+  if (log10 < MIN_LOG_MAGNIFICATION) return MIN_MAGNIFICATION
   const exponent = Math.floor(log10)
-  return normalizeMagnification(Math.pow(10, log10 - exponent), exponent)
+  return boundedInteractiveMagnification(normalizeMagnification(Math.pow(10, log10 - exponent), exponent))
 }
 
 export function magnificationAsNumber(value: Magnification) {
@@ -61,9 +85,9 @@ export function formatMagnification(value: Magnification) {
 }
 
 export function precisionDigits(zoom: Magnification | number | string) {
-  const parsed = typeof zoom === 'object' ? zoom : magnification(zoom)
+  const parsed = typeof zoom === 'object' ? normalizeMagnification(zoom.mantissa, zoom.exponent) : magnification(zoom)
   const digits = Math.ceil(magnificationLog10(parsed)) + 48
-  if (!Number.isSafeInteger(digits) || digits < 1) throw new RangeError('Magnification exceeds the browser numeric coordinate budget.')
+  if (!Number.isSafeInteger(digits) || digits < 1 || digits > MAX_COORDINATE_DIGITS) throw new RangeError('Magnification exceeds the browser numeric coordinate budget.')
   return digits
 }
 

@@ -1,0 +1,509 @@
+{
+  "browser": {
+    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "viewport": [
+      1440,
+      900
+    ],
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "method": "Traverse the full ordered exhibit list twice through the real SPA next control. Instrument Worker and AudioContext creation and termination in the browser document, check each owner after unmount, start sound only through a trusted browser click, and sample JS heap after V8 collection at three checkpoints. Heap values are estimates and do not establish device-wide memory or long-run boundedness.",
+  "exhibits": 19,
+  "routeEntries": 38,
+  "transitions": 38,
+  "workers": {
+    "totalCreated": 6,
+    "totalTerminated": 6,
+    "exhibitCreated": 6,
+    "exhibitTerminated": 6
+  },
+  "activeGalleryWorkers": [],
+  "audioContextsCreated": 2,
+  "audioContextsClosed": 2,
+  "routeSamples": [
+    {
+      "id": "mandelbrot",
+      "cycle": 1,
+      "workers": 2,
+      "audioStates": []
+    },
+    {
+      "id": "fluid",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "boids",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "attractors",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "reaction",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "lsystem",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "gravity",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "machine",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "neural",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "logic",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "forces",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "automata",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "adder",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "waves",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "optics",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "sound",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "garden",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "network",
+      "cycle": 1,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "lensing",
+      "cycle": 1,
+      "workers": 1,
+      "audioStates": []
+    },
+    {
+      "id": "mandelbrot",
+      "cycle": 2,
+      "workers": 2,
+      "audioStates": []
+    },
+    {
+      "id": "fluid",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "boids",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "attractors",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "reaction",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "lsystem",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "gravity",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "machine",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "neural",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "logic",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "forces",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "automata",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "adder",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "waves",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "optics",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "sound",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": [
+        "closed"
+      ]
+    },
+    {
+      "id": "garden",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "network",
+      "cycle": 2,
+      "workers": 0,
+      "audioStates": []
+    },
+    {
+      "id": "lensing",
+      "cycle": 2,
+      "workers": 1,
+      "audioStates": []
+    }
+  ],
+  "heapSamples": [
+    {
+      "route": "/exhibits/logic",
+      "usedBytes": 10040863
+    },
+    {
+      "route": "/exhibits/lensing",
+      "usedBytes": 11207191
+    },
+    {
+      "route": "/exhibits/lensing",
+      "usedBytes": 11526311
+    }
+  ],
+  "transitionChecks": [
+    {
+      "from": "mandelbrot",
+      "to": "fluid",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "fluid",
+      "to": "boids",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "boids",
+      "to": "attractors",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "attractors",
+      "to": "reaction",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "reaction",
+      "to": "lsystem",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "lsystem",
+      "to": "gravity",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "gravity",
+      "to": "machine",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "machine",
+      "to": "neural",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "neural",
+      "to": "logic",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "logic",
+      "to": "forces",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "forces",
+      "to": "automata",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "automata",
+      "to": "adder",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "adder",
+      "to": "waves",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "waves",
+      "to": "optics",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "optics",
+      "to": "sound",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "sound",
+      "to": "garden",
+      "workersReleased": true,
+      "audioStatesAfterExit": [
+        "closed"
+      ]
+    },
+    {
+      "from": "garden",
+      "to": "network",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "network",
+      "to": "lensing",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "lensing",
+      "to": "mandelbrot",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "mandelbrot",
+      "to": "fluid",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "fluid",
+      "to": "boids",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "boids",
+      "to": "attractors",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "attractors",
+      "to": "reaction",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "reaction",
+      "to": "lsystem",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "lsystem",
+      "to": "gravity",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "gravity",
+      "to": "machine",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "machine",
+      "to": "neural",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "neural",
+      "to": "logic",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "logic",
+      "to": "forces",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "forces",
+      "to": "automata",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "automata",
+      "to": "adder",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "adder",
+      "to": "waves",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "waves",
+      "to": "optics",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "optics",
+      "to": "sound",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "sound",
+      "to": "garden",
+      "workersReleased": true,
+      "audioStatesAfterExit": [
+        "closed",
+        "closed"
+      ]
+    },
+    {
+      "from": "garden",
+      "to": "network",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "network",
+      "to": "lensing",
+      "workersReleased": true,
+      "audioStatesAfterExit": []
+    },
+    {
+      "from": "lensing",
+      "to": "/",
+      "workersReleased": true,
+      "audioStatesAfterExit": [
+        "closed",
+        "closed"
+      ]
+    }
+  ],
+  "browserErrors": []
+}

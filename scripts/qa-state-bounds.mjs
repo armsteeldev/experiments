@@ -68,8 +68,8 @@ await call('Page.addScriptToEvaluateOnNewDocument', { source: `Object.defineProp
 const cases = [
   {
     id: 'mandelbrot',
-    state: { iterations: -1e100, palette: 'unknown', mode: 'unknown' },
-    expected: { iterations: 160, palette: 'abyss', mode: 'mandelbrot' },
+    state: { iterations: -1e100, palette: 'unknown', mode: 'unknown', view: { x: '9'.repeat(1200), y: '8'.repeat(1200), zoom: { mantissa: 1, exponent: 1_000_000 } } },
+    expected: { iterations: 160, palette: 'abyss', mode: 'mandelbrot', view: { x: '-0.5', y: '0', zoom: { mantissa: 1, exponent: 0 } } },
   },
   {
     id: 'automata',
@@ -118,6 +118,21 @@ const cases = [
     expected: { frequency: 440, cutoff: 2400, filterOn: true, viewMode: 'spectrogram' },
     harmonicRestore: 'custom',
   },
+  {
+    id: 'optics',
+    state: { placements: { source: [5, -2], prism: [0.1, 0.95], mirror: [null], lens: [0.5, 0.85] }, spectrum: 'infrared', wavelength: 1e100, material: 'unknown', prismRotation: -1e100, mirrorAngle: 1e100, focalRatio: 0, sourceAngle: 1e100, spread: -1e100 },
+    expected: { placements: { source: [0.94, 0.12], prism: [0.1, 0.85], mirror: [0.78, 0.31], lens: [0.5, 0.85] }, spectrum: 'spectrum', wavelength: 700, material: 'crown', prismRotation: -0.65, mirrorAngle: 1.6, focalRatio: 0.12, sourceAngle: 0.7, spread: 0.018 },
+  },
+  {
+    id: 'waves',
+    state: { frequency: 1e100, speed: -1e100, damping: 1e100, boundary: 'unknown', preset: 'unknown', viewMode: 'unknown', coherence: 'unknown', phaseOffset: -1e100 },
+    expected: { frequency: 0.19, speed: 0.35, damping: 0.055, boundary: 'absorb', preset: 'interference', viewMode: 'amplitude', coherence: 'coherent', phaseOffset: -Math.PI },
+  },
+  {
+    id: 'lensing',
+    state: { mass: 1e100, distance: -1e100, sourceRatio: 1e100, impact: -1e100, viewMode: 'unknown' },
+    expected: { mass: 1.45, distance: 22, sourceRatio: 0.88, impact: 4.495, viewMode: 'lensed sky' },
+  },
 ]
 
 const results = []
@@ -148,7 +163,7 @@ assert.deepEqual(errors, [], `Browser errors occurred: ${errors.join('; ')}`)
 const browser = await evaluate(`(() => { const gl = document.createElement('canvas').getContext('webgl2'); const debug = gl?.getExtension('WEBGL_debug_renderer_info'); return { userAgent: navigator.userAgent, devicePixelRatio, viewport: [innerWidth, innerHeight], renderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl?.getParameter(gl.RENDERER) ?? 'unavailable' } })()`)
 const summary = {
   browser,
-  method: 'Ten state cases across nine exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.',
+  method: 'Thirteen state cases across twelve exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.',
   cases: results,
   errors,
 }

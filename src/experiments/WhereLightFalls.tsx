@@ -4,7 +4,8 @@ import { ActionRow, ControlPanel, RangeControl, Segmented } from '../components/
 import type { ExperimentControls } from '../types'
 import { createLensingTable, rasterizeLensedSky, traceSchwarzschildPhoton } from '../simulations/lensing'
 import type { LensingTable, PhotonTrace } from '../simulations/lensing'
-import { clamp, resizeCanvas, safeState } from './invisibleWorld'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
+import { clamp, resizeCanvas } from './invisibleWorld'
 import './invisible-world.css'
 
 type ViewMode = 'lensed sky' | 'trajectories'
@@ -39,22 +40,20 @@ function makeStarfield(width: number, height: number): HTMLCanvasElement {
 export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null), workerRef = useRef<Worker | null>(null), requestId = useRef(0), skyRequestId = useRef(0)
   const sizeRef = useRef({ width: 800, height: 560, dpr: 1 }), backgroundRef = useRef<HTMLCanvasElement | null>(null), baseSkyRef = useRef<HTMLCanvasElement | null>(null), traceRef = useRef<PhotonTrace | null>(null)
-  const [size, setSize] = useState({ width: 800, height: 560 }), [mass, setMass] = useState(1), [distance, setDistance] = useState(36), [sourceRatio, setSourceRatio] = useState(0.58)
-  const [impact, setImpact] = useState(5.45), [viewMode, setViewMode] = useState<ViewMode>('lensed sky'), [table, setTable] = useState<LensingTable | null>(null)
+  const initialMass = boundedStateNumber(stateFromUrl?.mass, 1, 0.55, 1.45)
+  const initialImpact = boundedStateNumber(stateFromUrl?.impact, 5.45, 3.1 * initialMass, 28 * initialMass)
+  const [size, setSize] = useState({ width: 800, height: 560 }), [mass, setMass] = useState(initialMass)
+  const [distance, setDistance] = useState(() => boundedStateNumber(stateFromUrl?.distance, 36, 22, 72))
+  const [sourceRatio, setSourceRatio] = useState(() => boundedStateNumber(stateFromUrl?.sourceRatio, 0.58, 0.25, 0.88))
+  const [impact, setImpact] = useState(initialImpact)
+  const [viewMode, setViewMode] = useState<ViewMode>(() => stateChoice(stateFromUrl?.viewMode, ['lensed sky', 'trajectories'], 'lensed sky'))
+  const [table, setTable] = useState<LensingTable | null>(null)
   const [loading, setLoading] = useState(true), [advanced, setAdvanced] = useState(false), [stats, setStats] = useState<LensingStats>({ outcome: 'escaped', deflection: 0, impact: 5.45, radius: 0 })
-  const restored = useRef(false)
   const massRef = useRef(mass); massRef.current = mass
   const bCrit = 3 * Math.sqrt(3) * mass
   const trace = useMemo(() => traceSchwarzschildPhoton(impact, mass, { step: 0.012, radius: 140 * mass, maxAngle: 40, maxPoints: 7000 }), [impact, mass])
   const trajectoryBundle = useMemo(() => [1.004, 1.016, 1.04, 1.12, 1.35].map((factor) => traceSchwarzschildPhoton(3 * Math.sqrt(3) * mass * factor, mass, { step: 0.016, radius: 82 * mass, maxAngle: 24, maxPoints: 2600 })), [mass])
 
-  useEffect(() => {
-    if (!stateFromUrl || restored.current) return
-    restored.current = true
-    const b = safeState(stateFromUrl, 'impact', impact), d = safeState(stateFromUrl, 'distance', distance)
-    if (typeof b === 'number' && b >= 3 && b <= 30) setImpact(b)
-    if (typeof d === 'number' && d >= 20 && d <= 72) setDistance(d)
-  }, [stateFromUrl, impact, distance])
   useEffect(() => { onShareState({ mass, distance, sourceRatio, impact, viewMode }) }, [mass, distance, sourceRatio, impact, viewMode, onShareState])
 
   useEffect(() => {
@@ -204,6 +203,10 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
     const direction = event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? -1 : 1
     setImpact((value) => clamp(value + direction * 0.08 * mass, 3.1 * mass, 28 * mass))
   }
+  const changeMass = (nextMass: number) => {
+    setImpact(clamp(impact * nextMass / mass, 3.1 * nextMass, 28 * nextMass))
+    setMass(nextMass)
+  }
   const reset = () => { setMass(1); setDistance(36); setSourceRatio(0.58); setImpact(5.45); setViewMode('lensed sky') }
   const strongBending = stats.outcome === 'captured' ? 'Captured' : stats.outcome === 'near-critical' ? 'Near critical' : `${(stats.deflection! * 180 / Math.PI).toFixed(2)}°`
   const bOverM = stats.impact / mass
@@ -216,7 +219,7 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
     <div className="iw-lensing-caption"><span>Schwarzschild metric · non-rotating mass</span><span>{viewMode === 'lensed sky' ? 'Artistic disk layer · not radiative transfer' : 'Horizon 2M · photon sphere 3M'}</span></div>
     <ControlPanel title="Where light falls" note="Schwarzschild geodesics" visible={controlsVisible} onClose={onCloseControls} footer={<span>{tableReady ? 'Deflection table ready · image projection is a thin-lens approximation.' : 'Building a numerical deflection table in a worker.'}</span>}>
       <Segmented label="Explore" value={viewMode} options={[["lensed sky", "Lensed sky"], ["trajectories", "Ray path"]]} onChange={(value) => setViewMode(value as ViewMode)} />
-      <RangeControl label="Mass scale" value={mass} min={0.55} max={1.45} step={0.01} format={(value) => `${value.toFixed(2)} M₀`} onChange={setMass} />
+      <RangeControl label="Mass scale" value={mass} min={0.55} max={1.45} step={0.01} format={(value) => `${value.toFixed(2)} M₀`} onChange={changeMass} />
       <RangeControl label="Observer distance" value={distance} min={22} max={72} step={1} format={(value) => `${Math.round(value)} M₀`} onChange={setDistance} />
       {viewMode === 'lensed sky' && <RangeControl label="Source-plane ratio" value={sourceRatio} min={0.25} max={0.88} step={0.01} format={(value) => value.toFixed(2)} onChange={setSourceRatio} />}
       <RangeControl label="Impact parameter" value={impact} min={3.1 * mass} max={28 * mass} step={0.01} format={(value) => `${value.toFixed(2)} M₀`} onChange={setImpact} />

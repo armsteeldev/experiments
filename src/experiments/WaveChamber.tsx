@@ -4,7 +4,8 @@ import { ActionRow, ControlPanel, RangeControl, Segmented, SelectControl } from 
 import type { ExperimentControls } from '../types'
 import { addWaveEmitter, addWavePulse, createDoubleSlitState, createWaveState, seedWaveMode, setWaveBarrier, stepWave, waveEnergy, waveEnergyDensity } from '../simulations/waves'
 import type { WaveState } from '../simulations/waves'
-import { clamp, normalizedPointer, resizeCanvas, safeState } from './invisibleWorld'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
+import { clamp, normalizedPointer, resizeCanvas } from './invisibleWorld'
 import './invisible-world.css'
 
 type Tool = 'pulse' | 'emitter' | 'barrier' | 'erase'
@@ -43,22 +44,21 @@ export default function WaveChamber({ paused, controlsVisible, stateFromUrl, onS
   const canvasRef = useRef<HTMLCanvasElement>(null), stateRef = useRef<WaveState | null>(null)
   const fieldCanvasRef = useRef<HTMLCanvasElement | null>(null), fieldPixelsRef = useRef<ImageData | null>(null)
   const sizeRef = useRef({ width: 0, height: 0, dpr: 1 })
-  if (!stateRef.current) stateRef.current = makePreset('interference')
-  const [frequency, setFrequency] = useState(0.095), [speed, setSpeed] = useState(0.72), [damping, setDamping] = useState(0.008)
-  const [boundary, setBoundary] = useState<'reflect' | 'absorb'>('absorb'), [preset, setPreset] = useState<Preset>('interference')
-  const [coherence, setCoherence] = useState<'coherent' | 'wandering'>('coherent'), [phaseOffset, setPhaseOffset] = useState(0)
-  const [tool, setTool] = useState<Tool>('pulse'), [viewMode, setViewMode] = useState<ViewMode>('amplitude')
+  const initialPreset = stateChoice(stateFromUrl?.preset, ['slits', 'interference', 'standing', 'chamber'] as const, 'interference')
+  const initialSpeed = boundedStateNumber(stateFromUrl?.speed, 0.72, 0.35, 0.95)
+  if (!stateRef.current) stateRef.current = makePreset(initialPreset, initialSpeed)
+  const [frequency, setFrequency] = useState(() => boundedStateNumber(stateFromUrl?.frequency, 0.095, 0.005, 0.19))
+  const [speed, setSpeed] = useState(initialSpeed)
+  const [damping, setDamping] = useState(() => boundedStateNumber(stateFromUrl?.damping, 0.008, 0, 0.055))
+  const [boundary, setBoundary] = useState<'reflect' | 'absorb'>(() => stateChoice(stateFromUrl?.boundary, ['reflect', 'absorb'], 'absorb'))
+  const [preset, setPreset] = useState<Preset>(initialPreset)
+  const [coherence, setCoherence] = useState<'coherent' | 'wandering'>(() => stateChoice(stateFromUrl?.coherence, ['coherent', 'wandering'], 'coherent'))
+  const [phaseOffset, setPhaseOffset] = useState(() => boundedStateNumber(stateFromUrl?.phaseOffset, initialPreset === 'standing' ? Math.PI : 0, -Math.PI, Math.PI))
+  const [tool, setTool] = useState<Tool>('pulse')
+  const [viewMode, setViewMode] = useState<ViewMode>(() => stateChoice(stateFromUrl?.viewMode, ['amplitude', 'energy'], 'amplitude'))
   const [probe, setProbe] = useState({ x: 144, y: 90 }), [telemetry, setTelemetry] = useState({ amplitude: 0, energy: 0 })
   const lastPoint = useRef<{ x: number; y: number } | null>(null), draggingEmitter = useRef<number | null>(null), repaintRef = useRef<() => void>(() => {})
   const probeRef = useRef(probe), lastProbeUi = useRef(0)
-  const restored = useRef(false)
-
-  useEffect(() => {
-    if (!stateFromUrl || restored.current) return
-    restored.current = true
-    const initialFrequency = safeState(stateFromUrl, 'frequency', frequency)
-    if (typeof initialFrequency === 'number' && initialFrequency >= 0.035 && initialFrequency <= 0.19) setFrequency(initialFrequency)
-  }, [stateFromUrl, frequency])
 
   useEffect(() => { onShareState({ frequency, speed, damping, boundary, preset, viewMode, coherence, phaseOffset }) }, [frequency, speed, damping, boundary, preset, viewMode, coherence, phaseOffset, onShareState])
   useEffect(() => { const second = stateRef.current?.emitters[1]; if (second) second.phase = phaseOffset }, [phaseOffset])
@@ -232,7 +232,7 @@ export default function WaveChamber({ paused, controlsVisible, stateFromUrl, onS
       <RangeControl label="Wave speed" value={speed} min={0.35} max={0.95} step={0.01} format={(value) => value.toFixed(2)} onChange={(value) => setSpeed(Math.min(value, 0.97 / Math.sqrt(2) / 0.72))} />
       <RangeControl label="Damping" value={damping} min={0} max={0.055} step={0.001} format={(value) => value.toFixed(3)} onChange={setDamping} />
       <SelectControl label="Outer edge" value={boundary} options={[["absorb", "Absorbing sponge"], ["reflect", "Reflective · no flux"]]} onChange={(value) => setBoundary(value as 'absorb' | 'reflect')} />
-      <p className="control-note">{preset === 'chamber' ? 'The chamber begins at a rectangular mode frequency derived from this discrete stencil. Detune it to see the resonance fade.' : 'Phase wander applies a reproducible random walk to source phase; it approximates finite coherence.'} Solid strokes impose zero normal flux; absorbing edges add a graded damping layer. λc is the continuum estimate c / f.</p>
+      <p className="control-note">{preset === 'chamber' ? 'The chamber begins at a rectangular mode frequency derived from this discrete stencil. Detune it to see the resonance fade.' : 'Phase wander applies a reproducible random walk to source phase; it approximates finite coherence.'} Solid strokes impose zero normal flux; absorbing edges add a graded damping layer. λc is the continuum estimate c / f. Shared links restore these settings and starting preset; live pulses and drawn walls start fresh.</p>
       <ActionRow><button className="panel-action" onClick={manualStep}>Advance one stable step <i>→</i></button><button className="panel-action" onClick={reset}>Reset field <i>↺</i></button></ActionRow>
       <ActionRow><button className="panel-action" onClick={clearEmitters}>Remove emitters</button><button className="panel-action" onClick={clearBarriers}>Clear barriers</button></ActionRow>
     </ControlPanel>

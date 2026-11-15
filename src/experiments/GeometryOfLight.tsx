@@ -4,13 +4,27 @@ import { ActionRow, ControlPanel, RangeControl, Segmented, SelectControl } from 
 import type { ExperimentControls } from '../types'
 import { traceOptics } from '../simulations/optics'
 import type { OpticalScene, RaySource, TracedRay } from '../simulations/optics'
-import { clamp, normalizedPointer, resizeCanvas, safeState } from './invisibleWorld'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
+import { clamp, normalizedPointer, resizeCanvas } from './invisibleWorld'
 import './invisible-world.css'
 
 type Placements = { source: [number, number]; prism: [number, number]; mirror: [number, number]; lens: [number, number] }
 type SpectrumMode = 'spectrum' | 'single'
 type Material = 'crown' | 'flint' | 'ice'
 const defaultPlacements: Placements = { source: [0.15, 0.5], prism: [0.47, 0.5], mirror: [0.78, 0.31], lens: [0.74, 0.78] }
+function restoredPlacements(value: unknown): Placements {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return defaultPlacements
+  const saved = value as Record<string, unknown>
+  const result = {} as Placements
+  for (const key of ['source', 'prism', 'mirror', 'lens'] as const) {
+    const point = saved[key]
+    const fallback = defaultPlacements[key]
+    result[key] = Array.isArray(point) && point.length === 2
+      ? [boundedStateNumber(point[0], fallback[0], 0.06, 0.94), boundedStateNumber(point[1], fallback[1], 0.12, 0.85)]
+      : [...fallback]
+  }
+  return result
+}
 const wavelengthBands = [405, 430, 458, 488, 520, 550, 585, 620, 655, 680]
 const wavelengthColour = (nm: number) => {
   let r = 0, g = 0, b = 0
@@ -55,19 +69,16 @@ export default function GeometryOfLight({ paused, controlsVisible, stateFromUrl,
   const canvasRef = useRef<HTMLCanvasElement>(null), sizeRef = useRef({ width: 1, height: 1, dpr: 1 })
   const dragRef = useRef<keyof Placements | null>(null)
   const [selectedElement, setSelectedElement] = useState<keyof Placements | null>(null), [hoverElement, setHoverElement] = useState<keyof Placements | null>(null)
-  const [placements, setPlacements] = useState<Placements>(defaultPlacements), [size, setSize] = useState({ width: 1000, height: 700 })
-  const [spectrum, setSpectrum] = useState<SpectrumMode>('spectrum'), [wavelength, setWavelength] = useState(520)
-  const [material, setMaterial] = useState<Material>('crown'), [prismRotation, setPrismRotation] = useState(0.17), [mirrorAngle, setMirrorAngle] = useState(Math.PI / 4)
-  const [focalRatio, setFocalRatio] = useState(0.24), [sourceAngle, setSourceAngle] = useState(0), [spread, setSpread] = useState(0.065)
-  const restored = useRef(false)
+  const [placements, setPlacements] = useState<Placements>(() => restoredPlacements(stateFromUrl?.placements)), [size, setSize] = useState({ width: 1000, height: 700 })
+  const [spectrum, setSpectrum] = useState<SpectrumMode>(() => stateChoice(stateFromUrl?.spectrum, ['spectrum', 'single'], 'spectrum'))
+  const [wavelength, setWavelength] = useState(() => boundedStateNumber(stateFromUrl?.wavelength, 520, 380, 700))
+  const [material, setMaterial] = useState<Material>(() => stateChoice(stateFromUrl?.material, ['crown', 'flint', 'ice'], 'crown'))
+  const [prismRotation, setPrismRotation] = useState(() => boundedStateNumber(stateFromUrl?.prismRotation, 0.17, -0.65, 0.65))
+  const [mirrorAngle, setMirrorAngle] = useState(() => boundedStateNumber(stateFromUrl?.mirrorAngle, Math.PI / 4, -0.1, 1.6))
+  const [focalRatio, setFocalRatio] = useState(() => boundedStateNumber(stateFromUrl?.focalRatio, 0.24, 0.12, 0.42))
+  const [sourceAngle, setSourceAngle] = useState(() => boundedStateNumber(stateFromUrl?.sourceAngle, 0, -0.7, 0.7))
+  const [spread, setSpread] = useState(() => boundedStateNumber(stateFromUrl?.spread, 0.065, 0.018, 0.24))
   const glass = useMemo(() => ({ crown: [1.52, 0.018], flint: [1.62, 0.041], ice: [1.31, 0.006] }[material]), [material])
-
-  useEffect(() => {
-    if (!stateFromUrl || restored.current) return
-    restored.current = true
-    const value = safeState(stateFromUrl, 'wavelength', wavelength)
-    if (typeof value === 'number' && value >= 380 && value <= 700) setWavelength(value)
-  }, [stateFromUrl, wavelength])
   useEffect(() => { onShareState({ placements, spectrum, wavelength, material, prismRotation, mirrorAngle, focalRatio, sourceAngle, spread }) }, [placements, spectrum, wavelength, material, prismRotation, mirrorAngle, focalRatio, sourceAngle, spread, onShareState])
 
   const scene = useMemo(() => buildArrangement(size.width, size.height, placements, prismRotation, mirrorAngle, focalRatio, glass[0], glass[1]), [size, placements, prismRotation, mirrorAngle, focalRatio, glass])

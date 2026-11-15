@@ -1,0 +1,31 @@
+{
+  "browser": {
+    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "webgl": "WebKit WebGL"
+  },
+  "studies": [
+    "waves",
+    "optics",
+    "sound",
+    "garden",
+    "network",
+    "lensing"
+  ],
+  "screenshots": 50,
+  "repeatedSpaEntryExitCycles": 12,
+  "gallery": {
+    "count": 19,
+    "cards": 18
+  },
+  "search": {
+    "count": "01 STUDY",
+    "lensingLink": true
+  },
+  "networkDelivery": {
+    "tick": 97,
+    "delivered": 6,
+    "status": "Sent “a small idea” · route selected\norigin → west → relay → south → arrival"
+  },
+  "browserErrors": []
+}

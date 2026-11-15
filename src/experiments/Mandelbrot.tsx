@@ -147,9 +147,13 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string) {
 
 function importedView(state: Record<string, unknown> | null): View {
   const shared = state?.view as Partial<View> | undefined
+  const coordinate = (value: unknown, fallback: string) => {
+    const text = typeof value === 'number' && Number.isFinite(value) ? String(value) : value
+    return typeof text === 'string' && text.length <= 700 && /^-?\d+(?:\.\d+)?$/.test(text) ? text : fallback
+  }
   return {
-    x: typeof shared?.x === 'string' || typeof shared?.x === 'number' ? String(shared.x) : defaults.x,
-    y: typeof shared?.y === 'string' || typeof shared?.y === 'number' ? String(shared.y) : defaults.y,
+    x: coordinate(shared?.x, defaults.x),
+    y: coordinate(shared?.y, defaults.y),
     zoom: magnification(shared?.zoom),
   }
 }

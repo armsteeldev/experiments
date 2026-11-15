@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the simulation interaction QA checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
+Status is current to the serializer-bounds and repeated-route lifecycle QA checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -16,10 +16,12 @@ Status is current to the simulation interaction QA checkpoint on `renaissance/ne
 - [x] Version new shared URLs; retain decoding of existing unversioned links and reject unknown future envelopes.
 - [x] Define a versioned local notebook with a 16 KiB per-state limit, twelve entries and 128 KiB aggregate limit.
 - [x] Apply bounded safe-JSON validation to shared state encoding/decoding, including finite numbers, nesting, field counts, cycles and unsafe keys; preserve safe legacy links.
-- [x] Apply exhibit-range bounds and valid-choice recovery to restored numerical settings in nine high-risk models, including procedural generations, simulation rates, force parameters and uint32 seeds; keep the full per-exhibit parameter audit open.
+- [x] Apply exhibit-range bounds and valid-choice recovery to restored numerical settings in twelve high-risk routes, including procedural generations, simulation rates, force parameters, optical placements, mass-scaled photon impact, and uint32 seeds.
+- [x] Restore every serialized optics, wave, and lensing setting; state explicitly that shared wave links recreate the selected beginning, not live pulses or drawn walls.
+- [x] Bound imported Mandelbrot zoom to its supported 0.72×–10^500 range and reject overlong camera coordinates before fixed-point conversion.
 - [x] Restore all Shape of Sound shareable settings and reject invalid Fourier partials by number, amplitude, phase, and duplicate order; sound remains off on entry.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
-- [ ] Audit each exhibit serializer for validation, defaults, finite numeric bounds and deterministic seed behavior.
+- [ ] Finish the route-by-route audit of deterministic seeds and replay limits, and document custom state that intentionally starts fresh.
 - [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
 - [x] Ensure malformed/unsupported versions and corrupted local notebook data are recoverable without preventing exhibit entry.
 - [x] Test supported share links and route restoration across all 19 exhibits in the browser; exercise malformed/future-version entry recovery.
@@ -40,6 +42,7 @@ Status is current to the simulation interaction QA checkpoint on `renaissance/ne
 
 - [ ] Profile homepage/gallery network and main-thread behavior with timings tied to the selected renderer.
 - [ ] Measure lazy exhibit chunks, mounting duration, frame cadence and worker/AudioContext/WebGL cleanup after repeated route changes.
+- [x] Instrument workers and audio contexts during two complete nineteen-route SPA passes; confirm every route-owned worker terminates and each explicitly started audio context closes on exit.
 - [ ] Test idle/background suspension, resize/context loss and cancellation during heavy Mandelbrot/lensing work.
 - [ ] Repeat suitable performance samples on a physical GPU and mid-range mobile; keep SwiftShader results separate.
 
@@ -49,6 +52,7 @@ Status is current to the simulation interaction QA checkpoint on `renaissance/ne
 - [x] Add browser checks that assert actual state changes for Mandelbrot zoom/reset, Fluid pointer/button input, reaction-diffusion painting, gravity orbit creation/recovery, CPU stepping, neural training, keyboard-edited logic, gate-level addition and cellular-automaton stepping.
 - [x] Add representative browser state-change checks for geometry optics, sound synthesis, packet routing and gravitational lensing; prefer visible output or model values over fragile screenshot equality.
 - [x] On all 19 routes, reject a deeply nested shared-state envelope and recover with safe defaults without entering the error boundary.
+- [x] Exercise thirteen extreme/invalid shared-state cases across twelve routes; cover enum/default recovery, model bounds, optical placements, and an oversized fractal zoom/coordinate.
 - [ ] Exercise the Fluid Canvas2D fallback in a browser with WebGL disabled; the fallback code now applies paused strokes synchronously, but the current browser ran its WebGL renderer.
 - [ ] Add stable visual capture and tolerant image-diff workflow for representative desktop/mobile states.
 - [ ] Review scientific claims and visible approximations, especially Fluid, Garden, Networks, geometric optics and Where Light Falls.

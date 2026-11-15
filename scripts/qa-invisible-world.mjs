@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 
 const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9345)
 const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5197'
-const evidenceRoot = resolve('docs/invisible-world/evidence')
+const evidenceRoot = resolve(process.env.ARMSTEEL_EVIDENCE_DIR ?? 'docs/invisible-world/evidence')
 const errors = []
 const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
 const page = targets.find((target) => target.type === 'page')

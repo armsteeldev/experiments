@@ -8,14 +8,15 @@
     ],
     "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
   },
-  "method": "Ten state cases across nine exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.",
+  "method": "Thirteen state cases across twelve exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.",
   "cases": [
     {
       "id": "mandelbrot",
       "checkedSettings": [
         "iterations",
         "palette",
-        "mode"
+        "mode",
+        "view"
       ],
       "boundedStateRemounted": true
     },
@@ -127,6 +128,46 @@
         "frequency",
         "cutoff",
         "filterOn",
+        "viewMode"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "optics",
+      "checkedSettings": [
+        "placements",
+        "spectrum",
+        "wavelength",
+        "material",
+        "prismRotation",
+        "mirrorAngle",
+        "focalRatio",
+        "sourceAngle",
+        "spread"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "waves",
+      "checkedSettings": [
+        "frequency",
+        "speed",
+        "damping",
+        "boundary",
+        "preset",
+        "viewMode",
+        "coherence",
+        "phaseOffset"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "lensing",
+      "checkedSettings": [
+        "mass",
+        "distance",
+        "sourceRatio",
+        "impact",
         "viewMode"
       ],
       "boundedStateRemounted": true

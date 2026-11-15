@@ -22,6 +22,7 @@
     "qa:saved-experiments": "node scripts/qa-saved-experiments.mjs",
     "qa:state-sharing": "node scripts/qa-state-sharing.mjs",
     "qa:state-bounds": "node scripts/qa-state-bounds.mjs",
+    "qa:route-lifecycle": "node scripts/qa-route-lifecycle.mjs",
     "qa:exhibit-overlays": "node scripts/qa-exhibit-overlays.mjs",
     "qa:gallery-previews": "node scripts/qa-gallery-previews.mjs",
     "qa:collection-discovery": "node scripts/qa-collection-discovery.mjs",
