@@ -4,7 +4,7 @@
       "id": "mandelbrot",
       "viewport": "1440x900",
       "title": "The Infinite Shore",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "mandelbrot",
@@ -16,7 +16,7 @@
       "id": "fluid",
       "viewport": "1440x900",
       "title": "A Quiet Current",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "fluid",
@@ -28,7 +28,7 @@
       "id": "boids",
       "viewport": "1440x900",
       "title": "A Murmuration",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "boids",
@@ -40,7 +40,7 @@
       "id": "attractors",
       "viewport": "1440x900",
       "title": "Weather, Remembered",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "attractors",
@@ -52,7 +52,7 @@
       "id": "reaction",
       "viewport": "1440x900",
       "title": "The Pattern Beneath",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "reaction",
@@ -76,7 +76,7 @@
       "id": "gravity",
       "viewport": "1440x900",
       "title": "Gravity Playground",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "gravity",
@@ -88,7 +88,7 @@
       "id": "machine",
       "viewport": "1440x900",
       "title": "Inside the Machine",
-      "rendering": "dom"
+      "rendering": "svg"
     },
     {
       "id": "machine",
@@ -100,7 +100,7 @@
       "id": "neural",
       "viewport": "1440x900",
       "title": "Neural Networks",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "neural",
@@ -112,7 +112,7 @@
       "id": "logic",
       "viewport": "1440x900",
       "title": "Logic Laboratory",
-      "rendering": "dom"
+      "rendering": "svg"
     },
     {
       "id": "logic",
@@ -136,7 +136,7 @@
       "id": "automata",
       "viewport": "1440x900",
       "title": "Cellular Automata",
-      "rendering": "dom"
+      "rendering": "canvas"
     },
     {
       "id": "automata",
@@ -148,7 +148,7 @@
       "id": "adder",
       "viewport": "1440x900",
       "title": "The Adder",
-      "rendering": "dom"
+      "rendering": "svg"
     },
     {
       "id": "adder",

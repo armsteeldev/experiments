@@ -6,6 +6,7 @@ const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9345)
 const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5197'
 const evidenceRoot = resolve('docs/invisible-world/evidence')
 const legacyStudies = ['mandelbrot', 'fluid', 'boids', 'attractors', 'reaction', 'lsystem', 'gravity', 'machine', 'neural', 'logic', 'forces', 'automata', 'adder']
+const canvasStudies = new Set(['mandelbrot', 'fluid', 'boids', 'attractors', 'reaction', 'lsystem', 'gravity', 'neural', 'forces', 'automata'])
 const browserErrors = []
 const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
 const page = targets.find((target) => target.type === 'page')
@@ -75,18 +76,21 @@ for (const id of legacyStudies) {
   await waitForStudy(id)
   for (const viewport of [{ width: 1440, height: 900, mobile: false }, { width: 390, height: 844, mobile: true }]) {
     await setViewport(viewport.width, viewport.height, viewport.mobile)
-    await sleep(220)
+    await sleep(650)
     const state = await evaluate(`(() => {
       const stage = document.querySelector('.experiment-viewport')
       const title = document.querySelector('.dock-current span')
       const canvas = document.querySelector('.experiment-viewport canvas')
       const svg = document.querySelector('.experiment-viewport svg')
       const rect = stage?.getBoundingClientRect()
-      return { path: location.pathname, innerWidth, innerHeight, documentWidth: document.documentElement.scrollWidth, title: title?.textContent.trim(), content: Boolean(stage?.children.length && (canvas && canvas.width > 0 && canvas.height > 0 || svg || stage.textContent.trim().length > 12)), rendering: canvas && canvas.width > 0 && canvas.height > 0 ? 'canvas' : svg ? 'svg' : 'dom', stage: rect && { left: rect.left, right: rect.right, width: rect.width } }
+      const canvasRect = canvas?.getBoundingClientRect()
+      const canvasReady = Boolean(canvas && canvas.width > 0 && canvas.height > 0 && canvasRect && canvasRect.width > 0 && canvasRect.height > 0)
+      return { path: location.pathname, innerWidth, innerHeight, documentWidth: document.documentElement.scrollWidth, title: title?.textContent.trim(), content: Boolean(stage?.children.length && (canvasReady || svg || stage.textContent.trim().length > 12)), rendering: canvasReady ? 'canvas' : svg ? 'svg' : 'dom', stage: rect && { left: rect.left, right: rect.right, width: rect.width }, canvas: canvasRect && { width: canvasRect.width, height: canvasRect.height, bufferWidth: canvas?.width, bufferHeight: canvas?.height } }
     })()`)
     assert.equal(state.path, `/exhibits/${id}`)
     assert.ok(state.title, `${id} has no visible exhibit title`)
     assert.ok(state.content, `${id} has no mounted exhibit content`)
+    if (canvasStudies.has(id)) assert.equal(state.rendering, 'canvas', `${id} has no rendered canvas at ${state.innerWidth}px: ${JSON.stringify(state)}`)
     assert.ok(state.documentWidth <= state.innerWidth + 1, `${id} overflows at ${state.innerWidth}px: ${JSON.stringify(state)}`)
     assert.ok(state.stage.left >= -1 && state.stage.right <= state.innerWidth + 1, `${id} stage escapes the viewport at ${state.innerWidth}px: ${JSON.stringify(state)}`)
     routes.push({ id, viewport: `${viewport.width}x${viewport.height}`, title: state.title, rendering: state.rendering })
