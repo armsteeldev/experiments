@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to `eae7db9` on `renaissance/next-generation`: compact cellular and custom Logic/Invisible Forces/Gravity replay, Canvas 2D/GPU state parity, and two complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
+Status is current to `611ee7a` on `renaissance/next-generation`: compact cellular and custom Logic/Invisible Forces/Gravity/Flocking replay, Canvas 2D/GPU state parity, and two complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -24,11 +24,12 @@ Status is current to `eae7db9` on `renaissance/next-generation`: compact cellula
 - [x] Serialize cellular drawings compactly, including Brian’s Brain refractory cells; reject malformed grids and browser-test a drawn still-life share/reload.
 - [x] Restore Fluid preset and clear state in its Canvas 2D fallback; align Reaction Diffusion fallback presets, palettes, seeds and bounds with GPU state.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
-- [ ] Finish the route-by-route audit of deterministic seeds and replay limits. Current scope is documented in `STATE-REPLAY.md`; moved/placed Flocking markers remain outside shared state.
+- [ ] Finish the route-by-route audit of deterministic seeds and replay limits, with emphasis on starting dimensions, reset behavior and which random histories are intentionally regenerated. Current scope is documented in `STATE-REPLAY.md`.
 - [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
 - [x] Share and restore user-built Logic Laboratory circuits with validated node/wire limits, switch values and goal state; verify a custom XOR build and challenge after reload.
 - [x] Share and restore bounded Invisible Forces source charges and normalized camera framing while leaving released particle history out of the URL.
 - [x] Share and restore bounded Gravity body edits and normalized camera framing; trails and collision history restart, and restored IDs remain collision-free.
+- [x] Share and restore up to sixteen normalized Flocking field marks with their interaction kinds; verify viewport changes, oldest-mark replacement, explicit clearing, and malformed recovery.
 - [x] Ensure malformed/unsupported versions and corrupted local notebook data are recoverable without preventing exhibit entry.
 - [x] Test supported share links and route restoration across all 19 exhibits in the browser; exercise malformed/future-version entry recovery.
 
