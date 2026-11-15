@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to `e9bfaa7` on `renaissance/next-generation`: compact custom-cellular replay, Canvas 2D/GPU state parity, and two complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
+Status is current to `f3de7d9` on `renaissance/next-generation`: compact cellular and custom Logic/Invisible Forces replay, Canvas 2D/GPU state parity, and two complete nineteen-route lifecycle passes. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
