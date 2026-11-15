@@ -15,6 +15,7 @@
     "test:buttons": "node scripts/check-button-styles.mjs",
     "test:storage": "node scripts/check-storage.mjs",
     "qa:existing": "node scripts/qa-existing-exhibits.mjs",
+    "qa:resources": "node scripts/qa-invisible-resources.mjs",
     "test": "npm run test:numerics && npm run test:simulations && npm run test:adder && npm run test:fern && npm run test:attractors && npm run test:invisible-world && npm run test:buttons && npm run test:storage",
     "check:site": "node scripts/check-site-pages.mjs",
     "verify": "npm run build && npm test && npm run check:site",
