@@ -1,0 +1,136 @@
+{
+  "browser": {
+    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "viewport": [
+      1440,
+      900
+    ],
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "method": "Ten state cases across nine exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.",
+  "cases": [
+    {
+      "id": "mandelbrot",
+      "checkedSettings": [
+        "iterations",
+        "palette",
+        "mode"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "automata",
+      "checkedSettings": [
+        "pattern",
+        "rule",
+        "speed",
+        "renderMode",
+        "seed"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "lsystem",
+      "checkedSettings": [
+        "kind",
+        "iterations",
+        "angle",
+        "randomness",
+        "width",
+        "seed",
+        "zoom",
+        "panX",
+        "panY"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "attractors",
+      "checkedSettings": [
+        "system",
+        "speed",
+        "trail",
+        "palette",
+        "rho",
+        "sigma",
+        "beta",
+        "camera"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "boids",
+      "checkedSettings": [
+        "scenario",
+        "population",
+        "speed",
+        "radius",
+        "tool",
+        "seed"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "gravity",
+      "checkedSettings": [
+        "scene",
+        "speed",
+        "mass",
+        "launchSpeed"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "fluid",
+      "checkedSettings": [
+        "style",
+        "palette",
+        "viscosity",
+        "dissipation",
+        "force",
+        "brushSize",
+        "vorticity",
+        "preset"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "reaction",
+      "checkedSettings": [
+        "preset",
+        "feed",
+        "kill",
+        "diffusion",
+        "steps",
+        "palette",
+        "brush",
+        "brushSize",
+        "quality",
+        "seed"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "sound",
+      "checkedSettings": [
+        "frequency",
+        "cutoff",
+        "filterOn",
+        "viewMode"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "sound",
+      "checkedSettings": [
+        "frequency",
+        "cutoff",
+        "filterOn",
+        "viewMode"
+      ],
+      "boundedStateRemounted": true
+    }
+  ],
+  "errors": []
+}

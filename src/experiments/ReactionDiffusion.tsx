@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateInteger, boundedStateNumber, boundedStateSeed, stateChoice } from '../lib/experimentState'
 import ReactionDiffusionCpuFallback from './ReactionDiffusionCpuFallback'
 
 type Target = { texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number }
@@ -237,16 +238,17 @@ function release(bundle: Bundle) {
 function GpuReaction(props: ExperimentControls & { onUnsupported: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hint = useDiscoveryHint('reaction')
-  const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' && presets[props.stateFromUrl.preset] ? props.stateFromUrl.preset : 'coral')
-  const [feed, setFeed] = useState(() => Number(props.stateFromUrl?.feed) || presets[presetName].feed)
-  const [kill, setKill] = useState(() => Number(props.stateFromUrl?.kill) || presets[presetName].kill)
-  const [diffusion, setDiffusion] = useState(() => Number(props.stateFromUrl?.diffusion) || 1)
-  const [steps, setSteps] = useState(() => Number(props.stateFromUrl?.steps) || 3)
-  const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' ? props.stateFromUrl.palette : 'verdigris')
-  const [brush, setBrush] = useState(() => typeof props.stateFromUrl?.brush === 'string' ? props.stateFromUrl.brush : 'seed')
-  const [brushSize, setBrushSize] = useState(() => Number(props.stateFromUrl?.brushSize) || 28)
-  const [quality, setQuality] = useState(() => typeof props.stateFromUrl?.quality === 'string' ? props.stateFromUrl.quality : 'detail')
-  const [seed, setSeed] = useState(() => Number(props.stateFromUrl?.seed) || 42)
+  const initialPreset = stateChoice(props.stateFromUrl?.preset, Object.keys(presets), 'coral')
+  const [presetName, setPresetName] = useState(initialPreset)
+  const [feed, setFeed] = useState(() => boundedStateNumber(props.stateFromUrl?.feed, presets[initialPreset].feed, 0.012, 0.075))
+  const [kill, setKill] = useState(() => boundedStateNumber(props.stateFromUrl?.kill, presets[initialPreset].kill, 0.035, 0.075))
+  const [diffusion, setDiffusion] = useState(() => boundedStateNumber(props.stateFromUrl?.diffusion, 1, 0.55, 1.45))
+  const [steps, setSteps] = useState(() => boundedStateInteger(props.stateFromUrl?.steps, 3, 1, 5))
+  const [palette, setPalette] = useState<string>(() => stateChoice(props.stateFromUrl?.palette, ['mineral', 'coral', 'verdigris', 'ultraviolet', 'ember'], 'verdigris'))
+  const [brush, setBrush] = useState<string>(() => stateChoice(props.stateFromUrl?.brush, ['seed', 'erase'], 'seed'))
+  const [brushSize, setBrushSize] = useState(() => boundedStateNumber(props.stateFromUrl?.brushSize, 28, 8, 72))
+  const [quality, setQuality] = useState<string>(() => stateChoice(props.stateFromUrl?.quality, ['detail', 'balanced'], 'detail'))
+  const [seed, setSeed] = useState(() => boundedStateSeed(props.stateFromUrl?.seed, 42))
   const bundleRef = useRef<Bundle | null>(null)
   const resetRef = useRef<(kind: string, seedValue: number) => void>(() => {})
   const resizeRef = useRef<() => void>(() => {})

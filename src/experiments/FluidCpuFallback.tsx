@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
 
 const MAX_CELLS = 90_000
 const pigment: Record<string, [number, number, number]> = {
@@ -165,12 +166,9 @@ export default function Fluid({ paused, controlsVisible, stateFromUrl, onShareSt
   const simulation = useRef<FluidState | null>(null)
   const pointer = useRef<PointerTrace | null>(null)
   const renderer = useRef<{ ctx: CanvasRenderingContext2D; off: HTMLCanvasElement; offctx: CanvasRenderingContext2D } | null>(null)
-  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' && pigment[stateFromUrl.palette] ? stateFromUrl.palette : 'aurora')
-  const [viscosity, setViscosity] = useState(() => {
-    const value = Number(stateFromUrl?.viscosity)
-    return clamp(Number.isFinite(value) ? value : 0.13, 0, 0.9)
-  })
-  const [dissipation, setDissipation] = useState(() => clamp(Number(stateFromUrl?.dissipation) || 0.996, 0.94, 0.999))
+  const [palette, setPalette] = useState(() => stateChoice(stateFromUrl?.palette, Object.keys(pigment), 'aurora'))
+  const [viscosity, setViscosity] = useState(() => boundedStateNumber(stateFromUrl?.viscosity, 0.13, 0, 0.9))
+  const [dissipation, setDissipation] = useState(() => boundedStateNumber(stateFromUrl?.dissipation, 0.996, 0.94, 0.999))
   const [presetName, setPresetName] = useState('crossing')
   const params = useRef({ palette, viscosity, dissipation, paused })
   params.current = { palette, viscosity, dissipation, paused }

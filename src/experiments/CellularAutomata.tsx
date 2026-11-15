@@ -3,6 +3,7 @@ import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { patterns, placePattern, stepAutomaton, type AutomatonRule } from '../simulations/automata'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateSeed, stateChoice } from '../lib/experimentState'
 import './ExpandedExhibits.css'
 
 type PaintMode = 'paint' | 'erase' | 'pan'
@@ -42,8 +43,8 @@ export default function CellularAutomata({ paused, controlsVisible, stateFromUrl
   const [rule, setRule] = useState<AutomatonRule>(initialRule)
   const [pattern, setPattern] = useState(initialPattern)
   const [speed, setSpeed] = useState(() => Number.isInteger(Number(stateFromUrl?.speed)) && Number(stateFromUrl?.speed) >= 1 && Number(stateFromUrl?.speed) <= 18 ? Number(stateFromUrl?.speed) : 8)
-  const [renderMode, setRenderMode] = useState<RenderMode>(() => ['age','mono','ember'].includes(String(stateFromUrl?.renderMode)) ? stateFromUrl?.renderMode as RenderMode : 'age')
-  const [seed, setSeed] = useState(() => Number.isInteger(Number(stateFromUrl?.seed)) && Number(stateFromUrl?.seed) >= 0 ? Number(stateFromUrl?.seed) >>> 0 : 919)
+  const [renderMode, setRenderMode] = useState<RenderMode>(() => stateChoice(stateFromUrl?.renderMode, ['age', 'mono', 'ember'], 'age'))
+  const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 919))
   const [mode, setMode] = useState<PaintMode>('paint')
   const [running, setRunning] = useState(true)
   const [generation, setGeneration] = useState(0)

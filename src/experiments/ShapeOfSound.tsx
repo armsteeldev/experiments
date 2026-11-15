@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { ActionRow, ControlPanel, RangeControl, Segmented } from '../components/Controls'
 import type { ExperimentControls } from '../types'
-import { addHarmonic, applyLowpassResponse, harmonicsToPeriodicWaveCoefficients, lowpassMagnitude, quietSignalGain, signalSpectrum, synthesizeSignal, timbreHarmonics } from '../simulations/sound'
+import { addHarmonic, applyLowpassResponse, harmonicsToPeriodicWaveCoefficients, isValidHarmonicSet, lowpassMagnitude, quietSignalGain, signalSpectrum, synthesizeSignal, timbreHarmonics } from '../simulations/sound'
 import type { Harmonic, TimbrePreset } from '../simulations/sound'
-import { clamp, normalizedPointer, resizeCanvas, safeState } from './invisibleWorld'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
+import { clamp, normalizedPointer, resizeCanvas } from './invisibleWorld'
 import './invisible-world.css'
 
 type ViewMode = 'spectrum' | 'spectrogram'
@@ -19,11 +20,13 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
   const canvasRef = useRef<HTMLCanvasElement>(null), spectrogramRef = useRef<HTMLCanvasElement>(null), sizeRef = useRef({ width: 1, height: 1, dpr: 1 })
   const spectrogramInitializedRef = useRef(false), spectrogramLastColumnAtRef = useRef(0)
   const audioRef = useRef<AudioRig | null>(null), audioStartRef = useRef<Promise<void> | null>(null), paintRef = useRef<() => void>(() => {}), timeRef = useRef(0), draggingComponent = useRef<number | null>(null)
-  const [frequency, setFrequency] = useState(220), [harmonics, setHarmonics] = useState<Harmonic[]>(() => timbreHarmonics('triangle'))
-  const [timbre, setTimbre] = useState<TimbrePreset | 'custom'>('triangle')
-  const [selected, setSelected] = useState(1), [cutoff, setCutoff] = useState(1800), [filterOn, setFilterOn] = useState(false)
-  const [viewMode, setViewMode] = useState<ViewMode>('spectrum'), [audioOn, setAudioOn] = useState(false), [muted, setMuted] = useState(false), [audioMessage, setAudioMessage] = useState('The waveform is visible with sound off.')
-  const restored = useRef(false)
+  const importedHarmonics = isValidHarmonicSet(stateFromUrl?.harmonics) ? stateFromUrl.harmonics : null
+  const initialHarmonics = importedHarmonics ?? timbreHarmonics('triangle')
+  const initialSelectedHarmonic = initialHarmonics.some((part) => part.multiple === 1) ? 1 : initialHarmonics[0].multiple
+  const [frequency, setFrequency] = useState(() => boundedStateNumber(stateFromUrl?.frequency, 220, 55, 660)), [harmonics, setHarmonics] = useState<Harmonic[]>(initialHarmonics)
+  const [timbre, setTimbre] = useState<TimbrePreset | 'custom'>(importedHarmonics ? 'custom' : 'triangle')
+  const [selected, setSelected] = useState(initialSelectedHarmonic), [cutoff, setCutoff] = useState(() => boundedStateNumber(stateFromUrl?.cutoff, 1800, 180, 8000)), [filterOn, setFilterOn] = useState(stateFromUrl?.filterOn === true)
+  const [viewMode, setViewMode] = useState<ViewMode>(() => stateChoice(stateFromUrl?.viewMode, ['spectrum', 'spectrogram'], 'spectrum')), [audioOn, setAudioOn] = useState(false), [muted, setMuted] = useState(false), [audioMessage, setAudioMessage] = useState('The waveform is visible with sound off.')
   const sampleRate = audioRef.current?.context.sampleRate ?? 44100
   const displayedHarmonics = useMemo(() => filterOn ? applyLowpassResponse(harmonics, frequency, cutoff, sampleRate) : harmonics, [harmonics, frequency, filterOn, cutoff, sampleRate])
   const signal = useMemo(() => synthesizeSignal({ frequency, harmonics: displayedHarmonics, samples: 2048 }), [frequency, displayedHarmonics])
@@ -32,13 +35,6 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
   const audioPeak = useMemo(() => peakFor(synthesizeSignal({ frequency, harmonics, samples: 2048 })), [frequency, harmonics])
   const selectedHarmonic = harmonics.find((part) => part.multiple === selected) ?? harmonics[0]
 
-  useEffect(() => {
-    if (!stateFromUrl || restored.current) return
-    restored.current = true
-    const savedFrequency = safeState(stateFromUrl, 'frequency', frequency), savedHarmonics = safeState(stateFromUrl, 'harmonics', harmonics)
-    if (typeof savedFrequency === 'number' && savedFrequency >= 55 && savedFrequency <= 660) setFrequency(savedFrequency)
-    if (Array.isArray(savedHarmonics) && savedHarmonics.length > 0 && savedHarmonics.length <= 10 && savedHarmonics.every((part) => typeof part === 'object' && Number.isInteger((part as Harmonic).multiple) && (part as Harmonic).multiple > 0 && (part as Harmonic).multiple <= 24)) { setHarmonics(savedHarmonics as Harmonic[]); setTimbre('custom') }
-  }, [stateFromUrl, frequency, harmonics])
   useEffect(() => { onShareState({ frequency, harmonics, cutoff, filterOn, viewMode }) }, [frequency, harmonics, cutoff, filterOn, viewMode, onShareState])
 
   const installPeriodicWave = useCallback((rig: AudioRig, values: Harmonic[]) => {

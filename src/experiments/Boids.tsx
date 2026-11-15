@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateNumber, boundedStateSeed, stateChoice } from '../lib/experimentState'
 
 type Species = 0 | 1 | 2
 type Agent = { x: number; y: number; vx: number; vy: number; oldX: number; oldY: number; species: Species; plumage: number; size: number }
@@ -30,12 +31,12 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
   const agents = useRef<Agent[]>([])
   const markers = useRef<Marker[]>([])
   const drawRef = useRef<() => void>(() => {})
-  const [scenario, setScenario] = useState<Scenario>(() => Object.keys(scenarios).includes(String(stateFromUrl?.scenario)) ? stateFromUrl?.scenario as Scenario : 'murmuration')
+  const [scenario, setScenario] = useState<Scenario>(() => stateChoice(stateFromUrl?.scenario, Object.keys(scenarios) as Scenario[], 'murmuration'))
   const [population, setPopulation] = useState(() => clamp(Number(stateFromUrl?.population) || (window.matchMedia('(max-width: 720px)').matches ? 130 : 230), 120, 1400))
-  const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 1.55)
-  const [radius, setRadius] = useState(() => Number(stateFromUrl?.radius) || 104)
-  const [tool, setTool] = useState(() => typeof stateFromUrl?.tool === 'string' ? stateFromUrl.tool : 'food')
-  const [seed, setSeed] = useState(() => Number(stateFromUrl?.seed) || 17)
+  const [speed, setSpeed] = useState(() => boundedStateNumber(stateFromUrl?.speed, 1.55, 0.55, 4.2))
+  const [radius, setRadius] = useState(() => boundedStateNumber(stateFromUrl?.radius, 104, 28, 132))
+  const [tool, setTool] = useState<string>(() => stateChoice(stateFromUrl?.tool, ['attract', 'repel', 'obstacle', 'food'], 'food'))
+  const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 17))
   const params = useRef({ scenario, population, speed, radius, tool, seed, paused })
   params.current = { scenario, population, speed, radius, tool, seed, paused }
   useEffect(() => { onShareState({ scenario, population, speed, radius, tool, seed }) }, [scenario, population, speed, radius, tool, seed, onShareState])

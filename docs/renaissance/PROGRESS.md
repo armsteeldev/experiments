@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Latest clean checkpoint:** `a259f2a` verifies state-changing interactions and fixes paused Fluid input in the WebGL and Canvas2D paths. Current local work hardens URL-state validation across all exhibits.
+- **Latest clean checkpoint:** `ba9d686` hardens shared URL structure and verifies malformed-state recovery across all nineteen exhibits. Current local changes extend validation to model-specific settings and complete the Shape of Sound share/restore path.
 
 ## Milestones
 
@@ -50,6 +50,8 @@
 - Closed the cross-exhibit support gap found during the browser sweep: The Adder now shares/restores its width, architecture, valid operands and speed. Its changed 8-bit look-ahead link restored 23 + 17 and the displayed result was 40.
 - The Living Network restores its bounded 48-character message payload as well as endpoints; the input, save form and privacy page warn that this text appears in saved/shared settings and should not contain private information.
 - Shared URL state now uses the same safe-JSON boundaries as the local notebook: plain records only, finite numbers, bounded depth/field counts, and rejection of unsafe property names and cyclic values. Legacy links receive the same validation. Unit checks cover these edge cases; the browser share/restore sweep now sends a deeply nested invalid envelope to all 19 routes and confirms each opens with safe defaults, with no error boundary or browser/network errors. Per-exhibit parameter-range and seed validation remains a separate open audit.
+- A further per-model input audit found that a valid shared link could request an effectively unbounded L-system generation count, or restore simulation settings outside the ranges the exhibit itself offers. Added a reusable finite-number/enum/uint32 reader and apply it to bounded controls and choices in L-systems, Strange Attractors, Boids, Gravity, GPU/Canvas2D Fluid and Reaction-Diffusion, Cellular Automata, and Mandelbrot. This keeps model inputs within the controls’ working domains before simulation or rendering begins.
+- Shape of Sound now restores its frequency, custom Fourier partials, filter cutoff/state and display mode directly from a shared link. Partial sets require one to ten unique orders from 1–24, amplitudes in [0, 0.8], and finite phases in [−π, π]; invalid partials fall back to the triangle preset. Audio remains off until the visitor starts it.
 
 ### 4–10 — Performance, broader accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: in progress
 
@@ -88,6 +90,8 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run qa:original-interactions` — passed nine state-changing scenarios across nine exhibits against the built production bundle on isolated local port 5217, with ten captures and paired before/after canvas hashes for Fluid and reaction-diffusion; zero browser/network errors. Browser: HeadlessChrome 157, SwiftShader/Vulkan, desktop 1440×900 emulation. Port 5215 belongs to the MIDAS app and was not used.
 - `npm run qa:invisible-world` — passed the six expanded studies against the isolated local production preview: 50 captures, 12 repeated SPA entries, successful audio closure, optical source manipulation, sound harmonics, packet delivery through the live network, and keyboard lensing response. All 19 gallery pieces and concept search passed; no browser/HTTP errors. The gallery/evolved captures are committed baseline assets and were restored after the run, while dynamic packet counts were not retained as source changes.
 - `npm run qa:state-sharing` — passed share/restore plus malformed deeply nested state recovery for all 19 exhibits on the production preview; the structured evidence records the routes and restoration result. No browser/HTTP errors.
+- `npm run test:experiment-state` — passed bounded number, integer, enum, and uint32 seed cases.
+- `npm run qa:state-bounds` — passed ten extreme/invalid state cases across nine exhibit routes against the isolated production preview. The browser shared each mounted result back and matched it against the expected model bounds, enum defaults, and valid custom sound partials. No browser errors; HeadlessChrome 157 at 1440×900 with SwiftShader/Vulkan. Results are in [`evidence/state-bounds-browser-checks.json`](evidence/state-bounds-browser-checks.json); this is not physical-GPU evidence.
 - No dependency, service or tracking code was added; exhibit chunks remain lazy.
 
 ## Next action

@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
 import FluidCpuFallback from './FluidCpuFallback'
 
 type Target = { texture: WebGLTexture; framebuffer: WebGLFramebuffer; width: number; height: number }
@@ -292,17 +293,17 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
   const applyPausedStrokeRef = useRef<(trace: PointerSample) => void>(() => {})
   const seedRef = useRef<(name: string) => void>(() => {})
   const clearRef = useRef<() => void>(() => {})
-  const [style, setStyle] = useState(() => typeof props.stateFromUrl?.style === 'string' ? props.stateFromUrl.style : 'silk')
-  const [palette, setPalette] = useState(() => typeof props.stateFromUrl?.palette === 'string' && pigments[props.stateFromUrl.palette] ? props.stateFromUrl.palette : 'aurora')
-  const [viscosity, setViscosity] = useState(() => Number(props.stateFromUrl?.viscosity) || 0.12)
+  const [style, setStyle] = useState<string>(() => stateChoice(props.stateFromUrl?.style, ['silk', 'ink', 'smoke', 'electric'], 'silk'))
+  const [palette, setPalette] = useState(() => stateChoice(props.stateFromUrl?.palette, Object.keys(pigments), 'aurora'))
+  const [viscosity, setViscosity] = useState(() => boundedStateNumber(props.stateFromUrl?.viscosity, 0.12, 0, 0.9))
   // A slower dye fade lets the seeded circulation remain legible while the
   // velocity field continues to stretch it into new folds.
-  const [dissipation, setDissipation] = useState(() => Number(props.stateFromUrl?.dissipation) || 0.999)
-  const [force, setForce] = useState(() => Number(props.stateFromUrl?.force) || 0.72)
-  const [brushSize, setBrushSize] = useState(() => Number(props.stateFromUrl?.brushSize) || 42)
-  const [vorticity, setVorticity] = useState(() => Number(props.stateFromUrl?.vorticity) || 16)
+  const [dissipation, setDissipation] = useState(() => boundedStateNumber(props.stateFromUrl?.dissipation, 0.999, 0.96, 0.999))
+  const [force, setForce] = useState(() => boundedStateNumber(props.stateFromUrl?.force, 0.72, 0.15, 1.8))
+  const [brushSize, setBrushSize] = useState(() => boundedStateNumber(props.stateFromUrl?.brushSize, 42, 12, 110))
+  const [vorticity, setVorticity] = useState(() => boundedStateNumber(props.stateFromUrl?.vorticity, 16, 0, 32))
   const [ambient, setAmbient] = useState(() => props.stateFromUrl?.ambient !== false)
-  const [presetName, setPresetName] = useState(() => typeof props.stateFromUrl?.preset === 'string' ? props.stateFromUrl.preset : 'vortex')
+  const [presetName, setPresetName] = useState<string>(() => stateChoice(props.stateFromUrl?.preset, ['crossing', 'vortex', 'still'], 'vortex'))
   const [velocityGrid, setVelocityGrid] = useState([0, 0])
   const hint = useDiscoveryHint('fluid')
   const presetNameRef = useRef(presetName)

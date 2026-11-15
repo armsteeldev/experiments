@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateInteger, boundedStateNumber, boundedStateSeed, stateChoice } from '../lib/experimentState'
 import { generateFernGeometry } from '../simulations/fern'
 import { generateParametricTree } from '../simulations/parametricTree'
 import type { FernGeometry, FernSegment } from '../simulations/fern'
@@ -80,16 +81,16 @@ export default function LSystems({ paused, controlsVisible, stateFromUrl, onShar
   const hint = useDiscoveryHint('lsystem')
   const initialKind = typeof stateFromUrl?.kind === 'string' && presets[stateFromUrl.kind] ? stateFromUrl.kind : 'fern'
   const [kind, setKind] = useState(initialKind)
-  const [iterations, setIterations] = useState(() => Number(stateFromUrl?.iterations) || presets[initialKind].iterations)
-  const [angle, setAngle] = useState(() => Number(stateFromUrl?.angle) || presets[initialKind].angle)
-  const [randomness, setRandomness] = useState(() => stateFromUrl?.randomness !== undefined ? Number(stateFromUrl.randomness) : (presets[initialKind].organic ? 0.26 : 0))
-  const [width, setWidth] = useState(() => Number(stateFromUrl?.width) || 2.4)
-  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' ? stateFromUrl.palette : 'sage')
-  const [seed, setSeed] = useState(() => Number(stateFromUrl?.seed) || 7)
+  const [iterations, setIterations] = useState(() => boundedStateInteger(stateFromUrl?.iterations, presets[initialKind].iterations, 1, presets[initialKind].max))
+  const [angle, setAngle] = useState(() => boundedStateNumber(stateFromUrl?.angle, presets[initialKind].angle, 8, 112))
+  const [randomness, setRandomness] = useState(() => boundedStateNumber(stateFromUrl?.randomness, presets[initialKind].organic ? 0.26 : 0, 0, 0.65))
+  const [width, setWidth] = useState(() => boundedStateNumber(stateFromUrl?.width, 2.4, 0.6, 4))
+  const [palette, setPalette] = useState<string>(() => stateChoice(stateFromUrl?.palette, ['sage', 'frost', 'ember', 'violet'], 'sage'))
+  const [seed, setSeed] = useState(() => boundedStateSeed(stateFromUrl?.seed, 7))
   const [camera, setCamera] = useState<Camera>(() => ({
-    zoom: Math.max(0.15, Math.min(24, Number(stateFromUrl?.zoom) || 1)),
-    x: Number(stateFromUrl?.panX) || 0,
-    y: Number(stateFromUrl?.panY) || 0,
+    zoom: boundedStateNumber(stateFromUrl?.zoom, 1, 0.15, 24),
+    x: boundedStateNumber(stateFromUrl?.panX, 0, -1_000_000, 1_000_000),
+    y: boundedStateNumber(stateFromUrl?.panY, 0, -1_000_000, 1_000_000),
   }))
   const [growing, setGrowing] = useState(true)
   const [growthKey, setGrowthKey] = useState(0)

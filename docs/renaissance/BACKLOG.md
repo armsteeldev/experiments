@@ -16,6 +16,8 @@ Status is current to the simulation interaction QA checkpoint on `renaissance/ne
 - [x] Version new shared URLs; retain decoding of existing unversioned links and reject unknown future envelopes.
 - [x] Define a versioned local notebook with a 16 KiB per-state limit, twelve entries and 128 KiB aggregate limit.
 - [x] Apply bounded safe-JSON validation to shared state encoding/decoding, including finite numbers, nesting, field counts, cycles and unsafe keys; preserve safe legacy links.
+- [x] Apply exhibit-range bounds and valid-choice recovery to restored numerical settings in nine high-risk models, including procedural generations, simulation rates, force parameters and uint32 seeds; keep the full per-exhibit parameter audit open.
+- [x] Restore all Shape of Sound shareable settings and reject invalid Fourier partials by number, amplitude, phase, and duplicate order; sound remains off on entry.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
 - [ ] Audit each exhibit serializer for validation, defaults, finite numeric bounds and deterministic seed behavior.
 - [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.

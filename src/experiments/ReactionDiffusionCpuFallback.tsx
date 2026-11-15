@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl, Segmented } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateInteger, boundedStateNumber, stateChoice } from '../lib/experimentState'
 
 const MAX_CELLS = 90_000
 const palettes: Record<string, [number, number, number][]> = {
@@ -39,11 +40,11 @@ export default function ReactionDiffusion({ paused, controlsVisible, stateFromUr
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const buffers = useRef<ReactionState | null>(null)
   const drawRef = useRef<() => void>(() => {})
-  const [feed, setFeed] = useState(() => Number(stateFromUrl?.feed) || seeds.spots.feed)
-  const [kill, setKill] = useState(() => Number(stateFromUrl?.kill) || seeds.spots.kill)
-  const [diffusion, setDiffusion] = useState(() => Number(stateFromUrl?.diffusion) || 1)
-  const [steps, setSteps] = useState(() => Number(stateFromUrl?.steps) || 2)
-  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' && palettes[stateFromUrl.palette] ? stateFromUrl.palette : 'mineral')
+  const [feed, setFeed] = useState(() => boundedStateNumber(stateFromUrl?.feed, seeds.spots.feed, 0.018, 0.075))
+  const [kill, setKill] = useState(() => boundedStateNumber(stateFromUrl?.kill, seeds.spots.kill, 0.035, 0.075))
+  const [diffusion, setDiffusion] = useState(() => boundedStateNumber(stateFromUrl?.diffusion, 1, 0.5, 1.45))
+  const [steps, setSteps] = useState(() => boundedStateInteger(stateFromUrl?.steps, 2, 1, 5))
+  const [palette, setPalette] = useState(() => stateChoice(stateFromUrl?.palette, Object.keys(palettes), 'mineral'))
   const [seed, setSeed] = useState('spots')
   const [brush, setBrush] = useState('seed')
   const params = useRef({ feed, kill, diffusion, steps, palette, paused })

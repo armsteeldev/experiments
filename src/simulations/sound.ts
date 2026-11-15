@@ -2,6 +2,20 @@ export type Harmonic = { multiple: number; amplitude: number; phase: number }
 export type TimbrePreset = 'sine' | 'triangle' | 'square' | 'sawtooth'
 export type SignalParameters = { frequency: number; harmonics: Harmonic[]; samples?: number }
 
+export function isValidHarmonicSet(value: unknown): value is Harmonic[] {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 10) return false
+  const multiples = new Set<number>()
+  for (const item of value) {
+    if (!item || typeof item !== 'object') return false
+    const harmonic = item as Partial<Harmonic>
+    if (!Number.isInteger(harmonic.multiple) || harmonic.multiple! < 1 || harmonic.multiple! > 24 || multiples.has(harmonic.multiple!)) return false
+    if (!Number.isFinite(harmonic.amplitude) || harmonic.amplitude! < 0 || harmonic.amplitude! > 0.8) return false
+    if (!Number.isFinite(harmonic.phase) || harmonic.phase! < -Math.PI || harmonic.phase! > Math.PI) return false
+    multiples.add(harmonic.multiple!)
+  }
+  return true
+}
+
 export function timbreHarmonics(preset: TimbrePreset, amplitude = 0.72): Harmonic[] {
   const fundamental = Math.max(0, Math.min(0.8, Number.isFinite(amplitude) ? amplitude : 0.72))
   if (preset === 'sine') return [{ multiple: 1, amplitude: fundamental, phase: 0 }]

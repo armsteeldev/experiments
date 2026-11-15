@@ -10,6 +10,7 @@ import {
 import type { Magnification } from '../lib/deepZoom'
 import { acquireMandelbrotGpuRenderer } from '../lib/mandelbrotGpu'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { stateChoice } from '../lib/experimentState'
 import type { GpuTile, MandelbrotGpuRenderer, PreviewWarp } from '../lib/mandelbrotGpu'
 
 type View = { x: string; y: string; zoom: Magnification }
@@ -272,7 +273,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
 
   const [view, setView] = useState<View>(() => stateFromUrl?.view ? importedView(stateFromUrl) : { ...defaults })
   const [iterations, setIterations] = useState(() => Math.max(160, Math.min(4000, Number(stateFromUrl?.iterations) || 680)))
-  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' ? stateFromUrl.palette : 'abyss')
+  const [palette, setPalette] = useState<string>(() => stateChoice(stateFromUrl?.palette, ['abyss', 'mineral', 'twilight', 'ice', 'ember'], 'abyss'))
   const [mode, setMode] = useState<'mandelbrot' | 'julia'>(() => stateFromUrl?.mode === 'julia' ? 'julia' : 'mandelbrot')
   const [preset, setPreset] = useState(() => {
     const imported = stateFromUrl?.view ? importedView(stateFromUrl) : defaults

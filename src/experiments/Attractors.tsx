@@ -3,6 +3,7 @@ import type { PointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
 import { AttractorTrailBuffer, attractorRenderStride, shouldRenderAttractorFrame } from '../simulations/attractorTrail'
 
 type Point3 = { x: number; y: number; z: number }
@@ -10,8 +11,12 @@ type SystemName = 'lorenz' | 'rossler' | 'thomas' | 'aizawa' | 'halvorsen'
 type Camera = { x: number; y: number; zoom: number }
 function cameraFor(system: SystemName, state?: Record<string, unknown> | null): Camera {
   const shared = state?.camera as Partial<Camera> | undefined
-  if (shared && Number.isFinite(Number(shared.x)) && Number.isFinite(Number(shared.y)) && Number.isFinite(Number(shared.zoom))) {
-    return { x: Number(shared.x), y: Number(shared.y), zoom: Math.max(0.45, Math.min(4.5, Number(shared.zoom))) }
+  if (shared && typeof shared === 'object') {
+    return {
+      x: boundedStateNumber(shared.x, 0, -1.3, 1.3),
+      y: boundedStateNumber(shared.y, 0, -1_000_000, 1_000_000),
+      zoom: boundedStateNumber(shared.zoom, 1, 0.45, 4.5),
+    }
   }
   if (system === 'lorenz') return { x: 1.3, y: 0, zoom: 1 }
   if (system === 'rossler') return { x: 0.38, y: 0.48, zoom: 1.18 }
@@ -60,31 +65,35 @@ function advancePoint(p: Point3, dt: number, system: SystemName, q: { rho: numbe
 }
 
 export default function Attractors({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const initialSystem = stateChoice(stateFromUrl?.system, Object.keys(systemNames) as SystemName[], 'lorenz')
+  const initialA = initialSystem === 'thomas' ? 0.208186 : initialSystem === 'halvorsen' ? 1.4 : initialSystem === 'aizawa' ? 0.95 : 0.2
+  const [minimumA, maximumA] = initialSystem === 'thomas' ? [0.05, 0.38] : initialSystem === 'aizawa' ? [0.55, 1.25] : initialSystem === 'halvorsen' ? [1, 2] : [0.05, 0.45]
+  const [minimumB, maximumB] = initialSystem === 'aizawa' ? [0.4, 1.1] : [0.05, 0.45]
+  const [minimumC, maximumC] = initialSystem === 'aizawa' ? [0.3, 1.1] : [3, 9]
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hint = useDiscoveryHint('attractors')
   const path = useRef(new AttractorTrailBuffer(28_000))
   const trajectoryCenter = useRef<Point3>({ x: 0, y: 0, z: 0 })
   const point = useRef<Point3>({ x: 0.1, y: 0, z: 0 })
   const [cameraState, setCameraState] = useState<Camera>(() => {
-    const initial = Object.keys(systemNames).includes(String(stateFromUrl?.system)) ? stateFromUrl?.system as SystemName : 'lorenz'
-    return cameraFor(initial, stateFromUrl)
+    return cameraFor(initialSystem, stateFromUrl)
   })
   const camera = useRef<Camera>(cameraState)
   camera.current = cameraState
   const drag = useRef<{ x: number; y: number } | null>(null)
   const drawRef = useRef<() => void>(() => {})
   const resetRef = useRef<() => void>(() => {})
-  const [system, setSystem] = useState<SystemName>(() => Object.keys(systemNames).includes(String(stateFromUrl?.system)) ? stateFromUrl?.system as SystemName : 'lorenz')
+  const [system, setSystem] = useState<SystemName>(initialSystem)
   const [configuration, setConfiguration] = useState('classic')
-  const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 1.8)
-  const [trail, setTrail] = useState(() => Number(stateFromUrl?.trail) || 16000)
-  const [palette, setPalette] = useState(() => typeof stateFromUrl?.palette === 'string' ? stateFromUrl.palette : 'polar')
-  const [rho, setRho] = useState(() => Number(stateFromUrl?.rho) || 28)
-  const [sigma, setSigma] = useState(() => Number(stateFromUrl?.sigma) || 10)
-  const [beta, setBeta] = useState(() => Number(stateFromUrl?.beta) || 8 / 3)
-  const [a, setA] = useState(() => Number(stateFromUrl?.a) || (stateFromUrl?.system === 'thomas' ? 0.208186 : stateFromUrl?.system === 'halvorsen' ? 1.4 : stateFromUrl?.system === 'aizawa' ? 0.95 : 0.2))
-  const [b, setB] = useState(() => Number(stateFromUrl?.b) || (stateFromUrl?.system === 'aizawa' ? 0.7 : 0.2))
-  const [c, setC] = useState(() => Number(stateFromUrl?.c) || (stateFromUrl?.system === 'aizawa' ? 0.6 : 5.7))
+  const [speed, setSpeed] = useState(() => boundedStateNumber(stateFromUrl?.speed, 1.8, 0.25, 4))
+  const [trail, setTrail] = useState(() => boundedStateNumber(stateFromUrl?.trail, 16000, 2500, 28000))
+  const [palette, setPalette] = useState(() => stateChoice(stateFromUrl?.palette, Object.keys(palettes), 'polar'))
+  const [rho, setRho] = useState(() => boundedStateNumber(stateFromUrl?.rho, 28, 10, 45))
+  const [sigma, setSigma] = useState(() => boundedStateNumber(stateFromUrl?.sigma, 10, 5, 18))
+  const [beta, setBeta] = useState(() => boundedStateNumber(stateFromUrl?.beta, 8 / 3, 1, 5))
+  const [a, setA] = useState(() => boundedStateNumber(stateFromUrl?.a, initialA, minimumA, maximumA))
+  const [b, setB] = useState(() => boundedStateNumber(stateFromUrl?.b, initialSystem === 'aizawa' ? 0.7 : 0.2, minimumB, maximumB))
+  const [c, setC] = useState(() => boundedStateNumber(stateFromUrl?.c, initialSystem === 'aizawa' ? 0.6 : 5.7, minimumC, maximumC))
   const params = useRef({ system, speed, trail, palette, rho, sigma, beta, a, b, c, paused })
   params.current = { system, speed, trail, palette, rho, sigma, beta, a, b, c, paused }
   useEffect(() => { onShareState({ system, speed, trail, palette, rho, sigma, beta, a, b, c, camera: cameraState }) }, [system, speed, trail, palette, rho, sigma, beta, a, b, c, cameraState, onShareState])

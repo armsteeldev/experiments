@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { boundedStateNumber, stateChoice } from '../lib/experimentState'
 import { bodyRadius, circularOrbitVelocity, estimateGravityThrowVelocity, gravityEnergy, integrateGravity, pickGravityBodyAtWorld, type CollisionMode, type GravityBody, type GravityPointerSample } from '../simulations/gravity'
 import './ExpandedExhibits.css'
 
@@ -43,11 +44,11 @@ type GravityPointer = {
 export default function GravityPlayground({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hint = useDiscoveryHint('gravity')
-  const [scene, setScene] = useState<Scene>(() => sceneNames.some(([key]) => key === stateFromUrl?.scene) ? stateFromUrl?.scene as Scene : 'solar')
-  const [speed, setSpeed] = useState(() => Number(stateFromUrl?.speed) || 1)
+  const [scene, setScene] = useState<Scene>(() => stateChoice(stateFromUrl?.scene, sceneNames.map(([key]) => key as Scene), 'solar'))
+  const [speed, setSpeed] = useState(() => boundedStateNumber(stateFromUrl?.speed, 1, 0.25, 2.2))
   const [collision, setCollision] = useState<CollisionMode>(() => ['merge','bounce','pass'].includes(String(stateFromUrl?.collision)) ? stateFromUrl?.collision as CollisionMode : 'merge')
-  const [mass, setMass] = useState(() => Number(stateFromUrl?.mass) || 2)
-  const [launchSpeed, setLaunchSpeed] = useState(() => Number(stateFromUrl?.launchSpeed) || 4)
+  const [mass, setMass] = useState(() => boundedStateNumber(stateFromUrl?.mass, 2, 0.2, 30))
+  const [launchSpeed, setLaunchSpeed] = useState(() => boundedStateNumber(stateFromUrl?.launchSpeed, 4, 0.5, 9))
   const [trails, setTrails] = useState(() => stateFromUrl?.trails !== false)
   const [prediction, setPrediction] = useState(() => stateFromUrl?.prediction === true)
   const [launchMode, setLaunchMode] = useState(false)
