@@ -13,41 +13,78 @@
     "hidden": {
       "hidden": true,
       "intervals": {
-        "total": 14,
-        "visible": 9,
+        "total": 15,
+        "visible": 10,
         "hidden": 5
       },
       "rafHidden": 0
     },
     "after": {
-      "tick": 13,
-      "visibleSteps": 14,
+      "tick": 14,
+      "visibleSteps": 15,
       "hiddenSteps": 5
     },
-    "tickDelta": 5,
-    "visibleStepDelta": 6,
+    "tickDelta": 6,
+    "visibleStepDelta": 7,
     "hiddenStepDelta": 5,
     "method": "A real second browser tab backgrounds the page for 5 seconds; interval callbacks are counted by visibility and the next rendered tick is reconciled against foreground callbacks."
   },
   "mandelbrot": {
     "before": {
-      "prepare": 29,
+      "prepare": 25,
       "workers": 2,
       "highestPrepareGeneration": 10
     },
     "hidden": {
       "hidden": true,
-      "prepare": 29,
+      "prepare": 25,
       "cancel": 22,
       "highestCancelGeneration": 11
     },
-    "heldPrepareCount": 29,
+    "heldPrepareCount": 25,
     "resumed": {
-      "prepare": 31,
+      "prepare": 27,
       "highestPrepareGeneration": 12
     },
     "method": "Worker postMessage calls are recorded in the page; hide during deep preset work, confirm explicit cancellation and no new requests, then reactivate and verify a later generation resumes."
   },
+  "webglContextLoss": {
+    "supported": true,
+    "fallback": {
+      "lostEvent": true,
+      "fastVisibility": "hidden",
+      "cpuVisibility": "visible",
+      "gpuVisibility": "hidden",
+      "errorBoundary": false
+    },
+    "restored": {
+      "restoredEvent": true,
+      "lost": false,
+      "glError": 0,
+      "pixels": [
+        [
+          6,
+          17,
+          33,
+          255
+        ],
+        [
+          3,
+          5,
+          8,
+          255
+        ],
+        [
+          6,
+          18,
+          35,
+          255
+        ]
+      ],
+      "distinctPixels": 3,
+      "fastVisibility": "visible"
+    }
+  },
   "browserErrors": [],
-  "caveat": "Headless Chromium background-tab behavior does not establish physical-device power use; WebGPU context-loss recovery is a separate, still-open check."
+  "caveat": "Headless Chromium background-tab behavior does not establish physical-device power use. WEBGL_lose_context checks the WebGL fallback path, not physical GPU failure or WebGPU device-loss behavior."
 }

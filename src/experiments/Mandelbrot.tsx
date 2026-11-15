@@ -702,27 +702,32 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
     let vertex: WebGLShader | null = null
     let fragment: WebGLShader | null = null
     let locations: Record<string, WebGLUniformLocation | null> = {}
-    try {
-      gl = canvas.getContext('webgl2', { alpha: false, antialias: false, powerPreference: 'high-performance' })
-      if (!gl) throw new Error('WebGL 2 unavailable')
-      const activeGl = gl
-      vertex = compile(gl, gl.VERTEX_SHADER, vertexShader)
-      fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentShader)
-      const created = gl.createProgram()
-      if (!created) throw new Error('Could not create a fractal program')
-      program = created
-      gl.attachShader(created, vertex)
-      gl.attachShader(created, fragment)
-      gl.linkProgram(created)
-      if (!gl.getProgramParameter(created, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(created) || 'Could not link the fractal shader')
-      locations = Object.fromEntries(['uResolution', 'uCenter', 'uZoom', 'uIterations', 'uPalette', 'uJulia', 'uJuliaC'].map((name) => [name, activeGl.getUniformLocation(created, name)]))
-      setFastSupported(true)
-    } catch {
-      setFastSupported(false)
+    const initialize = () => {
+      program = null; vertex = null; fragment = null; locations = {}
+      try {
+        gl = canvas.getContext('webgl2', { alpha: false, antialias: false, powerPreference: 'high-performance' })
+        if (!gl) throw new Error('WebGL 2 unavailable')
+        const activeGl = gl
+        vertex = compile(gl, gl.VERTEX_SHADER, vertexShader)
+        fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentShader)
+        const created = gl.createProgram()
+        if (!created) throw new Error('Could not create a fractal program')
+        program = created
+        gl.attachShader(created, vertex)
+        gl.attachShader(created, fragment)
+        gl.linkProgram(created)
+        if (!gl.getProgramParameter(created, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(created) || 'Could not link the fractal shader')
+        locations = Object.fromEntries(['uResolution', 'uCenter', 'uZoom', 'uIterations', 'uPalette', 'uJulia', 'uJuliaC'].map((name) => [name, activeGl.getUniformLocation(created, name)]))
+        setFastSupported(true)
+        return true
+      } catch {
+        setFastSupported(false)
+        return false
+      }
     }
     const draw = () => {
       const state = config.current
-      if (!gl || !program || !canvas.width || !canvas.height || deepView(state.view)) return
+      if (!gl || gl.isContextLost() || !program || !canvas.width || !canvas.height || deepView(state.view)) return
       gl.useProgram(program)
       gl.uniform2f(locations.uResolution, canvas.width, canvas.height)
       gl.uniform2f(locations.uCenter, Number(state.view.x), Number(state.view.y))
@@ -737,6 +742,22 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
       sourceRef.current = 'fast'
       renderedViewRef.current = { ...state.view }
     }
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      setFastSupported(false)
+      setRenderStatus('Graphics context lost · switching to the progressive renderer')
+    }
+    const onContextRestored = () => {
+      if (!initialize()) {
+        setRenderStatus('Graphics context could not be restored · using the progressive renderer')
+        return
+      }
+      setRenderStatus('')
+      draw()
+    }
+    canvas.addEventListener('webglcontextlost', onContextLost)
+    canvas.addEventListener('webglcontextrestored', onContextRestored)
+    initialize()
     fastDraw.current = draw
     const resize = () => {
       const rect = surfaceRect(canvas)
@@ -764,6 +785,8 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
     resize()
     return () => {
       observer.disconnect()
+      canvas.removeEventListener('webglcontextlost', onContextLost)
+      canvas.removeEventListener('webglcontextrestored', onContextRestored)
       fastDraw.current = () => {}
       if (gl && program) gl.deleteProgram(program)
       if (gl && vertex) gl.deleteShader(vertex)

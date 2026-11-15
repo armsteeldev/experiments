@@ -202,14 +202,50 @@ try {
   await waitFor(`window.__armsteelBackgroundQA.workers.filter((worker) => worker.url.includes('mandelbrot.worker')).reduce((sum, worker) => sum + worker.messages.filter((message) => message.action === 'prepare').length, 0) > ${heldMandelbrot}`, 'Deep rendering to resume on return')
   const resumedMandelbrot = await evaluate(`(() => { const workers = window.__armsteelBackgroundQA.workers.filter((worker) => worker.url.includes('mandelbrot.worker')); return { prepare: workers.reduce((sum, worker) => sum + worker.messages.filter((message) => message.action === 'prepare').length, 0), highestPrepareGeneration: Math.max(...workers.flatMap((worker) => worker.messages.filter((message) => message.action === 'prepare').map((message) => message.generation ?? -1))) } })()`)
   assert.ok(resumedMandelbrot.highestPrepareGeneration > hiddenMandelbrot.highestCancelGeneration, 'Foreground rendering uses a new generation after cancellation')
+
+  await click('button[aria-label="Toggle experiment controls"]')
+  assert.equal(await evaluate(`(() => { const button = [...document.querySelectorAll('#experiment-controls button')].find((item) => item.textContent.trim() === 'Reset'); if (!button) return false; button.click(); return true })()`), true, 'The browser can reset the deep camera to its overview')
+  await waitFor(`!document.querySelector('.canvas-coordinate')?.textContent.includes('e50') && document.querySelector('.fractal-fast')?.style.visibility === 'visible'`, 'The fast WebGL view to return before context loss')
+  const contextLossSupported = await evaluate(`(() => {
+    const canvas = document.querySelector('.fractal-fast')
+    const gl = canvas?.getContext('webgl2')
+    const extension = gl?.getExtension('WEBGL_lose_context')
+    if (!canvas || !gl || !extension) return false
+    window.__armsteelWebglContextQA = { canvas, gl, extension, events: [] }
+    canvas.addEventListener('webglcontextlost', () => window.__armsteelWebglContextQA.events.push('lost'))
+    canvas.addEventListener('webglcontextrestored', () => window.__armsteelWebglContextQA.events.push('restored'))
+    return true
+  })()`)
+  let contextLoss = { supported: contextLossSupported }
+  if (contextLossSupported) {
+    await evaluate('window.__armsteelWebglContextQA.extension.loseContext()')
+    await waitFor(`window.__armsteelWebglContextQA.events.includes('lost') && document.querySelector('.fractal-fast')?.style.visibility === 'hidden' && (document.querySelector('.fractal-cpu')?.style.visibility === 'visible' || document.querySelector('.fractal-gpu')?.style.visibility === 'visible')`, 'The WebGL loss event to activate a progressive fallback')
+    const fallback = await evaluate(`({ lostEvent: window.__armsteelWebglContextQA.events.includes('lost'), fastVisibility: document.querySelector('.fractal-fast')?.style.visibility, cpuVisibility: document.querySelector('.fractal-cpu')?.style.visibility, gpuVisibility: document.querySelector('.fractal-gpu')?.style.visibility, errorBoundary: Boolean(document.querySelector('.experience-error')) })`)
+    assert.equal(fallback.errorBoundary, false, 'WebGL loss stays inside the Mandelbrot exhibit')
+    await evaluate('window.__armsteelWebglContextQA.extension.restoreContext()')
+    await waitFor(`window.__armsteelWebglContextQA.events.includes('restored') && !window.__armsteelWebglContextQA.gl.isContextLost() && document.querySelector('.fractal-fast')?.style.visibility === 'visible'`, 'The WebGL shader to be rebuilt after context restoration')
+    const restored = await evaluate(`(() => {
+      const { gl } = window.__armsteelWebglContextQA
+      const pixels = []
+      for (const [x, y] of [[gl.drawingBufferWidth >> 2, gl.drawingBufferHeight >> 2], [gl.drawingBufferWidth >> 1, gl.drawingBufferHeight >> 1], [gl.drawingBufferWidth * 3 >> 2, gl.drawingBufferHeight * 3 >> 2]]) {
+        const pixel = new Uint8Array(4); gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel); pixels.push([...pixel])
+      }
+      return { restoredEvent: window.__armsteelWebglContextQA.events.includes('restored'), lost: gl.isContextLost(), glError: gl.getError(), pixels, distinctPixels: new Set(pixels.map((pixel) => pixel.join(','))).size, fastVisibility: document.querySelector('.fractal-fast')?.style.visibility }
+    })()`)
+    assert.equal(restored.lost, false, 'The WebGL context is live after restoration')
+    assert.equal(restored.glError, 0, 'The restored WebGL draw has no context error')
+    assert.ok(restored.distinctPixels > 1, 'The restored shader renders visible fractal variation')
+    contextLoss = { supported: true, fallback, restored }
+  }
   assert.equal(browserErrors.length, 0, `Background suspension produced browser or network errors: ${browserErrors.join('; ')}`)
 
   const evidence = {
     browser: await evaluate(`({ userAgent: navigator.userAgent, visibility: document.visibilityState, renderer: (() => { const gl = document.createElement('canvas').getContext('webgl2'); if (!gl) return 'unavailable'; const extension = gl.getExtension('WEBGL_debug_renderer_info'); return extension ? gl.getParameter(extension.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER) })() })`),
     network: { before: beforeNetwork, hidden: hiddenNetwork, after: afterNetwork, tickDelta: networkDelta, visibleStepDelta, hiddenStepDelta, method: 'A real second browser tab backgrounds the page for 5 seconds; interval callbacks are counted by visibility and the next rendered tick is reconciled against foreground callbacks.' },
     mandelbrot: { before: beforeMandelbrot, hidden: hiddenMandelbrot, heldPrepareCount: heldMandelbrot, resumed: resumedMandelbrot, method: 'Worker postMessage calls are recorded in the page; hide during deep preset work, confirm explicit cancellation and no new requests, then reactivate and verify a later generation resumes.' },
+    webglContextLoss: contextLoss,
     browserErrors,
-    caveat: 'Headless Chromium background-tab behavior does not establish physical-device power use; WebGPU context-loss recovery is a separate, still-open check.'
+    caveat: 'Headless Chromium background-tab behavior does not establish physical-device power use. WEBGL_lose_context checks the WebGL fallback path, not physical GPU failure or WebGPU device-loss behavior.'
   }
   await mkdir('docs/renaissance/evidence', { recursive: true })
   await writeFile(resolve('docs/renaissance/evidence/background-suspension-browser-checks.json'), `${JSON.stringify(evidence, null, 2)}\n`)
