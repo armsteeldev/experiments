@@ -1,0 +1,59 @@
+{
+  "browser": "HeadlessChrome 157, SwiftShader WebGL, desktop and touch-emulated phone",
+  "coverage": {
+    "exhibits": 19,
+    "viewports": [
+      "desktop 1440×900",
+      "phone 390×844"
+    ],
+    "firstPaintChecks": 38
+  },
+  "firstPaint": {
+    "desktopPassed": 19,
+    "mobilePassed": 19,
+    "unpainted": [],
+    "horizontalOverflow": {
+      "desktop": false,
+      "mobile": false
+    }
+  },
+  "interaction": {
+    "preview": "lsystem",
+    "baseSignature": "1d265322",
+    "hoveredSignature": "604d8b71",
+    "resetSignature": "1d265322",
+    "hoverChangesPixels": true,
+    "pointerLeaveRestoresBase": true,
+    "reducedMotion": {
+      "emulated": true,
+      "hoverSignatureUnchanged": true
+    }
+  },
+  "workerLifecycle": {
+    "inGallery": {
+      "created": 1,
+      "terminated": 0,
+      "active": 1,
+      "urls": [
+        "http://127.0.0.1:5215/assets/previewRaster.worker-wb1D9Dtq.js"
+      ]
+    },
+    "afterGalleryUnmount": {
+      "created": 1,
+      "terminated": 1,
+      "active": 0,
+      "urls": [
+        "http://127.0.0.1:5215/assets/previewRaster.worker-wb1D9Dtq.js"
+      ]
+    },
+    "afterGalleryReturn": {
+      "created": 1,
+      "terminated": 1,
+      "active": 0,
+      "urls": [
+        "http://127.0.0.1:5215/assets/previewRaster.worker-wb1D9Dtq.js"
+      ]
+    }
+  },
+  "browserErrors": []
+}

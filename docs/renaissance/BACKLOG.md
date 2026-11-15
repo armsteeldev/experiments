@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the `renaissance/next-generation` shared-shell/mobile checkpoint. Items are ordered by visitor value, risk and dependency.
+Status is current to the gallery-preview lifecycle checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -47,7 +47,9 @@ Status is current to the `renaissance/next-generation` shared-shell/mobile check
 
 ## P2 — Gallery and preview refinement
 
-- [ ] Inspect gallery first paint and preview startup on a clean profile; ensure visibility-driven previews stop when hidden.
+- [x] Inspect first paint for all 19 previews on desktop and phone; test interactive hover/reset and reduced-motion behavior.
+- [x] Terminate the shared Mandelbrot preview worker and clear preview canvases when the gallery unmounts; verify the worker does not return on gallery remount with cached previews.
+- [ ] Test that live previews suspend promptly while cards remain outside the visible region.
 - [ ] Check concept search, no-results behavior, favorites/recent handling, and the usefulness of each related link.
 - [ ] Keep a single preview budget; do not mount nineteen full simulation engines.
 - [ ] Improve card and microcopy legibility where browser review shows a real issue.

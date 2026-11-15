@@ -63,6 +63,14 @@ The build after the notebook and state-sharing changes measured 351.17 kB initia
 
 Export/import is not implemented. Per-exhibit validators accept different ranges and formats, so the state-sharing sweep establishes a valid envelope and route recovery, not a scientific guarantee that every arbitrary external setting will reproduce identically. Physical-GPU results remain unavailable; browser captures use HeadlessChrome with SwiftShader.
 
+## Gallery preview first-paint and lifecycle follow-up
+
+`npm run qa:gallery-previews` checked all 19 previews at 1440×900 and 390×844 in HeadlessChrome 157 with SwiftShader/touch emulation. All 38 canvases painted, neither viewport overflowed horizontally, hover caused a measurable change in the interactive L-system preview, pointer leave restored the sampled pixels, and reduced-motion emulation prevented preview animation.
+
+The test instruments worker creation/termination across gallery exit and return. Before the fix, the shared preview raster worker remained alive after gallery unmount. After the fix it created once and terminated once at unmount; active worker count was zero after exit and remained zero after returning to the cached gallery. Unmounting the last preview also clears pending jobs and preview canvas caches. This is a targeted page-level cleanup check, not a broad long-run memory or offscreen-card suspension measurement.
+
+Representative captures: [desktop gallery](evidence/gallery-collection-desktop.png), [interactive preview hover](evidence/gallery-preview-hover-desktop.png), [phone gallery](evidence/gallery-collection-mobile.png), and the [homepage hero on desktop](evidence/home-hero-preview-desktop.png) and [phone](evidence/home-hero-preview-mobile.png). Current initial bundles are 351.89 kB JavaScript raw / 113.55 kB gzip and 107.92 kB CSS / 23.45 kB gzip; no new dependency was added.
+
 ## Third validated change: shared exhibit navigation and overlays
 
 The first full overlay review covered all nineteen exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. It exposed a mobile dock that placed some controls beyond the glass frame and a selector stylesheet whose direct-child selector did not reach the nested option list. Phone layouts now keep the home action, current-study chooser, Controls, About, pause and fullscreen visible as 44×44 px targets; the selector contains all nineteen destinations with 44 px scrollable rows. Sequential previous/next actions remain available on wider screens and the chooser exposes all destinations on phones.

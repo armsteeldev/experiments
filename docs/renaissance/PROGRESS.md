@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Working tree:** Clean after the shared-shell accessibility/mobile milestone. Curated paths, versioned local experiment notebook and overlay/navigation fixes are browser-verified.
+- **Working tree:** Clean at the gallery preview lifecycle checkpoint; curated paths, local experiment notebook, shared navigation/overlays and gallery preview cleanup are committed and browser-verified.
 
 ## Milestones
 
@@ -28,7 +28,10 @@
 - The optional local notebook now sits before the long card grid, so saved setups are visible near the collection’s first choices. Its entries can be named, reopened, refreshed, or removed.
 - Fixed two measured shared-navigation gaps: phone dock actions were partly off-screen and below a useful touch size, and the exhibit chooser CSS targeted direct children while its options are nested in a list. At widths up to 420px the dock now keeps six core actions at 44×44 px and moves sequential navigation into the full exhibit chooser; every chooser row is 44 px and its final option is scroll-reachable.
 - Added `qa:exhibit-overlays`: all nineteen routes × six viewport shapes × dock, Controls, About and chooser (456 checks). The browser found a lazy-mount race where a controls panel could open before its exhibit loaded and miss keyboard focus. The shared shell now waits for that panel to mount before moving focus. The rerun passed with zero layout/accessibility findings and zero browser/network errors. See [`evidence/exhibit-overlay-review.json`](evidence/exhibit-overlay-review.json) and [320px mobile chooser/dock capture](evidence/exhibit-selector-320-mobile.png).
-- Remaining for this milestone: improve search/recommendation relevance and inspect preview scheduling/first paint under a clean profile.
+- Added a gallery preview browser sweep across all 19 cards at desktop and touch-emulated phone sizes. All 38 previews paint visibly, neither viewport has horizontal overflow, L-system hover changes the rendered pixels and pointer leave restores the exact sampled base image. Emulated reduced motion keeps that preview static.
+- The sweep exposed a lifecycle leak: the shared Mandelbrot preview raster worker remained alive after leaving the gallery. Preview canvases now use reference-counted ownership; when the last gallery preview unmounts, pending cache entries and raster/background canvases are cleared and the worker terminates. Returning to the gallery reuses its cached preview without reopening the worker. Browser instrumentation verified one worker created, one terminated, zero active after unmount and still zero active on return.
+- Captures and the machine-readable run are in [`evidence/`](evidence/); browser validation is HeadlessChrome 157 with SwiftShader and phone emulation, not physical hardware. The production build is 351.89 kB initial JS raw / 113.55 kB gzip and 107.92 kB initial CSS raw / 23.45 kB gzip; exhibit chunks remain lazy.
+- Remaining for this milestone: improve concept search/recommendation relevance and test preview suspension while cards are outside the visible region.
 
 ### 3 — New product capabilities: in progress
 
@@ -69,7 +72,7 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run qa:state-sharing` — passed share → reload for all 19 exhibits, state-size and current-envelope checks, including edited Adder values; no browser or HTTP errors. The harness also verifies restored Adder controls and calculated result.
 - `npm run verify` — passed after the shared-shell changes, including all simulations, exhaustive 4-/8-bit Adder cases, storage validation, 19 exhibit metadata/routes, and static SEO/sitemap checks.
 - `npm run qa:exhibit-overlays` — passed 456 checks for the dock, Controls, About and selector over 19 exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. All focus movement, Escape close/return, panel bounds, scroll reach, selector row height, mobile dock target size, and browser/network-error checks passed. This is headless SwiftShader plus viewport/touch emulation, not a physical phone or screen-reader test.
-- Current build payload: initial JS 351.64 kB raw / 113.45 kB gzip; initial CSS 107.92 / 23.45 kB gzip. Exhibit chunks remain lazy; no dependency or service was added.
+- Current build payload: initial JS 351.89 kB raw / 113.55 kB gzip; initial CSS 107.92 / 23.45 kB gzip. Exhibit chunks remain lazy; no dependency or service was added.
 
 ## Next action
 

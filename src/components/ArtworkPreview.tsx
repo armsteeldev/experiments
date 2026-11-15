@@ -35,6 +35,7 @@ const backgroundCache = new Map<string, HTMLCanvasElement>()
 type PendingFractal = { width: number; height: number; palette: Palette }
 let fractalWorker: Worker | null = null
 let fractalWorkerUnavailable = false
+let mountedPreviews = 0
 const fractalPending = new Map<string, PendingFractal>()
 
 function drawFractalFallback(canvas: HTMLCanvasElement, palette: Palette) {
@@ -80,6 +81,20 @@ function getFractalWorker() {
     return null
   }
   return fractalWorker
+}
+
+function canUseFractalWorker() {
+  return !fractalWorkerUnavailable && typeof Worker !== 'undefined' && typeof OffscreenCanvas !== 'undefined'
+}
+
+function releasePreviewResources() {
+  if (mountedPreviews > 0) return
+  fractalWorker?.terminate()
+  fractalWorker = null
+  for (const key of fractalPending.keys()) fractalCache.delete(key)
+  fractalPending.clear()
+  fractalCache.clear()
+  backgroundCache.clear()
 }
 
 const paletteFor = (id: string): Palette => palettes[id] ?? palettes[previewModes[id]] ?? ['#b4c6cc', '#85a9bc', '#9d90b4']
@@ -128,9 +143,9 @@ function background(ctx: CanvasRenderingContext2D, w: number, h: number, palette
 }
 
 function drawMandelbrot(ctx: CanvasRenderingContext2D, w: number, h: number, palette: Palette, time: number) {
-  const worker = getFractalWorker()
-  const targetWidth = worker ? Math.min(1024, Math.max(520, Math.round(w * 0.78))) : Math.min(420, Math.max(300, Math.round(w * 0.4)))
-  const targetHeight = worker ? Math.min(440, Math.max(240, Math.round(h * 0.75))) : Math.min(180, Math.max(140, Math.round(h * 0.35)))
+  const workerCapable = canUseFractalWorker()
+  const targetWidth = workerCapable ? Math.min(1024, Math.max(520, Math.round(w * 0.78))) : Math.min(420, Math.max(300, Math.round(w * 0.4)))
+  const targetHeight = workerCapable ? Math.min(440, Math.max(240, Math.round(h * 0.75))) : Math.min(180, Math.max(140, Math.round(h * 0.35)))
   const key = `${targetWidth}x${targetHeight}:${palette.join('-')}`
   let target = fractalCache.get(key)
   if (!target) {
@@ -139,6 +154,7 @@ function drawMandelbrot(ctx: CanvasRenderingContext2D, w: number, h: number, pal
     target.height = targetHeight
     fractalCache.set(key, target)
     if (fractalCache.size > 6) fractalCache.delete(fractalCache.keys().next().value!)
+    const worker = workerCapable ? getFractalWorker() : null
     if (worker) {
       fractalPending.set(key, { width: targetWidth, height: targetHeight, palette })
       worker.postMessage({ key, width: targetWidth, height: targetHeight, palette })
@@ -554,6 +570,7 @@ export default function ArtworkPreview({ id, live = false }: Props) {
     const canvas = ref.current
     const ctx = canvas?.getContext('2d', { alpha: false, desynchronized: true })
     if (!canvas || !ctx) return
+    mountedPreviews += 1
 
     let raf = 0
     let visible = false
@@ -671,6 +688,8 @@ export default function ArtworkPreview({ id, live = false }: Props) {
       interactionTarget?.removeEventListener('pointerleave', pointerLeave)
       interactionTarget?.removeEventListener('focusin', focusIn)
       interactionTarget?.removeEventListener('focusout', focusOut)
+      mountedPreviews = Math.max(0, mountedPreviews - 1)
+      releasePreviewResources()
     }
   }, [id, live])
 
