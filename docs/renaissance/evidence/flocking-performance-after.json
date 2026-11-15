@@ -1,0 +1,61 @@
+{
+  "browser": "HeadlessChrome 157, Canvas 2D, SwiftShader/Vulkan, 1440×900",
+  "workload": {
+    "scenario": "Predator and prey",
+    "population": 1400,
+    "awarenessPx": 132
+  },
+  "capture": "evidence/flocking-predator-evolved.png",
+  "trials": [
+    {
+      "callbacks": 43,
+      "callbackMs": {
+        "median": 13.099999904632568,
+        "p95": 29.200000286102295,
+        "max": 78.19999980926514
+      },
+      "frameIntervalsMs": {
+        "median": 50,
+        "p95": 66.70000000000005,
+        "max": 116.80000000000007
+      },
+      "longTasksOver50ms": 6,
+      "longestLongTaskMs": 102,
+      "wallSeconds": 2.221
+    },
+    {
+      "callbacks": 44,
+      "callbackMs": {
+        "median": 10.199999809265137,
+        "p95": 21.09999990463257,
+        "max": 22.300000190734863
+      },
+      "frameIntervalsMs": {
+        "median": 50,
+        "p95": 66.69999999999982,
+        "max": 83.39999999999964
+      },
+      "longTasksOver50ms": 3,
+      "longestLongTaskMs": 71,
+      "wallSeconds": 2.228
+    },
+    {
+      "callbacks": 42,
+      "callbackMs": {
+        "median": 11.300000190734863,
+        "p95": 19.90000009536743,
+        "max": 46.299999713897705
+      },
+      "frameIntervalsMs": {
+        "median": 50,
+        "p95": 66.69999999999982,
+        "max": 83.39999999999964
+      },
+      "longTasksOver50ms": 6,
+      "longestLongTaskMs": 66,
+      "wallSeconds": 2.224
+    }
+  ],
+  "browserErrors": [],
+  "caveat": "Callback timing includes all page animation callbacks; software-rendered headless measurements do not represent physical-GPU or phone performance."
+}

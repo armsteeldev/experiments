@@ -5,6 +5,7 @@ import { ActionRow, ControlPanel, RangeControl, SelectControl, Segmented } from 
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
 import { boundedStateNumber, boundedStateSeed, stateChoice } from '../lib/experimentState'
 import { MAX_FLOCKING_MARKERS, restoreFlockingMarkers, type FlockingMarkerState } from '../lib/flockingState'
+import { limitedVectorScale, nearestToroidalPoint, wrappedCellSpan, wrappedCellStart } from '../simulations/flockingGrid'
 
 type Species = 0 | 1 | 2
 type Agent = { x: number; y: number; vx: number; vy: number; oldX: number; oldY: number; species: Species; plumage: number; size: number }
@@ -21,11 +22,6 @@ const palettes = {
   flock: ['#d8d5c4', '#8dc5ca', '#e4bc8a'],
 }
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
-function limit(x: number, y: number, max: number): [number, number] {
-  const length = Math.hypot(x, y)
-  return length > max ? [x * max / length, y * max / length] : [x, y]
-}
-
 export default function Boids({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const hint = useDiscoveryHint('boids')
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -64,6 +60,7 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
     let width = 0, height = 0, raf = 0, previous = 0, lastPopulation = 0, lastSeed = 0, lastScenario = ''
     let columns = 0, rows = 0, cellSize = 0
     let cells: Agent[][] = []
+    const predators: Agent[] = []
     const randomizer = (initialSeed: number) => {
       let value = initialSeed >>> 0
       return () => { value = (value * 1664525 + 1013904223) >>> 0; return value / 4294967296 }
@@ -225,36 +222,39 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
       if (cellSize !== r) {
         cellSize = r; columns = Math.max(1, Math.ceil(width / cellSize)); rows = Math.max(1, Math.ceil(height / cellSize))
         cells = Array.from({ length: columns * rows }, () => [])
-      } else cells.forEach((cell) => { cell.length = 0 })
+      } else for (let index = 0; index < cells.length; index++) cells[index].length = 0
+      predators.length = 0
       for (const bird of agents.current) {
         const gx = Math.floor(bird.x / cellSize), gy = Math.floor(bird.y / cellSize)
-        cells[((gy + rows) % rows) * columns + ((gx + columns) % columns)]?.push(bird)
+        const cellIndex = ((gy + rows) % rows) * columns + ((gx + columns) % columns)
+        cells[cellIndex]?.push(bird)
+        if (q.scenario === 'predator' && bird.species === 2) predators.push(bird)
       }
       const radius2 = r * r
       const maxSpeed = q.speed * (q.scenario === 'predator' ? 1.2 : 1)
       for (const bird of agents.current) {
         let sx = 0, sy = 0, ax = 0, ay = 0, cx = 0, cy = 0, neighbors = 0
         let closestPrey: Agent | null = null, closestPredator: Agent | null = null
-        let preyDistance2 = Infinity, predatorDistance2 = Infinity
+        let preyDistance2 = Infinity
         const gx = Math.floor(bird.x / cellSize), gy = Math.floor(bird.y / cellSize)
-        const reach = q.scenario === 'predator' && bird.species === 1 ? 3 : 1
-        const checkedCells = new Set<number>()
-        for (let oy = -reach; oy <= reach; oy++) for (let ox = -reach; ox <= reach; ox++) {
-          const xx = (gx + ox + columns) % columns, yy = (gy + oy + rows) % rows
+        const reach = 1
+        const searchColumns = wrappedCellSpan(columns, reach), searchRows = wrappedCellSpan(rows, reach)
+        const startColumn = wrappedCellStart(gx, columns, reach), startRow = wrappedCellStart(gy, rows, reach)
+        // The old per-bird Set skipped duplicate cells when a wrapped grid was
+        // narrower than the neighbourhood. A bounded unique window preserves
+        // its order without allocating a collection for every simulated bird.
+        for (let rowOffset = 0; rowOffset < searchRows; rowOffset++) for (let columnOffset = 0; columnOffset < searchColumns; columnOffset++) {
+          const xx = (startColumn + columnOffset) % columns, yy = (startRow + rowOffset) % rows
           const cellIndex = yy * columns + xx
-          if (checkedCells.has(cellIndex)) continue
-          checkedCells.add(cellIndex)
           for (const other of cells[cellIndex]) {
             if (other === bird) continue
             let dx = other.x - bird.x, dy = other.y - bird.y
             if (dx > width / 2) dx -= width; else if (dx < -width / 2) dx += width
             if (dy > height / 2) dy -= height; else if (dy < -height / 2) dy += height
             const d2 = dx * dx + dy * dy
-            if (d2 > radius2 * (bird.species === 1 ? 6.25 : 1)) continue
+            if (d2 > radius2) continue
             if (q.scenario === 'predator' && bird.species === 2 && other.species === 1 && d2 < preyDistance2) {
               preyDistance2 = d2; closestPrey = other
-            } else if (q.scenario === 'predator' && bird.species === 1 && other.species === 2 && d2 < predatorDistance2) {
-              predatorDistance2 = d2; closestPredator = other
             }
             const sameGroup = other.species === bird.species
             if (d2 < radius2 && sameGroup) {
@@ -267,38 +267,53 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
             }
           }
         }
+        if (q.scenario === 'predator' && bird.species === 1) {
+          // Prey need to see predators out to 2.5 awareness radii. Scanning
+          // 49 mixed-species grid cells for every prey bird dominated the
+          // crowded scene; scan the small predator population directly while
+          // keeping ordinary flock interactions on the local 3×3 grid.
+          closestPredator = nearestToroidalPoint(predators, bird.x, bird.y, width, height, r * 2.5)
+        }
         let fx = 0, fy = 0
         if (neighbors) {
           // Keep separation local; letting its inverse-distance sum dominate
           // alignment caused the opening flock to radiate into a starburst.
-          const separation = limit(sx * 42, sy * 42, 0.11)
-          const alignment = limit(ax / neighbors - bird.vx, ay / neighbors - bird.vy, q.scenario === 'murmuration' ? 0.13 : 0.085)
+          const separationX = sx * 42, separationY = sy * 42
+          const separationScale = limitedVectorScale(separationX, separationY, 0.11)
+          const alignmentX = ax / neighbors - bird.vx, alignmentY = ay / neighbors - bird.vy
+          const alignmentScale = limitedVectorScale(alignmentX, alignmentY, q.scenario === 'murmuration' ? 0.13 : 0.085)
           const cohesionScale = q.scenario === 'murmuration' ? 0.0028 : 0.00115
-          const cohesion = limit((cx / neighbors - bird.x) * cohesionScale, (cy / neighbors - bird.y) * cohesionScale, q.scenario === 'murmuration' ? 0.12 : 0.084)
-          fx += separation[0] + alignment[0] + cohesion[0]
-          fy += separation[1] + alignment[1] + cohesion[1]
+          const cohesionX = (cx / neighbors - bird.x) * cohesionScale, cohesionY = (cy / neighbors - bird.y) * cohesionScale
+          const cohesionLimit = q.scenario === 'murmuration' ? 0.12 : 0.084
+          const cohesionVectorScale = limitedVectorScale(cohesionX, cohesionY, cohesionLimit)
+          fx += separationX * separationScale + alignmentX * alignmentScale + cohesionX * cohesionVectorScale
+          fy += separationY * separationScale + alignmentY * alignmentScale + cohesionY * cohesionVectorScale
         }
         if (closestPrey) {
           let dx = closestPrey.x - bird.x, dy = closestPrey.y - bird.y
           if (dx > width / 2) dx -= width; if (dx < -width / 2) dx += width
           if (dy > height / 2) dy -= height; if (dy < -height / 2) dy += height
-          const chase = limit(dx * 0.00075, dy * 0.00075, 0.15)
-          fx += chase[0]; fy += chase[1]
+          const chaseX = dx * 0.00075, chaseY = dy * 0.00075
+          const chaseScale = limitedVectorScale(chaseX, chaseY, 0.15)
+          fx += chaseX * chaseScale; fy += chaseY * chaseScale
         }
         if (closestPredator) {
           let dx = bird.x - closestPredator.x, dy = bird.y - closestPredator.y
           if (dx > width / 2) dx -= width; if (dx < -width / 2) dx += width
           if (dy > height / 2) dy -= height; if (dy < -height / 2) dy += height
-          const flee = limit(dx * 0.0018, dy * 0.0018, 0.22)
-          fx += flee[0]; fy += flee[1]
+          const fleeX = dx * 0.0018, fleeY = dy * 0.0018
+          const fleeScale = limitedVectorScale(fleeX, fleeY, 0.22)
+          fx += fleeX * fleeScale; fy += fleeY * fleeScale
         }
         if (q.scenario === 'vortex') {
           const dx = bird.x - width / 2, dy = bird.y - height / 2
-          const swirl = limit(-dy * 0.00014, dx * 0.00014, 0.07)
-          fx += swirl[0]; fy += swirl[1]
+          const swirlX = -dy * 0.00014, swirlY = dx * 0.00014
+          const swirlScale = limitedVectorScale(swirlX, swirlY, 0.07)
+          fx += swirlX * swirlScale; fy += swirlY * swirlScale
         } else if (q.scenario === 'migration') {
-          const wind = limit(maxSpeed - bird.vx, 0.1 - bird.vy, 0.04)
-          fx += wind[0]; fy += wind[1]
+          const windX = maxSpeed - bird.vx, windY = 0.1 - bird.vy
+          const windScale = limitedVectorScale(windX, windY, 0.04)
+          fx += windX * windScale; fy += windY * windScale
         }
         if (q.scenario === 'murmuration') {
           // Keep this showcase flock in view without pinning it to a point:
@@ -328,12 +343,12 @@ export default function Boids({ paused, controlsVisible, stateFromUrl, onShareSt
             fx -= dx / distance * strength; fy -= dy / distance * strength
           }
         }
-        const force = limit(fx, fy, 0.23)
-        bird.vx += force[0] * dt
-        bird.vy += force[1] * dt
-        const velocity = limit(bird.vx, bird.vy, maxSpeed * (bird.species === 2 ? 1.25 : 1))
+        const forceScale = limitedVectorScale(fx, fy, 0.23)
+        bird.vx += fx * forceScale * dt
+        bird.vy += fy * forceScale * dt
+        const velocityScale = limitedVectorScale(bird.vx, bird.vy, maxSpeed * (bird.species === 2 ? 1.25 : 1))
         bird.oldX = bird.x; bird.oldY = bird.y
-        bird.vx = velocity[0]; bird.vy = velocity[1]
+        bird.vx *= velocityScale; bird.vy *= velocityScale
         if (q.scenario === 'murmuration') {
           bird.x += bird.vx * dt; bird.y += bird.vy * dt
           if (bird.x < 6 || bird.x > width - 6) { bird.x = clamp(bird.x, 6, width - 6); bird.vx *= -0.72 }
