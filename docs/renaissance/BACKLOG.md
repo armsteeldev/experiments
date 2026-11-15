@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change, alongside the cancellable Where Light Falls work in `368a298`. Items are ordered by visitor value, risk and dependency.
+Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, plus the nineteen-study model-boundary audit. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -67,8 +67,12 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Exercise seventeen extreme/invalid shared-state cases across thirteen routes; cover enum/default recovery, model bounds, optical placements, oversized fractal zoom/coordinates, CPU source execution, and browser-painted cellular-board replay.
 - [x] Exercise Fluid and Reaction Diffusion Canvas 2D fallbacks with WebGL disabled; restore WebGL2 and verify a fallback-created Reaction setup keeps its preset and pigment.
 - [ ] Add stable visual capture and tolerant image-diff workflow for representative desktop/mobile states.
-- [ ] Review scientific claims and visible approximations, especially Fluid, Garden, Networks, geometric optics and Where Light Falls.
-- [ ] Test limits, invalid parameters, resets, deterministic seeds, worker cancellation, and numerical invariants.
+- [x] Compare visitor-facing model descriptions with all nineteen implementations and record evidence/limitations in `SCIENCE.md`.
+- [x] Add selected numerical checks for softened gravity force/potential and momentum, neural backpropagation, electrostatic field/potential, and wrapped cellular-automaton updates.
+- [ ] Add GPU fluid and reaction–diffusion residual/grid-refinement checks without duplicating the production solver.
+- [ ] Add attractor step-refinement/reference trajectory checks and direct L-system rewrite-rule tests.
+- [ ] Obtain independent specialist review of Where Light Falls model language and imagery.
+- [ ] Extend numerical bounds/reset/determinism/cancellation testing in the remaining uncovered routes and extreme-parameter combinations.
 
 ## P2 — Gallery and preview refinement
 

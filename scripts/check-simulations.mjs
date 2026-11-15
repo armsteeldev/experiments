@@ -61,6 +61,24 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
   for (let i = 0; i < 2400; i++) gravity.integrateGravity(circular, .003, 1, 'pass')
   const orbitRadius = Math.hypot(circular[1].x - circular[0].x, circular[1].y - circular[0].y)
   assert.ok(Math.abs(orbitRadius - 3.5) < .035, `A circular launch should remain near its starting radius: ${orbitRadius}`)
+  const softenedPair = [
+    { id: 40, x: -.8, y: .4, vx: 0, vy: 0, mass: 2, color: '#fff' },
+    { id: 41, x: 1.1, y: -.2, vx: 0, vy: 0, mass: 3, color: '#fff' },
+  ]
+  const acceleration = gravity.gravityAcceleration(softenedPair, .7)[0]
+  const potentialAt = (x, y) => gravity.gravityEnergy([{ ...softenedPair[0], x, y }, softenedPair[1]], .7)
+  const h = 1e-5, x0 = softenedPair[0].x, y0 = softenedPair[0].y
+  const numericAx = -(potentialAt(x0 + h, y0) - potentialAt(x0 - h, y0)) / (2 * h * softenedPair[0].mass)
+  const numericAy = -(potentialAt(x0, y0 + h) - potentialAt(x0, y0 - h)) / (2 * h * softenedPair[0].mass)
+  assert.ok(Math.abs(acceleration.ax - numericAx) < 1e-7 && Math.abs(acceleration.ay - numericAy) < 1e-7, 'The softened acceleration is the gradient of the matching pair potential')
+  const freePair = [
+    { id: 42, x: -.8, y: .4, vx: .15, vy: .45, mass: 2, color: '#fff' },
+    { id: 43, x: 1.1, y: -.2, vx: -.1, vy: -.3, mass: 3, color: '#fff' },
+  ]
+  const momentumBefore = freePair.reduce((p, body) => ({ x: p.x + body.mass * body.vx, y: p.y + body.mass * body.vy }), { x: 0, y: 0 })
+  for (let i = 0; i < 400; i++) gravity.integrateGravity(freePair, .001, .7, 'pass')
+  const momentumAfter = freePair.reduce((p, body) => ({ x: p.x + body.mass * body.vx, y: p.y + body.mass * body.vy }), { x: 0, y: 0 })
+  assert.ok(Math.hypot(momentumAfter.x - momentumBefore.x, momentumAfter.y - momentumBefore.y) < 1e-11, 'An unforced, collision-free softened pair conserves total linear momentum')
   const collision = [
     { id: 3, x: -.02, y: 0, vx: 1, vy: 0, mass: 1, color: '#fff' },
     { id: 4, x: .02, y: 0, vx: -1, vy: 0, mass: 1, color: '#fff' },
@@ -129,6 +147,26 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
 {
   const hand = { sizes: [2, 1], layers: [{ weights: [[1, -1]], biases: [.5] }] }
   assert.ok(Math.abs(neural.forwardNetwork(hand, [1, .25], 'tanh').output[0] - Math.tanh(1.25)) < 1e-12)
+  const gradientNetwork = { sizes: [2, 2, 1], layers: [
+    { weights: [[.4, -.2], [-.3, .5]], biases: [.45, .6] },
+    { weights: [[.35, -.2]], biases: [.4] },
+  ] }
+  const gradientSample = { x: [.6, .2], y: .8 }
+  const objective = (network, activation) => {
+    const prediction = neural.forwardNetwork(network, gradientSample.x, activation).output[0]
+    const target = activation === 'tanh' ? gradientSample.y * 2 - 1 : gradientSample.y
+    return .5 * (prediction - target) ** 2
+  }
+  for (const activation of ['tanh', 'sigmoid', 'relu']) {
+    const epsilon = 1e-4, rate = 1e-5, plus = structuredClone(gradientNetwork), minus = structuredClone(gradientNetwork), trained = structuredClone(gradientNetwork)
+    plus.layers[0].weights[0][0] += epsilon
+    minus.layers[0].weights[0][0] -= epsilon
+    const numericGradient = (objective(plus, activation) - objective(minus, activation)) / (2 * epsilon)
+    const initialWeight = trained.layers[0].weights[0][0]
+    neural.trainNetworkStep(trained, [gradientSample], activation, rate)
+    const backpropGradient = (initialWeight - trained.layers[0].weights[0][0]) / rate
+    assert.ok(Math.abs(backpropGradient - numericGradient) < 2e-6, `${activation} backpropagation agrees with a finite-difference loss gradient`)
+  }
   const samples = [
     { x: [-1, -1], y: 1 }, { x: [-1, 1], y: 0 },
     { x: [1, -1], y: 0 }, { x: [1, 1], y: 1 },
@@ -177,6 +215,13 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
   assert.ok(line.length > 10 && line.at(-1).x > .9, 'A dipole field line should run from the positive charge toward the negative charge')
   const one = electric.electricField([{ id: 1, x: 0, y: 0, q: 1 }], 1, 0)
   assert.ok(one.x > .99 && Math.abs(one.y) < 1e-12)
+  const charges = [{ id: 3, x: -.3, y: .4, q: 2 }, { id: 4, x: 1.1, y: -.5, q: -.7 }]
+  const point = { x: .37, y: -.21 }, sampledField = electric.electricField(charges, point.x, point.y)
+  const potentialAt = (x, y) => electric.electricPotential(charges, x, y)
+  const h = 1e-5
+  const dx = (potentialAt(point.x + h, point.y) - potentialAt(point.x - h, point.y)) / (2 * h)
+  const dy = (potentialAt(point.x, point.y + h) - potentialAt(point.x, point.y - h)) / (2 * h)
+  assert.ok(Math.abs(sampledField.x + dx) < 1e-7 && Math.abs(sampledField.y + dy) < 1e-7, 'The softened electric field agrees with the negative numerical gradient of its potential')
 }
 
 {
@@ -191,6 +236,8 @@ const [gravity, cpu, neural, circuit, electric, automata] = await Promise.all([
   const six = new Uint8Array(9*9); [[3,3],[4,3],[5,3],[3,4],[5,4],[4,5]].forEach(([x,y])=>{six[y*9+x]=1})
   assert.equal(automata.stepAutomaton(six,9,9,'highlife')[4*9+4],1)
   assert.equal(automata.stepAutomaton(six,9,9,'life')[4*9+4],0)
+  const wrappedBirth = new Uint8Array(25); [[4,1],[0,1],[1,1]].forEach(([x,y])=>{wrappedBirth[y*5+x]=1})
+  assert.equal(automata.stepAutomaton(wrappedBirth,5,5,'life')[2*5],1, 'Neighbor counts cross the wrapped left/right grid edge')
   const brain = new Uint8Array(9*9); [[3,4],[5,4]].forEach(([x,y])=>{brain[y*9+x]=1})
   const firing=automata.stepAutomaton(brain,9,9,'brian');assert.equal(firing[4*9+4],1);assert.equal(automata.stepAutomaton(firing,9,9,'brian')[4*9+4],2)
   const garden = new Uint8Array(120 * 120)

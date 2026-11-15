@@ -79,10 +79,11 @@ async function waitForRoute(path) {
   throw new Error(`Timed out loading ${path}`)
 }
 
-function viewportReview(viewport, exhibitId) {
+function viewportReview(viewport, exhibitId, expectedAbout) {
   return `(() => {
     const viewportName = ${JSON.stringify(viewport.name)}
     const exhibit = ${JSON.stringify(exhibitId)}
+    const expectedModelDescription = ${JSON.stringify(expectedAbout)}
     const emulatedTouch = ${JSON.stringify(viewport.mobile)}
     const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()))
     const readPanel = (kind, triggerSelector, panelSelector) => {
@@ -131,6 +132,30 @@ function viewportReview(viewport, exhibitId) {
         open.accessibleControlCount = accessibleControls.length
         open.unnamedControls = accessibleControls.filter((element) => !element.name)
         open.issues = []
+        if (kind === 'information') {
+          const details = panel?.querySelector('.info-reading')
+          const summary = details?.querySelector('summary')
+          summary?.click()
+          await nextFrame()
+          const paragraph = details?.querySelector('p')
+          const text = paragraph?.textContent?.trim() ?? ''
+          const textRect = paragraph?.getBoundingClientRect()
+          const panelRect = panel?.getBoundingClientRect()
+          open.modelDescription = {
+            available: Boolean(details && summary && paragraph),
+            expanded: details?.open ?? false,
+            exact: text === expectedModelDescription,
+            accessibleLabel: summary?.textContent?.trim() ?? '',
+            paragraphWidth: paragraph?.clientWidth ?? 0,
+            paragraphScrollWidth: paragraph?.scrollWidth ?? 0,
+            visibleInsidePanel: Boolean(textRect && panelRect && textRect.width > 0 && textRect.height > 0 && textRect.right <= panelRect.right + 1 && textRect.left >= panelRect.left - 1),
+          }
+          if (!open.modelDescription.available) open.issues.push('model description is unavailable')
+          if (!open.modelDescription.expanded || !open.modelDescription.exact) open.issues.push('expanded model description differs from the exhibit metadata')
+          if (!open.modelDescription.accessibleLabel) open.issues.push('model description disclosure has no visible label')
+          if (open.modelDescription.paragraphScrollWidth > open.modelDescription.paragraphWidth + 1) open.issues.push('model description has horizontal text overflow')
+          if (!open.modelDescription.visibleInsidePanel) open.issues.push('model description escapes the information panel')
+        }
         if (!open.panel) open.issues.push('panel missing')
         else {
           if (open.panel.x < -1 || open.panel.y < -1 || open.panel.right > innerWidth + 1 || open.panel.bottom > innerHeight + 1) open.issues.push('panel escapes viewport')
@@ -193,7 +218,7 @@ for (const exhibit of exhibits) {
   await waitForRoute(`/exhibits/${exhibit.id}`)
   for (const viewport of viewports) {
     await setViewport(viewport)
-    results.push(...await evaluate(viewportReview(viewport, exhibit.id)))
+    results.push(...await evaluate(viewportReview(viewport, exhibit.id, exhibit.about)))
   }
 }
 
