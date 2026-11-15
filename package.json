@@ -38,6 +38,7 @@
     "qa:fallback-restoration": "node scripts/qa-fallback-restoration.mjs",
     "qa:route-lifecycle": "node scripts/qa-route-lifecycle.mjs",
     "qa:exhibit-overlays": "node scripts/qa-exhibit-overlays.mjs",
+    "qa:accessibility": "node scripts/qa-accessibility.mjs",
     "qa:gallery-previews": "node scripts/qa-gallery-previews.mjs",
     "qa:collection-performance": "node scripts/qa-collection-performance.mjs",
     "qa:collection-discovery": "node scripts/qa-collection-discovery.mjs",

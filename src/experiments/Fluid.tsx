@@ -428,7 +428,7 @@ function GpuFluid(props: ExperimentControls & { onUnsupported: () => void }) {
     <ControlPanel title="A Quiet Current" note="GPU INCOMPRESSIBLE FLOW" visible={props.controlsVisible} onClose={props.onCloseControls}>
       <SelectControl label="Rendering style" value={style} options={[['silk', 'Silk · flowing ribbons'], ['ink', 'Ink · dense pigment'], ['smoke', 'Smoke · soft volume'], ['electric', 'Electric · luminous folds']]} onChange={setStyle} />
       <SelectControl label="Pigment" value={palette} options={Object.entries(pigments).map(([key, item]) => [key, item.name])} onChange={setPalette} />
-      <div className="preset-row"><span>FLOW</span>{[['crossing', 'Crossing'], ['vortex', 'Vortex'], ['still', 'Quiet']].map(([key, label]) => <button key={key} className={presetName === key ? 'selected' : ''} onClick={() => selectPreset(key)}>{label}</button>)}</div>
+      <div className="preset-row" role="group" aria-label="Flow presets"><span>FLOW</span>{[['crossing', 'Crossing'], ['vortex', 'Vortex'], ['still', 'Quiet']].map(([key, label]) => <button key={key} className={presetName === key ? 'selected' : ''} aria-pressed={presetName === key} onClick={() => selectPreset(key)}>{label}</button>)}</div>
       <Segmented label="Background movement" value={ambient ? 'on' : 'off'} options={[['on', 'Drifting'], ['off', 'Strokes only']]} onChange={(value) => setAmbient(value === 'on')} />
       <RangeControl label="Brush width" value={brushSize} min={12} max={110} step={2} onChange={setBrushSize} format={(value) => value + ' px'} />
       <RangeControl label="Stroke strength" value={force} min={0.15} max={1.8} step={0.05} onChange={setForce} format={(value) => value.toFixed(2) + '×'} />

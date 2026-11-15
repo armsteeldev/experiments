@@ -1198,7 +1198,7 @@ export default function Mandelbrot({ controlsVisible, stateFromUrl, onShareState
         ['overview', 'The whole set'], ['seahorse', 'Seahorse valley'], ['spiral', 'The whirlpool'], ['mini', 'Miniature Mandelbrot'],
         ['filament', 'Filament lace'], ['antenna', 'Satellite antenna'], ['deep', 'Satellite filament · 10⁵⁰×'], ['custom', 'Current view'],
       ]} onChange={(name) => { if (name !== 'custom') transitionTo(name); else setPreset('custom') }} />
-      <div className="segmented-control"><span>Navigate</span><div><button onClick={() => adjustZoom(1 / 1.7)} aria-label="Zoom out">−</button><button onClick={() => adjustZoom(1.7)} aria-label="Zoom in">+</button><button onClick={reset}>Reset</button></div></div>
+      <div className="segmented-control" role="group" aria-label="Fractal view navigation"><span>Navigate</span><div><button onClick={() => adjustZoom(1 / 1.7)} aria-label="Zoom out">−</button><button onClick={() => adjustZoom(1.7)} aria-label="Zoom in">+</button><button onClick={reset}>Reset</button></div></div>
       <Segmented label="Equation" value={mode} options={[["mandelbrot", "Mandelbrot"], ["julia", "Julia"]]} onChange={(value) => setMode(value as 'mandelbrot' | 'julia')} />
       <SelectControl label="Pigment" value={palette} options={[["abyss", "Abyss"], ["mineral", "Mineral"], ["twilight", "Twilight"], ["ice", "Ice"], ["ember", "Ember"]]} onChange={setPalette} />
       <RangeControl label="Escape detail" value={iterations} min={160} max={4000} step={40} onChange={setIterations} />

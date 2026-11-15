@@ -2094,3 +2094,52 @@ body.immersive-active { height: 100%; min-height: 0; }
   .journey-panel { animation: none; }
   .journey-tabs button, .journey-route a, .journey-begin, .journey-current nav a { transition: none; }
 }
+
+/* Preserve the quiet visual hierarchy while keeping visitor-facing text readable. */
+.control-panel .panel-content > p,
+.control-panel .panel-content .control-note,
+.control-panel .panel-content .adder-control-copy {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.control-panel .range-control > span,
+.control-panel .select-control > span,
+.control-panel .segmented-control > span,
+.control-panel .preset-row > span {
+  font-size: 12px;
+}
+.control-panel .select-control select,
+.control-panel .segmented-control button,
+.control-panel .preset-row button,
+.control-panel .panel-action,
+.control-panel .small-action {
+  font-size: 12px;
+}
+.control-panel .select-control select { min-height: 40px; }
+.control-panel .segmented-control button,
+.control-panel .preset-row button,
+.control-panel .panel-action,
+.control-panel .small-action { min-height: 40px; }
+.exhibit-page .experiment-viewport .control-panel.is-open .panel-content button { min-height: 40px; font-size: 12px; }
+.exhibit-page .experiment-viewport .control-panel.is-open .panel-content .panel-action { font-size: 12px; }
+.control-panel .range-control input::-webkit-slider-thumb { width: 20px; height: 20px; }
+.control-panel .range-control input::-moz-range-thumb { width: 20px; height: 20px; }
+.panel-close { width: 44px; height: 44px; }
+.info-category { font-size: 9px; }
+.info-panel > p { max-width: 34ch; font-size: 13px; line-height: 1.7; }
+.info-reading summary { min-height: 44px; display: flex; align-items: center; font-size: 12px; }
+.info-reading p { font-size: 12px; line-height: 1.7; }
+.related-studies > span,
+.info-method span { font-size: 9px; }
+.related-studies a { min-height: 40px; }
+.related-studies a strong { font-size: 11px; }
+.related-studies a small { font-size: 9px; }
+.info-method strong { font-size: 12px; line-height: 1.55; }
+.info-actions button { min-height: 44px; font-size: 11px; line-height: 1.3; }
+.saved-experiments-heading > p,
+.saved-experiment-card > a > small,
+.saved-experiment-save > p { font-size: 11px; line-height: 1.6; }
+.saved-experiment-save input { font-size: 12px; }
+.saved-experiment-save button { min-height: 44px; font-size: 12px; }
+.control-panel :is(button, input, select, summary):focus-visible,
+.info-panel :is(button, a, summary):focus-visible { outline-offset: 3px; }

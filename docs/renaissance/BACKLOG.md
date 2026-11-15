@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, plus the nineteen-study model-boundary audit in `6ba7883`. Items are ordered by visitor value, risk and dependency.
+Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, the nineteen-study model-boundary audit in `6ba7883`, and the verified shared-control readability/accessibility checkpoint. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -40,8 +40,12 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Keep every core phone dock action inside the viewport with 44×44 px targets; verify that all nineteen 44 px selector rows remain reachable by scrolling.
 - [x] Move focus into shared overlays and return it to the trigger on Escape, including when an exhibit control panel mounts after its lazy module loads.
 - [x] Audit visible controls in shared Controls, About and selector surfaces for a discoverable DOM name across all exhibits and viewport shapes.
-- [ ] Review label size, contrast, reading order, dialog semantics and screen-reader descriptions with assistive technology.
-- [ ] Verify keyboard and touch equivalents for primary actions and support reduced-motion preferences.
+- [x] Enlarge the shared Controls/About reading copy and saved-state privacy note; keep About actions and selected study links at useful touch sizes; verify 320px, 390px and desktop layout across all 19 routes.
+- [x] Add a reduced-motion browser matrix; confirm all 19 studies begin paused when that preference is active at three viewport sizes.
+- [x] Give shared segmented and preset choices a named group and `aria-pressed` state matching the selected visual option.
+- [x] Add an automated Controls/About typography and target-size check; see `npm run qa:accessibility` and `evidence/accessibility-readability-review.json`.
+- [ ] Add keyboard alternatives for pointer-only primary canvas actions, then verify state changes from actual key events.
+- [ ] Review formal contrast, reading order, dialog semantics, status announcements and screen-reader descriptions with assistive technology.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
 - [x] Keep simulation diagnostics development-only and verify they are absent from production JavaScript.
 - [x] Make pointer strokes and the keyboard “Stir the centre” action visibly change GPU Fluid while paused; mirror paused input behavior in the Canvas2D fallback.

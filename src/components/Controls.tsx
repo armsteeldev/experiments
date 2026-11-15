@@ -18,7 +18,7 @@ export function SelectControl({ label, value, options, onChange }: { label: stri
 }
 
 export function Segmented({ label, value, options, onChange }: { label: string; value: string; options: [string, string][]; onChange: (value: string) => void }) {
-  return <div className="segmented-control"><span>{label}</span><div>{options.map(([key, name]) => <button key={key} className={value === key ? 'chosen' : ''} onClick={() => onChange(key)}>{name}</button>)}</div></div>
+  return <div className="segmented-control" role="group" aria-label={label}><span>{label}</span><div>{options.map(([key, name]) => <button key={key} className={value === key ? 'chosen' : ''} aria-pressed={value === key} onClick={() => onChange(key)}>{name}</button>)}</div></div>
 }
 
 export function ActionRow({ children }: { children: ReactNode }) {
