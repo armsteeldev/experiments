@@ -1,0 +1,253 @@
+{
+  "browser": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "version": 1,
+  "legacyUnversionedDecoder": "unit-tested in test:storage",
+  "exhibits": [
+    {
+      "id": "mandelbrot",
+      "keys": [
+        "view",
+        "iterations",
+        "palette",
+        "mode"
+      ],
+      "bytes": 146,
+      "routeRestored": true
+    },
+    {
+      "id": "fluid",
+      "keys": [
+        "style",
+        "palette",
+        "viscosity",
+        "dissipation",
+        "force",
+        "brushSize",
+        "vorticity",
+        "ambient",
+        "preset"
+      ],
+      "bytes": 172,
+      "routeRestored": true
+    },
+    {
+      "id": "boids",
+      "keys": [
+        "scenario",
+        "population",
+        "speed",
+        "radius",
+        "tool",
+        "seed"
+      ],
+      "bytes": 117,
+      "routeRestored": true
+    },
+    {
+      "id": "attractors",
+      "keys": [
+        "system",
+        "speed",
+        "trail",
+        "palette",
+        "rho",
+        "sigma",
+        "beta",
+        "a",
+        "b",
+        "c",
+        "camera"
+      ],
+      "bytes": 191,
+      "routeRestored": true
+    },
+    {
+      "id": "reaction",
+      "keys": [
+        "preset",
+        "feed",
+        "kill",
+        "diffusion",
+        "steps",
+        "palette",
+        "brush",
+        "brushSize",
+        "quality",
+        "seed"
+      ],
+      "bytes": 174,
+      "routeRestored": true
+    },
+    {
+      "id": "lsystem",
+      "keys": [
+        "kind",
+        "iterations",
+        "angle",
+        "randomness",
+        "width",
+        "palette",
+        "seed",
+        "zoom",
+        "panX",
+        "panY"
+      ],
+      "bytes": 148,
+      "routeRestored": true
+    },
+    {
+      "id": "gravity",
+      "keys": [
+        "scene",
+        "speed",
+        "collision",
+        "mass",
+        "launchSpeed",
+        "trails",
+        "prediction"
+      ],
+      "bytes": 129,
+      "routeRestored": true
+    },
+    {
+      "id": "machine",
+      "keys": [
+        "program"
+      ],
+      "bytes": 41,
+      "routeRestored": true
+    },
+    {
+      "id": "neural",
+      "keys": [
+        "dataset",
+        "hidden",
+        "depth",
+        "activation",
+        "rate"
+      ],
+      "bytes": 94,
+      "routeRestored": true
+    },
+    {
+      "id": "logic",
+      "keys": [
+        "preset"
+      ],
+      "bytes": 40,
+      "routeRestored": true
+    },
+    {
+      "id": "forces",
+      "keys": [
+        "preset",
+        "showPotential",
+        "showLines",
+        "showParticles",
+        "fieldScale"
+      ],
+      "bytes": 117,
+      "routeRestored": true
+    },
+    {
+      "id": "automata",
+      "keys": [
+        "pattern",
+        "rule",
+        "speed",
+        "renderMode",
+        "seed"
+      ],
+      "bytes": 102,
+      "routeRestored": true
+    },
+    {
+      "id": "adder",
+      "keys": [
+        "width",
+        "architecture",
+        "speed",
+        "a",
+        "b"
+      ],
+      "bytes": 86,
+      "routeRestored": true
+    },
+    {
+      "id": "waves",
+      "keys": [
+        "frequency",
+        "speed",
+        "damping",
+        "boundary",
+        "preset",
+        "viewMode",
+        "coherence",
+        "phaseOffset"
+      ],
+      "bytes": 178,
+      "routeRestored": true
+    },
+    {
+      "id": "optics",
+      "keys": [
+        "placements",
+        "spectrum",
+        "wavelength",
+        "material",
+        "prismRotation",
+        "mirrorAngle",
+        "focalRatio",
+        "sourceAngle",
+        "spread"
+      ],
+      "bytes": 280,
+      "routeRestored": true
+    },
+    {
+      "id": "sound",
+      "keys": [
+        "frequency",
+        "harmonics",
+        "cutoff",
+        "filterOn",
+        "viewMode"
+      ],
+      "bytes": 654,
+      "routeRestored": true
+    },
+    {
+      "id": "garden",
+      "keys": [
+        "temperature",
+        "resourceRate",
+        "seasonal"
+      ],
+      "bytes": 78,
+      "routeRestored": true
+    },
+    {
+      "id": "network",
+      "keys": [
+        "source",
+        "destination",
+        "message"
+      ],
+      "bytes": 94,
+      "routeRestored": true
+    },
+    {
+      "id": "lensing",
+      "keys": [
+        "mass",
+        "distance",
+        "sourceRatio",
+        "impact",
+        "viewMode"
+      ],
+      "bytes": 105,
+      "routeRestored": true
+    }
+  ],
+  "errors": []
+}

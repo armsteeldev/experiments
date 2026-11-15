@@ -107,15 +107,19 @@ function ResultModule({ label, value, known, point, carry = false }: { label: st
   </g>
 }
 
-export default function Adder({ paused, controlsVisible, onCloseControls }: ExperimentControls) {
-  const [width, setWidth] = useState(4)
-  const [architecture, setArchitecture] = useState<AdderArchitecture>('ripple')
-  const [aText, setAText] = useState('1')
-  const [bText, setBText] = useState('1')
+export default function Adder({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
+  const initialWidth = [4, 8, 16].includes(Number(stateFromUrl?.width)) ? Number(stateFromUrl?.width) : 4
+  const initialOperand = (value: unknown) => typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= maximum(initialWidth) ? String(value) : '1'
+  const initialArchitecture = stateFromUrl?.architecture === 'lookahead' ? 'lookahead' : 'ripple'
+  const initialSpeed = typeof stateFromUrl?.speed === 'number' && [0.5, 1, 1.5, 2].includes(stateFromUrl.speed) ? stateFromUrl.speed : 1
+  const [width, setWidth] = useState(initialWidth)
+  const [architecture, setArchitecture] = useState<AdderArchitecture>(initialArchitecture)
+  const [aText, setAText] = useState(() => initialOperand(stateFromUrl?.a))
+  const [bText, setBText] = useState(() => initialOperand(stateFromUrl?.b))
   const [cursor, setCursor] = useState(9999)
   const [runStarted, setRunStarted] = useState(true)
   const [playing, setPlaying] = useState(false)
-  const [speed, setSpeed] = useState(1)
+  const [speed, setSpeed] = useState(initialSpeed)
   const [selectedBit, setSelectedBit] = useState(0)
   const [followTrace, setFollowTrace] = useState(false)
   const [selectedGateId, setSelectedGateId] = useState<string | null>(null)
@@ -205,6 +209,10 @@ export default function Adder({ paused, controlsVisible, onCloseControls }: Expe
     ? kind === 'sum' ? { x: 510, y: 156 } : { x: 510, y: 356 }
     : kind === 'sum' ? { x: 906, y: 170 } : { x: 906, y: 368 }
   const runLabel = playing ? 'Pause' : complete ? 'Replay the sum' : 'Calculate'
+
+  useEffect(() => {
+    onShareState({ width, architecture, speed, ...(validA ? { a } : {}), ...(validB ? { b } : {}) })
+  }, [width, architecture, speed, validA, validB, a, b, onShareState])
 
   return <section className="experiment-surface adder-instrument" aria-label="The Adder, a gate-level arithmetic instrument">
     <header className="adder-instrument-head">

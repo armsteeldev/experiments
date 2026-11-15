@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Working tree:** Curated paths are implemented and browser-verified; the next checkpoint is a local saved-state notebook or another measured high-value discovery improvement.
+- **Working tree:** Curated paths and a versioned local experiment notebook are implemented and browser-verified. Notebook work is not committed yet.
 
 ## Milestones
 
@@ -25,11 +25,18 @@
 - Added `test:journeys`, `qa:journeys`, and the previously documented `qa:invisible-world` npm command. The new browser flow passes desktop, keyboard, touch-emulated mobile, direct link, refresh, invalid association, exit, and completion cases at 320/390px and landscape 844×390.
 - Captures and machine-readable results are in [`evidence/`](evidence/); none use a production or real mobile device.
 - Build delta from the baseline: initial JS 338.41 → 344.92 kB raw (109.27 → 111.22 kB gzip); initial CSS 97.60 → 103.68 kB raw (21.38 → 22.68 kB gzip). Lazy exhibit chunks are unchanged.
+- The optional local notebook now sits before the long card grid, so saved setups are visible near the collection’s first choices. Its entries can be named, reopened, refreshed, or removed.
 - Remaining for this milestone: improve search/recommendation relevance, review all 19 route control overlays with fresh browsers, and inspect preview scheduling/first paint under a clean profile.
 
-### 3 — New product capabilities: queued
+### 3 — New product capabilities: in progress
 
-Evaluate versioned share-state restoration and a small privacy-preserving saved-experiment notebook. Confirm how each exhibit serializes before saving state; keep large buffers out of URLs/local storage.
+- The shared URL format now writes `{"$armsteel":1,"state":...}`; older unversioned settings links continue to decode. Unknown future envelope versions fail closed.
+- Added optional named local configurations for all exhibits that report shareable settings. Each saved entry uses a versioned local record, validates JSON-safe values and registered exhibit IDs, stays within 16 KiB per state, twelve entries and 128 KiB total, and can be deleted individually. Storage failure falls back to tab memory with a clear confirmation.
+- Settings and presets are saved; live simulation buffers and full running history are not. UI and privacy copy say so. No account, server, analytics, or third-party storage was introduced.
+- `test:storage` covers schema version, malformed data, unsupported values, invalid exhibit IDs, count/byte caps, legacy URL reads, unsupported future URL versions, deletion and blocked storage. `qa:saved-experiments` covers changed Cellular Automata settings from save through refresh and deletion on desktop and narrow mobile.
+- Remaining: audit each exhibit’s parameter bounds and deterministic-seed behavior; add export/import only if it can preserve the model honestly; test shared links across all exhibits and malformed state in the browser.
+- Closed the cross-exhibit support gap found during the browser sweep: The Adder now shares/restores its width, architecture, valid operands and speed. Its changed 8-bit look-ahead link restored 23 + 17 and the displayed result was 40.
+- The Living Network restores its bounded 48-character message payload as well as endpoints; the input, save form and privacy page warn that this text appears in saved/shared settings and should not contain private information.
 
 ### 4–10 — Performance, accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: queued
 
@@ -43,6 +50,7 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - Distinguish simulation fidelity from rendering quality and software-rendered browser behavior from physical GPU results.
 - Curated path data contains only stable exhibit IDs and editorial transition notes. Path context is a non-sensitive `journey` query value; no progress is stored or sent elsewhere.
 - A path's About panel remains open while navigating between its stops, but the shared dock's ordinary navigation remains free to leave the path.
+- URL settings are Base64 URL encoded, not encrypted. Version 1 is unwrapped for exhibit consumers; versionless links remain supported. Named settings live only in local storage (or current-tab memory if storage is unavailable), with a 12-entry/128-KiB notebook cap.
 
 ## Latest verification
 
@@ -52,7 +60,10 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `node scripts/qa-invisible-world.mjs` — passed six added exhibits, 50 captures, 12 route entries.
 - `npm run qa:resources` — completed in a fresh browser profile; software-WebGL results are recorded at [`evidence/baseline-runtime-resource-samples.json`](evidence/baseline-runtime-resource-samples.json).
 - `npm run qa:journeys` — passed nine desktop/mobile scenarios after the production build; `docs/renaissance/evidence/journey-browser-checks.json` reports no browser or HTTP errors.
+- `npm run test:storage` — passed schema, validation, legacy/future version, size, count, recovery, removal, and storage-fallback cases.
+- `npm run qa:saved-experiments` — passed setting changes, named save, URL restoration, deep-link refresh, 390px and 320px gallery fit, removal target size, deletion, privacy disclosure, and zero browser/network errors. Screenshots and results are in [`evidence/`](evidence/).
+- `npm run qa:state-sharing` — passed share → reload for all 19 exhibits, state-size and current-envelope checks, including edited Adder values; no browser or HTTP errors. The harness also verifies restored Adder controls and calculated result.
 
 ## Next action
 
-Review the full diff, commit the baseline and curated-path milestone, then audit current per-exhibit serializers before designing versioned local saves. Keep the source branch and production untouched.
+Review the full diff, commit this checkpoint, then continue with concept-search relevance, all-route overlay review, preview scheduling, and accessibility/mobile audit. Keep the source branch and production untouched.

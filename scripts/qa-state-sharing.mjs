@@ -1,0 +1,154 @@
+import assert from 'node:assert/strict'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
+
+const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9351)
+const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5198'
+const experiments = JSON.parse(await readFile(new URL('../src/data/experiments.json', import.meta.url), 'utf8'))
+const evidenceRoot = resolve('docs/renaissance/evidence')
+const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
+const page = targets.find((target) => target.type === 'page' && target.url === 'about:blank') ?? targets.find((target) => target.type === 'page')
+assert.ok(page, `No page target found on CDP port ${port}`)
+
+const socket = new WebSocket(page.webSocketDebuggerUrl)
+await new Promise((resolveOpen, reject) => {
+  socket.addEventListener('open', resolveOpen, { once: true })
+  socket.addEventListener('error', reject, { once: true })
+})
+let nextId = 0
+const waiting = new Map()
+const browserErrors = []
+socket.addEventListener('message', (event) => {
+  const message = JSON.parse(event.data)
+  if (message.id && waiting.has(message.id)) {
+    const { resolve: resolveCall, reject, method, timeout } = waiting.get(message.id)
+    clearTimeout(timeout)
+    waiting.delete(message.id)
+    if (message.error) reject(new Error(`${method}: ${message.error.message}`))
+    else resolveCall(message.result)
+  }
+  if (message.method === 'Runtime.exceptionThrown') browserErrors.push(`uncaught: ${message.params.exceptionDetails.exception?.description ?? message.params.exceptionDetails.text}`)
+  if (message.method === 'Runtime.consoleAPICalled' && message.params.type === 'error') browserErrors.push(`console: ${message.params.args.map((item) => item.value ?? item.description ?? '').join(' ')}`)
+  if (message.method === 'Log.entryAdded' && message.params.entry.level === 'error') browserErrors.push(`log: ${message.params.entry.text}`)
+  if (message.method === 'Network.responseReceived' && message.params.response.status >= 400) browserErrors.push(`http ${message.params.response.status}: ${message.params.response.url}`)
+})
+
+function call(method, params = {}) {
+  const id = ++nextId
+  socket.send(JSON.stringify({ id, method, params }))
+  return new Promise((resolveCall, reject) => {
+    const timeout = setTimeout(() => {
+      if (!waiting.has(id)) return
+      waiting.delete(id)
+      reject(new Error(`CDP timeout: ${method}`))
+    }, 30000)
+    waiting.set(id, { resolve: resolveCall, reject, method, timeout })
+  })
+}
+
+async function evaluate(expression) {
+  const response = await call('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true })
+  if (response.exceptionDetails) throw new Error(response.exceptionDetails.exception?.description ?? response.exceptionDetails.text)
+  return response.result.value
+}
+
+const sleep = (ms) => new Promise((done) => setTimeout(done, ms))
+async function waitFor(expression, label) {
+  for (let attempt = 0; attempt < 200; attempt++) {
+    if (await evaluate(expression)) return
+    await sleep(100)
+  }
+  throw new Error(`Timed out waiting for ${label}`)
+}
+
+async function click(selector) {
+  const found = await evaluate(`(() => { const node = document.querySelector(${JSON.stringify(selector)}); if (!node) return false; node.click(); return true })()`)
+  assert.ok(found, `Could not click ${selector}`)
+}
+
+await call('Page.enable')
+await call('Runtime.enable')
+await call('Network.enable')
+await call('Log.enable')
+await call('Page.addScriptToEvaluateOnNewDocument', { source: `Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async (text) => { window.__armsteelCopied = text } } })` })
+await mkdir(evidenceRoot, { recursive: true })
+const routeResults = []
+
+for (const item of experiments) {
+  await call('Page.navigate', { url: `${base}/exhibits/${item.id}` })
+  await waitFor(`location.pathname === ${JSON.stringify(`/exhibits/${item.id}`)} && Boolean(document.querySelector('.dock-current span')) && !document.querySelector('.experience-loading')`, `${item.id} exhibit mount`)
+  await sleep(160)
+  if (item.id === 'adder') {
+    await click('button[aria-label="Toggle experiment controls"]')
+    await waitFor(`document.querySelector('.control-panel select')?.options.length > 1`, 'Adder settings')
+    await evaluate(`(() => {
+      const selects = [...document.querySelectorAll('.control-panel select')]
+      const setSelect = (label, value) => {
+        const select = selects.find((node) => node.closest('label')?.querySelector('span')?.textContent === label)
+        Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set.call(select, value)
+        select.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+      setSelect('Circuit width', '8')
+      setSelect('Carry architecture', 'lookahead')
+      for (const [label, value] of [['First number', '23'], ['Second number', '17']]) {
+        const input = [...document.querySelectorAll('input')].find((node) => node.getAttribute('aria-label') === label)
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, value)
+        input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: value }))
+      }
+    })()`)
+    await waitFor(`document.querySelector('.control-panel select')?.value === '8' && document.querySelector('[aria-label="First number"]')?.value === '23' && document.querySelector('[aria-label="Second number"]')?.value === '17'`, 'changed Adder parameters')
+    await sleep(160)
+    const screenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+    await writeFile(resolve(evidenceRoot, 'state-sharing-adder-settings.png'), Buffer.from(screenshot.data, 'base64'))
+    await click('button[aria-label="Toggle experiment controls"]')
+  }
+  if (item.id === 'network') {
+    await click('button[aria-label="Toggle experiment controls"]')
+    await waitFor(`Boolean(document.querySelector('.iw-message-input input'))`, 'network message setting')
+    await evaluate(`(() => { const input = document.querySelector('.iw-message-input input'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'curious packet'); input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: 'curious packet' })) })()`)
+    await waitFor(`document.querySelector('.iw-message-input input')?.value === 'curious packet'`, 'changed network message')
+    await sleep(160)
+    await click('button[aria-label="Toggle experiment controls"]')
+  }
+  await click('button[aria-label="Toggle experiment information"]')
+  await waitFor(`Boolean(document.querySelector('.info-actions button:last-child'))`, `${item.id} share control`)
+  await click('.info-actions button:last-child')
+  await waitFor(`typeof window.__armsteelCopied === 'string' && window.__armsteelCopied.length > 0`, `${item.id} copied link`)
+  const shared = await evaluate(`(() => { const url = new URL(window.__armsteelCopied); return { href: url.href, state: url.searchParams.get('state') } })()`)
+  assert.equal(new URL(shared.href).pathname, `/exhibits/${item.id}`, `${item.id} shares its own route`)
+  assert.ok(shared.state && shared.state.length <= 32_768, `${item.id} share state is missing or oversized`)
+  const decoded = JSON.parse(Buffer.from(shared.state, 'base64url').toString('utf8'))
+  assert.equal(decoded.$armsteel, 1, `${item.id} uses the current state schema`)
+  assert.ok(decoded.state && typeof decoded.state === 'object' && !Array.isArray(decoded.state), `${item.id} has an object-shaped state`)
+  assert.ok(Object.keys(decoded.state).length > 0, `${item.id} shares its meaningful configuration`)
+  if (item.id === 'adder') assert.deepEqual(decoded.state, { width: 8, architecture: 'lookahead', speed: 1, a: 23, b: 17 }, 'Adder shares the edited circuit, inputs and speed')
+  if (item.id === 'network') assert.equal(decoded.state.message, 'curious packet', 'the network shares its message payload explicitly')
+  const stateBytes = Buffer.byteLength(JSON.stringify(decoded), 'utf8')
+  assert.ok(stateBytes <= 16 * 1024, `${item.id} state is within the shared/local state limit`)
+  await call('Page.navigate', { url: shared.href })
+  await waitFor(`location.pathname === ${JSON.stringify(`/exhibits/${item.id}`)} && new URLSearchParams(location.search).has('state') && Boolean(document.querySelector('.dock-current span')) && !document.querySelector('.experience-loading')`, `${item.id} shared-link restore`)
+  if (item.id === 'adder') {
+    await click('button[aria-label="Toggle experiment controls"]')
+    await waitFor(`document.querySelector('.control-panel select')?.value === '8'`, 'restored Adder circuit width')
+    const adder = await evaluate(`({ selects: [...document.querySelectorAll('.control-panel select')].map((node) => node.value), a: document.querySelector('[aria-label="First number"]')?.value, b: document.querySelector('[aria-label="Second number"]')?.value, result: document.querySelector('.adder-answer strong')?.textContent })`)
+    assert.deepEqual(adder, { selects: ['8', 'lookahead'], a: '23', b: '17', result: '40' }, 'Adder settings restore and evaluate through the visible circuit')
+  }
+  if (item.id === 'network') {
+    await click('button[aria-label="Toggle experiment controls"]')
+    await waitFor(`document.querySelector('.iw-message-input input')?.value === 'curious packet'`, 'restored network message payload')
+  }
+  routeResults.push({ id: item.id, keys: Object.keys(decoded.state), bytes: stateBytes, routeRestored: true })
+}
+
+assert.deepEqual(browserErrors, [], `Browser or network errors occurred: ${browserErrors.join('; ')}`)
+await mkdir(evidenceRoot, { recursive: true })
+await writeFile(resolve(evidenceRoot, 'state-sharing-browser-checks.json'), JSON.stringify({
+  browser: await evaluate('navigator.userAgent'),
+  version: 1,
+  legacyUnversionedDecoder: 'unit-tested in test:storage',
+  exhibits: routeResults,
+  errors: browserErrors,
+}, null, 2) + '\n')
+socket.close()
+console.log(`State-sharing browser checks passed: ${routeResults.length} exhibits shared and restored, no browser or HTTP errors.`)

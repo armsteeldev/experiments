@@ -1,7 +1,22 @@
 const FAVORITES_KEY = 'armsteel:favorites'
+const SAVED_EXPERIMENTS_KEY = 'armsteel:saved-scenes'
+const SHARED_STATE_MARKER = '$armsteel'
+const SHARED_STATE_VERSION = 1
 const MAX_SHARED_STATE_BYTES = 16 * 1024
+const MAX_SAVED_EXPERIMENTS = 12
+const MAX_SAVED_EXPERIMENTS_BYTES = 128 * 1024
+
+export type SavedExperiment = {
+  id: string
+  exhibitId: string
+  name: string
+  savedAt: string
+  state: Record<string, unknown>
+}
 
 let memoryFavorites: string[] | null = null
+let memorySavedExperiments: SavedExperiment[] | null = null
+let savedExperimentsVolatile = false
 let recentVisits: string[] = []
 
 function allowedSet(allowedIds?: readonly string[]) {
@@ -73,7 +88,12 @@ export function decodeState(search: string): Record<string, unknown> | null {
     if (bytes.byteLength > MAX_SHARED_STATE_BYTES) return null
     const value: unknown = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes))
     if (!value || typeof value !== 'object' || Array.isArray(value)) return null
-    return value as Record<string, unknown>
+    const record = value as Record<string, unknown>
+    if (Object.hasOwn(record, SHARED_STATE_MARKER)) {
+      if (record[SHARED_STATE_MARKER] !== SHARED_STATE_VERSION || !record.state || typeof record.state !== 'object' || Array.isArray(record.state)) return null
+      return record.state as Record<string, unknown>
+    }
+    return record
   } catch {
     return null
   }
@@ -81,7 +101,7 @@ export function decodeState(search: string): Record<string, unknown> | null {
 
 export function encodeState(state: Record<string, unknown>) {
   try {
-    const bytes = new TextEncoder().encode(JSON.stringify(state))
+    const bytes = new TextEncoder().encode(JSON.stringify({ [SHARED_STATE_MARKER]: SHARED_STATE_VERSION, state }))
     if (bytes.byteLength > MAX_SHARED_STATE_BYTES) return ''
     let binary = ''
     for (const byte of bytes) binary += String.fromCharCode(byte)
@@ -89,4 +109,129 @@ export function encodeState(state: Record<string, unknown>) {
   } catch {
     return ''
   }
+}
+
+function isSerializableValue(value: unknown, depth = 0, seen = new WeakSet<object>()): boolean {
+  if (value === null || typeof value === 'boolean') return true
+  if (typeof value === 'string') return value.length <= MAX_SHARED_STATE_BYTES
+  if (typeof value === 'number') return Number.isFinite(value)
+  if (typeof value !== 'object' || depth > 10 || seen.has(value)) return false
+  seen.add(value)
+  try {
+    if (Array.isArray(value)) return value.length <= 8192 && value.every((item) => isSerializableValue(item, depth + 1, seen))
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype !== Object.prototype && prototype !== null) return false
+    const entries = Object.entries(value as Record<string, unknown>)
+    return entries.length <= 256 && entries.every(([key, item]) =>
+      key.length <= 80 && key !== '__proto__' && key !== 'prototype' && key !== 'constructor' && isSerializableValue(item, depth + 1, seen))
+  } catch {
+    return false
+  } finally {
+    seen.delete(value)
+  }
+}
+
+function serializeState(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !isSerializableValue(value)) return null
+  const encoded = encodeState(value as Record<string, unknown>)
+  return encoded ? decodeState(`?state=${encoded}`) : null
+}
+
+function cleanSavedName(value: unknown): string {
+  return typeof value === 'string' ? value.replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, 64) : ''
+}
+
+function serializedSize(value: unknown): number {
+  try { return new TextEncoder().encode(JSON.stringify(value)).byteLength } catch { return Infinity }
+}
+
+function sanitizeSavedExperiments(value: unknown, allowedIds?: readonly string[]): SavedExperiment[] {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return []
+  const root = value as { version?: unknown; experiments?: unknown }
+  if (root.version !== 1 || !Array.isArray(root.experiments)) return []
+  const result: SavedExperiment[] = []
+  const seen = new Set<string>()
+  for (const entry of root.experiments.slice(0, MAX_SAVED_EXPERIMENTS * 4)) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue
+    const candidate = entry as Partial<SavedExperiment>
+    if (typeof candidate.id !== 'string' || !/^scene-[a-z0-9-]{6,90}$/.test(candidate.id) || seen.has(candidate.id)) continue
+    if (typeof candidate.exhibitId !== 'string' || !sanitizeIds([candidate.exhibitId], allowedIds, 1).length) continue
+    const name = cleanSavedName(candidate.name)
+    if (!name || typeof candidate.savedAt !== 'string' || candidate.savedAt.length > 40 || !Number.isFinite(Date.parse(candidate.savedAt))) continue
+    const state = serializeState(candidate.state)
+    if (!state || !Object.keys(state).length) continue
+    const saved = { id: candidate.id, exhibitId: candidate.exhibitId, name, savedAt: candidate.savedAt, state }
+    const next = [...result, saved]
+    if (next.length > MAX_SAVED_EXPERIMENTS || serializedSize({ version: 1, experiments: next }) > MAX_SAVED_EXPERIMENTS_BYTES) continue
+    result.push(saved)
+    seen.add(saved.id)
+  }
+  return result
+}
+
+function readSavedExperiments(allowedIds?: readonly string[]): SavedExperiment[] {
+  let raw: string | null
+  const memory = () => sanitizeSavedExperiments({ version: 1, experiments: memorySavedExperiments ?? [] }, allowedIds)
+  try { raw = window.localStorage.getItem(SAVED_EXPERIMENTS_KEY) } catch {
+    return memory()
+  }
+  if (!raw) return savedExperimentsVolatile ? memory() : []
+  if (raw.length > MAX_SAVED_EXPERIMENTS_BYTES || new TextEncoder().encode(raw).byteLength > MAX_SAVED_EXPERIMENTS_BYTES) return savedExperimentsVolatile ? memory() : []
+  try {
+    const stored = sanitizeSavedExperiments(JSON.parse(raw), allowedIds)
+    return savedExperimentsVolatile
+      ? sanitizeSavedExperiments({ version: 1, experiments: [...(memorySavedExperiments ?? []), ...stored] }, allowedIds)
+      : stored
+  } catch { return savedExperimentsVolatile ? memory() : [] }
+}
+
+export function getSavedExperiments(allowedIds?: readonly string[]): SavedExperiment[] {
+  const experiments = readSavedExperiments(allowedIds)
+  memorySavedExperiments = experiments
+  return experiments
+}
+
+function writeSavedExperiments(experiments: SavedExperiment[]): boolean {
+  const record = { version: 1, experiments }
+  if (serializedSize(record) > MAX_SAVED_EXPERIMENTS_BYTES) return false
+  memorySavedExperiments = experiments
+  try {
+    window.localStorage.setItem(SAVED_EXPERIMENTS_KEY, JSON.stringify(record))
+    savedExperimentsVolatile = false
+    return true
+  } catch {
+    savedExperimentsVolatile = true
+    return false
+  }
+}
+
+function newSavedExperimentId(): string {
+  return `scene-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+}
+
+export function saveExperimentState(exhibitId: string, nameValue: string, stateValue: unknown, allowedIds?: readonly string[]) {
+  const current = getSavedExperiments(allowedIds)
+  const name = cleanSavedName(nameValue)
+  const state = serializeState(stateValue)
+  if (!sanitizeIds([exhibitId], allowedIds, 1).length || !name || !state || !Object.keys(state).length) {
+    return { status: 'invalid' as const, experiments: current }
+  }
+  if (current.length >= MAX_SAVED_EXPERIMENTS) return { status: 'full' as const, experiments: current }
+  const snapshot: SavedExperiment = {
+    id: newSavedExperimentId(),
+    exhibitId,
+    name,
+    savedAt: new Date().toISOString(),
+    state,
+  }
+  const next = [snapshot, ...current]
+  if (serializedSize({ version: 1, experiments: next }) > MAX_SAVED_EXPERIMENTS_BYTES) {
+    return { status: 'too-large' as const, experiments: current }
+  }
+  return { status: writeSavedExperiments(next) ? 'saved' as const : 'memory-only' as const, experiments: next }
+}
+
+export function removeSavedExperiment(id: string, allowedIds?: readonly string[]) {
+  const next = getSavedExperiments(allowedIds).filter((item) => item.id !== id)
+  return { persisted: writeSavedExperiments(next), experiments: next }
 }

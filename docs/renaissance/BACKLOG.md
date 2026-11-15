@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the `cd76da9` baseline. Items are ordered by visitor value, risk and dependency.
+Status is current to the active `renaissance/next-generation` notebook checkpoint. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -9,13 +9,17 @@ Status is current to the `cd76da9` baseline. Items are ordered by visitor value,
 - [x] Add data integrity checks for path IDs, stop counts, references and duplicate stops.
 - [x] Add a browser workflow for starting, continuing, skipping to a stop, exiting, direct-loading, and mobile viewing.
 - [x] Expose the already documented six-exhibit browser harness as an npm script.
+- [x] Put named saved configurations near the collection entrance when any exist.
 
 ## P1 — Reproducible personal exploration
 
-- [ ] Define a versioned, per-exhibit state envelope and maximum encoded URL/local storage sizes.
+- [x] Version new shared URLs; retain decoding of existing unversioned links and reject unknown future envelopes.
+- [x] Define a versioned local notebook with a 16 KiB per-state limit, twelve entries and 128 KiB aggregate limit.
+- [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
 - [ ] Audit each exhibit serializer for validation, defaults, finite numeric bounds and deterministic seed behavior.
-- [ ] Add optional named local saves and safe export/import only where the state can be accurately restored; document that shared URL data is public.
-- [ ] Ensure malformed/old state is recoverable and never prevents opening the exhibit.
+- [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
+- [x] Ensure malformed/unsupported versions and corrupted local notebook data are recoverable without preventing exhibit entry.
+- [x] Test supported share links and route restoration across all 19 exhibits in the browser; exercise malformed/future-version entry recovery.
 
 ## P1 — Product accessibility and mobile
 

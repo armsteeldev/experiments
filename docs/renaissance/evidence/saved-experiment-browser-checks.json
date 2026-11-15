@@ -1,0 +1,34 @@
+{
+  "browser": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "scenarios": [
+    "changed exhibit settings saved with a local name",
+    "versioned and validated local record",
+    "URL restoration of rule, pattern and rendering",
+    "deep-link refresh",
+    "mobile gallery layout and removal target",
+    "delete and privacy disclosure"
+  ],
+  "savedState": {
+    "pattern": "glider",
+    "rule": "highlife",
+    "speed": 8,
+    "renderMode": "ember",
+    "seed": 919
+  },
+  "mobile": {
+    "width": 390,
+    "documentWidth": 390,
+    "cardWidth": 350,
+    "removeTarget": {
+      "width": 36,
+      "height": 36
+    },
+    "name": "Pulsar with HighLife"
+  },
+  "narrow": {
+    "width": 320,
+    "documentWidth": 320,
+    "cardWidth": 280
+  },
+  "errors": []
+}

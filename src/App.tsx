@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import AmbientField from './components/AmbientField'
 import ArtworkPreview from './components/ArtworkPreview'
@@ -7,7 +7,7 @@ import { Icon } from './components/Icon'
 import { experiments } from './registry'
 import journeyData from './data/journeys.json'
 import siteCopy from './data/site-copy.json'
-import { decodeState, encodeState, getFavorites, getRecent, rememberVisit, toggleFavorite } from './lib/storage'
+import { decodeState, encodeState, getFavorites, getRecent, getSavedExperiments, rememberVisit, removeSavedExperiment, saveExperimentState, toggleFavorite } from './lib/storage'
 import { SITE_ORIGIN, updatePageMetadata } from './lib/metadata'
 import type { ExperimentDefinition } from './types'
 
@@ -21,6 +21,13 @@ const journeys = journeyData as Journey[]
 function journeyHref(journeyId: string, exhibitId: string) {
   const query = new URLSearchParams({ journey: journeyId })
   return `/exhibits/${encodeURIComponent(exhibitId)}?${query.toString()}`
+}
+
+function savedExperimentHref(experimentId: string, state: Record<string, unknown>) {
+  const encoded = encodeState(state)
+  const query = new URLSearchParams()
+  if (encoded) query.set('state', encoded)
+  return `/exhibits/${encodeURIComponent(experimentId)}${encoded ? `?${query.toString()}` : ''}`
 }
 
 function collectionStructuredData() {
@@ -116,6 +123,7 @@ function Exhibition() {
   const [filter, setFilter] = useState<string>('All works')
   const [query, setQuery] = useState('')
   const [favorites, setFavorites] = useState<string[]>(() => getFavorites(experimentIds))
+  const [savedExperiments, setSavedExperiments] = useState(() => getSavedExperiments(experimentIds))
   const [searchOpen, setSearchOpen] = useState(false)
   const [selectedJourneyId, setSelectedJourneyId] = useState(journeys[0]?.id ?? '')
   const navigate = useNavigate()
@@ -174,6 +182,7 @@ function Exhibition() {
     if (choice) navigate('/exhibits/' + choice.id)
   }
   const favorite = (id: string) => setFavorites(toggleFavorite(id, experimentIds))
+  const removeSaved = (id: string) => setSavedExperiments(removeSavedExperiment(id, experimentIds).experiments)
 
   return <main className="exhibition-page">
     <a className="skip-link" href="#collection">Skip to collection</a>
@@ -260,6 +269,27 @@ function Exhibition() {
         </div>
       </section>}
 
+      {savedExperiments.length > 0 && <section className="saved-experiments" aria-labelledby="saved-experiments-heading">
+        <div className="saved-experiments-heading">
+          <div><p className="eyebrow"><span className="eyebrow-rule" /> YOUR NOTEBOOK</p><h2 id="saved-experiments-heading">Keep a particular setup.</h2></div>
+          <p>Settings saved on this device. A running simulation’s full history is not included.</p>
+        </div>
+        <div className="saved-experiments-grid">
+          {savedExperiments.map((saved) => {
+            const item = experiments.find((candidate) => candidate.id === saved.exhibitId)
+            if (!item) return null
+            return <article className="saved-experiment-card" key={saved.id}>
+              <Link to={savedExperimentHref(saved.exhibitId, saved.state)}>
+                <span>{item.number} <i>·</i> {item.title} <time dateTime={saved.savedAt}>{new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(saved.savedAt))}</time></span>
+                <strong>{saved.name}</strong>
+                <small>Open these settings <Icon name="arrow" /></small>
+              </Link>
+              <button type="button" onClick={() => removeSaved(saved.id)} aria-label={`Remove saved setup ${saved.name}`} title="Remove saved setup"><Icon name="close" /></button>
+            </article>
+          })}
+        </div>
+      </section>}
+
       {gridItems.length ? <div className="gallery-grid" id="gallery-grid" aria-live="polite">
         {gridItems.map((item, index) => <article className="gallery-card" key={item.id} style={{ '--card-index': index } as React.CSSProperties}>
           <div className="card-art">
@@ -315,6 +345,9 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
   const [isFavorite, setIsFavorite] = useState(() => getFavorites(experimentIds).includes(experiment.id))
   const [fullscreen, setFullscreen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [savedName, setSavedName] = useState(`${experiment.title} settings`)
+  const [savedMessage, setSavedMessage] = useState('')
+  const captureState = useCallback((state: Record<string, unknown>) => { stateRef.current = state }, [])
   const requestedJourneyId = new URLSearchParams(location.search).get('journey')
   const activeJourney = journeys.find((journey) => journey.id === requestedJourneyId && journey.stops.some((stop) => stop.exhibit === experiment.id))
   const journeyIndex = activeJourney?.stops.findIndex((stop) => stop.exhibit === experiment.id) ?? -1
@@ -327,6 +360,8 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
     rememberVisit(experiment.id, experimentIds)
     setIsFavorite(getFavorites(experimentIds).includes(experiment.id))
     setPaused(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    setSavedName(`${experiment.title} settings`)
+    setSavedMessage('')
     if (!keepJourneyOpen.current) setActiveOverlay(null)
     keepJourneyOpen.current = false
     setInterfaceVisible(true)
@@ -436,6 +471,14 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
       window.prompt('Copy this exhibit link', url.toString())
     }
   }
+  const saveCurrentSettings = () => {
+    const result = saveExperimentState(experiment.id, savedName, stateRef.current, experimentIds)
+    if (result.status === 'saved') setSavedMessage('Saved in this browser.')
+    else if (result.status === 'memory-only') setSavedMessage('Saved for this tab. Browser storage is unavailable.')
+    else if (result.status === 'full') setSavedMessage('Notebook full. Remove a saved setup before adding another.')
+    else if (result.status === 'too-large') setSavedMessage('These settings exceed the notebook’s storage limit.')
+    else setSavedMessage('This setup could not be saved. Its settings may be empty or unsupported.')
+  }
   const visit = (targetId: string) => { setActiveOverlay(null); navigate('/exhibits/' + targetId) }
   const move = (delta: number) => {
     const index = experiments.findIndex((item) => item.id === experiment.id)
@@ -470,7 +513,7 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
     <div className="experiment-viewport">
       <ExperimentBoundary key={experiment.id}>
         <Suspense fallback={<div className="experience-loading" role="status"><span className="loading-orbit" aria-hidden="true" /><span>Opening {experiment.title}</span></div>}>
-          <Component paused={paused || !documentVisible} controlsVisible={activeOverlay === 'controls'} stateFromUrl={decodeState(location.search)} onShareState={(state) => { stateRef.current = state }} onCloseControls={closeOverlay} />
+          <Component paused={paused || !documentVisible} controlsVisible={activeOverlay === 'controls'} stateFromUrl={decodeState(location.search)} onShareState={captureState} onCloseControls={closeOverlay} />
         </Suspense>
       </ExperimentBoundary>
     </div>
@@ -497,6 +540,13 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
       <details className="info-reading"><summary>Read the underlying idea</summary><p>{experiment.about}</p></details>
       {experiment.related?.length ? <nav className="related-studies" aria-label="Related experiments"><span>FOLLOW THIS THREAD</span><div>{experiment.related.map((id) => experiments.find((item) => item.id === id)).filter((item): item is ExperimentDefinition => !!item).map((item) => <Link key={item.id} to={'/exhibits/' + item.id}><small>{item.number}</small><strong>{item.title}</strong><Icon name="arrow" /></Link>)}</div></nav> : null}
       <div className="info-method"><span>UNDERLYING IDEA</span><strong>{experiment.method}</strong></div>
+      <section className="saved-experiment-save" aria-labelledby="saved-experiment-form-heading">
+        <label id="saved-experiment-form-heading" htmlFor="saved-experiment-name">Save these settings</label>
+        <div><input id="saved-experiment-name" value={savedName} maxLength={64} onChange={(event) => { setSavedName(event.target.value); setSavedMessage('') }} aria-describedby="saved-experiment-note" />
+          <button type="button" onClick={saveCurrentSettings} disabled={!savedName.trim()}>Save</button></div>
+        <p id="saved-experiment-note">Presets and settings are saved. A running simulation’s full history is not.{experiment.id === 'network' ? ' The message is included, so avoid private text.' : ''}</p>
+        {savedMessage && <p className="saved-experiment-status" role="status">{savedMessage}</p>}
+      </section>
       <div className="info-actions">
         <button onClick={() => setIsFavorite(toggleFavorite(experiment.id, experimentIds).includes(experiment.id))} aria-pressed={isFavorite}><Icon name="heart" />{isFavorite ? 'Saved to exhibition' : 'Save to exhibition'}</button>
         <button onClick={() => { void share() }}><Icon name="share" />{copied ? 'Link copied' : 'Share this experiment'}</button>
@@ -559,8 +609,8 @@ function PrivacyPage() {
     },
   }), [])
 
-  const renderParagraph = (paragraph: string) => paragraph.split(/\[(armsteel:favorites|experiments\.armsteel\.dev|email|contact page)\]/g).map((part, index) => {
-    if (part === 'armsteel:favorites' || part === 'experiments.armsteel.dev') return <code key={index}>{part}</code>
+  const renderParagraph = (paragraph: string) => paragraph.split(/\[(armsteel:favorites|armsteel:saved-scenes|experiments\.armsteel\.dev|email|contact page)\]/g).map((part, index) => {
+    if (part === 'armsteel:favorites' || part === 'armsteel:saved-scenes' || part === 'experiments.armsteel.dev') return <code key={index}>{part}</code>
     if (part === 'email') return <a key={index} href="mailto:armsteeldev@outlook.com">armsteeldev@outlook.com</a>
     if (part === 'contact page') return <a key={index} href="https://armsteel.dev/contact/">Armsteel contact page</a>
     return part

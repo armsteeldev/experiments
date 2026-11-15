@@ -52,6 +52,7 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
     const savedSource = safeState(stateFromUrl, 'source', source), savedDestination = safeState(stateFromUrl, 'destination', destination)
     if (typeof savedSource === 'string' && state.nodes.some((node) => node.id === savedSource)) setSource(savedSource)
     if (typeof savedDestination === 'string' && state.nodes.some((node) => node.id === savedDestination)) setDestination(savedDestination)
+    if (typeof stateFromUrl.message === 'string' && stateFromUrl.message.length <= 48) setMessage(stateFromUrl.message)
   }, [stateFromUrl, source, destination, state.nodes])
   useEffect(() => { onShareState({ source, destination, message }) }, [source, destination, message, onShareState])
 
@@ -218,7 +219,8 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
     <ControlPanel title="Network study" note="Queue-aware Dijkstra" visible={controlsVisible} onClose={onCloseControls} footer={<span>Packets recalculate at each hop. Links use ticks, queues and per-tick capacity.</span>}>
       <SelectControl label="From" value={source} options={nodeOptions} onChange={setSource} />
       <SelectControl label="To" value={destination} options={nodeOptions.filter(([id]) => id !== source)} onChange={setDestination} />
-      <label className="iw-message-input"><span>Message payload</span><input maxLength={48} value={message} onChange={(event) => setMessage(event.target.value)} aria-label="Message text carried in packets" /></label>
+      <label className="iw-message-input"><span>Message payload</span><input maxLength={48} value={message} onChange={(event) => setMessage(event.target.value)} aria-label="Message text carried in packets" aria-describedby="network-message-sharing-note" /></label>
+      <p className="control-note" id="network-message-sharing-note">This text is included in saved and shared settings. Use fictional text, not private information.</p>
       <ActionRow><button className="panel-action" onClick={() => send(1)}>Send a message <i>↗</i></button><button className="panel-action" onClick={() => send(5)}>Send a burst <i>»</i></button></ActionRow>
       <div className="iw-route-card"><span>SHORTEST CURRENT ROUTE</span><strong>{routeText}</strong><small>Current estimated cost {shortest?.slice(1).reduce((sum, id, index) => { const a = shortest[index]; const link = networkRef.current!.links.find((item) => item.active && ((item.a === a && item.b === id) || (item.b === a && item.a === id))); return sum + (link?.latency ?? 0) + (link?.queue.length ?? 0) * (1.2 + 2 / Math.max(1, link?.bandwidth ?? 1)) }, 0).toFixed(1) ?? '—'} ticks</small></div>
       {selectedLink && <div className="iw-panel-section" key={selectedLink.id}><span>Selected link · {selectedLink.id}</span>
