@@ -79,6 +79,8 @@ All nineteen About panels now present two or three editor-selected related works
 
 The production build now measures 354.35 kB initial JavaScript (114.25 kB gzip) and 108.79 kB initial CSS (23.66 kB gzip). Relative to the nineteen-exhibit baseline, the initial payload grew by 15.94 kB raw / 4.98 kB gzip JavaScript and 11.19 kB raw / 2.28 kB gzip CSS. The discovery change adds no package, network service or visitor tracking; exhibit code remains lazy loaded.
 
+The overlay regression also applies a DOM naming heuristic to visible buttons, links and form controls inside Controls, About and the exhibit selector. Its full 19-route × six-viewport matrix recorded 4,452 observations and no unnamed items. It checks common explicit sources—ARIA labels/references, associated labels, text and titles—but is not the browser’s computed-name algorithm, a WCAG audit or evidence from a screen reader. Physical assistive-technology review remains open.
+
 ## Third validated change: shared exhibit navigation and overlays
 
 The first full overlay review covered all nineteen exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. It exposed a mobile dock that placed some controls beyond the glass frame and a selector stylesheet whose direct-child selector did not reach the nested option list. Phone layouts now keep the home action, current-study chooser, Controls, About, pause and fullscreen visible as 44×44 px targets; the selector contains all nineteen destinations with 44 px scrollable rows. Sequential previous/next actions remain available on wider screens and the chooser exposes all destinations on phones.

@@ -26,6 +26,7 @@ Status is current to the collection-discovery checkpoint on `renaissance/next-ge
 - [x] Sweep all 19 routes at 320×740, 390×844, 768×1024, 1024×768, 1440×900, and 844×390, including Controls, About, and the route selector.
 - [x] Keep every core phone dock action inside the viewport with 44×44 px targets; verify that all nineteen 44 px selector rows remain reachable by scrolling.
 - [x] Move focus into shared overlays and return it to the trigger on Escape, including when an exhibit control panel mounts after its lazy module loads.
+- [x] Audit visible controls in shared Controls, About and selector surfaces for a discoverable DOM name across all exhibits and viewport shapes.
 - [ ] Review label size, contrast, reading order, dialog semantics and screen-reader descriptions with assistive technology.
 - [ ] Verify keyboard and touch equivalents for primary actions and support reduced-motion preferences.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.

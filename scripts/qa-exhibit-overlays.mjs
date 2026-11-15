@@ -5,8 +5,11 @@ import { resolve } from 'node:path'
 const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9362)
 const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5215'
 const evidenceRoot = resolve('docs/renaissance/evidence')
-const exhibits = JSON.parse(await readFile(resolve('src/data/experiments.json'), 'utf8'))
-const viewports = [
+const allExhibits = JSON.parse(await readFile(resolve('src/data/experiments.json'), 'utf8'))
+const exhibitFilter = process.env.ARMSTEEL_QA_EXHIBITS?.split(',').map((id) => id.trim()).filter(Boolean)
+const exhibits = exhibitFilter ? allExhibits.filter((item) => exhibitFilter.includes(item.id)) : allExhibits
+assert.ok(exhibits.length, 'No exhibits selected for overlay review')
+const allViewports = [
   { width: 320, height: 740, mobile: true, name: 'narrow portrait' },
   { width: 390, height: 844, mobile: true, name: 'phone portrait' },
   { width: 768, height: 1024, mobile: true, name: 'tablet portrait' },
@@ -14,6 +17,9 @@ const viewports = [
   { width: 1440, height: 900, mobile: false, name: 'desktop' },
   { width: 844, height: 390, mobile: true, name: 'phone landscape' },
 ]
+const viewportFilter = process.env.ARMSTEEL_QA_VIEWPORTS?.split(',').map((name) => name.trim()).filter(Boolean)
+const viewports = viewportFilter ? allViewports.filter((viewport) => viewportFilter.includes(viewport.name)) : allViewports
+assert.ok(viewports.length, 'No viewports selected for overlay review')
 const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
 const page = targets.find((target) => target.type === 'page' && target.url === 'about:blank') ?? targets.find((target) => target.type === 'page')
 assert.ok(page, `No page target found on CDP port ${port}`)
@@ -112,6 +118,18 @@ function viewportReview(viewport, exhibitId) {
           focus: { tag: focusable?.tagName, label: focusable?.getAttribute('aria-label'), inside: Boolean(focusable && panel?.contains(document.activeElement)), visible: Boolean(focusRect && focusRect.width && focusRect.height) },
           triggerExpanded: trigger?.getAttribute('aria-expanded'), documentWidth: document.documentElement.scrollWidth,
         }
+        const accessibleControls = panel ? [...panel.querySelectorAll('button, a[href], input:not([type="hidden"]), select, textarea, [role="button"]')].filter((element) => {
+          const style = getComputedStyle(element)
+          const bounds = element.getBoundingClientRect()
+          return style.display !== 'none' && style.visibility !== 'hidden' && bounds.width > 0 && bounds.height > 0 && !element.closest('[aria-hidden="true"], [inert]')
+        }).map((element) => {
+          const labelledBy = element.getAttribute('aria-labelledby')?.split(/\\s+/).map((id) => document.getElementById(id)?.textContent.trim()).filter(Boolean).join(' ')
+          const labels = element.labels ? [...element.labels].map((label) => label.textContent.trim()).filter(Boolean).join(' ') : ''
+          const name = [element.getAttribute('aria-label'), labelledBy, labels, element.textContent?.trim(), element.getAttribute('title')].find((value) => value?.trim())?.trim() ?? ''
+          return { tag: element.tagName.toLowerCase(), type: element.getAttribute('type'), name, className: String(element.className), text: element.textContent.trim().slice(0, 100), html: element.outerHTML.slice(0, 320) }
+        }) : []
+        open.accessibleControlCount = accessibleControls.length
+        open.unnamedControls = accessibleControls.filter((element) => !element.name)
         open.issues = []
         if (!open.panel) open.issues.push('panel missing')
         else {
@@ -120,8 +138,9 @@ function viewportReview(viewport, exhibitId) {
         }
         if (!open.focus.inside) open.issues.push('focus did not enter panel')
         if (open.documentWidth > innerWidth + 1) open.issues.push('page has horizontal overflow')
+        if (open.unnamedControls.length) open.issues.push(open.unnamedControls.length + ' visible controls have no accessible name')
         if (kind === 'selector') {
-          if (selectorRows.length !== ${exhibits.length}) open.issues.push('selector has an unexpected number of options')
+          if (selectorRows.length !== ${allExhibits.length}) open.issues.push('selector has an unexpected number of options')
           if (scroll.scrollHeight > scroll.clientHeight + 1 && !selectorReach?.lastRowReachable) open.issues.push('last selector option cannot be reached by scrolling')
           if (emulatedTouch && (selectorReach?.minRowHeight ?? 0) < 40) open.issues.push('selector option touch target is too small')
         }
@@ -192,7 +211,12 @@ const lazyControlFocus = results.find((result) => result.kind === 'controls' && 
 const report = {
   base,
   chromium: 'HeadlessChrome 157, SwiftShader WebGL, viewport and touch emulation',
-  coverage: { exhibitCount: exhibits.length, viewports, checks: results.length, groups: checkGroups },
+  coverage: { totalExhibits: allExhibits.length, exhibitsChecked: exhibits.map(({ id }) => id), viewports, checks: results.length, groups: checkGroups },
+  accessibleNames: {
+    method: 'DOM heuristic: aria-label, aria-labelledby, associated labels, text content or title; not the browser accessibility tree or a screen-reader test.',
+    controlObservations: results.reduce((total, result) => total + (result.accessibleControlCount ?? 0), 0),
+    unnamedControls: results.reduce((total, result) => total + (result.unnamedControls?.length ?? 0), 0),
+  },
   representative: {
     narrowPhoneDock: narrowDock && { bounds: { x: narrowDock.x, right: narrowDock.right, width: narrowDock.widthPx }, targets: narrowDock.buttons.map(({ label, width, height }) => ({ label, width, height })) },
     narrowPhoneSelector: narrowSelector && { rowCount: narrowSelector.selectorReach?.rowCount, minRowHeight: narrowSelector.selectorReach?.minRowHeight, lastRowReachable: narrowSelector.selectorReach?.lastRowReachable },

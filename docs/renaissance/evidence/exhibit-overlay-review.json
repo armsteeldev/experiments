@@ -2,7 +2,28 @@
   "base": "http://127.0.0.1:5215",
   "chromium": "HeadlessChrome 157, SwiftShader WebGL, viewport and touch emulation",
   "coverage": {
-    "exhibitCount": 19,
+    "totalExhibits": 19,
+    "exhibitsChecked": [
+      "mandelbrot",
+      "fluid",
+      "boids",
+      "attractors",
+      "reaction",
+      "lsystem",
+      "gravity",
+      "machine",
+      "neural",
+      "logic",
+      "forces",
+      "automata",
+      "adder",
+      "waves",
+      "optics",
+      "sound",
+      "garden",
+      "network",
+      "lensing"
+    ],
     "viewports": [
       {
         "width": 320,
@@ -48,6 +69,11 @@
       "information": 114,
       "selector": 114
     }
+  },
+  "accessibleNames": {
+    "method": "DOM heuristic: aria-label, aria-labelledby, associated labels, text content or title; not the browser accessibility tree or a screen-reader test.",
+    "controlObservations": 4452,
+    "unnamedControls": 0
   },
   "representative": {
     "narrowPhoneDock": {
