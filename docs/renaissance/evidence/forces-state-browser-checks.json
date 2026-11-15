@@ -1,0 +1,26 @@
+{
+  "browser": "HeadlessChrome 157, 1440×900, SwiftShader/Vulkan",
+  "editedArrangement": {
+    "sources": 3,
+    "positive": 1,
+    "negative": 2,
+    "zoom": 1.2969300866657718,
+    "showPotential": false,
+    "showLines": false,
+    "fieldScale": 1.35
+  },
+  "fullReload": {
+    "chargesExact": true,
+    "cameraExact": true,
+    "customSelection": true
+  },
+  "namedPresetFraming": {
+    "preset": "dipole",
+    "cameraExact": true
+  },
+  "malformedRecovery": {
+    "extremeStrengthUsesDipoleStarter": true,
+    "errorBoundary": false
+  },
+  "browserErrors": []
+}

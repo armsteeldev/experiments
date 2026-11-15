@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ActionRow, ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { useDiscoveryHint } from '../lib/useDiscoveryHint'
+import { restoreForcesSnapshot, restoreForcesView } from '../lib/forcesState'
+import { boundedStateNumber } from '../lib/experimentState'
 import { electricField, electricPotential, type Charge } from '../simulations/electric'
 import './ExpandedExhibits.css'
 
-type Preset = 'dipole' | 'quadrupole' | 'ring' | 'cluster'
-const presetOptions: [Preset, string][] = [['dipole', 'Electric dipole'], ['quadrupole', 'Quadrupole'], ['ring', 'A charged ring'], ['cluster', 'Uneven cluster']]
+type Preset = 'dipole' | 'quadrupole' | 'ring' | 'cluster' | 'custom'
+type NamedPreset = Exclude<Preset, 'custom'>
+const presetOptions: [NamedPreset, string][] = [['dipole', 'Electric dipole'], ['quadrupole', 'Quadrupole'], ['ring', 'A charged ring'], ['cluster', 'Uneven cluster']]
 let chargeId = 50
-function presetCharges(preset: Preset): Charge[] {
+function presetCharges(preset: NamedPreset): Charge[] {
   const make = (x: number, y: number, q: number): Charge => ({ id: chargeId++, x, y, q })
   if (preset === 'quadrupole') return [make(-.85,-.75,1),make(.85,-.75,-1),make(-.85,.75,-1),make(.85,.75,1)]
   if (preset === 'ring') return Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4; return make(Math.cos(a) * 1.2, Math.sin(a) * 1.2, i % 2 ? -0.65 : .65) })
@@ -21,26 +24,46 @@ type Particle = { x: number; y: number; vx: number; vy: number; q: number; trail
 export default function InvisibleForces({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const hint = useDiscoveryHint('forces')
-  const initialPreset = presetOptions.some(([key]) => key === stateFromUrl?.preset) ? stateFromUrl?.preset as Preset : 'dipole'
+  const restoredForces = stateFromUrl?.preset === 'custom' ? restoreForcesSnapshot(stateFromUrl.charges, stateFromUrl.view) : null
+  const restoredView = restoreForcesView(stateFromUrl?.view)
+  const requestedPreset = stateFromUrl && (presetOptions.some(([key]) => key === stateFromUrl.preset) || stateFromUrl.preset === 'custom') ? stateFromUrl.preset as Preset : 'dipole'
+  const initialPreset: Preset = requestedPreset === 'custom' && !restoredForces ? 'dipole' : requestedPreset
   const [preset, setPreset] = useState<Preset>(initialPreset)
-  const [showPotential, setShowPotential] = useState(true)
-  const [showLines, setShowLines] = useState(true)
-  const [showParticles, setShowParticles] = useState(true)
-  const [fieldScale, setFieldScale] = useState(1)
+  const [showPotential, setShowPotential] = useState(stateFromUrl?.showPotential !== false)
+  const [showLines, setShowLines] = useState(stateFromUrl?.showLines !== false)
+  const [showParticles, setShowParticles] = useState(stateFromUrl?.showParticles !== false)
+  const [fieldScale, setFieldScale] = useState(() => boundedStateNumber(stateFromUrl?.fieldScale, 1, .3, 2))
   const [addSign, setAddSign] = useState<1 | -1 | 0>(0)
   const [selectedChargeId, setSelectedChargeId] = useState<number | null>(null)
   const [chargeStrength, setChargeStrength] = useState(1)
   const [notice, setNotice] = useState('')
   const [probe, setProbe] = useState({ strength: '—', potential: '—' })
-  const state = useRef({ charges: presetCharges(initialPreset), particles: [] as Particle[], width: 0, height: 0, dpr: 1, scale: 0, cameraX: 0, cameraY: 0, raf: 0, last: 0, pointer: null as null | { id: number; mode: 'charge' | 'pan' | 'add'; chargeId?: number; x: number; y: number; startX:number;startY:number; worldX: number; worldY: number } })
+  const initialEngineState = useMemo(() => ({
+    charges: restoredForces ? restoredForces.charges.map((charge) => ({ id: chargeId++, ...charge })) : presetCharges(initialPreset === 'custom' ? 'dipole' : initialPreset),
+    particles: [] as Particle[], width: 0, height: 0, dpr: 1, scale: 0, zoom: restoredForces?.view.zoom ?? restoredView?.zoom ?? 1,
+    cameraX: restoredForces?.view.x ?? restoredView?.x ?? 0, cameraY: restoredForces?.view.y ?? restoredView?.y ?? 0, raf: 0, last: 0,
+    pointer: null as null | { id: number; mode: 'charge' | 'pan' | 'add'; chargeId?: number; x: number; y: number; startX:number;startY:number; worldX: number; worldY: number },
+  }), [])
+  const state = useRef(initialEngineState)
   const parameters = useRef({ paused, showPotential, showLines, showParticles, fieldScale, selectedChargeId }); parameters.current = { paused, showPotential, showLines, showParticles, fieldScale, selectedChargeId }
-  useEffect(() => { onShareState({ preset, showPotential, showLines, showParticles, fieldScale }) }, [preset, showPotential, showLines, showParticles, fieldScale, onShareState])
+  const [sceneRevision, setSceneRevision] = useState(0)
+  const cameraShareTimer = useRef<number | null>(null)
+  const markSceneChanged = () => setSceneRevision((revision) => revision + 1)
+  const scheduleCameraShare = () => {
+    if (cameraShareTimer.current !== null) window.clearTimeout(cameraShareTimer.current)
+    cameraShareTimer.current = window.setTimeout(() => { cameraShareTimer.current = null; markSceneChanged() }, 180)
+  }
+  useEffect(() => {
+    const s = state.current
+    const charges = s.charges.map(({ x, y, q }) => ({ x, y, q }))
+    onShareState({ preset, showPotential, showLines, showParticles, fieldScale, ...(preset === 'custom' ? { charges } : {}), view: { x: s.cameraX, y: s.cameraY, zoom: s.zoom } })
+  }, [preset, showPotential, showLines, showParticles, fieldScale, sceneRevision, onShareState])
 
   useEffect(() => {
     const canvas = canvasRef.current, ctx = canvas?.getContext('2d', { alpha: false }), heat = document.createElement('canvas'), heatCtx = heat.getContext('2d')
     if (!canvas || !ctx || !heatCtx) return
     const s = state.current; let width = 0, height = 0, dpr = 1, raf = 0, lastDraw = 0, lastReadout = 0
-    const resize = () => { const rect = canvas.getBoundingClientRect(); if (!rect.width || !rect.height) return; width = rect.width; height = rect.height; dpr = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(2_400_000 / (width * height))); canvas.width = Math.floor(width * dpr); canvas.height = Math.floor(height * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); s.width = width; s.height = height; s.dpr = dpr; if (!s.scale) s.scale = Math.min(width, height) / 5.4 }
+    const resize = () => { const rect = canvas.getBoundingClientRect(); if (!rect.width || !rect.height) return; width = rect.width; height = rect.height; dpr = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(2_400_000 / (width * height))); canvas.width = Math.floor(width * dpr); canvas.height = Math.floor(height * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); s.width = width; s.height = height; s.dpr = dpr; s.scale = Math.min(width, height) / 5.4 * s.zoom }
     const toScreen = (x: number, y: number) => [width / 2 + (x - s.cameraX) * s.scale, height / 2 + (y - s.cameraY) * s.scale]
     const toWorld = (x: number, y: number) => [s.cameraX + (x - width / 2) / s.scale, s.cameraY + (y - height / 2) / s.scale]
     const draw = (now: number) => {
@@ -111,7 +134,11 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
     return () => { cancelAnimationFrame(raf); observer.disconnect() }
   }, [])
 
-  useEffect(() => { state.current.charges = presetCharges(preset); state.current.particles = []; setSelectedChargeId(null); setChargeStrength(1); setNotice('') }, [preset])
+  const loadPreset = (next: NamedPreset) => {
+    const s = state.current
+    s.charges = presetCharges(next); s.particles = []
+    setPreset(next); setSelectedChargeId(null); setChargeStrength(1); setNotice(''); markSceneChanged()
+  }
   const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
     const s = state.current, rect = event.currentTarget.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top, wx = s.cameraX + (x - s.width / 2) / s.scale, wy = s.cameraY + (y - s.height / 2) / s.scale
     const charge = s.charges.slice().reverse().find((item) => Math.hypot((item.x - s.cameraX) * s.scale + s.width / 2 - x, (item.y - s.cameraY) * s.scale + s.height / 2 - y) < 24)
@@ -129,36 +156,51 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
   }
   const pointerUp = (event: React.PointerEvent<HTMLCanvasElement>) => {
     const s = state.current, p = s.pointer; if (!p || p.id !== event.pointerId) return
+    let sceneChanged = false
     if (p.mode === 'add') {
       if (s.charges.length >= 16) setNotice('The field is full. Remove a charge before adding another.')
-      else { const charge = { id: chargeId++, x: p.worldX, y: p.worldY, q: addSign || 1 }; s.charges.push(charge); setSelectedChargeId(charge.id); setChargeStrength(1); setNotice('Charge placed · drag it to reshape its field.') }
+      else { const charge = { id: chargeId++, x: p.worldX, y: p.worldY, q: addSign || 1 }; s.charges.push(charge); setSelectedChargeId(charge.id); setChargeStrength(1); setPreset('custom'); setNotice('Charge placed · drag it to reshape its field.'); sceneChanged = true }
       setAddSign(0)
     }
-    else if (p.mode === 'pan' && Math.hypot(p.x - p.startX, p.y - p.startY) < 6) {
-      s.particles.push({ x: p.worldX, y: p.worldY, vx: 0, vy: 0, q: .13, trail: [] }); if (s.particles.length > 5) s.particles.shift(); setNotice('Positive test particle released. Its path follows qE/m.')
+    else if (p.mode === 'charge') {
+      setPreset('custom'); sceneChanged = true
+    }
+    else if (p.mode === 'pan') {
+      if (Math.hypot(p.x - p.startX, p.y - p.startY) < 6) {
+        s.particles.push({ x: p.worldX, y: p.worldY, vx: 0, vy: 0, q: .13, trail: [] }); if (s.particles.length > 5) s.particles.shift(); setNotice('Positive test particle released. Its path follows qE/m.')
+      }
+      sceneChanged = true
     }
     s.pointer = null
+    if (sceneChanged) markSceneChanged()
   }
   const wheel = (event: WheelEvent) => {
     event.preventDefault(); const canvas = canvasRef.current; if (!canvas) return; const s = state.current, rect = canvas.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top, beforeX = s.cameraX + (x - s.width / 2) / s.scale, beforeY = s.cameraY + (y - s.height / 2) / s.scale
-    s.scale = clamp(s.scale * Math.exp(-event.deltaY * .001), Math.min(s.width,s.height)/14, Math.min(s.width,s.height)*1.4); s.cameraX = beforeX - (x - s.width / 2) / s.scale; s.cameraY = beforeY - (y - s.height / 2) / s.scale
+    s.scale = clamp(s.scale * Math.exp(-event.deltaY * .001), Math.min(s.width,s.height)/14, Math.min(s.width,s.height)*1.4); s.zoom = s.scale / (Math.min(s.width, s.height) / 5.4); s.cameraX = beforeX - (x - s.width / 2) / s.scale; s.cameraY = beforeY - (y - s.height / 2) / s.scale; scheduleCameraShare()
   }
-  useEffect(() => { const canvas = canvasRef.current; if (!canvas) return; canvas.addEventListener('wheel', wheel, { passive: false }); return () => canvas.removeEventListener('wheel', wheel) }, [])
+  useEffect(() => { const canvas = canvasRef.current; if (!canvas) return; canvas.addEventListener('wheel', wheel, { passive: false }); return () => { canvas.removeEventListener('wheel', wheel); if (cameraShareTimer.current !== null) window.clearTimeout(cameraShareTimer.current) } }, [])
   const selectedCharge = state.current.charges.find((charge) => charge.id === selectedChargeId)
   const adjustChargeStrength = (value: number) => {
     setChargeStrength(value)
     const charge = state.current.charges.find((item) => item.id === selectedChargeId)
-    if (charge) charge.q = (charge.q < 0 ? -1 : 1) * value
+    if (charge) { charge.q = (charge.q < 0 ? -1 : 1) * value; setPreset('custom'); markSceneChanged() }
   }
   const flipChargePolarity = () => {
     const charge = state.current.charges.find((item) => item.id === selectedChargeId)
-    if (charge) { charge.q *= -1; setNotice(`Selected charge is now ${charge.q > 0 ? 'positive' : 'negative'}.`) }
+    if (charge) { charge.q *= -1; setPreset('custom'); setNotice(`Selected charge is now ${charge.q > 0 ? 'positive' : 'negative'}.`); markSceneChanged() }
   }
+  const removeLastCharge = () => {
+    const s = state.current, removed = s.charges.pop()
+    if (removed?.id === selectedChargeId) { setSelectedChargeId(null); setChargeStrength(1) }
+    setPreset('custom'); setNotice(removed ? 'Last charge removed.' : 'There are no charges to remove.')
+    if (removed) markSceneChanged()
+  }
+  const restoreCharges = () => loadPreset(preset === 'custom' ? 'dipole' : preset)
   const placePositiveAtCentre = () => {
     const s = state.current
     if (s.charges.length >= 16) { setNotice('The field is full. Remove a charge before adding another.'); return }
     const charge = { id: chargeId++, x: s.cameraX, y: s.cameraY, q: 1 }
-    s.charges.push(charge); setSelectedChargeId(charge.id); setChargeStrength(1); setAddSign(0)
+    s.charges.push(charge); setSelectedChargeId(charge.id); setChargeStrength(1); setAddSign(0); setPreset('custom'); markSceneChanged()
     setNotice('Positive charge placed at the centre. Field lines point away from it.')
     hint.dismiss()
   }
@@ -168,14 +210,14 @@ export default function InvisibleForces({ paused, controlsVisible, stateFromUrl,
     {hint.visible ? <aside className="scene-nudge scene-nudge-high" id="forces-first-move" role="note"><span>Try this · Invisible Forces</span><p>Add a positive charge. Arrows leave it and end at negative charges; tap open space to release a test particle.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={placePositiveAtCentre}>Place + at the centre</button></aside> : <button className="scene-nudge-reopen scene-nudge-reopen-high" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <div className="forces-heading"><span className="exp-eyebrow">ELECTROSTATICS · SUPERPOSITION <i /></span><h2>What the eye <em>cannot see.</em></h2></div>
     <div className="forces-scale"><span>NORMALIZED FIELD AT CENTRE</span><strong>{probe.strength}<small> E</small></strong><span>POTENTIAL <b>{probe.potential} Φ</b></span></div>
-    <div className="forces-tools"><button className={addSign === 1 ? 'selected' : ''} onClick={() => { setSelectedChargeId(null); setAddSign((value) => value === 1 ? 0 : 1); setNotice('') }}>＋ Positive charge</button><button className={addSign === -1 ? 'selected' : ''} onClick={() => { setSelectedChargeId(null); setAddSign((value) => value === -1 ? 0 : -1); setNotice('') }}>− Negative charge</button><button onClick={() => { const p = state.current, removed = p.charges.pop(); if (removed?.id === selectedChargeId) { setSelectedChargeId(null); setChargeStrength(1) } setNotice(removed ? 'Last charge removed.' : 'There are no charges to remove.') }}>Remove last</button></div>
+    <div className="forces-tools"><button className={addSign === 1 ? 'selected' : ''} onClick={() => { setSelectedChargeId(null); setAddSign((value) => value === 1 ? 0 : 1); setNotice('') }}>＋ Positive charge</button><button className={addSign === -1 ? 'selected' : ''} onClick={() => { setSelectedChargeId(null); setAddSign((value) => value === -1 ? 0 : -1); setNotice('') }}>− Negative charge</button><button onClick={removeLastCharge}>Remove last</button></div>
     <div className="forces-caption">{addSign ? 'CLICK THE FIELD TO PLACE A CHARGE' : notice || 'DRAG CHARGES · DRAG EMPTY SPACE TO PAN · SCROLL TO ZOOM · CLICK TO RELEASE A TEST PARTICLE'}</div>
     <ControlPanel title="Invisible Forces" note="Coulomb field · potential · particle motion" visible={controlsVisible} onClose={onCloseControls}>
-      <SelectControl label="Charge arrangement" value={preset} options={presetOptions} onChange={(value) => setPreset(value as Preset)} />
+      <SelectControl label="Charge arrangement" value={preset} options={[...presetOptions, ...(preset === 'custom' ? [['custom', 'Custom arrangement'] as [string, string]] : [])]} onChange={(value) => { if (value !== 'custom') loadPreset(value as NamedPreset) }} />
       {selectedCharge && <><RangeControl label={`Selected ${selectedCharge.q > 0 ? 'positive' : 'negative'} charge strength`} value={chargeStrength} min={.1} max={2} step={.05} format={(value) => value.toFixed(2)} onChange={adjustChargeStrength} /><ActionRow><button className="small-action" onClick={flipChargePolarity}>Flip polarity</button><button className="small-action" onClick={() => setSelectedChargeId(null)}>Unselect charge</button></ActionRow></>}
       <RangeControl label="Test-particle charge" value={fieldScale} min={.3} max={2} step={.05} format={(value) => `${value.toFixed(2)}×`} onChange={setFieldScale} />
       <ActionRow><button className="small-action" onClick={() => setShowPotential((value) => !value)}>{showPotential ? 'Potential on' : 'Potential off'}</button><button className="small-action" onClick={() => setShowLines((value) => !value)}>{showLines ? 'Field lines on' : 'Field lines off'}</button></ActionRow>
-      <ActionRow><button className="small-action" onClick={() => setShowParticles((value) => !value)}>{showParticles ? 'Trajectories on' : 'Trajectories off'}</button><button className="small-action" onClick={() => { state.current.particles = []; setNotice('Test particles cleared.') }}>Clear particles</button><button className="small-action" onClick={() => { state.current.charges = presetCharges(preset); state.current.particles = []; setSelectedChargeId(null); setNotice('Preset charges restored.') }}>Restore charges</button></ActionRow>
+      <ActionRow><button className="small-action" onClick={() => setShowParticles((value) => !value)}>{showParticles ? 'Trajectories on' : 'Trajectories off'}</button><button className="small-action" onClick={() => { state.current.particles = []; setNotice('Test particles cleared.') }}>Clear particles</button><button className="small-action" onClick={restoreCharges}>Restore charges</button></ActionRow>
       <p className="control-note">Positive charges send field arrows outward; negative charges draw them inward. Heat and contours show electric potential. Test particles move under qE/m. The readout uses normalized simulation values, not physical units. Changing a test particle’s charge changes its motion, not the source field.</p>
     </ControlPanel>
   </section>

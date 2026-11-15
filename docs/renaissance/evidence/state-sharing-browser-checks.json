@@ -158,9 +158,10 @@
         "showPotential",
         "showLines",
         "showParticles",
-        "fieldScale"
+        "fieldScale",
+        "view"
       ],
-      "bytes": 117,
+      "bytes": 147,
       "routeRestored": true,
       "invalidStateRecovery": true
     },
