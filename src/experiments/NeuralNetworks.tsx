@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
+import { boundedStateSeed } from '../lib/experimentState'
+import { MAX_SHARED_NEURAL_SAMPLES, restoreNeuralSamples } from '../lib/neuralState'
 import { ControlPanel, RangeControl, SelectControl } from '../components/Controls'
 import { accuracy, createNetwork, forwardNetwork, trainNetworkStep, type Activation, type NeuralNetwork, type Sample } from '../simulations/neural'
 import './ComputingRethink.css'
@@ -71,7 +73,9 @@ function NetworkInspector({ network, input, activation, onClose }: { network: Ne
 export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const initialDataset = datasets.some(([key]) => key === stateFromUrl?.dataset) ? stateFromUrl?.dataset as DatasetName : 'xor'
   const [dataset, setDataset] = useState<DatasetName>(initialDataset)
-  const [samples, setSamples] = useState<Sample[]>(() => initialDataset === 'custom' ? [] : makeDataset(initialDataset))
+  const [samples, setSamples] = useState<Sample[]>(() => initialDataset === 'custom'
+    ? restoreNeuralSamples(stateFromUrl?.examples) ?? []
+    : makeDataset(initialDataset))
   const [hidden, setHidden] = useState(() => hiddenSizes.includes(Number(stateFromUrl?.hidden)) ? Number(stateFromUrl?.hidden) : 5)
   const [depth, setDepth] = useState(() => [1, 2].includes(Number(stateFromUrl?.depth)) ? Number(stateFromUrl?.depth) : 1)
   const [activation, setActivation] = useState<Activation>(() => ['tanh', 'sigmoid', 'relu'].includes(String(stateFromUrl?.activation)) ? stateFromUrl?.activation as Activation : 'tanh')
@@ -86,7 +90,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   const [dataVersion, setDataVersion] = useState(0)
   const [undoCount, setUndoCount] = useState(0)
   const [networkOpen, setNetworkOpen] = useState(false)
-  const [weightSeed, setWeightSeed] = useState(1)
+  const [weightSeed, setWeightSeed] = useState(() => boundedStateSeed(stateFromUrl?.weightSeed, 1))
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [network, setNetwork] = useState(() => createNetwork([2, hidden, 1], weightSeed))
   const samplesRef = useRef(samples)
@@ -118,7 +122,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   }
   const resetWeights = (nextHidden = hidden, nextDepth = depth, nextActivation = activation) => {
     haltTraining()
-    const nextSeed = weightSeed + 1
+    const nextSeed = ((weightSeed + 1) >>> 0) || 1
     setWeightSeed(nextSeed)
     const nextNetwork = createNetwork([2, ...Array(nextDepth).fill(nextHidden), 1], nextSeed)
     setNetwork(nextNetwork)
@@ -127,7 +131,12 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     setNote('Fresh weights. The map shows the new network’s actual first guesses.')
   }
 
-  useEffect(() => { onShareState({ dataset, hidden, depth, activation, rate }); }, [dataset, hidden, depth, activation, rate, onShareState])
+  useEffect(() => {
+    onShareState({
+      dataset, hidden, depth, activation, rate, weightSeed,
+      ...(dataset === 'custom' ? { examples: samples.map((sample) => ({ x: [...sample.x], y: sample.y })) } : {}),
+    })
+  }, [dataset, hidden, depth, activation, rate, weightSeed, samples, onShareState])
   useEffect(() => { updateStats() }, [])
   useEffect(() => {
     if (!training || paused || samplesRef.current.length === 0) { trainingRef.current = false; return }
@@ -220,7 +229,9 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     haltTraining()
     const next = samplesRef.current.map((sample) => ({ x: [...sample.x], y: sample.y }))
     if (near >= 0) { dragIndex.current = near; dragRecorded.current = false; setNote('Move this example. Training pauses while you edit the pattern.') }
-    else { pushUndo(); dragIndex.current = next.length; dragRecorded.current = true; next.push({ x: point, y: classToAdd }); setExamples(next, `Added a ${classToAdd === 1 ? 'teal' : 'coral'} example. Drag to place it precisely.`) }
+    else if (next.length >= MAX_SHARED_NEURAL_SAMPLES) {
+      setNote(`This lesson is limited to ${MAX_SHARED_NEURAL_SAMPLES} examples so it stays quick to train and easy to share. Erase one to make room.`)
+    } else { pushUndo(); dragIndex.current = next.length; dragRecorded.current = true; next.push({ x: point, y: classToAdd }); setExamples(next, `Added a ${classToAdd === 1 ? 'teal' : 'coral'} example. Drag to place it precisely.`) }
   }
   const handlePointerMove = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     if (!(event.buttons & 1) || dragIndex.current === null || tool !== 'draw') return
@@ -301,7 +312,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
       <RangeControl label="Learning rate" value={rate} min={.01} max={.22} step={.005} format={(value) => value.toFixed(3)} onChange={setRate} />
       <div className="neural-advanced-metrics"><span>TRAINING EXAMPLES <b>{samples.length}</b></span><span>ACCURACY <b>{Math.round(correct * 100)}%</b></span><span>MEAN SQUARED LOSS <b>{metrics.loss.toFixed(4)}</b></span><span>LIVE PREDICTION <b>{prediction.toFixed(4)}</b></span></div>
       <button className="small-action" onClick={() => resetWeights()}>Reset the weights</button>
-      <p className="control-note">The canvas colours come from the actual network output at each location. It learns from labelled examples with backpropagation. New test points are never added to training unless you place them in draw mode.</p>
+      <p className="control-note">The canvas colours come from the actual network output at each location. It learns from labelled examples with backpropagation. New test points are never added to training unless you place them in draw mode. Custom lessons share up to {MAX_SHARED_NEURAL_SAMPLES} examples; trained weights restart from the saved initialization seed.</p>
     </ControlPanel>
   </section>
 }

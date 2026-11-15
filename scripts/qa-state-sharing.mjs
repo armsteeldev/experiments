@@ -70,6 +70,23 @@ async function click(selector) {
   assert.ok(found, `Could not click ${selector}`)
 }
 
+async function clickNeuralMapAt(x, y) {
+  const point = await evaluate(`(() => {
+    const canvas = document.querySelector('.neural-learning-map')
+    const rect = canvas?.getBoundingClientRect()
+    if (!rect) return null
+    const mobile = rect.width < 720
+    const plot = mobile
+      ? { x: 16, y: Math.max(132, rect.height * .2), w: rect.width - 32, h: Math.max(210, rect.height * .55) }
+      : { x: 44, y: 154, w: rect.width - 88, h: Math.max(280, rect.height - 294) }
+    return { x: rect.left + plot.x + (${x} + 1) * plot.w / 2, y: rect.top + plot.y + (1 - (${y})) * plot.h / 2 }
+  })()`)
+  assert.ok(point, 'Neural map canvas is available for the custom example')
+  await call('Input.dispatchMouseEvent', { type: 'mouseMoved', x: point.x, y: point.y })
+  await call('Input.dispatchMouseEvent', { type: 'mousePressed', x: point.x, y: point.y, button: 'left', clickCount: 1 })
+  await call('Input.dispatchMouseEvent', { type: 'mouseReleased', x: point.x, y: point.y, button: 'left', clickCount: 1 })
+}
+
 await call('Page.enable')
 await call('Runtime.enable')
 await call('Network.enable')
@@ -114,6 +131,26 @@ for (const item of experiments) {
     await sleep(160)
     await click('button[aria-label="Toggle experiment controls"]')
   }
+  let neuralReplay = null
+  if (item.id === 'neural') {
+    await click('.neural-patterns button:last-child')
+    await click('.class-tool.class-zero')
+    await clickNeuralMapAt(-0.56, 0.7)
+    await click('.class-tool.class-one')
+    await clickNeuralMapAt(0.57, 0.4)
+    await waitFor(`document.querySelector('.neural-score span')?.textContent.startsWith('2 EXAMPLES')`, 'two user-drawn neural examples')
+    await click('button[aria-label="Toggle experiment controls"]')
+    await waitFor(`Boolean([...document.querySelectorAll('.control-panel button')].find((node) => node.textContent.includes('Reset the weights')))`, 'neural reset control')
+    await click('.control-panel button.small-action')
+    await waitFor(`Boolean(document.querySelector('.neural-score span')?.textContent.includes('2 EXAMPLES'))`, 'neural lesson retained after weight reset')
+    await click('.neural-inspect-button')
+    await waitFor(`Boolean(document.querySelector('.weight-inspection'))`, 'neural weight inspection')
+    const initialWeight = await evaluate(`document.querySelector('.weight-inspection')?.getAttribute('aria-label')`)
+    assert.ok(initialWeight, 'reset network exposes a weight for reproducibility')
+    neuralReplay = { initialWeight, examples: 2 }
+    await click('.neural-inspect-button')
+    await click('button[aria-label="Toggle experiment controls"]')
+  }
   await click('button[aria-label="Toggle experiment information"]')
   await waitFor(`Boolean(document.querySelector('.info-actions button:last-child'))`, `${item.id} share control`)
   await click('.info-actions button:last-child')
@@ -127,6 +164,14 @@ for (const item of experiments) {
   assert.ok(Object.keys(decoded.state).length > 0, `${item.id} shares its meaningful configuration`)
   if (item.id === 'adder') assert.deepEqual(decoded.state, { width: 8, architecture: 'lookahead', speed: 1, a: 23, b: 17 }, 'Adder shares the edited circuit, inputs and speed')
   if (item.id === 'network') assert.equal(decoded.state.message, 'curious packet', 'the network shares its message payload explicitly')
+  if (item.id === 'neural') {
+    assert.equal(decoded.state.dataset, 'custom', 'Neural Networks shares the custom lesson kind')
+    assert.equal(decoded.state.weightSeed, 3, 'Neural Networks shares the seed of its latest weight reset')
+    assert.deepEqual(decoded.state.examples.map((sample) => sample.y), [0, 1], 'Neural Networks shares both example labels')
+    for (const [index, expected] of [[-0.56, 0.7], [0.57, 0.4]].entries()) {
+      assert.ok(Math.abs(decoded.state.examples[index].x[0] - expected[0]) < 0.01 && Math.abs(decoded.state.examples[index].x[1] - expected[1]) < 0.01, `Neural Networks restores example ${index + 1} coordinates`)
+    }
+  }
   const stateBytes = Buffer.byteLength(JSON.stringify(decoded), 'utf8')
   assert.ok(stateBytes <= 16 * 1024, `${item.id} state is within the shared/local state limit`)
   await call('Page.navigate', { url: shared.href })
@@ -141,10 +186,26 @@ for (const item of experiments) {
     await click('button[aria-label="Toggle experiment controls"]')
     await waitFor(`document.querySelector('.iw-message-input input')?.value === 'curious packet'`, 'restored network message payload')
   }
+  if (item.id === 'neural') {
+    await waitFor(`document.querySelector('.neural-score span')?.textContent.startsWith('2 EXAMPLES')`, 'restored custom neural examples')
+    await click('.neural-inspect-button')
+    await waitFor(`Boolean(document.querySelector('.weight-inspection'))`, 'restored seeded network weights')
+    const restoredWeight = await evaluate(`document.querySelector('.weight-inspection')?.getAttribute('aria-label')`)
+    assert.equal(restoredWeight, neuralReplay.initialWeight, 'the shared weight seed recreates the visible initial network')
+    await click('.neural-inspect-button')
+    const screenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+    await writeFile(resolve(evidenceRoot, 'neural-custom-lesson-restored.png'), Buffer.from(screenshot.data, 'base64'))
+    const malformedExamples = Buffer.from(JSON.stringify({ $armsteel: 1, state: { dataset: 'custom', weightSeed: 3, examples: [{ x: [0, 1.01], y: 1 }] } })).toString('base64url')
+    await call('Page.navigate', { url: `${base}/exhibits/neural?state=${malformedExamples}` })
+    await waitFor(`location.pathname === '/exhibits/neural' && Boolean(document.querySelector('.neural-score span')) && !document.querySelector('.experience-loading')`, 'malformed neural custom lesson recovery')
+    await waitFor(`document.querySelector('.neural-score span')?.textContent.startsWith('0 EXAMPLES')`, 'malformed neural lesson safely opens blank')
+    assert.equal(await evaluate(`Boolean(document.querySelector('.experience-error'))`), false, 'malformed neural examples do not enter the error boundary')
+    neuralReplay = { ...neuralReplay, sharedWeightSeed: decoded.state.weightSeed, restoredWeight, malformedExamplesRecoverBlank: true }
+  }
   await call('Page.navigate', { url: `${base}/exhibits/${item.id}?state=${invalidState}` })
   await waitFor(`location.pathname === ${JSON.stringify(`/exhibits/${item.id}`)} && Boolean(document.querySelector('.dock-current span')) && !document.querySelector('.experience-loading')`, `${item.id} recovery from structurally invalid shared state`)
   assert.equal(await evaluate(`Boolean(document.querySelector('.experience-error'))`), false, `${item.id} opens with safe defaults after an invalid nested state is rejected`)
-  routeResults.push({ id: item.id, keys: Object.keys(decoded.state), bytes: stateBytes, routeRestored: true, invalidStateRecovery: true })
+  routeResults.push({ id: item.id, keys: Object.keys(decoded.state), bytes: stateBytes, routeRestored: true, invalidStateRecovery: true, ...(neuralReplay ? { neuralReplay } : {}) })
 }
 
 assert.deepEqual(browserErrors, [], `Browser or network errors occurred: ${browserErrors.join('; ')}`)

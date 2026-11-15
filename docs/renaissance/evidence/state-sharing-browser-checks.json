@@ -136,11 +136,20 @@
         "hidden",
         "depth",
         "activation",
-        "rate"
+        "rate",
+        "weightSeed",
+        "examples"
       ],
-      "bytes": 94,
+      "bytes": 229,
       "routeRestored": true,
-      "invalidStateRecovery": true
+      "invalidStateRecovery": true,
+      "neuralReplay": {
+        "initialWeight": "Inspect weight from neuron 1 in layer 1 to neuron 1 in layer 2: -0.526",
+        "examples": 2,
+        "sharedWeightSeed": 3,
+        "restoredWeight": "Inspect weight from neuron 1 in layer 1 to neuron 1 in layer 2: -0.526",
+        "malformedExamplesRecoverBlank": true
+      }
     },
     {
       "id": "logic",
