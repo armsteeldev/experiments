@@ -12,7 +12,7 @@
     "network",
     "lensing"
   ],
-  "screenshots": 45,
+  "screenshots": 50,
   "repeatedSpaEntryExitCycles": 12,
   "gallery": {
     "count": 19,
@@ -21,6 +21,11 @@
   "search": {
     "count": "01 STUDY",
     "lensingLink": true
+  },
+  "networkDelivery": {
+    "tick": 91,
+    "delivered": 6,
+    "status": "Sent “a small idea” · route selected\norigin → west → relay → south → arrival"
   },
   "browserErrors": []
 }

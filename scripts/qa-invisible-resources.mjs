@@ -20,8 +20,9 @@ const waiting = new Map()
 socket.addEventListener('message', (event) => {
   const message = JSON.parse(event.data)
   if (!message.id || !waiting.has(message.id)) return
-  const { resolve: resolveCall, reject, method } = waiting.get(message.id)
+  const { resolve: resolveCall, reject, method, timeout } = waiting.get(message.id)
   waiting.delete(message.id)
+  clearTimeout(timeout)
   if (message.error) reject(new Error(`${method}: ${message.error.message}`))
   else resolveCall(message.result)
 })
@@ -30,8 +31,8 @@ function call(method, params = {}) {
   const id = ++nextId
   socket.send(JSON.stringify({ id, method, params }))
   return new Promise((resolveCall, reject) => {
-    waiting.set(id, { resolve: resolveCall, reject, method })
-    setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    const timeout = setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    waiting.set(id, { resolve: resolveCall, reject, method, timeout })
   })
 }
 
@@ -76,8 +77,19 @@ samples.push(await metrics('garden-after-18s-before-gc'))
 await call('HeapProfiler.collectGarbage')
 await sleep(300)
 samples.push(await metrics('garden-after-18s-after-gc'))
+const framePacing = await evaluate(`new Promise((resolve) => {
+  const intervals = []; let previous = 0
+  const sample = (now) => {
+    if (previous) intervals.push(now - previous)
+    previous = now
+    if (intervals.length < 120) { requestAnimationFrame(sample); return }
+    const ordered = [...intervals].sort((a, b) => a - b)
+    resolve({ samples: intervals.length, medianMs: Number(ordered[Math.floor(ordered.length * .5)].toFixed(2)), p95Ms: Number(ordered[Math.floor(ordered.length * .95)].toFixed(2)), maxMs: Number(Math.max(...ordered).toFixed(2)) })
+  }
+  requestAnimationFrame(sample)
+})`)
 
-for (let cycle = 1; cycle <= 4; cycle++) {
+for (let cycle = 1; cycle <= 8; cycle++) {
   await evaluate(`document.querySelector('button[aria-label="Return to exhibition"]')?.click()`)
   for (let attempt = 0; attempt < 100; attempt++) {
     if (await evaluate(`Boolean(document.querySelector('.exhibition-page'))`)) break
@@ -93,7 +105,8 @@ for (let cycle = 1; cycle <= 4; cycle++) {
 
 const report = {
   browser: await evaluate(`({ userAgent: navigator.userAgent, hardwareConcurrency: navigator.hardwareConcurrency, deviceMemoryGiB: navigator.deviceMemory ?? null, renderer: (() => { const gl = document.createElement('canvas').getContext('webgl2'); return gl?.getParameter(gl.RENDERER) ?? 'unavailable' })() })`),
-  method: 'One 18-second evolving garden sample bracketed by snapshots before and after forced V8 collection, followed by four settled SPA unmount/remount samples after forced collection. Counters are Chromium estimates, not GPU or device-wide memory.',
+  method: 'One 18-second evolving garden sample bracketed by snapshots before and after forced V8 collection, 120 requestAnimationFrame intervals during continued evolution, and eight settled SPA unmount/remount samples after forced collection. Counters are Chromium estimates, not GPU or device-wide memory.',
+  framePacing,
   samples,
 }
 await mkdir(evidenceRoot, { recursive: true })

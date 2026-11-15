@@ -18,11 +18,13 @@ await new Promise((resolveOpen, reject) => {
 
 let nextId = 0
 const waiting = new Map()
+let networkDeliverySummary = null
 socket.addEventListener('message', (event) => {
   const message = JSON.parse(event.data)
   if (message.id && waiting.has(message.id)) {
-    const { resolve: resolveCall, reject, method } = waiting.get(message.id)
+    const { resolve: resolveCall, reject, method, timeout } = waiting.get(message.id)
     waiting.delete(message.id)
+    clearTimeout(timeout)
     if (message.error) reject(new Error(`${method}: ${message.error.message}`))
     else resolveCall(message.result)
   }
@@ -36,8 +38,8 @@ function call(method, params = {}) {
   const id = ++nextId
   socket.send(JSON.stringify({ id, method, params }))
   return new Promise((resolveCall, reject) => {
-    waiting.set(id, { resolve: resolveCall, reject, method })
-    setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    const timeout = setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    waiting.set(id, { resolve: resolveCall, reject, method, timeout })
   })
 }
 
@@ -204,6 +206,7 @@ async function prepareDesktop(id) {
   await sleep(120)
   await sleep(id === 'lensing' ? 2300 : 800)
   await assertNoHorizontalOverflow(id)
+  if (id === 'sound') assert.equal(await evaluate(`document.querySelector('.iw-sound-actions span')?.textContent.trim()`), 'AUDIO OFF', 'Sound remains silent until a visitor starts it')
   await saveScreenshot(`${id}/01-opening-desktop.png`)
   await sleep(2200)
   await saveScreenshot(`${id}/02-evolved-desktop.png`)
@@ -214,6 +217,7 @@ await call('Runtime.enable')
 await call('Network.enable')
 await call('Log.enable')
 await call('Page.setLifecycleEventsEnabled', { enabled: true })
+await call('Page.addScriptToEvaluateOnNewDocument', { source: `(() => { const Native = window.AudioContext; window.__armsteelAudioContexts = []; window.AudioContext = function(...args) { const context = new Native(...args); window.__armsteelAudioContexts.push(context); return context }; Object.setPrototypeOf(window.AudioContext, Native); window.AudioContext.prototype = Native.prototype })()` })
 
 const studies = ['waves', 'optics', 'sound', 'garden', 'network', 'lensing']
 for (const id of studies) {
@@ -233,6 +237,15 @@ for (const id of studies) {
     await toggleControls()
     await clickButton('Listen to the signal')
     await sleep(350)
+    assert.equal(await evaluate(`document.querySelector('.iw-sound-actions span')?.textContent.trim()`), 'AUDIO ON · LOW LEVEL', 'The audio graph starts only after the explicit button action')
+    await clickButton('Mute generated sound')
+    assert.ok(await evaluate(`Boolean(document.querySelector('.iw-sound-actions button[aria-label="Unmute generated sound"]'))`), 'The mute control silences the running oscillator')
+    await clickButton('Unmute generated sound')
+    await clickButton('Stop sound')
+    await clickButton('Listen to the signal')
+    await clickButton('Stop sound')
+    await clickButton('Listen to the signal')
+    assert.equal(await evaluate(`window.__armsteelAudioContexts?.length`), 1, 'Repeated start, mute and stop reuses one Web Audio context')
   } else if (id === 'garden') {
     await clickButton('Scatter food')
     await clickAt(770, 500)
@@ -244,6 +257,10 @@ for (const id of studies) {
     await clickButton('Fail link')
     await clickAt(1440 * 0.24, 900 * 0.35)
     await sleep(700)
+    await clickButton('Send')
+    await clickAt(1440 * 0.13, 900 * 0.5)
+    await clickAt(1440 * 0.9, 900 * 0.5)
+    assert.ok((await evaluate(`document.querySelector('.iw-network-route')?.textContent`)).includes('Sent'), 'Choosing source then destination sends a packet directly from the graph')
   } else if (id === 'lensing') {
     await toggleControls()
     await clickButton('Near-critical flyby')
@@ -253,6 +270,13 @@ for (const id of studies) {
   }
   await assertNoHorizontalOverflow(id)
   await saveScreenshot(`${id}/03-interaction-desktop.png`)
+  if (id === 'sound') await clickButton('Stop sound')
+  if (id === 'network') {
+    await sleep(1800)
+    networkDeliverySummary = await evaluate(`(() => { const text = document.querySelector('.iw-network-stats')?.innerText ?? ''; const match = text.match(/(\\d+) delivered/); return { tick: Number(text.match(/TICK (\\d+)/)?.[1] ?? 0), delivered: Number(match?.[1] ?? 0), status: document.querySelector('.iw-network-route')?.innerText ?? '' } })()`)
+    assert.ok(networkDeliverySummary.delivered > 0, `A graph-sent packet delivers after traversing the live network: ${JSON.stringify(networkDeliverySummary)}`)
+    await saveScreenshot('network/08-delivered-desktop.png')
+  }
 
   if (id === 'waves') {
     await focusCanvas()
@@ -296,13 +320,44 @@ for (const id of studies) {
   if (id === 'sound') {
     await clickButton('Spectrogram')
     const active = await evaluate(`document.querySelector('.iw-sound-canvas')?.getAttribute('aria-label')`)
-    assert.ok(active?.includes('2 harmonics'), 'Adding a second harmonic changes the signal model')
+    assert.ok(active?.includes('10 harmonics'), 'Adding a second harmonic changes the triangle-wave signal model')
   }
   if (id === 'garden') await clickButton('Cool bloom')
   if (id === 'network') await clickButton('Reset network')
   await sleep(250)
   await assertNoHorizontalOverflow(id, true)
   await saveScreenshot(`${id}/04-advanced-desktop.png`)
+  if (id === 'waves') {
+    await clickButton('Resonant chamber')
+    await sleep(420)
+    assert.ok(await evaluate(`Boolean([...document.querySelectorAll('.iw-button-row button')].find((button) => button.innerText === 'Resonant chamber')?.classList.contains('selected'))`), 'The cavity preset selects its discrete resonant mode')
+    await toggleControls()
+    await saveScreenshot('waves/08-resonant-chamber-desktop.png')
+    await toggleControls()
+    await clickButton('Amplitude')
+    for (const [label, path] of [['Double slit', 'waves/09-double-slit-desktop.png'], ['Standing', 'waves/10-standing-desktop.png']]) {
+      await clickButton(label)
+      await sleep(label === 'Double slit' ? 1800 : 520)
+      assert.ok(await evaluate(`Boolean([...document.querySelectorAll('.iw-button-row button')].find((button) => button.innerText === ${JSON.stringify(label)})?.classList.contains('selected'))`), `${label} selects its wave scene`)
+      await toggleControls()
+      await saveScreenshot(path)
+      await toggleControls()
+    }
+  } else if (id === 'garden') {
+    await toggleControls()
+    await clickButton('Pause experiment')
+    assert.ok(await evaluate(`Boolean(document.querySelector('[aria-label="Resume experiment"]')?.getAttribute('aria-pressed') === 'true')`), 'The garden can be paused before a dense visual stress scene')
+    await clickButton('Add life')
+    assert.equal(await evaluate(`document.querySelector('.iw-garden-tools button[aria-pressed="true"]')?.textContent`), 'Add life', 'Add life is the selected direct-manipulation tool')
+    for (let index = 0; index < 400; index++) {
+      await clickAt(250 + (index % 10) * 58, 180 + (Math.floor(index / 10) % 16) * 29)
+    }
+    await sleep(720)
+    const population = Number.parseInt(await evaluate(`document.querySelector('.iw-garden-stats strong')?.textContent ?? '0'`), 10)
+    assert.ok(population >= 300 && population <= 320, `The garden renders its near-cap population without exceeding the cap: ${population}`)
+    await saveScreenshot('garden/08-high-population-desktop.png')
+    await clickButton('Inspect')
+  }
 
   await waitForScene(id)
   await viewport(390, 844, true)
@@ -328,11 +383,18 @@ for (const id of studies) {
   await saveScreenshot(`${id}/07-controls-mobile.png`)
 
   await toggleControls()
+  if (id === 'sound') await clickButton('Listen to the signal')
   for (let cycle = 0; cycle < 2; cycle++) {
     await clickButton('Return to exhibition')
     for (let attempt = 0; attempt < 100; attempt++) {
       if (await evaluate(`Boolean(document.querySelector('.exhibition-page'))`)) break
       await sleep(60)
+    }
+    if (id === 'sound' && cycle === 0) {
+      await sleep(180)
+      const audio = await evaluate(`({ count: window.__armsteelAudioContexts?.length ?? 0, states: window.__armsteelAudioContexts?.map((context) => context.state) ?? [] })`)
+      assert.equal(audio.count, 1, 'Repeated listening reuses one Web Audio context')
+      assert.ok(audio.states.every((state) => state === 'closed'), `Leaving the sound study closes its audio context: ${JSON.stringify(audio)}`)
     }
     await clickExhibitLink(id)
     await waitForRoute(id)
@@ -368,10 +430,11 @@ await saveScreenshot('gallery-search-schwarzschild.png')
 const summary = {
   browser: await evaluate(`({ userAgent: navigator.userAgent, devicePixelRatio, webgl: (() => { const canvas = document.createElement('canvas'); const gl = canvas.getContext('webgl2'); return gl ? gl.getParameter(gl.RENDERER) : 'unavailable' })() })`),
   studies,
-  screenshots: studies.length * 7 + 3,
+  screenshots: studies.length * 7 + 8,
   repeatedSpaEntryExitCycles: studies.length * 2,
   gallery: gallerySummary,
   search: searchSummary,
+  networkDelivery: networkDeliverySummary,
   browserErrors: errors,
 }
 await writeFile(resolve(evidenceRoot, 'run-summary.json'), `${JSON.stringify(summary, null, 2)}\n`)

@@ -10,7 +10,7 @@ import './invisible-world.css'
 type Placements = { source: [number, number]; prism: [number, number]; mirror: [number, number]; lens: [number, number] }
 type SpectrumMode = 'spectrum' | 'single'
 type Material = 'crown' | 'flint' | 'ice'
-const defaultPlacements: Placements = { source: [0.15, 0.5], prism: [0.47, 0.5], mirror: [0.78, 0.31], lens: [0.74, 0.72] }
+const defaultPlacements: Placements = { source: [0.15, 0.5], prism: [0.47, 0.5], mirror: [0.78, 0.31], lens: [0.74, 0.78] }
 const wavelengthBands = [405, 430, 458, 488, 520, 550, 585, 620, 655, 680]
 const wavelengthColour = (nm: number) => {
   let r = 0, g = 0, b = 0
@@ -38,7 +38,8 @@ function buildArrangement(width: number, height: number, placements: Placements,
     objects: [
       { kind: 'prism', vertices, index, dispersion },
       { kind: 'mirror', a: { x: mx - along.x * mirrorHalf, y: my - along.y * mirrorHalf }, b: { x: mx + along.x * mirrorHalf, y: my + along.y * mirrorHalf } },
-      { kind: 'lens', center: { x: lx, y: ly }, angle: Math.PI / 2, focalLength: height * focalRatio, aperture: height * 0.24 },
+      // The lens normal follows the beam axis, so the left-to-right rays cross its plane.
+      { kind: 'lens', center: { x: lx, y: ly }, angle: 0, focalLength: height * focalRatio, aperture: height * 0.24 },
     ],
   }
 }
@@ -53,6 +54,7 @@ function spectrumRays(scene: OpticalScene, placements: Placements, mode: Spectru
 export default function GeometryOfLight({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null), sizeRef = useRef({ width: 1, height: 1, dpr: 1 })
   const dragRef = useRef<keyof Placements | null>(null)
+  const [selectedElement, setSelectedElement] = useState<keyof Placements | null>(null), [hoverElement, setHoverElement] = useState<keyof Placements | null>(null)
   const [placements, setPlacements] = useState<Placements>(defaultPlacements), [size, setSize] = useState({ width: 1000, height: 700 })
   const [spectrum, setSpectrum] = useState<SpectrumMode>('spectrum'), [wavelength, setWavelength] = useState(520)
   const [material, setMaterial] = useState<Material>('crown'), [prismRotation, setPrismRotation] = useState(0.17), [mirrorAngle, setMirrorAngle] = useState(Math.PI / 4)
@@ -120,10 +122,17 @@ export default function GeometryOfLight({ paused, controlsVisible, stateFromUrl,
       }
       const lens = scene.objects.find((object) => object.kind === 'lens')!
       if (lens.kind === 'lens') {
-        context.save(); context.translate(lens.center.x, lens.center.y)
-        context.beginPath(); context.ellipse(0, 0, lens.aperture * 0.48, height * 0.018, 0, 0, Math.PI * 2)
-        context.fillStyle = 'rgba(156,213,224,.13)'; context.fill(); context.strokeStyle = 'rgba(185,229,235,.52)'; context.lineWidth = 1; context.stroke()
-        context.beginPath(); context.ellipse(0, 0, lens.aperture * 0.37, height * 0.007, 0, 0, Math.PI * 2); context.strokeStyle = 'rgba(225,249,248,.31)'; context.stroke()
+        context.save(); context.translate(lens.center.x, lens.center.y); context.rotate(lens.angle)
+        const half = lens.aperture * 0.5, thickness = Math.max(7, height * 0.018)
+        const glass = context.createLinearGradient(-thickness, 0, thickness, 0)
+        glass.addColorStop(0, 'rgba(102,174,194,.12)'); glass.addColorStop(.5, 'rgba(221,247,247,.27)'); glass.addColorStop(1, 'rgba(108,179,197,.12)')
+        context.beginPath(); context.moveTo(0, -half)
+        context.quadraticCurveTo(thickness, -half * .58, thickness, 0)
+        context.quadraticCurveTo(thickness, half * .58, 0, half)
+        context.quadraticCurveTo(-thickness, half * .58, -thickness, 0)
+        context.quadraticCurveTo(-thickness, -half * .58, 0, -half); context.closePath()
+        context.fillStyle = glass; context.fill(); context.strokeStyle = 'rgba(195,235,239,.65)'; context.lineWidth = 1.1; context.stroke()
+        context.beginPath(); context.moveTo(0, -half * .8); context.lineTo(0, half * .8); context.strokeStyle = 'rgba(235,252,250,.27)'; context.lineWidth = .65; context.stroke()
         context.restore()
       }
       for (const path of rayPaths) {
@@ -141,6 +150,15 @@ export default function GeometryOfLight({ paused, controlsVisible, stateFromUrl,
           context.globalAlpha = 0.95; context.fillStyle = '#fff'; context.shadowColor = color; context.shadowBlur = 9; context.beginPath(); context.arc(x, y, 1.7, 0, Math.PI * 2); context.fill(); context.shadowBlur = 0
         }
       }
+      const focus = hoverElement ?? selectedElement
+      if (focus) {
+        const [fx, fy] = placements[focus]
+        const x = fx * width, y = fy * height, radius = focus === 'prism' ? height * .13 : Math.max(23, height * .045)
+        context.save(); context.setLineDash([3, 4]); context.beginPath(); context.arc(x, y, radius, 0, Math.PI * 2)
+        context.strokeStyle = hoverElement === focus ? 'rgba(227,248,248,.86)' : 'rgba(193,230,234,.62)'; context.lineWidth = 1; context.stroke(); context.setLineDash([])
+        context.beginPath(); context.arc(x, y, 2.4, 0, Math.PI * 2); context.fillStyle = '#f4ffff'; context.fill()
+        context.restore()
+      }
       context.globalAlpha = 1
       const [sourceX, sourceY] = placements.source.map((value, i) => value * (i === 0 ? width : height))
       const glow = context.createRadialGradient(sourceX, sourceY, 1, sourceX, sourceY, height * 0.1)
@@ -152,16 +170,24 @@ export default function GeometryOfLight({ paused, controlsVisible, stateFromUrl,
     }
     animation = requestAnimationFrame(render)
     return () => { disposed = true; cancelAnimationFrame(animation) }
-  }, [paused, rayPaths, scene, placements, spectrum, wavelength])
+  }, [paused, rayPaths, scene, placements, spectrum, wavelength, selectedElement, hoverElement])
+
+  const nearestElement = (point: { x: number; y: number }) => {
+    const options = Object.entries(placements) as [keyof Placements, [number, number]][]
+    const selected = options.sort((a, b) => Math.hypot(a[1][0] - point.x, a[1][1] - point.y) - Math.hypot(b[1][0] - point.x, b[1][1] - point.y))[0]
+    return Math.hypot(selected[1][0] - point.x, selected[1][1] - point.y) < 0.13 ? selected[0] : null
+  }
 
   const pointerDown = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     const point = normalizedPointer(event, event.currentTarget)
-    const options: [keyof Placements, [number, number]][] = Object.entries(placements) as [keyof Placements, [number, number]][]
-    const selected = options.sort((a, b) => Math.hypot(a[1][0] - point.x, a[1][1] - point.y) - Math.hypot(b[1][0] - point.x, b[1][1] - point.y))[0]
-    if (Math.hypot(selected[1][0] - point.x, selected[1][1] - point.y) < 0.13) { dragRef.current = selected[0]; event.currentTarget.setPointerCapture(event.pointerId) }
+    const element = nearestElement(point)
+    if (element) { dragRef.current = element; setSelectedElement(element); setHoverElement(element); event.currentTarget.setPointerCapture(event.pointerId) }
   }
   const pointerMove = (event: ReactPointerEvent<HTMLCanvasElement>) => {
-    if (!dragRef.current || !event.currentTarget.hasPointerCapture(event.pointerId)) return
+    if (!dragRef.current || !event.currentTarget.hasPointerCapture(event.pointerId)) {
+      const point = normalizedPointer(event, event.currentTarget)
+      setHoverElement(nearestElement(point)); return
+    }
     const point = normalizedPointer(event, event.currentTarget), key = dragRef.current
     setPlacements((previous) => ({ ...previous, [key]: [clamp(point.x, 0.06, 0.94), clamp(point.y, 0.12, 0.85)] }))
   }

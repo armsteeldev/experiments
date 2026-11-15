@@ -5,19 +5,25 @@
     "deviceMemoryGiB": 16,
     "renderer": "WebKit WebGL"
   },
-  "method": "One 18-second evolving garden sample bracketed by snapshots before and after forced V8 collection, followed by four settled SPA unmount/remount samples after forced collection. Counters are Chromium estimates, not GPU or device-wide memory.",
+  "method": "One 18-second evolving garden sample bracketed by snapshots before and after forced V8 collection, 120 requestAnimationFrame intervals during continued evolution, and eight settled SPA unmount/remount samples after forced collection. Counters are Chromium estimates, not GPU or device-wide memory.",
+  "framePacing": {
+    "samples": 120,
+    "medianMs": 33.4,
+    "p95Ms": 50.1,
+    "maxMs": 50.1
+  },
   "samples": [
     {
       "label": "garden-start-after-gc",
-      "Timestamp": 3179632.372813,
+      "Timestamp": 3189354.223361,
       "Documents": 1,
-      "JSEventListeners": 176,
-      "Nodes": 246,
-      "LayoutCount": 7,
-      "ScriptDuration": 0.194836,
-      "TaskDuration": 0.930563,
-      "JSHeapUsedSize": 4271384,
-      "JSHeapTotalSize": 6180864,
+      "JSEventListeners": 177,
+      "Nodes": 260,
+      "LayoutCount": 9,
+      "ScriptDuration": 0.203058,
+      "TaskDuration": 0.931914,
+      "JSHeapUsedSize": 4800404,
+      "JSHeapTotalSize": 5394432,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
       "viewport": [
@@ -25,18 +31,18 @@
         900
       ],
       "population": "34 / 320",
-      "jsHeapUsed": 7065454
+      "jsHeapUsed": 7614354
     },
     {
       "label": "garden-after-18s-before-gc",
-      "Timestamp": 3179650.375386,
+      "Timestamp": 3189372.226528,
       "Documents": 1,
-      "JSEventListeners": 221,
-      "Nodes": 246,
-      "LayoutCount": 34,
-      "ScriptDuration": 0.893317,
-      "TaskDuration": 8.85523,
-      "JSHeapUsedSize": 7956908,
+      "JSEventListeners": 207,
+      "Nodes": 260,
+      "LayoutCount": 36,
+      "ScriptDuration": 0.948007,
+      "TaskDuration": 8.556505,
+      "JSHeapUsedSize": 5177372,
       "JSHeapTotalSize": 13258752,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
@@ -44,39 +50,39 @@
         1440,
         900
       ],
-      "population": "41 / 320",
-      "jsHeapUsed": 10748199
+      "population": "48 / 320",
+      "jsHeapUsed": 7987297
     },
     {
       "label": "garden-after-18s-after-gc",
-      "Timestamp": 3179650.721256,
+      "Timestamp": 3189372.550863,
       "Documents": 1,
-      "JSEventListeners": 176,
-      "Nodes": 246,
-      "LayoutCount": 34,
-      "ScriptDuration": 0.90481,
-      "TaskDuration": 9.023913,
-      "JSHeapUsedSize": 5007276,
-      "JSHeapTotalSize": 5656576,
+      "JSEventListeners": 177,
+      "Nodes": 260,
+      "LayoutCount": 36,
+      "ScriptDuration": 0.95665,
+      "TaskDuration": 8.706281,
+      "JSHeapUsedSize": 4941860,
+      "JSHeapTotalSize": 5394432,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
       "viewport": [
         1440,
         900
       ],
-      "population": "41 / 320",
-      "jsHeapUsed": 7801629
+      "population": "48 / 320",
+      "jsHeapUsed": 7755132
     },
     {
       "label": "garden-remount-1-after-gc",
-      "Timestamp": 3179652.694822,
+      "Timestamp": 3189379.323245,
       "Documents": 2,
-      "JSEventListeners": 176,
-      "Nodes": 252,
-      "LayoutCount": 62,
-      "ScriptDuration": 1.091252,
-      "TaskDuration": 10.236518,
-      "JSHeapUsedSize": 5623160,
+      "JSEventListeners": 177,
+      "Nodes": 265,
+      "LayoutCount": 71,
+      "ScriptDuration": 1.30492,
+      "TaskDuration": 11.554996,
+      "JSHeapUsedSize": 5674224,
       "JSHeapTotalSize": 6443008,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
@@ -85,19 +91,19 @@
         900
       ],
       "population": "34 / 320",
-      "jsHeapUsed": 8419816
+      "jsHeapUsed": 7621746
     },
     {
       "label": "garden-remount-2-after-gc",
-      "Timestamp": 3179654.339187,
+      "Timestamp": 3189381.195207,
       "Documents": 2,
-      "JSEventListeners": 176,
-      "Nodes": 252,
-      "LayoutCount": 89,
-      "ScriptDuration": 1.20145,
-      "TaskDuration": 11.115218,
-      "JSHeapUsedSize": 5547416,
-      "JSHeapTotalSize": 6180864,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 98,
+      "ScriptDuration": 1.465022,
+      "TaskDuration": 12.726527,
+      "JSHeapUsedSize": 4846808,
+      "JSHeapTotalSize": 6705152,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
       "viewport": [
@@ -105,18 +111,18 @@
         900
       ],
       "population": "34 / 320",
-      "jsHeapUsed": 8343908
+      "jsHeapUsed": 7665477
     },
     {
       "label": "garden-remount-3-after-gc",
-      "Timestamp": 3179655.966321,
+      "Timestamp": 3189383.031602,
       "Documents": 2,
-      "JSEventListeners": 176,
-      "Nodes": 252,
-      "LayoutCount": 117,
-      "ScriptDuration": 1.335554,
-      "TaskDuration": 12.08411,
-      "JSHeapUsedSize": 5496612,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 125,
+      "ScriptDuration": 1.618222,
+      "TaskDuration": 13.840986,
+      "JSHeapUsedSize": 5479216,
       "JSHeapTotalSize": 5918720,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
@@ -125,18 +131,18 @@
         900
       ],
       "population": "34 / 320",
-      "jsHeapUsed": 8293268
+      "jsHeapUsed": 8298049
     },
     {
       "label": "garden-remount-4-after-gc",
-      "Timestamp": 3179657.8182,
+      "Timestamp": 3189385.063482,
       "Documents": 2,
-      "JSEventListeners": 176,
-      "Nodes": 252,
-      "LayoutCount": 144,
-      "ScriptDuration": 1.44547,
-      "TaskDuration": 13.194228,
-      "JSHeapUsedSize": 5731892,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 152,
+      "ScriptDuration": 1.747514,
+      "TaskDuration": 15.1189,
+      "JSHeapUsedSize": 5601336,
       "JSHeapTotalSize": 6443008,
       "route": "/exhibits/garden",
       "devicePixelRatio": 1,
@@ -145,7 +151,87 @@
         900
       ],
       "population": "34 / 320",
-      "jsHeapUsed": 8528384
+      "jsHeapUsed": 8420238
+    },
+    {
+      "label": "garden-remount-5-after-gc",
+      "Timestamp": 3189387.365033,
+      "Documents": 2,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 179,
+      "ScriptDuration": 1.882991,
+      "TaskDuration": 16.677466,
+      "JSHeapUsedSize": 5756828,
+      "JSHeapTotalSize": 6443008,
+      "route": "/exhibits/garden",
+      "devicePixelRatio": 1,
+      "viewport": [
+        1440,
+        900
+      ],
+      "population": "34 / 320",
+      "jsHeapUsed": 8575661
+    },
+    {
+      "label": "garden-remount-6-after-gc",
+      "Timestamp": 3189389.350761,
+      "Documents": 2,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 206,
+      "ScriptDuration": 2.044882,
+      "TaskDuration": 17.937971,
+      "JSHeapUsedSize": 5785716,
+      "JSHeapTotalSize": 6705152,
+      "route": "/exhibits/garden",
+      "devicePixelRatio": 1,
+      "viewport": [
+        1440,
+        900
+      ],
+      "population": "34 / 320",
+      "jsHeapUsed": 8604674
+    },
+    {
+      "label": "garden-remount-7-after-gc",
+      "Timestamp": 3189391.43573,
+      "Documents": 2,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 233,
+      "ScriptDuration": 2.177153,
+      "TaskDuration": 19.273276,
+      "JSHeapUsedSize": 5832772,
+      "JSHeapTotalSize": 6705152,
+      "route": "/exhibits/garden",
+      "devicePixelRatio": 1,
+      "viewport": [
+        1440,
+        900
+      ],
+      "population": "34 / 320",
+      "jsHeapUsed": 8651730
+    },
+    {
+      "label": "garden-remount-8-after-gc",
+      "Timestamp": 3189393.116271,
+      "Documents": 2,
+      "JSEventListeners": 177,
+      "Nodes": 266,
+      "LayoutCount": 260,
+      "ScriptDuration": 2.318213,
+      "TaskDuration": 20.189087,
+      "JSHeapUsedSize": 5774580,
+      "JSHeapTotalSize": 6443008,
+      "route": "/exhibits/garden",
+      "devicePixelRatio": 1,
+      "viewport": [
+        1440,
+        900
+      ],
+      "population": "34 / 320",
+      "jsHeapUsed": 8593497
     }
   ]
 }

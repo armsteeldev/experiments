@@ -23,7 +23,7 @@ function makeStarfield(width: number, height: number): HTMLCanvasElement {
   nebula.addColorStop(0, 'rgba(103,77,133,.2)'); nebula.addColorStop(0.35, 'rgba(42,80,113,.18)'); nebula.addColorStop(0.72, 'rgba(27,45,77,.1)'); nebula.addColorStop(1, 'rgba(7,10,18,0)')
   context.fillStyle = nebula; context.fillRect(0, 0, width, height)
   const random = seeded(72143)
-  for (let i = 0; i < 760; i++) {
+  for (let i = 0; i < 980; i++) {
     const x = random() * width, y = random() * height, radius = 0.28 + random() * 1.15
     const warm = random() > 0.81, alpha = 0.14 + random() * 0.58
     context.beginPath(); context.arc(x, y, radius, 0, Math.PI * 2)
@@ -73,8 +73,12 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
         backgroundRef.current = surface
       }
     }
-    worker.onerror = () => { worker.terminate(); workerRef.current = null; setLoading(false); setTimeout(() => setTable(createLensingTable(massRef.current, 90, 180)), 0) }
-    return () => { worker.terminate(); workerRef.current = null }
+    let disposed = false, fallbackTimer = 0
+    worker.onerror = () => {
+      worker.terminate(); workerRef.current = null; setLoading(false)
+      fallbackTimer = window.setTimeout(() => { if (!disposed) setTable(createLensingTable(massRef.current, 90, 180)) }, 0)
+    }
+    return () => { disposed = true; clearTimeout(fallbackTimer); worker.terminate(); workerRef.current = null }
     // The worker is a per-exhibit resource and is recreated only on unmount/remount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -138,39 +142,46 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
       context.fillStyle = '#040811'; context.fillRect(0, 0, width, height)
       if (viewMode === 'lensed sky' && backgroundRef.current) context.drawImage(backgroundRef.current, 0, 0, width, height)
       else if (baseSkyRef.current) context.drawImage(baseSkyRef.current, 0, 0, width, height)
-      const focal = height * 1.27, shadow = focal * Math.atan(bCrit / distance), horizon = focal * Math.atan(2 * mass / distance), cx = width * 0.5, cy = height * 0.5
-      const halo = context.createRadialGradient(cx, cy, Math.max(1, shadow * 0.83), cx, cy, shadow * 1.19)
-      halo.addColorStop(0, 'rgba(0,0,0,0)'); halo.addColorStop(0.53, 'rgba(216,169,124,.06)'); halo.addColorStop(0.7, 'rgba(245,212,173,.34)'); halo.addColorStop(0.83, 'rgba(133,188,222,.2)'); halo.addColorStop(1, 'rgba(88,137,190,0)')
-      context.fillStyle = halo; context.beginPath(); context.arc(cx, cy, shadow * 1.2, 0, Math.PI * 2); context.fill()
-      context.beginPath(); context.arc(cx, cy, shadow, 0, Math.PI * 2); context.fillStyle = '#020307'; context.fill()
-      context.save(); context.translate(cx, cy); context.scale(1, 0.24)
-      for (let ring = 0; ring < 4; ring++) {
-        const radius = shadow * (0.84 + ring * 0.09)
-        context.beginPath(); context.ellipse(0, 0, radius * 1.28, radius, time * 0.014 + ring * 0.08, 0, Math.PI * 2)
-        context.strokeStyle = `rgba(${ring % 2 ? '238,179,119' : '130,198,229'},${0.12 + (Math.sin(time * 0.6 + ring) + 1) * 0.07})`
-        context.lineWidth = ring === 1 ? 2.2 : 0.8; context.shadowColor = ring % 2 ? '#e6a574' : '#87c9e6'; context.shadowBlur = 11; context.stroke()
-      }
-      context.restore(); context.shadowBlur = 0
-      context.beginPath(); context.arc(cx, cy, horizon, 0, Math.PI * 2); context.strokeStyle = 'rgba(4,6,10,.98)'; context.lineWidth = 3; context.stroke()
-
-      if (viewMode === 'trajectories') for (const sample of trajectoryBundle) {
-        if (sample.points.length < 2) continue
-        context.beginPath(); sample.points.forEach((point, index) => { const x = cx + point.x * focal / distance, y = cy - point.y * focal / distance; if (index === 0) context.moveTo(x, y); else context.lineTo(x, y) })
-        context.strokeStyle = sample.captured ? 'rgba(239,157,119,.4)' : 'rgba(131,197,237,.38)'; context.lineWidth = 0.8; context.stroke()
-      }
-      const selectedTrace = traceRef.current
-      if (selectedTrace?.points.length) {
-        const pixelsPerMass = focal / distance
-        context.beginPath()
-        selectedTrace.points.forEach((point, index) => {
-          const x = cx + point.x * pixelsPerMass, y = cy - point.y * pixelsPerMass
-          if (index === 0) context.moveTo(x, y); else context.lineTo(x, y)
-        })
-        context.strokeStyle = selectedTrace.outcome === 'captured' ? 'rgba(255,175,128,.78)' : selectedTrace.outcome === 'near-critical' ? 'rgba(225,176,255,.82)' : 'rgba(188,228,255,.78)'; context.lineWidth = 1.25; context.shadowColor = selectedTrace.outcome === 'captured' ? '#f09161' : '#8bd6ff'; context.shadowBlur = 11; context.stroke(); context.shadowBlur = 0
-        const bPixels = selectedTrace.impact * pixelsPerMass
-        if (selectedTrace.closestApproach < selectedTrace.impact * 1.4) {
-          context.beginPath(); context.arc(cx, cy, bPixels, -Math.PI * 0.11, Math.PI * 0.23); context.strokeStyle = 'rgba(246,217,171,.55)'; context.lineWidth = 0.75; context.stroke()
+      const focal = height * 1.27, shadow = focal * Math.atan(bCrit / distance), horizon = focal * Math.atan(2 * mass / distance), photonSphere = focal * Math.atan(3 * mass / distance), cx = width * 0.5, cy = height * 0.5
+      if (viewMode === 'lensed sky') {
+        const halo = context.createRadialGradient(cx, cy, Math.max(1, shadow * 0.83), cx, cy, shadow * 1.19)
+        halo.addColorStop(0, 'rgba(0,0,0,0)'); halo.addColorStop(0.53, 'rgba(216,169,124,.06)'); halo.addColorStop(0.7, 'rgba(245,212,173,.34)'); halo.addColorStop(0.83, 'rgba(133,188,222,.2)'); halo.addColorStop(1, 'rgba(88,137,190,0)')
+        context.fillStyle = halo; context.beginPath(); context.arc(cx, cy, shadow * 1.2, 0, Math.PI * 2); context.fill()
+        context.save(); context.translate(cx, cy); context.scale(1, 0.24)
+        const disk = context.createRadialGradient(0, 0, shadow * 0.78, 0, 0, shadow * 1.85)
+        disk.addColorStop(0, 'rgba(0,0,0,0)'); disk.addColorStop(0.28, 'rgba(0,0,0,0)'); disk.addColorStop(0.43, 'rgba(242,157,105,.17)'); disk.addColorStop(0.62, 'rgba(250,217,166,.24)'); disk.addColorStop(0.78, 'rgba(125,189,236,.12)'); disk.addColorStop(1, 'rgba(92,132,199,0)')
+        context.fillStyle = disk; context.beginPath(); context.ellipse(0, 0, shadow * 2, shadow * 2, 0, 0, Math.PI * 2); context.fill()
+        for (let ring = 0; ring < 4; ring++) {
+          const radius = shadow * (1.02 + ring * 0.15)
+          context.beginPath(); context.ellipse(0, 0, radius * 1.28, radius, time * 0.014 + ring * 0.08, 0, Math.PI * 2)
+          context.strokeStyle = `rgba(${ring % 2 ? '238,179,119' : '130,198,229'},${0.22 + (Math.sin(time * 0.6 + ring) + 1) * 0.1})`
+          context.lineWidth = ring === 1 ? 2.2 : 0.9; context.shadowColor = ring % 2 ? '#e6a574' : '#87c9e6'; context.shadowBlur = 13; context.stroke()
         }
+        context.restore(); context.shadowBlur = 0
+        context.beginPath(); context.arc(cx, cy, shadow, 0, Math.PI * 2); context.fillStyle = '#020307'; context.fill()
+        context.beginPath(); context.arc(cx, cy, shadow * 1.008, 0, Math.PI * 2); context.strokeStyle = 'rgba(186,205,230,.24)'; context.lineWidth = 0.8; context.stroke()
+        context.beginPath(); context.arc(cx, cy, horizon, 0, Math.PI * 2); context.strokeStyle = 'rgba(4,6,10,.98)'; context.lineWidth = 3; context.stroke()
+      } else {
+        const pixelsPerMass = focal / distance
+        for (const sample of trajectoryBundle) {
+          if (sample.points.length < 2) continue
+          context.beginPath(); sample.points.forEach((point, index) => { const x = cx + point.x * pixelsPerMass, y = cy - point.y * pixelsPerMass; if (index === 0) context.moveTo(x, y); else context.lineTo(x, y) })
+          context.strokeStyle = sample.captured ? 'rgba(239,157,119,.4)' : 'rgba(131,197,237,.38)'; context.lineWidth = 0.8; context.stroke()
+        }
+        const selectedTrace = traceRef.current
+        if (selectedTrace?.points.length) {
+          context.beginPath()
+          selectedTrace.points.forEach((point, index) => {
+            const x = cx + point.x * pixelsPerMass, y = cy - point.y * pixelsPerMass
+            if (index === 0) context.moveTo(x, y); else context.lineTo(x, y)
+          })
+          context.strokeStyle = selectedTrace.outcome === 'captured' ? 'rgba(255,175,128,.78)' : selectedTrace.outcome === 'near-critical' ? 'rgba(225,176,255,.82)' : 'rgba(188,228,255,.78)'; context.lineWidth = 1.25; context.shadowColor = selectedTrace.outcome === 'captured' ? '#f09161' : '#8bd6ff'; context.shadowBlur = 11; context.stroke(); context.shadowBlur = 0
+        }
+        // Trajectories use the equatorial Schwarzschild plane. In this view the
+        // mask is the physical 2M horizon; the 3M photon sphere is shown too.
+        context.beginPath(); context.arc(cx, cy, horizon, 0, Math.PI * 2); context.fillStyle = '#020307'; context.fill()
+        context.beginPath(); context.arc(cx, cy, photonSphere, 0, Math.PI * 2); context.strokeStyle = 'rgba(222,197,238,.42)'; context.lineWidth = 0.8; context.setLineDash([3, 5]); context.stroke(); context.setLineDash([])
+        context.beginPath(); context.arc(cx, cy, horizon, 0, Math.PI * 2); context.strokeStyle = 'rgba(242,224,206,.34)'; context.lineWidth = 1; context.stroke()
       }
       context.font = '8px ui-monospace, monospace'; context.fillStyle = 'rgba(190,208,222,.56)'; context.textAlign = 'center'
       context.fillText('EVENT HORIZON · 2M', cx, cy + horizon + 17)
@@ -202,12 +213,12 @@ export default function WhereLightFalls({ paused, controlsVisible, stateFromUrl,
     <canvas ref={canvasRef} className="iw-canvas iw-lensing-canvas" tabIndex={0} aria-label="Schwarzschild black hole lensing view. Click to choose an impact parameter; focus the canvas and use arrow keys to move toward or away from the capture boundary." onPointerDown={setImpactFromPointer} onKeyDown={canvasKeyDown} />
     <div className="iw-titleplate iw-titleplate-wide"><span>19 · RELATIVISTIC STUDY</span><strong>Where Light Falls</strong><small>Follow a photon close to the point of no return.</small></div>
     <div className="iw-lensing-readout iw-glass-surface" aria-live="polite"><span>{stats.outcome.toUpperCase()} TRAJECTORY</span><strong>{strongBending}</strong><div>b / M {bOverM.toFixed(3)} <i>·</i> rₘᵢₙ / M {stats.radius.toFixed(3)}</div></div>
-    <div className="iw-lensing-caption"><span>Schwarzschild metric · non-rotating mass</span><span>Artistic disk layer · not radiative transfer</span></div>
+    <div className="iw-lensing-caption"><span>Schwarzschild metric · non-rotating mass</span><span>{viewMode === 'lensed sky' ? 'Artistic disk layer · not radiative transfer' : 'Horizon 2M · photon sphere 3M'}</span></div>
     <ControlPanel title="Where light falls" note="Schwarzschild geodesics" visible={controlsVisible} onClose={onCloseControls} footer={<span>{tableReady ? 'Deflection table ready · image projection is a thin-lens approximation.' : 'Building a numerical deflection table in a worker.'}</span>}>
       <Segmented label="Explore" value={viewMode} options={[["lensed sky", "Lensed sky"], ["trajectories", "Ray path"]]} onChange={(value) => setViewMode(value as ViewMode)} />
       <RangeControl label="Mass scale" value={mass} min={0.55} max={1.45} step={0.01} format={(value) => `${value.toFixed(2)} M₀`} onChange={setMass} />
       <RangeControl label="Observer distance" value={distance} min={22} max={72} step={1} format={(value) => `${Math.round(value)} M₀`} onChange={setDistance} />
-      <RangeControl label="Source-plane ratio" value={sourceRatio} min={0.25} max={0.88} step={0.01} format={(value) => value.toFixed(2)} onChange={setSourceRatio} />
+      {viewMode === 'lensed sky' && <RangeControl label="Source-plane ratio" value={sourceRatio} min={0.25} max={0.88} step={0.01} format={(value) => value.toFixed(2)} onChange={setSourceRatio} />}
       <RangeControl label="Impact parameter" value={impact} min={3.1 * mass} max={28 * mass} step={0.01} format={(value) => `${value.toFixed(2)} M₀`} onChange={setImpact} />
       <div className="iw-photon-measure iw-glass-inset"><span>{stats.outcome.toUpperCase()}</span><strong>{strongBending}</strong><div>b₍crit₎ = 3√3M = {bCrit.toFixed(3)} M</div><div>Photon sphere r = 3M · horizon r = 2M</div></div>
       <button className="iw-subtle-toggle" onClick={() => setAdvanced((value) => !value)} aria-expanded={advanced}>{advanced ? 'Hide' : 'Inspect'} the mathematical model</button>

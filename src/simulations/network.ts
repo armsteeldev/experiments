@@ -16,8 +16,9 @@ function linkFrom(state: NetworkState, node: string, next: string): NetworkLink 
   return state.links.find((link) => link.active && ((link.a === node && link.b === next) || (link.b === node && link.a === next)))
 }
 
-export function shortestRoute(state: NetworkState, source: string, destination: string): string[] | null {
+export function shortestRoute(state: NetworkState, source: string, destination: string, avoid: readonly string[] = []): string[] | null {
   if (!state.nodes.some((node) => node.id === source) || !state.nodes.some((node) => node.id === destination)) return null
+  const forbidden = new Set(avoid.filter((id) => id !== source && id !== destination))
   const distance = new Map(state.nodes.map((node) => [node.id, Infinity])), previous = new Map<string, string>(), visited = new Set<string>()
   distance.set(source, 0)
   while (visited.size < state.nodes.length) {
@@ -28,6 +29,7 @@ export function shortestRoute(state: NetworkState, source: string, destination: 
     for (const link of state.links) {
       if (!link.active || (link.a !== current && link.b !== current)) continue
       const next = link.a === current ? link.b : link.a
+      if (forbidden.has(next)) continue
       const cost = link.latency + link.queue.length * (1.2 + 2 / Math.max(1, link.bandwidth))
       const candidate = best + cost
       if (candidate < distance.get(next)!) { distance.set(next, candidate); previous.set(next, current) }
@@ -45,9 +47,13 @@ export function shortestRoute(state: NetworkState, source: string, destination: 
 
 export function sendPacket(state: NetworkState, source: string, destination: string, count = 1, payload = 'signal'): NetworkPacket[] {
   const packets: NetworkPacket[] = []
-  for (let i = 0; i < Math.min(12, Math.max(1, count)); i++) {
-    if (state.packets.filter((packet) => !['delivered', 'dropped'].includes(packet.status)).length >= state.maxPackets) break
-    const packet: NetworkPacket = { id: `p${state.nextPacket++}`, source, destination, payload: payload.slice(0, 48), current: source, route: [source], status: 'routing', created: state.tick, hops: 0 }
+  if (!state.nodes.some((node) => node.id === source) || !state.nodes.some((node) => node.id === destination)) return packets
+  const quantity = Number.isFinite(count) ? Math.max(0, Math.min(12, Math.floor(count))) : 0
+  const maxPackets = Number.isFinite(state.maxPackets) ? Math.max(0, Math.min(120, Math.floor(state.maxPackets))) : 0
+  for (let i = 0; i < quantity; i++) {
+    if (state.packets.filter((packet) => !['delivered', 'dropped'].includes(packet.status)).length >= maxPackets) break
+    const alreadyThere = source === destination
+    const packet: NetworkPacket = { id: `p${state.nextPacket++}`, source, destination, payload: typeof payload === 'string' ? payload.slice(0, 48) : '', current: source, route: [source], status: alreadyThere ? 'delivered' : 'routing', created: state.tick, deliveredAt: alreadyThere ? state.tick : undefined, hops: 0 }
     state.packets.push(packet); packets.push(packet); state.selectedPacket = packet.id
   }
   return packets
@@ -80,7 +86,10 @@ export function stepNetwork(state: NetworkState): void {
   for (const packet of state.packets) {
     if (packet.status !== 'routing' && packet.status !== 'waiting') continue
     if (packet.current === packet.destination) { packet.status = 'delivered'; packet.deliveredAt ??= state.tick; continue }
-    const route = shortestRoute(state, packet.current, packet.destination)
+    // A link-cost change can make a local shortest path point back to a node
+    // this packet just left. Avoid its visited path so queue updates cannot
+    // make one packet bounce forever between previously visited nodes.
+    const route = shortestRoute(state, packet.current, packet.destination, packet.route.slice(0, -1))
     if (!route || route.length < 2) { packet.status = 'waiting'; continue }
     const link = linkFrom(state, route[0], route[1])
     if (!link) { packet.status = 'waiting'; continue }

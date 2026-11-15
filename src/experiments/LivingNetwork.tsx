@@ -7,14 +7,11 @@ import type { NetworkLink, NetworkNode, NetworkState } from '../simulations/netw
 import { clamp, normalizedPointer, resizeCanvas, safeState } from './invisibleWorld'
 import './invisible-world.css'
 
-type Tool = 'move' | 'cut' | 'connect'
+type Tool = 'send' | 'move' | 'cut' | 'connect'
 type NetworkStats = { delivered: number; dropped: number; inFlight: number; latency: number; tick: number }
 
 function seedNetwork(): NetworkState {
-  const state = createNetworkState()
-  sendPacket(state, 'origin', 'arrival', 2, 'hello')
-  stepNetwork(state)
-  return state
+  return createNetworkState()
 }
 
 function distanceToSegment(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
@@ -31,15 +28,23 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
   const canvasRef = useRef<HTMLCanvasElement>(null), networkRef = useRef<NetworkState | null>(null), sizeRef = useRef({ width: 1, height: 1, dpr: 1 })
   if (!networkRef.current) networkRef.current = seedNetwork()
   const dragNode = useRef<string | null>(null), connectFrom = useRef<string | null>(null)
-  const [tool, setTool] = useState<Tool>('move'), [source, setSource] = useState('origin'), [destination, setDestination] = useState('arrival')
+  const [tool, setTool] = useState<Tool>('send'), [source, setSource] = useState('origin'), [destination, setDestination] = useState('arrival')
   const [message, setMessage] = useState('a small idea'), [selectedLinkId, setSelectedLinkId] = useState<string | null>(null)
-  const [selectedPacketId, setSelectedPacketId] = useState('p2'), [stats, setStats] = useState<NetworkStats>({ delivered: 0, dropped: 0, inFlight: 2, latency: 0, tick: 1 })
-  const [linkRevision, setLinkRevision] = useState(0), [connectHint, setConnectHint] = useState('Choose a connection or send a message')
+  const [selectedPacketId, setSelectedPacketId] = useState<string | null>(null), [stats, setStats] = useState<NetworkStats>({ delivered: 0, dropped: 0, inFlight: 0, latency: 0, tick: 0 })
+  const [linkRevision, setLinkRevision] = useState(0), [connectHint, setConnectHint] = useState('Choose a source node, then a destination')
   const restored = useRef(false)
   const state = networkRef.current!
   const selectedLink = state.links.find((link) => link.id === selectedLinkId)
   const selectedPacket = state.packets.find((packet) => packet.id === selectedPacketId)
   const shortest = shortestRoute(state, source, destination)
+
+  const sendFromTo = (from: string, to: string, count = 1) => {
+    const packets = sendPacket(networkRef.current!, from, to, count, message)
+    if (packets.length) {
+      setSelectedPacketId(packets.at(-1)!.id); networkRef.current!.selectedPacket = packets.at(-1)!.id
+      setConnectHint(`Sent “${message.slice(0, 22)}” · route selected`)
+    } else setConnectHint('Packet limit reached · wait for the network to clear')
+  }
 
   useEffect(() => {
     if (!stateFromUrl || restored.current) return
@@ -147,6 +152,17 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
   const pointerDown = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     const point = position(event), sim = networkRef.current!
     const node = sim.nodes.find((candidate) => Math.hypot(candidate.x * point.width - point.x * point.width, candidate.y * point.height - point.y * point.height) < 28)
+    if (tool === 'send') {
+      if (!node) { setConnectHint('Choose a node as the source') ; return }
+      if (!connectFrom.current) {
+        connectFrom.current = node.id; setSource(node.id); setConnectHint(`${node.label} is the source · choose a destination`)
+      } else if (connectFrom.current === node.id) {
+        connectFrom.current = null; setConnectHint('Choose a different destination')
+      } else {
+        const from = connectFrom.current; connectFrom.current = null; setDestination(node.id); sendFromTo(from, node.id)
+      }
+      return
+    }
     if (tool === 'connect' && node) {
       if (!connectFrom.current) { connectFrom.current = node.id; setConnectHint(`Now choose a second node from ${node.label}`) }
       else if (connectFrom.current !== node.id) {
@@ -182,15 +198,12 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
     if (node) { node.x = clamp(point.x, 0.075, 0.925); node.y = clamp(point.y, 0.14, 0.83) }
   }
   const pointerUp = (event: ReactPointerEvent<HTMLCanvasElement>) => { dragNode.current = null; if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId) }
-  const send = (count = 1) => {
-    const packets = sendPacket(networkRef.current!, source, destination, count, message)
-    if (packets.length) { setSelectedPacketId(packets.at(-1)!.id); networkRef.current!.selectedPacket = packets.at(-1)!.id; setConnectHint(`Sent “${message.slice(0, 22)}” · route selected`) }
-  }
+  const send = (count = 1) => sendFromTo(source, destination, count)
   const canvasKeyDown = (event: React.KeyboardEvent<HTMLCanvasElement>) => {
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault(); event.stopPropagation(); send(1)
   }
-  const reset = () => { networkRef.current = seedNetwork(); setSelectedPacketId('p2'); setSelectedLinkId(null); connectFrom.current = null; setConnectHint('Choose a connection or send a message') }
+  const reset = () => { networkRef.current = seedNetwork(); setSelectedPacketId(null); setSelectedLinkId(null); connectFrom.current = null; setConnectHint('Choose a source node, then a destination') }
   const setLinkProperty = (key: 'latency' | 'bandwidth' | 'capacity', value: number) => { if (!selectedLink) return; selectedLink[key] = value; setLinkRevision((revision) => revision + 1) }
   void linkRevision
   const nodeOptions = networkRef.current!.nodes.map((node) => [node.id, node.label] as [string, string])
@@ -199,7 +212,7 @@ export default function LivingNetwork({ paused, controlsVisible, stateFromUrl, o
   return <section className="iw-scene iw-network" aria-label="Interactive packet-routing network">
     <canvas ref={canvasRef} className="iw-canvas iw-network-canvas" tabIndex={0} aria-label="Network graph. Drag nodes to rearrange, click links to inspect, use Fail link or Add link. Focus the canvas and press Enter to send the current message." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onKeyDown={canvasKeyDown} />
     <div className="iw-titleplate"><span>18 · INFORMATION STUDY</span><strong>The Living Network</strong><small>A message finds its way through.</small></div>
-    <div className="iw-network-tools iw-glass-surface" role="group" aria-label="Network editing tools">{(['move', 'cut', 'connect'] as Tool[]).map((value) => <button key={value} className={tool === value ? 'is-selected' : ''} onClick={() => { setTool(value); connectFrom.current = null; setConnectHint(value === 'connect' ? 'Choose two nodes to add a connection' : 'Choose a connection or send a message') }} aria-pressed={tool === value}>{value === 'move' ? 'Move / inspect' : value === 'cut' ? 'Fail link' : 'Add link'}</button>)}</div>
+    <div className="iw-network-tools iw-glass-surface" role="group" aria-label="Network tools">{(['send', 'move', 'cut', 'connect'] as Tool[]).map((value) => <button key={value} className={tool === value ? 'is-selected' : ''} onClick={() => { setTool(value); connectFrom.current = null; setConnectHint(value === 'send' ? 'Choose a source node, then a destination' : value === 'connect' ? 'Choose two nodes to add a connection' : value === 'cut' ? 'Choose a connection to fail or restore' : 'Drag nodes to rearrange or inspect') }} aria-pressed={tool === value}>{value === 'send' ? 'Send' : value === 'move' ? 'Move / inspect' : value === 'cut' ? 'Fail link' : 'Add link'}</button>)}</div>
     <div className="iw-network-stats iw-glass-surface" aria-live="polite"><span>NETWORK PULSE · TICK {stats.tick}</span><strong>{stats.inFlight} <small>IN FLIGHT</small></strong><div>{stats.delivered} delivered <i>·</i> {stats.dropped} dropped <i>·</i> {stats.latency.toFixed(1)} ticks mean</div></div>
     <div className="iw-network-route iw-glass-surface"><span>{connectHint}</span><small>{routeText}</small></div>
     <ControlPanel title="Network study" note="Queue-aware Dijkstra" visible={controlsVisible} onClose={onCloseControls} footer={<span>Packets recalculate at each hop. Links use ticks, queues and per-tick capacity.</span>}>

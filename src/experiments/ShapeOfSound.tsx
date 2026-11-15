@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { ActionRow, ControlPanel, RangeControl, Segmented } from '../components/Controls'
 import type { ExperimentControls } from '../types'
-import { addHarmonic, applyLowpassResponse, harmonicsToPeriodicWaveCoefficients, lowpassMagnitude, signalSpectrum, synthesizeSignal } from '../simulations/sound'
-import type { Harmonic } from '../simulations/sound'
+import { addHarmonic, applyLowpassResponse, harmonicsToPeriodicWaveCoefficients, lowpassMagnitude, quietSignalGain, signalSpectrum, synthesizeSignal, timbreHarmonics } from '../simulations/sound'
+import type { Harmonic, TimbrePreset } from '../simulations/sound'
 import { clamp, normalizedPointer, resizeCanvas, safeState } from './invisibleWorld'
 import './invisible-world.css'
 
@@ -15,11 +15,12 @@ function peakFor(samples: Float32Array) {
   for (const sample of samples) peak = Math.max(peak, Math.abs(sample))
   return Math.max(0.2, peak)
 }
-
 export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
   const canvasRef = useRef<HTMLCanvasElement>(null), spectrogramRef = useRef<HTMLCanvasElement>(null), sizeRef = useRef({ width: 1, height: 1, dpr: 1 })
-  const audioRef = useRef<AudioRig | null>(null), paintRef = useRef<() => void>(() => {}), timeRef = useRef(0), draggingComponent = useRef<number | null>(null)
-  const [frequency, setFrequency] = useState(220), [harmonics, setHarmonics] = useState<Harmonic[]>([{ multiple: 1, amplitude: 0.72, phase: 0 }])
+  const spectrogramInitializedRef = useRef(false), spectrogramLastColumnAtRef = useRef(0)
+  const audioRef = useRef<AudioRig | null>(null), audioStartRef = useRef<Promise<void> | null>(null), paintRef = useRef<() => void>(() => {}), timeRef = useRef(0), draggingComponent = useRef<number | null>(null)
+  const [frequency, setFrequency] = useState(220), [harmonics, setHarmonics] = useState<Harmonic[]>(() => timbreHarmonics('triangle'))
+  const [timbre, setTimbre] = useState<TimbrePreset | 'custom'>('triangle')
   const [selected, setSelected] = useState(1), [cutoff, setCutoff] = useState(1800), [filterOn, setFilterOn] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('spectrum'), [audioOn, setAudioOn] = useState(false), [muted, setMuted] = useState(false), [audioMessage, setAudioMessage] = useState('The waveform is visible with sound off.')
   const restored = useRef(false)
@@ -28,6 +29,7 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
   const signal = useMemo(() => synthesizeSignal({ frequency, harmonics: displayedHarmonics, samples: 2048 }), [frequency, displayedHarmonics])
   const rawSpectrum = useMemo(() => signalSpectrum(signal), [signal])
   const peak = useMemo(() => peakFor(signal), [signal])
+  const audioPeak = useMemo(() => peakFor(synthesizeSignal({ frequency, harmonics, samples: 2048 })), [frequency, harmonics])
   const selectedHarmonic = harmonics.find((part) => part.multiple === selected) ?? harmonics[0]
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
     restored.current = true
     const savedFrequency = safeState(stateFromUrl, 'frequency', frequency), savedHarmonics = safeState(stateFromUrl, 'harmonics', harmonics)
     if (typeof savedFrequency === 'number' && savedFrequency >= 55 && savedFrequency <= 660) setFrequency(savedFrequency)
-    if (Array.isArray(savedHarmonics) && savedHarmonics.length > 0 && savedHarmonics.length <= 10 && savedHarmonics.every((part) => typeof part === 'object' && Number.isInteger((part as Harmonic).multiple) && (part as Harmonic).multiple > 0 && (part as Harmonic).multiple <= 24)) setHarmonics(savedHarmonics as Harmonic[])
+    if (Array.isArray(savedHarmonics) && savedHarmonics.length > 0 && savedHarmonics.length <= 10 && savedHarmonics.every((part) => typeof part === 'object' && Number.isInteger((part as Harmonic).multiple) && (part as Harmonic).multiple > 0 && (part as Harmonic).multiple <= 24)) { setHarmonics(savedHarmonics as Harmonic[]); setTimbre('custom') }
   }, [stateFromUrl, frequency, harmonics])
   useEffect(() => { onShareState({ frequency, harmonics, cutoff, filterOn, viewMode }) }, [frequency, harmonics, cutoff, filterOn, viewMode, onShareState])
 
@@ -45,38 +47,48 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
     rig.oscillator.setPeriodicWave(wave)
   }, [])
   const startAudio = async () => {
-    if (audioRef.current) {
-      const rig = audioRef.current
-      if (rig.context.state === 'suspended') await rig.context.resume()
-      const nextOn = !audioOn
-      setAudioOn(nextOn); setMuted(false)
-      rig.gain.gain.setTargetAtTime(nextOn ? 0.055 : 0, rig.context.currentTime, 0.035)
-      setAudioMessage(nextOn ? 'Playing generated harmonics at a quiet level.' : 'Sound is off. The visual signal remains active.')
-      return
-    }
-    try {
-      const context = new AudioContext(), oscillator = context.createOscillator(), filter = context.createBiquadFilter(), gain = context.createGain()
-      filter.type = 'lowpass'; filter.frequency.value = cutoff; filter.Q.value = Math.SQRT1_2
-      gain.gain.value = 0
-      oscillator.frequency.value = frequency
-      oscillator.connect(filter); filter.connect(gain); gain.connect(context.destination)
-      const rig = { context, oscillator, filter, gain }
-      installPeriodicWave(rig, harmonics); audioRef.current = rig; oscillator.start(); await context.resume()
-      setAudioOn(true); setMuted(false)
-      gain.gain.setTargetAtTime(0.055, context.currentTime, 0.04)
-      setAudioMessage('Playing a Web Audio oscillator synthesized from these visible Fourier components.')
-    } catch {
-      const rig = audioRef.current
-      if (rig) { try { rig.oscillator.stop() } catch { /* The oscillator may already have stopped. */ }; void rig.context.close(); audioRef.current = null }
-      setAudioMessage('Audio could not start in this browser. The visual instrument still works.')
-    }
+    if (audioStartRef.current) return audioStartRef.current
+    const operation = (async () => {
+      let context: AudioContext | null = null
+      try {
+        if (audioRef.current) {
+          const rig = audioRef.current
+          if (rig.context.state === 'suspended') await rig.context.resume()
+          const nextOn = !audioOn
+          setAudioOn(nextOn); setMuted(false)
+          rig.gain.gain.setTargetAtTime(nextOn ? quietSignalGain(audioPeak) : 0, rig.context.currentTime, 0.035)
+          setAudioMessage(nextOn ? 'Playing generated harmonics at a quiet level.' : 'Sound is off. The visual signal remains active.')
+          return
+        }
+        context = new AudioContext()
+        const oscillator = context.createOscillator(), filter = context.createBiquadFilter(), gain = context.createGain()
+        filter.type = 'lowpass'; filter.frequency.value = cutoff; filter.Q.value = Math.SQRT1_2
+        gain.gain.value = 0
+        oscillator.frequency.value = frequency
+        oscillator.connect(filter); filter.connect(gain); gain.connect(context.destination)
+        const rig = { context, oscillator, filter, gain }
+        audioRef.current = rig
+        installPeriodicWave(rig, harmonics); oscillator.start(); await context.resume()
+        setAudioOn(true); setMuted(false)
+        gain.gain.setTargetAtTime(quietSignalGain(audioPeak), context.currentTime, 0.04)
+        setAudioMessage('Playing a Web Audio oscillator synthesized from these visible Fourier components.')
+      } catch {
+        const rig = audioRef.current
+        if (rig) { try { rig.oscillator.stop() } catch { /* The oscillator may already have stopped. */ }; void rig.context.close().catch(() => {}); audioRef.current = null }
+        else if (context) void context.close().catch(() => {})
+        setAudioOn(false); setMuted(false)
+        setAudioMessage('Audio could not start in this browser. The visual instrument still works.')
+      }
+    })()
+    audioStartRef.current = operation
+    try { await operation } finally { if (audioStartRef.current === operation) audioStartRef.current = null }
   }
   const toggleMute = () => {
     const rig = audioRef.current
     if (!rig) return
     const nextMuted = !muted
     setMuted(nextMuted)
-    rig.gain.gain.setTargetAtTime(nextMuted || !audioOn ? 0 : 0.055, rig.context.currentTime, 0.02)
+    rig.gain.gain.setTargetAtTime(nextMuted || !audioOn ? 0 : quietSignalGain(audioPeak), rig.context.currentTime, 0.02)
     setAudioMessage(nextMuted ? 'Muted. The waveform and spectrum continue to show the generated signal.' : 'Sound returned at a quiet level.')
   }
 
@@ -98,7 +110,7 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
     const veil = context.createRadialGradient(width * 0.48, height * 0.43, 0, width * 0.48, height * 0.43, height * 0.86)
     veil.addColorStop(0, 'rgba(59,46,92,.28)'); veil.addColorStop(0.5, 'rgba(29,30,59,.12)'); veil.addColorStop(1, 'rgba(7,9,18,0)')
     context.fillStyle = veil; context.fillRect(0, 0, width, height)
-    const top = height * 0.18, plotH = height * 0.38, mid = top + plotH * 0.52
+    const top = Math.max(124, height * 0.18), plotH = height * 0.38, mid = top + plotH * 0.52
     context.strokeStyle = 'rgba(190,176,224,.13)'; context.lineWidth = 0.7
     for (let line = -2; line <= 2; line++) { const y = mid + line * plotH * 0.19; context.beginPath(); context.moveTo(width * 0.075, y); context.lineTo(width * 0.93, y); context.stroke() }
     for (let tick = 0; tick <= 8; tick++) { const x = width * (0.075 + tick * 0.106); context.beginPath(); context.moveTo(x, top + 4); context.lineTo(x, top + plotH); context.stroke() }
@@ -135,32 +147,55 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
       const specCanvas = spectrogramRef.current, specContext = specCanvas?.getContext('2d')
       if (specCanvas && specContext) {
         const specWidth = Math.max(1, Math.round(width * 0.855)), specHeight = Math.max(1, Math.round(height * 0.2))
-        if (specCanvas.width !== specWidth || specCanvas.height !== specHeight) { specCanvas.width = specWidth; specCanvas.height = specHeight }
-        specContext.drawImage(specCanvas, -1, 0)
-        const column = specContext.createImageData(1, specHeight)
-        for (let y = 0; y < specHeight; y++) {
-          const bin = Math.round((1 - y / specHeight) * Math.min(rawSpectrum.length - 1, 18))
-          const amplitude = rawSpectrum[bin]
-          const level = Math.min(255, Math.round(Math.log1p(amplitude * 18) * 112))
-          column.data[y * 4] = Math.round(level * 0.86); column.data[y * 4 + 1] = Math.round(level * 0.58); column.data[y * 4 + 2] = level; column.data[y * 4 + 3] = 255
+        if (specCanvas.width !== specWidth || specCanvas.height !== specHeight) {
+          specCanvas.width = specWidth; specCanvas.height = specHeight; spectrogramInitializedRef.current = false
         }
-        specContext.putImageData(column, specWidth - 1, 0)
+        const writeColumn = (column: ImageData, targetX: number) => {
+          for (let y = 0; y < specHeight; y++) {
+            const bin = Math.max(1, Math.min(rawSpectrum.length - 1, Math.round(1 + (1 - y / Math.max(1, specHeight - 1)) * 17)))
+            const amplitude = rawSpectrum[bin], level = Math.min(1, Math.log1p(amplitude * 24) / Math.log1p(0.8 * 24))
+            const index = y * 4
+            column.data[index] = Math.round(12 + level * 230); column.data[index + 1] = Math.round(9 + level * 128); column.data[index + 2] = Math.round(25 + level * 228); column.data[index + 3] = 255
+          }
+          specContext.putImageData(column, targetX, 0)
+        }
+        if (!spectrogramInitializedRef.current) {
+          const image = specContext.createImageData(specWidth, specHeight)
+          for (let y = 0; y < specHeight; y++) {
+            const bin = Math.max(1, Math.min(rawSpectrum.length - 1, Math.round(1 + (1 - y / Math.max(1, specHeight - 1)) * 17)))
+            const amplitude = rawSpectrum[bin], level = Math.min(1, Math.log1p(amplitude * 24) / Math.log1p(0.8 * 24))
+            const red = Math.round(12 + level * 230), green = Math.round(9 + level * 128), blue = Math.round(25 + level * 228)
+            for (let x = 0; x < specWidth; x++) { const index = (y * specWidth + x) * 4; image.data[index] = red; image.data[index + 1] = green; image.data[index + 2] = blue; image.data[index + 3] = 255 }
+          }
+          specContext.putImageData(image, 0, 0); spectrogramInitializedRef.current = true
+          spectrogramLastColumnAtRef.current = time
+        } else if (time - spectrogramLastColumnAtRef.current >= 70) {
+          const column = specContext.createImageData(1, specHeight)
+          specContext.drawImage(specCanvas, -1, 0)
+          writeColumn(column, specWidth - 1)
+          spectrogramLastColumnAtRef.current = time
+        }
         context.drawImage(specCanvas, width * 0.075, specTop, width * 0.855, height * 0.2)
+        const cursorX = width * 0.93
+        context.beginPath(); context.moveTo(cursorX, specTop); context.lineTo(cursorX, specTop + height * 0.2)
+        context.strokeStyle = 'rgba(246,231,255,.3)'; context.lineWidth = .8; context.stroke()
       }
     }
     const labelY = height * 0.93
     context.fillStyle = 'rgba(189,178,211,.66)'; context.font = '9px ui-monospace, monospace'
-    context.fillText('SINE', width * 0.075, labelY)
+    context.fillText(timbre.toUpperCase(), width * 0.075, labelY)
     context.fillText(`${harmonics.length} PARTIAL${harmonics.length === 1 ? '' : 'S'}`, width * 0.17, labelY)
     context.fillText(filterOn ? `LOW-PASS ${cutoff} Hz` : 'FILTER OPEN', width * 0.79, labelY)
-  }, [signal, rawSpectrum, frequency, peak, viewMode, harmonics, filterOn, cutoff, selected])
+  }, [signal, rawSpectrum, frequency, peak, viewMode, harmonics, filterOn, cutoff, selected, timbre])
   useEffect(() => { paintRef.current = () => paint(timeRef.current) }, [paint])
 
   useEffect(() => {
     let frame = 0, time = 0, last = 0, disposed = false
     const draw = (now: number) => {
       if (disposed) return
-      if (!paused && now - last > 28) { time += now - last; last = now; timeRef.current = time }
+      const elapsed = last ? now - last : 0
+      last = now
+      if (!paused && elapsed > 28) { time += elapsed; timeRef.current = time }
       paint(time)
       frame = requestAnimationFrame(draw)
     }
@@ -173,19 +208,22 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
     if (!rig) return
     rig.oscillator.frequency.setTargetAtTime(frequency, rig.context.currentTime, 0.025)
     rig.filter.frequency.setTargetAtTime(filterOn ? cutoff : 20000, rig.context.currentTime, 0.03)
+    rig.gain.gain.setTargetAtTime(audioOn && !muted ? quietSignalGain(audioPeak) : 0, rig.context.currentTime, 0.035)
     try { installPeriodicWave(rig, harmonics) } catch { setAudioMessage('The browser declined a harmonic update; reset the instrument to continue.') }
-  }, [frequency, harmonics, cutoff, filterOn, installPeriodicWave])
+  }, [frequency, harmonics, cutoff, filterOn, installPeriodicWave, audioOn, muted, audioPeak])
 
   useEffect(() => () => {
     const rig = audioRef.current
     if (!rig) return
     try { rig.oscillator.stop() } catch { /* The oscillator may already have stopped. */ }
-    void rig.context.close()
+    void rig.context.close().catch(() => {})
     audioRef.current = null
   }, [])
 
-  const updateHarmonic = (key: 'amplitude' | 'phase', value: number) => setHarmonics((previous) => previous.map((part) => part.multiple === selected ? { ...part, [key]: value } : part))
+  const chooseTimbre = (value: TimbrePreset) => { setTimbre(value); setHarmonics(timbreHarmonics(value)); setSelected(1) }
+  const updateHarmonic = (key: 'amplitude' | 'phase', value: number) => { setTimbre('custom'); setHarmonics((previous) => previous.map((part) => part.multiple === selected ? { ...part, [key]: value } : part)) }
   const togglePartial = (multiple: number) => {
+    setTimbre('custom')
     const next = addHarmonic(harmonics, multiple); setHarmonics(next)
     if (!next.some((part) => part.multiple === selected)) setSelected(next[0]?.multiple ?? 1)
     else if (!harmonics.some((part) => part.multiple === multiple)) setSelected(multiple)
@@ -198,6 +236,7 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
     const visibleAmplitude = Math.max(0, Math.min(0.8, (0.88 - point.y) / 0.17 * 0.8))
     const response = filterOn ? lowpassMagnitude(multiple * frequency, cutoff, sampleRate) : 1
     const amplitude = Math.max(0, Math.min(0.8, visibleAmplitude / Math.max(0.025, response)))
+    setTimbre('custom')
     setSelected(multiple)
     setHarmonics((previous) => {
       const existing = previous.some((part) => part.multiple === multiple)
@@ -220,24 +259,28 @@ export default function ShapeOfSound({ paused, controlsVisible, stateFromUrl, on
   const canvasKeyDown = (event: React.KeyboardEvent<HTMLCanvasElement>) => {
     if (!event.key.startsWith('Arrow')) return
     event.preventDefault(); event.stopPropagation()
+    setTimbre('custom')
     const available = harmonics.map((part) => part.multiple), index = Math.max(0, available.indexOf(selected))
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       setSelected(available[clamp(index + (event.key === 'ArrowRight' ? 1 : -1), 0, available.length - 1)])
     } else setHarmonics((previous) => previous.map((part) => part.multiple === selected ? { ...part, amplitude: clamp(part.amplitude + (event.key === 'ArrowUp' ? 0.03 : -0.03), 0, 0.8) } : part))
   }
-  const reset = () => { setFrequency(220); setHarmonics([{ multiple: 1, amplitude: 0.72, phase: 0 }]); setSelected(1); setCutoff(1800); setFilterOn(false); setViewMode('spectrum') }
+  const reset = () => { setFrequency(220); setTimbre('triangle'); setHarmonics(timbreHarmonics('triangle')); setSelected(1); setCutoff(1800); setFilterOn(false); setViewMode('spectrum') }
 
   return <section className="iw-scene iw-sound" aria-label="Interactive Fourier sound instrument">
     <canvas ref={canvasRef} className="iw-canvas iw-sound-canvas" tabIndex={0} aria-label={`Visual waveform of ${frequency} hertz assembled from ${harmonics.length} harmonics. Tap or drag a Fourier bar to add or shape a harmonic; focus the canvas and use arrow keys to select and adjust components.`} onPointerDown={beginSpectrumEdit} onPointerMove={moveSpectrumEdit} onPointerUp={endSpectrumEdit} onPointerCancel={endSpectrumEdit} onKeyDown={canvasKeyDown} />
     <canvas ref={spectrogramRef} className="iw-spectrogram-buffer" aria-hidden="true" />
     <div className="iw-titleplate"><span>16 · ACOUSTIC STUDY</span><strong>The Shape of Sound</strong><small>One tone. Many possible forms.</small></div>
     <div className="iw-sound-actions iw-glass-surface">
-      <button className={audioOn && !muted ? 'iw-audio-on' : ''} onClick={() => { void startAudio() }} aria-pressed={audioOn && !muted}>{audioOn ? (muted ? 'Unmute sound' : 'Mute sound') : 'Listen to the signal'}</button>
+      <button className={audioOn ? 'iw-audio-on' : ''} onClick={() => { void startAudio() }} aria-pressed={audioOn}>{audioOn ? 'Stop sound' : 'Listen to the signal'}</button>
       {audioOn && <button onClick={toggleMute} aria-label={muted ? 'Unmute generated sound' : 'Mute generated sound'}>{muted ? 'Unmute' : 'Mute'}</button>}
       <span>{audioOn && !muted ? 'AUDIO ON · LOW LEVEL' : 'AUDIO OFF'}</span>
     </div>
     <div className="iw-audio-status" role="status" aria-live="polite">{audioMessage}</div>
     <ControlPanel title="Sound instrument" note="Fourier synthesis" visible={controlsVisible} onClose={onCloseControls} footer={<span>Audio is generated locally after you press Listen.</span>}>
+      <div className="iw-panel-section"><span>Start with a waveform</span><div className="iw-button-row iw-timbre-presets">
+        {(['sine', 'triangle', 'square', 'sawtooth'] as TimbrePreset[]).map((value) => <button key={value} className={timbre === value ? 'selected' : ''} aria-pressed={timbre === value} onClick={() => chooseTimbre(value)}>{value === 'sawtooth' ? 'Saw' : value[0].toUpperCase() + value.slice(1)}</button>)}
+      </div></div>
       <RangeControl label="Fundamental" value={frequency} min={55} max={660} step={1} format={(value) => `${Math.round(value)} Hz`} onChange={setFrequency} />
       <div className="iw-panel-section"><span>Build the tone · add or remove</span><div className="iw-harmonic-buttons">
         {[2, 3, 4, 5, 6, 8].map((multiple) => <button key={multiple} className={harmonics.some((part) => part.multiple === multiple) ? 'selected' : ''} onClick={() => togglePartial(multiple)} aria-pressed={harmonics.some((part) => part.multiple === multiple)}>{multiple === 2 ? '2nd' : `${multiple}th`}</button>)}

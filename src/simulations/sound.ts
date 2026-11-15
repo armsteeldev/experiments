@@ -1,5 +1,28 @@
 export type Harmonic = { multiple: number; amplitude: number; phase: number }
+export type TimbrePreset = 'sine' | 'triangle' | 'square' | 'sawtooth'
 export type SignalParameters = { frequency: number; harmonics: Harmonic[]; samples?: number }
+
+export function timbreHarmonics(preset: TimbrePreset, amplitude = 0.72): Harmonic[] {
+  const fundamental = Math.max(0, Math.min(0.8, Number.isFinite(amplitude) ? amplitude : 0.72))
+  if (preset === 'sine') return [{ multiple: 1, amplitude: fundamental, phase: 0 }]
+  const parts: Harmonic[] = []
+  if (preset === 'triangle' || preset === 'square') {
+    for (let multiple = 1; multiple <= 17; multiple += 2) {
+      const order = Math.floor((multiple - 1) / 2)
+      parts.push({ multiple, amplitude: fundamental / (preset === 'triangle' ? multiple * multiple : multiple), phase: preset === 'triangle' && order % 2 ? Math.PI : 0 })
+    }
+  } else {
+    for (let multiple = 1; multiple <= 9; multiple++) parts.push({ multiple, amplitude: fundamental / multiple, phase: multiple % 2 ? 0 : Math.PI })
+  }
+  return parts
+}
+
+/** Keep the unfiltered oscillator's sample peak at or below the exhibit's quiet ceiling. */
+export function quietSignalGain(peak: number, ceiling = 0.055): number {
+  const safeCeiling = Number.isFinite(ceiling) ? Math.max(0, Math.min(0.1, ceiling)) : 0.055
+  const safePeak = Number.isFinite(peak) ? Math.max(0.01, peak) : 1
+  return Math.min(0.055, safeCeiling / safePeak)
+}
 
 export function synthesizeSignal({ frequency, harmonics, samples = 2048 }: SignalParameters): Float32Array {
   const count = Math.max(16, Math.min(16384, 2 ** Math.ceil(Math.log2(samples))))
