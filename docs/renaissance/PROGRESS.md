@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Previous performance checkpoint:** `9e258c7` profiles the cold gallery and reduces only decorative ambient-field resolution after repeated slow frames. Earlier verified work includes cancellable Where Light Falls computation (`368a298`), bounded replay for Gravity and Flocking (`611ee7a`, `eae7db9`), hidden-tab suspension and Mandelbrot context recovery (`0c2050c`, `ad13449`), and bounded Neural Networks custom lessons (`a65f693`, `e11ec03`). Replay boundaries are summarized in [`STATE-REPLAY.md`](STATE-REPLAY.md).
+- **Latest implementation checkpoint:** `6ba7883` reconciles all nineteen visitor-facing model descriptions with their code, adds selected invariant/gradient checks, and expands the all-exhibit About-panel browser matrix. The previous performance checkpoint `9e258c7` profiles the cold gallery and reduces only decorative ambient-field resolution after repeated slow frames. Earlier verified work includes cancellable Where Light Falls computation (`368a298`), bounded replay for Gravity and Flocking (`611ee7a`, `eae7db9`), hidden-tab suspension and Mandelbrot context recovery (`0c2050c`, `ad13449`), and bounded Neural Networks custom lessons (`a65f693`, `e11ec03`). Replay boundaries are summarized in [`STATE-REPLAY.md`](STATE-REPLAY.md).
 
 ## Milestones
 

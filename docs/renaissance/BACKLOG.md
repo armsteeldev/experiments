@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, plus the nineteen-study model-boundary audit. Items are ordered by visitor value, risk and dependency.
+Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, plus the nineteen-study model-boundary audit in `6ba7883`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
