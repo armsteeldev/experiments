@@ -164,6 +164,10 @@ export default function AmbientField() {
     const timeUniform = gl.getUniformLocation(program, 'u_time')
     canvas.dataset.fallback = 'false'
 
+    const slowFrameLimitMs = 80
+    const slowFramesBeforeDownscale = 3
+    const densityStep = 0.74
+    const minimumRenderScale = 0.52
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
     const mobileViewport = window.matchMedia('(max-width: 720px)')
     let reducedMotion = motionPreference.matches
@@ -171,6 +175,8 @@ export default function AmbientField() {
     let raf = 0
     let elapsed = 0
     let previousFrame = 0
+    let slowFrameStreak = 0
+    let renderScale = 1
     let pointerX = 0.53
     let pointerY = 0.54
     let targetX = pointerX
@@ -183,6 +189,15 @@ export default function AmbientField() {
       if (!reducedMotion && previousFrame && now - previousFrame < 40) {
         raf = window.requestAnimationFrame(draw)
         return
+      }
+      const frameInterval = previousFrame ? now - previousFrame : 0
+      if (!reducedMotion && frameInterval > slowFrameLimitMs) slowFrameStreak++
+      else slowFrameStreak = Math.max(0, slowFrameStreak - 1)
+      if (slowFrameStreak >= slowFramesBeforeDownscale && renderScale > minimumRenderScale) {
+        // This shader is atmospheric decoration; lower only its pixel fill when frames keep falling behind.
+        renderScale = Math.max(minimumRenderScale, Math.round(renderScale * densityStep * 100) / 100)
+        slowFrameStreak = 0
+        resize()
       }
       const delta = previousFrame ? Math.min((now - previousFrame) / 1000, 0.08) : 0
       previousFrame = now
@@ -202,7 +217,7 @@ export default function AmbientField() {
     const resize = () => {
       const width = window.visualViewport?.width ?? window.innerWidth
       const height = window.visualViewport?.height ?? window.innerHeight
-      const density = Math.min(window.devicePixelRatio || 1, 1.15) * (mobileViewport.matches ? 0.72 : 0.86)
+      const density = Math.min(window.devicePixelRatio || 1, 1.15) * (mobileViewport.matches ? 0.72 : 0.86) * renderScale
       const nextWidth = Math.max(1, Math.round(width * density))
       const nextHeight = Math.max(1, Math.round(height * density))
       if (canvas.width === nextWidth && canvas.height === nextHeight) return
@@ -222,6 +237,7 @@ export default function AmbientField() {
       if (document.hidden) {
         window.cancelAnimationFrame(raf)
         raf = 0
+        slowFrameStreak = 0
       } else {
         previousFrame = 0
         if (reducedMotion) draw(performance.now())
@@ -252,6 +268,8 @@ export default function AmbientField() {
       } else {
         window.cancelAnimationFrame(raf)
         raf = 0
+        previousFrame = 0
+        slowFrameStreak = 0
       }
     }, { threshold: 0.01 }) : null
 

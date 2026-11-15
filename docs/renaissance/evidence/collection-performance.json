@@ -1,0 +1,1628 @@
+{
+  "browser": "Chrome/157.0.8103.38",
+  "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "cpuThrottleRate": 1,
+  "reducedMotion": false,
+  "coldCache": true,
+  "desktop": {
+    "viewport": [
+      1440,
+      900,
+      1
+    ],
+    "navigation": {
+      "responseStartMs": 8.699999809265137,
+      "domContentLoadedMs": 173,
+      "loadMs": 173.2999997138977,
+      "transferBytes": 2984,
+      "decodedBytes": 9223
+    },
+    "paint": [
+      {
+        "name": "first-paint",
+        "startTime": 144,
+        "duration": 0,
+        "size": null
+      },
+      {
+        "name": "first-contentful-paint",
+        "startTime": 144,
+        "duration": 0,
+        "size": null
+      },
+      {
+        "name": "largest-contentful-paint",
+        "startTime": 144,
+        "duration": 0,
+        "size": 120080
+      }
+    ],
+    "longTasks": [
+      {
+        "name": "self",
+        "startTime": 342.40000009536743,
+        "duration": 130,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 473.19999980926514,
+        "duration": 552,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1066.4000000953674,
+        "duration": 323,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1413.2999997138977,
+        "duration": 258,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1682.6999998092651,
+        "duration": 148,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1865,
+        "duration": 178,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2055.0999999046326,
+        "duration": 166,
+        "size": null
+      }
+    ],
+    "slowCanvasOps": [],
+    "webGLDrawCalls": [
+      {
+        "method": "drawArrays",
+        "durationMs": 0.2
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      }
+    ],
+    "ambientGpuTimerExtension": false,
+    "rafCallbacks": {
+      "he": {
+        "calls": 7,
+        "totalMs": 7.899999618530273,
+        "maxMs": 4.599999904632568,
+        "over8Ms": 0,
+        "maxIntervalMs": 666.578,
+        "intervalsOver80Ms": 6,
+        "lastTime": 2205.2
+      },
+      "D": {
+        "calls": 6,
+        "totalMs": 35.59999990463257,
+        "maxMs": 33.09999990463257,
+        "over8Ms": 1,
+        "maxIntervalMs": 333.29999999999995,
+        "intervalsOver80Ms": 5,
+        "lastTime": 2205.2
+      }
+    },
+    "observerCallbacks": {
+      "ResizeObserver": {
+        "calls": 20,
+        "totalMs": 0.19999980926513672,
+        "maxMs": 0.09999990463256836,
+        "over8Ms": 0
+      },
+      "IntersectionObserver": {
+        "calls": 21,
+        "totalMs": 0.20000028610229492,
+        "maxMs": 0.10000038146972656,
+        "over8Ms": 0
+      }
+    },
+    "resources": [
+      {
+        "name": "/assets/index-5ShuiTkr.js",
+        "initiator": "script",
+        "durationMs": 34.1,
+        "transferBytes": 115111,
+        "encodedBytes": 114811,
+        "decodedBytes": 355604
+      },
+      {
+        "name": "/assets/index-C6yXZ4un.css",
+        "initiator": "link",
+        "durationMs": 31.3,
+        "transferBytes": 23962,
+        "encodedBytes": 23662,
+        "decodedBytes": 108785
+      }
+    ],
+    "dom": {
+      "nodes": 551,
+      "galleryCards": 18,
+      "previews": 20,
+      "canvases": 20
+    },
+    "worker": {
+      "active": 0,
+      "created": 0,
+      "urls": []
+    },
+    "ambient": {
+      "width": 674,
+      "height": 426,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "pixelRatio": 0.47,
+      "fallback": "false",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+    },
+    "overflow": false,
+    "heap": {
+      "usedBytes": 9848952,
+      "totalBytes": 13244156
+    }
+  },
+  "profile": {
+    "durationMs": 1400,
+    "samplingIntervalMicros": 1000,
+    "topStacks": [
+      {
+        "frame": "(root) @ [native]:0:0 <- (program) @ [native]:0:0",
+        "samples": 675
+      },
+      {
+        "frame": "(root) @ [native]:0:0 <- (idle) @ [native]:0:0",
+        "samples": 162
+      },
+      {
+        "frame": "(root) @ [native]:0:0 <- (anonymous) @ [native]:36:60 <- he @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:1557 <- window.requestAnimationFrame @ [native]:36:36 <- requestAnimationFrame @ [native]:0:0",
+        "samples": 1
+      },
+      {
+        "frame": "(root) @ [native]:0:0 <- (anonymous) @ [native]:36:60 <- D @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:20700 <- qb @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:19709 <- _b @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:9755 <- lineTo @ [native]:0:0",
+        "samples": 1
+      },
+      {
+        "frame": "(root) @ [native]:0:0 <- (anonymous) @ [native]:36:60 <- D @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:20700 <- qb @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:19709 <- Eb @ http://127.0.0.1:5230/assets/index-5ShuiTkr.js:145:6749 <- drawImage @ [native]:0:0",
+        "samples": 1
+      }
+    ]
+  },
+  "trace": {
+    "eventCount": 1646,
+    "windowMs": 1200,
+    "longEvents": [
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 138,
+        "startMs": 3255039479.8,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 131,
+        "startMs": 3255039343.3,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 122.6,
+        "startMs": 3255038752.4,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 122.5,
+        "startMs": 3255039480.4,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 113.5,
+        "startMs": 3255038638.8,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 105.2,
+        "startMs": 3255038639.5,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 104.9,
+        "startMs": 3255039521.4,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 104.3,
+        "startMs": 3255038753,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 103.3,
+        "startMs": 3255039239.2,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 100.7,
+        "startMs": 3255039064.3,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 99.6,
+        "startMs": 3255039343.9,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 96.5,
+        "startMs": 3255039142.6,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 94.5,
+        "startMs": 3255038645.2,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 94.1,
+        "startMs": 3255038970.1,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 90.7,
+        "startMs": 3255038875.3,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 87.6,
+        "startMs": 3255039245.2,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 84.3,
+        "startMs": 3255038971.3,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 82.6,
+        "startMs": 3255038876,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 81.2,
+        "startMs": 3255039345.6,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 79.6,
+        "startMs": 3255039165.2,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 77.7,
+        "startMs": 3255039245.7,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 71,
+        "startMs": 3255039166,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 66.6,
+        "startMs": 3255039071.5,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 65,
+        "startMs": 3255039074.1,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 60.3,
+        "startMs": 3255038909,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 55.1,
+        "startMs": 3255038554.7,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 54.5,
+        "startMs": 3255038805,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 53,
+        "startMs": 3255038746.9,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 41.1,
+        "startMs": 3255039479.7,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      },
+      {
+        "name": "RunTask",
+        "category": "disabled-by-default-devtools.timeline",
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 41,
+        "startMs": 3255038971.1,
+        "functionName": null,
+        "url": null,
+        "line": null,
+        "taskName": null
+      }
+    ],
+    "longTaskDetails": [
+      {
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 138,
+        "events": [
+          {
+            "name": "Commit",
+            "category": "disabled-by-default-devtools.timeline",
+            "durationMs": 124.2,
+            "functionName": null,
+            "url": null,
+            "line": null,
+            "keys": []
+          }
+        ]
+      },
+      {
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 131,
+        "events": []
+      },
+      {
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 122.6,
+        "events": [
+          {
+            "name": "Commit",
+            "category": "disabled-by-default-devtools.timeline",
+            "durationMs": 110.8,
+            "functionName": null,
+            "url": null,
+            "line": null,
+            "keys": []
+          }
+        ]
+      },
+      {
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 122.5,
+        "events": [
+          {
+            "name": "GPUTask",
+            "category": "disabled-by-default-devtools.timeline",
+            "durationMs": 122.4,
+            "functionName": null,
+            "url": null,
+            "line": null,
+            "keys": [
+              "renderer_pid",
+              "used_bytes"
+            ]
+          }
+        ]
+      },
+      {
+        "thread": "CrRendererMain",
+        "pid": 3783260,
+        "tid": 3783260,
+        "durationMs": 113.5,
+        "events": [
+          {
+            "name": "Commit",
+            "category": "disabled-by-default-devtools.timeline",
+            "durationMs": 107.4,
+            "functionName": null,
+            "url": null,
+            "line": null,
+            "keys": []
+          }
+        ]
+      },
+      {
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 105.2,
+        "events": [
+          {
+            "name": "GPUTask",
+            "category": "disabled-by-default-devtools.timeline",
+            "durationMs": 105.1,
+            "functionName": null,
+            "url": null,
+            "line": null,
+            "keys": [
+              "renderer_pid",
+              "used_bytes"
+            ]
+          }
+        ]
+      },
+      {
+        "thread": "VizCompositorThread",
+        "pid": 3580168,
+        "tid": 3580197,
+        "durationMs": 104.9,
+        "events": []
+      },
+      {
+        "thread": "CrGpuMain",
+        "pid": 3580168,
+        "tid": 3580168,
+        "durationMs": 104.3,
+        "events": [
+          {
+            "name": "GPUTask",
+            "category": "disabled-by-default-devtools.timeline",
+            "durationMs": 104.3,
+            "functionName": null,
+            "url": null,
+            "line": null,
+            "keys": [
+              "renderer_pid",
+              "used_bytes"
+            ]
+          }
+        ]
+      }
+    ],
+    "threads": {
+      "0:0": "swapper",
+      "3580168:3580168": "CrGpuMain",
+      "3580168:3580191": "PerfettoTrace",
+      "3580032:3580032": "CrBrowserMain",
+      "3580032:3580131": "PerfettoTrace",
+      "3783260:3783260": "CrRendererMain",
+      "3783260:3783266": "PerfettoTrace",
+      "3580032:3580214": "Chrome_DevToolsHandlerThread",
+      "3580168:3580196": "Chrome_ChildIOThread",
+      "3783260:3783273": "Compositor",
+      "3580168:3580197": "VizCompositorThread",
+      "3783260:3783271": "Chrome_ChildIOThread",
+      "3783260:3783267": "ThreadPoolServiceThread",
+      "3580032:3580132": "ThreadPoolServiceThread",
+      "3580032:3580140": "Chrome_IOThread"
+    }
+  },
+  "search": {
+    "desktopMsIncludingCDPRoundTrips": 506,
+    "mobileMsIncludingCDPRoundTrips": 119,
+    "exactResult": "01 STUDY",
+    "desktopMetrics": {
+      "taskDurationDeltaSeconds": 0.9761220000000002,
+      "scriptDurationDeltaSeconds": 0.05640500000000001
+    }
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844,
+      2
+    ],
+    "cards": 18,
+    "previews": 20,
+    "documentWidth": 390,
+    "overflow": false,
+    "visibleCanvasCount": 1
+  },
+  "final": {
+    "longTasks": [
+      {
+        "name": "self",
+        "startTime": 342.40000009536743,
+        "duration": 130,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 473.19999980926514,
+        "duration": 552,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1066.4000000953674,
+        "duration": 323,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1413.2999997138977,
+        "duration": 258,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1682.6999998092651,
+        "duration": 148,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 1865,
+        "duration": 178,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2055.0999999046326,
+        "duration": 166,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2241.9000000953674,
+        "duration": 103,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2358.199999809265,
+        "duration": 95,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2464.5,
+        "duration": 99,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2578.0999999046326,
+        "duration": 124,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2717.4000000953674,
+        "duration": 70,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2816.0999999046326,
+        "duration": 77,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 2972.5999999046326,
+        "duration": 102,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 3114.7999997138977,
+        "duration": 117,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 3255.0999999046326,
+        "duration": 103,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 3433.2999997138977,
+        "duration": 171,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 3648.699999809265,
+        "duration": 154,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 3828.5999999046326,
+        "duration": 281,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4117.099999904633,
+        "duration": 125,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4262.5,
+        "duration": 92,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4395.599999904633,
+        "duration": 70,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4524,
+        "duration": 125,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4674,
+        "duration": 93,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4776.199999809265,
+        "duration": 111,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 4947.799999713898,
+        "duration": 138,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5158.299999713898,
+        "duration": 124,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5289.599999904633,
+        "duration": 99,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5421.099999904633,
+        "duration": 86,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5516.900000095367,
+        "duration": 111,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5687.799999713898,
+        "duration": 68,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5764.699999809265,
+        "duration": 64,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5838,
+        "duration": 88,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5932.699999809265,
+        "duration": 96,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6080.5,
+        "duration": 63,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6167.400000095367,
+        "duration": 107,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6280.900000095367,
+        "duration": 111,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6403.900000095367,
+        "duration": 84,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6498.599999904633,
+        "duration": 87,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6592.900000095367,
+        "duration": 71,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6693.900000095367,
+        "duration": 72,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6773.699999809265,
+        "duration": 79,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6872.5,
+        "duration": 85,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7008.400000095367,
+        "duration": 124,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7155.699999809265,
+        "duration": 172,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7335.299999713898,
+        "duration": 101,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7465.900000095367,
+        "duration": 113,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7604,
+        "duration": 123,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7766.5,
+        "duration": 80,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 7897.699999809265,
+        "duration": 140,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 8037.799999713898,
+        "duration": 57,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 8139.400000095367,
+        "duration": 127,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 8329.099999904633,
+        "duration": 96,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 8474.099999904633,
+        "duration": 269,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 8752.799999713898,
+        "duration": 174,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 9098.699999809265,
+        "duration": 54,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 9859.400000095367,
+        "duration": 73,
+        "size": null
+      }
+    ],
+    "slowCanvasOps": [],
+    "webGLDrawCalls": [
+      {
+        "method": "drawArrays",
+        "durationMs": 0.2
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0.1
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      }
+    ],
+    "rafCallbacks": {
+      "he": {
+        "calls": 93,
+        "totalMs": 30.59999990463257,
+        "maxMs": 7.099999904632568,
+        "over8Ms": 0,
+        "maxIntervalMs": 666.578,
+        "intervalsOver80Ms": 61,
+        "lastTime": 11288.2
+      },
+      "D": {
+        "calls": 89,
+        "totalMs": 58.19999980926514,
+        "maxMs": 33.09999990463257,
+        "over8Ms": 2,
+        "maxIntervalMs": 383.3000000000011,
+        "intervalsOver80Ms": 59,
+        "lastTime": 11288.2
+      }
+    },
+    "observerCallbacks": {
+      "ResizeObserver": {
+        "calls": 59,
+        "totalMs": 6.699999809265137,
+        "maxMs": 3.5999999046325684,
+        "over8Ms": 0
+      },
+      "IntersectionObserver": {
+        "calls": 43,
+        "totalMs": 6.600000381469727,
+        "maxMs": 6.400000095367432,
+        "over8Ms": 0
+      }
+    },
+    "ambient": {
+      "width": 168,
+      "height": 363,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "pixelRatio": 0.43,
+      "fallback": "false",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+    },
+    "worker": {
+      "active": 1,
+      "created": 1
+    },
+    "heap": 10520464
+  },
+  "metrics": {
+    "desktopBeforeSearch": {
+      "Timestamp": 3255040.073812,
+      "AudioHandlers": 0,
+      "AudioWorkletProcessors": 0,
+      "Documents": 8,
+      "Frames": 6,
+      "JSEventListeners": 374,
+      "LayoutObjects": 840,
+      "MediaKeySessions": 0,
+      "MediaKeys": 0,
+      "Nodes": 861,
+      "Resources": 5,
+      "ContextLifecycleStateObservers": 17,
+      "V8PerContextDatas": 2,
+      "WorkerGlobalScopes": 0,
+      "UACSSResources": 0,
+      "RTCPeerConnections": 0,
+      "ResourceFetchers": 8,
+      "AdSubframes": 0,
+      "DetachedScriptStates": 1,
+      "ArrayBufferContents": 3,
+      "LayoutCount": 26,
+      "RecalcStyleCount": 33,
+      "LayoutDuration": 0.068309,
+      "RecalcStyleDuration": 0.093072,
+      "DevToolsCommandDuration": 0.088747,
+      "ScriptDuration": 0.239511,
+      "V8CompileDuration": 0,
+      "TaskDuration": 6.492859,
+      "TaskOtherDuration": 6.00322,
+      "ThreadTime": 0.618952,
+      "ProcessTime": 1.12,
+      "JSHeapUsedSize": 2608636,
+      "JSHeapTotalSize": 6029312,
+      "FirstMeaningfulPaint": 0,
+      "DomContentLoaded": 3255032.637873,
+      "NavigationStart": 3255032.47149
+    },
+    "desktopAfterSearch": {
+      "Timestamp": 3255041.223566,
+      "AudioHandlers": 0,
+      "AudioWorkletProcessors": 0,
+      "Documents": 8,
+      "Frames": 6,
+      "JSEventListeners": 909,
+      "LayoutObjects": 1402,
+      "MediaKeySessions": 0,
+      "MediaKeys": 0,
+      "Nodes": 1397,
+      "Resources": 5,
+      "ContextLifecycleStateObservers": 18,
+      "V8PerContextDatas": 2,
+      "WorkerGlobalScopes": 0,
+      "UACSSResources": 0,
+      "RTCPeerConnections": 0,
+      "ResourceFetchers": 8,
+      "AdSubframes": 0,
+      "DetachedScriptStates": 1,
+      "ArrayBufferContents": 3,
+      "LayoutCount": 50,
+      "RecalcStyleCount": 62,
+      "LayoutDuration": 0.074967,
+      "RecalcStyleDuration": 0.108315,
+      "DevToolsCommandDuration": 0.096435,
+      "ScriptDuration": 0.295916,
+      "V8CompileDuration": 0,
+      "TaskDuration": 7.468981,
+      "TaskOtherDuration": 6.893348,
+      "ThreadTime": 0.727762,
+      "ProcessTime": 1.69,
+      "JSHeapUsedSize": 4214356,
+      "JSHeapTotalSize": 6291456,
+      "FirstMeaningfulPaint": 3255032.611769,
+      "DomContentLoaded": 3255032.637873,
+      "NavigationStart": 3255032.47149
+    },
+    "final": {
+      "Timestamp": 3255043.788709,
+      "AudioHandlers": 0,
+      "AudioWorkletProcessors": 0,
+      "Documents": 8,
+      "Frames": 6,
+      "JSEventListeners": 1148,
+      "LayoutObjects": 1525,
+      "MediaKeySessions": 0,
+      "MediaKeys": 0,
+      "Nodes": 1431,
+      "Resources": 5,
+      "ContextLifecycleStateObservers": 19,
+      "V8PerContextDatas": 2,
+      "WorkerGlobalScopes": 1,
+      "UACSSResources": 0,
+      "RTCPeerConnections": 0,
+      "ResourceFetchers": 9,
+      "AdSubframes": 0,
+      "DetachedScriptStates": 1,
+      "ArrayBufferContents": 5,
+      "LayoutCount": 81,
+      "RecalcStyleCount": 104,
+      "LayoutDuration": 0.093897,
+      "RecalcStyleDuration": 0.156063,
+      "DevToolsCommandDuration": 0.102745,
+      "ScriptDuration": 0.349583,
+      "V8CompileDuration": 0,
+      "TaskDuration": 8.730333,
+      "TaskOtherDuration": 8.028045,
+      "ThreadTime": 0.901549,
+      "ProcessTime": 2.22,
+      "JSHeapUsedSize": 3300392,
+      "JSHeapTotalSize": 4980736,
+      "FirstMeaningfulPaint": 3255032.611769,
+      "DomContentLoaded": 3255032.637873,
+      "NavigationStart": 3255032.47149
+    }
+  },
+  "errors": []
+}

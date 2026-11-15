@@ -1,0 +1,409 @@
+{
+  "browser": "Chrome/157.0.8103.38",
+  "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "renderer": "Headless Chromium with SwiftShader; browser-visible renderer is not a physical GPU",
+  "cpuThrottleRate": 1,
+  "reducedMotion": true,
+  "coldCache": true,
+  "desktop": {
+    "viewport": [
+      1440,
+      900,
+      1
+    ],
+    "navigation": {
+      "responseStartMs": 11,
+      "domContentLoadedMs": 120.60000038146973,
+      "loadMs": 121.30000019073486,
+      "transferBytes": 2986,
+      "decodedBytes": 9223
+    },
+    "paint": [
+      {
+        "name": "first-paint",
+        "startTime": 128,
+        "duration": 0,
+        "size": null
+      },
+      {
+        "name": "first-contentful-paint",
+        "startTime": 128,
+        "duration": 0,
+        "size": null
+      },
+      {
+        "name": "largest-contentful-paint",
+        "startTime": 1188,
+        "duration": 0,
+        "size": 242094
+      }
+    ],
+    "longTasks": [
+      {
+        "name": "self",
+        "startTime": 161.90000009536743,
+        "duration": 51,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 262,
+        "duration": 444,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 712.6000003814697,
+        "duration": 56,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 769.2000002861023,
+        "duration": 64,
+        "size": null
+      }
+    ],
+    "slowCanvasOps": [],
+    "slowWebGLOps": [
+      {
+        "method": "drawArrays",
+        "durationMs": 0.3
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      }
+    ],
+    "ambientGpuTimerExtension": false,
+    "rafCallbacks": {},
+    "observerCallbacks": {
+      "ResizeObserver": {
+        "calls": 20,
+        "totalMs": 0.20000028610229492,
+        "maxMs": 0.20000028610229492,
+        "over8Ms": 0
+      },
+      "IntersectionObserver": {
+        "calls": 21,
+        "totalMs": 56.59999990463257,
+        "maxMs": 56.30000019073486,
+        "over8Ms": 1
+      }
+    },
+    "resources": [
+      {
+        "name": "/assets/index-Dh4X_Mly.js",
+        "initiator": "script",
+        "durationMs": 32.7,
+        "transferBytes": 115091,
+        "encodedBytes": 114791,
+        "decodedBytes": 355589
+      },
+      {
+        "name": "/assets/index-C6yXZ4un.css",
+        "initiator": "link",
+        "durationMs": 21.7,
+        "transferBytes": 23962,
+        "encodedBytes": 23662,
+        "decodedBytes": 108785
+      }
+    ],
+    "dom": {
+      "nodes": 551,
+      "galleryCards": 18,
+      "previews": 20,
+      "canvases": 20
+    },
+    "worker": {
+      "active": 0,
+      "created": 0,
+      "urls": []
+    },
+    "ambient": {
+      "width": 1226,
+      "height": 774,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "pixelRatio": 0.85,
+      "fallback": "false"
+    },
+    "overflow": false,
+    "heap": {
+      "usedBytes": 6221906,
+      "totalBytes": 7460398
+    }
+  },
+  "profile": {
+    "durationMs": 1400,
+    "samplingIntervalMicros": 1000,
+    "topStacks": [
+      {
+        "frame": "(root) @ [native]:0:0 <- (idle) @ [native]:0:0",
+        "samples": 1226
+      },
+      {
+        "frame": "(root) @ [native]:0:0 <- (program) @ [native]:0:0",
+        "samples": 2
+      }
+    ]
+  },
+  "trace": {
+    "eventCount": 80,
+    "windowMs": 1200,
+    "longEvents": [],
+    "longTaskDetails": [],
+    "threads": {
+      "0:0": "swapper",
+      "3580168:3580191": "PerfettoTrace",
+      "3580032:3580032": "CrBrowserMain",
+      "3580032:3580131": "PerfettoTrace",
+      "3765684:3765684": "CrRendererMain",
+      "3765684:3765691": "PerfettoTrace",
+      "3580032:3580214": "Chrome_DevToolsHandlerThread",
+      "3580168:3580197": "VizCompositorThread",
+      "3580032:3580132": "ThreadPoolServiceThread"
+    }
+  },
+  "search": {
+    "desktopMsIncludingCDPRoundTrips": 293,
+    "mobileMsIncludingCDPRoundTrips": 129,
+    "exactResult": "01 STUDY",
+    "desktopMetrics": {
+      "taskDurationDeltaSeconds": 0.3908560000000001,
+      "scriptDurationDeltaSeconds": 0.10352
+    }
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844,
+      2
+    ],
+    "cards": 18,
+    "previews": 20,
+    "documentWidth": 390,
+    "overflow": false,
+    "visibleCanvasCount": 1
+  },
+  "final": {
+    "longTasks": [
+      {
+        "name": "self",
+        "startTime": 161.90000009536743,
+        "duration": 51,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 262,
+        "duration": 444,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 712.6000003814697,
+        "duration": 56,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 769.2000002861023,
+        "duration": 64,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5631.900000095367,
+        "duration": 58,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 5738.300000190735,
+        "duration": 61,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6058.5,
+        "duration": 125,
+        "size": null
+      },
+      {
+        "name": "self",
+        "startTime": 6414.800000190735,
+        "duration": 57,
+        "size": null
+      }
+    ],
+    "slowCanvasOps": [],
+    "slowWebGLOps": [
+      {
+        "method": "drawArrays",
+        "durationMs": 0.3
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      },
+      {
+        "method": "drawArrays",
+        "durationMs": 0
+      }
+    ],
+    "rafCallbacks": {},
+    "observerCallbacks": {
+      "ResizeObserver": {
+        "calls": 80,
+        "totalMs": 36.40000104904175,
+        "maxMs": 11.099999904632568,
+        "over8Ms": 1
+      },
+      "IntersectionObserver": {
+        "calls": 46,
+        "totalMs": 105.5,
+        "maxMs": 56.30000019073486,
+        "over8Ms": 5
+      }
+    },
+    "ambient": {
+      "width": 323,
+      "height": 699,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "pixelRatio": 0.83,
+      "fallback": "false"
+    },
+    "worker": {
+      "active": 1,
+      "created": 1
+    },
+    "heap": 8100830
+  },
+  "metrics": {
+    "desktopBeforeSearch": {
+      "Timestamp": 3254427.101953,
+      "AudioHandlers": 0,
+      "AudioWorkletProcessors": 0,
+      "Documents": 10,
+      "Frames": 7,
+      "JSEventListeners": 374,
+      "LayoutObjects": 848,
+      "MediaKeySessions": 0,
+      "MediaKeys": 0,
+      "Nodes": 878,
+      "Resources": 6,
+      "ContextLifecycleStateObservers": 19,
+      "V8PerContextDatas": 2,
+      "WorkerGlobalScopes": 0,
+      "UACSSResources": 0,
+      "RTCPeerConnections": 0,
+      "ResourceFetchers": 10,
+      "AdSubframes": 0,
+      "DetachedScriptStates": 1,
+      "ArrayBufferContents": 2,
+      "LayoutCount": 23,
+      "RecalcStyleCount": 25,
+      "LayoutDuration": 0.036053,
+      "RecalcStyleDuration": 0.036897,
+      "DevToolsCommandDuration": 0.061316,
+      "ScriptDuration": 0.162825,
+      "V8CompileDuration": 0,
+      "TaskDuration": 1.075389,
+      "TaskOtherDuration": 0.778298,
+      "ThreadTime": 0.201672,
+      "ProcessTime": 0.58,
+      "JSHeapUsedSize": 2470928,
+      "JSHeapTotalSize": 3670016,
+      "FirstMeaningfulPaint": 3254421.80991,
+      "DomContentLoaded": 3254421.804664,
+      "NavigationStart": 3254421.684207
+    },
+    "desktopAfterSearch": {
+      "Timestamp": 3254427.555527,
+      "AudioHandlers": 0,
+      "AudioWorkletProcessors": 0,
+      "Documents": 10,
+      "Frames": 7,
+      "JSEventListeners": 911,
+      "LayoutObjects": 1410,
+      "MediaKeySessions": 0,
+      "MediaKeys": 0,
+      "Nodes": 1418,
+      "Resources": 6,
+      "ContextLifecycleStateObservers": 21,
+      "V8PerContextDatas": 2,
+      "WorkerGlobalScopes": 1,
+      "UACSSResources": 0,
+      "RTCPeerConnections": 0,
+      "ResourceFetchers": 11,
+      "AdSubframes": 0,
+      "DetachedScriptStates": 1,
+      "ArrayBufferContents": 4,
+      "LayoutCount": 51,
+      "RecalcStyleCount": 63,
+      "LayoutDuration": 0.045697,
+      "RecalcStyleDuration": 0.059336,
+      "DevToolsCommandDuration": 0.063173,
+      "ScriptDuration": 0.266345,
+      "V8CompileDuration": 0,
+      "TaskDuration": 1.466245,
+      "TaskOtherDuration": 1.031694,
+      "ThreadTime": 0.30412,
+      "ProcessTime": 1.08,
+      "JSHeapUsedSize": 3629576,
+      "JSHeapTotalSize": 6029312,
+      "FirstMeaningfulPaint": 3254421.80991,
+      "DomContentLoaded": 3254421.804664,
+      "NavigationStart": 3254421.684207
+    },
+    "final": {
+      "Timestamp": 3254429.446367,
+      "AudioHandlers": 0,
+      "AudioWorkletProcessors": 0,
+      "Documents": 10,
+      "Frames": 7,
+      "JSEventListeners": 1148,
+      "LayoutObjects": 1533,
+      "MediaKeySessions": 0,
+      "MediaKeys": 0,
+      "Nodes": 1455,
+      "Resources": 6,
+      "ContextLifecycleStateObservers": 21,
+      "V8PerContextDatas": 2,
+      "WorkerGlobalScopes": 1,
+      "UACSSResources": 0,
+      "RTCPeerConnections": 0,
+      "ResourceFetchers": 11,
+      "AdSubframes": 0,
+      "DetachedScriptStates": 1,
+      "ArrayBufferContents": 6,
+      "LayoutCount": 103,
+      "RecalcStyleCount": 124,
+      "LayoutDuration": 0.083917,
+      "RecalcStyleDuration": 0.219255,
+      "DevToolsCommandDuration": 0.065736,
+      "ScriptDuration": 0.366965,
+      "V8CompileDuration": 0,
+      "TaskDuration": 2.087393,
+      "TaskOtherDuration": 1.35152,
+      "ThreadTime": 0.468036,
+      "ProcessTime": 1.86,
+      "JSHeapUsedSize": 4268980,
+      "JSHeapTotalSize": 6553600,
+      "FirstMeaningfulPaint": 3254421.80991,
+      "DomContentLoaded": 3254421.804664,
+      "NavigationStart": 3254421.684207
+    }
+  },
+  "errors": []
+}

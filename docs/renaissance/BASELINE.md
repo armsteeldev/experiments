@@ -126,3 +126,22 @@ The browser images are [phone after resize](evidence/lensing-lifecycle-mobile.pn
 At `368a298`, the build measured 355.46 kB initial JS (114.69 kB gzip), 108.79 kB CSS (23.66 kB gzip), 19.52 kB Where Light Falls (7.78 kB gzip), and a 6.94 kB lensing worker. The six-study browser suite subsequently passed 50 temporary captures, 12 repeated route entries, the live packet reroute, desktop/mobile interaction and 19-card gallery/search checks without browser/HTTP errors. Its compact run summary is [`evidence/invisible-world-browser-checks.json`](evidence/invisible-world-browser-checks.json); the full transient capture set was kept outside the repository. The route-share sweep also passed for all 19 exhibits after allowing the custom Neural lesson click targets a three-CSS-pixel placement tolerance.
 
 No dependency, tracking or service was added. HeadlessChrome used SwiftShader; the test’s 390×844, DPR 2 phone is viewport emulation. WebGPU device-loss behavior still needs a browser with WebGPU, and physical phone/GPU timing remains unmeasured.
+
+## Homepage and gallery performance follow-up
+
+`npm run qa:collection-performance` captures the cold homepage at 1440×900, then emulates a 390×844 DPR 2 phone. It disables cache use in the isolated browser target, records paint/network/heap/worker data, monitors long tasks and drawing callbacks, captures a short Chrome trace with thread names, exercises exact-result search, and checks document overflow. Each run loads 18 gallery cards and 20 lightweight canvases; none of the 19 simulation engines is mounted by the gallery. Both before/after builds loaded without browser or HTTP errors.
+
+Two paired runs compared the committed `cd76da9` source with the adaptive ambient-field change, in the same HeadlessChrome 157 / SwiftShader browser, CPU rate 1, and isolated cold-cache targets. The before build was archived from `HEAD` into a temporary directory; the preview server and archive were removed after measurement. These are renderer-specific lab results, not physical-GPU or phone results.
+
+| Measurement | Before median | After median | Change |
+|---|---:|---:|---:|
+| Long-task duration sum in the initial gallery sample | 1,875.5 ms | 1,563.5 ms | 16.6% lower |
+| Per-run median long-task duration | 275.5 ms | 167.5 ms | 39.2% lower |
+| Largest traced GPU-main task | 268.9 ms | 152.8 ms | 43.2% lower |
+| Page `ScriptDuration` during open-and-search | 88.5 ms | 69.9 ms | 21.0% lower |
+| Search workflow wall time through CDP | 981.5 ms | 361.5 ms | 63.1% lower |
+| Ambient canvas backing-pixel ratio at the gallery sample | 0.85 | 0.535 | 37.1% lower per dimension |
+
+The CDP search wall time includes automation round trips, and page long tasks include browser/rendering work rather than only the ambient shader. Frame traces show long `GPUTask` / renderer commit work while the ambient WebGL canvas animates; the reduced-motion check leaves it static and at full density. The site now watches rendered-frame intervals and lowers pixel density only for this decorative background after repeated slow frames. It steps down to a 0.52 floor and never changes exhibit simulation quality. On the two software-rendered trials, this left about 60% fewer ambient backing pixels at capture, with a visually close desktop result. Subsequent post-change runs also passed the mobile/search/error checks. FCP and LCP varied between samples and showed no consistent improvement, so they are not presented as a gain.
+
+Initial JS rose 0.14 kB raw / 0.12 kB gzip in the production build (355.46 → 355.60 kB raw); CSS was unchanged. Detailed paired records are [`collection-performance-before.json`](evidence/collection-performance-before.json), [`collection-performance-before-repeat-2.json`](evidence/collection-performance-before-repeat-2.json), [`collection-performance-after.json`](evidence/collection-performance-after.json), and [`collection-performance-after-repeat-2.json`](evidence/collection-performance-after-repeat-2.json). The reduced-motion sample is [`collection-performance-reduced-motion.json`](evidence/collection-performance-reduced-motion.json). Representative [before desktop](evidence/collection-performance-desktop-before.png), [after desktop](evidence/collection-performance-desktop-after.png), and [after phone](evidence/collection-performance-mobile-after.png) captures retain the visual review. The latest post-change run is the default [`collection-performance.json`](evidence/collection-performance.json).

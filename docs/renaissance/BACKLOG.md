@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current through the cancellable Where Light Falls rendering work in `368a298` on `renaissance/next-generation`: cooperative table/source/raster preparation and a main-thread fallback join bounded reproducible state across the collection, targeted WebGL recovery, hidden-tab suspension and measured high-density Flocking improvements. Items are ordered by visitor value, risk and dependency.
+Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change, alongside the cancellable Where Light Falls work in `368a298`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -48,7 +48,7 @@ Status is current through the cancellable Where Light Falls rendering work in `3
 
 ## P1 — Performance and lifecycle
 
-- [ ] Profile homepage/gallery network and main-thread behavior with timings tied to the selected renderer.
+- [x] Profile cold homepage/gallery loading, search, main-thread long tasks, animation callbacks, and GPU/compositor traces in HeadlessChrome 157 / SwiftShader; reduce only decorative ambient pixel density after repeated slow frames and preserve before/after evidence.
 - [ ] Measure lazy exhibit chunks, mounting duration, frame cadence and worker/AudioContext/WebGL cleanup after repeated route changes.
 - [x] Instrument workers and audio contexts during two complete nineteen-route SPA passes; confirm every route-owned worker terminates and each explicitly started audio context closes on exit.
 - [x] Profile the 1,400-agent Flocking predator scenario before/after optimization under a fixed headless browser and workload; preserve exact trial data and the software-renderer caveat.
