@@ -412,8 +412,32 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
   useEffect(() => {
     if (!activeOverlay) return
     const panelId = activeOverlay === 'controls' ? 'experiment-controls' : activeOverlay === 'selector' ? 'experiment-selector' : 'experiment-information'
-    const frame = requestAnimationFrame(() => document.getElementById(panelId)?.querySelector<HTMLElement>('button, input, select, [tabindex="0"]')?.focus({ preventScroll: true }))
-    return () => cancelAnimationFrame(frame)
+    let cancelled = false
+    let frame = 0
+    let timeout = 0
+    let observer: MutationObserver | null = null
+    const focusPanel = () => {
+      if (cancelled) return false
+      const panel = document.getElementById(panelId)
+      const target = panel?.querySelector<HTMLElement>('button, input, select, [tabindex="0"]')
+      if (!panel || !target || panel.hasAttribute('inert') || panel.getAttribute('aria-hidden') === 'true') return false
+      target.focus({ preventScroll: true })
+      observer?.disconnect()
+      if (timeout) window.clearTimeout(timeout)
+      return true
+    }
+    observer = new MutationObserver(() => { focusPanel() })
+    observer.observe(stageRef.current ?? document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-hidden', 'inert'] })
+    frame = requestAnimationFrame(() => {
+      if (focusPanel()) return
+      timeout = window.setTimeout(() => observer?.disconnect(), 2500)
+    })
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      if (timeout) window.clearTimeout(timeout)
+      observer?.disconnect()
+    }
   }, [activeOverlay, experiment?.id])
 
   useEffect(() => {

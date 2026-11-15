@@ -20,6 +20,7 @@
     "qa:journeys": "node scripts/qa-journeys.mjs",
     "qa:saved-experiments": "node scripts/qa-saved-experiments.mjs",
     "qa:state-sharing": "node scripts/qa-state-sharing.mjs",
+    "qa:exhibit-overlays": "node scripts/qa-exhibit-overlays.mjs",
     "qa:invisible-world": "node scripts/qa-invisible-world.mjs",
     "test": "npm run test:numerics && npm run test:simulations && npm run test:adder && npm run test:fern && npm run test:attractors && npm run test:invisible-world && npm run test:journeys && npm run test:buttons && npm run test:storage",
     "check:site": "node scripts/check-site-pages.mjs",

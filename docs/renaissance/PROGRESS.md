@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Working tree:** Curated paths and a versioned local experiment notebook are implemented and browser-verified. Notebook work is not committed yet.
+- **Working tree:** Clean after the shared-shell accessibility/mobile milestone. Curated paths, versioned local experiment notebook and overlay/navigation fixes are browser-verified.
 
 ## Milestones
 
@@ -26,7 +26,9 @@
 - Captures and machine-readable results are in [`evidence/`](evidence/); none use a production or real mobile device.
 - Build delta from the baseline: initial JS 338.41 → 344.92 kB raw (109.27 → 111.22 kB gzip); initial CSS 97.60 → 103.68 kB raw (21.38 → 22.68 kB gzip). Lazy exhibit chunks are unchanged.
 - The optional local notebook now sits before the long card grid, so saved setups are visible near the collection’s first choices. Its entries can be named, reopened, refreshed, or removed.
-- Remaining for this milestone: improve search/recommendation relevance, review all 19 route control overlays with fresh browsers, and inspect preview scheduling/first paint under a clean profile.
+- Fixed two measured shared-navigation gaps: phone dock actions were partly off-screen and below a useful touch size, and the exhibit chooser CSS targeted direct children while its options are nested in a list. At widths up to 420px the dock now keeps six core actions at 44×44 px and moves sequential navigation into the full exhibit chooser; every chooser row is 44 px and its final option is scroll-reachable.
+- Added `qa:exhibit-overlays`: all nineteen routes × six viewport shapes × dock, Controls, About and chooser (456 checks). The browser found a lazy-mount race where a controls panel could open before its exhibit loaded and miss keyboard focus. The shared shell now waits for that panel to mount before moving focus. The rerun passed with zero layout/accessibility findings and zero browser/network errors. See [`evidence/exhibit-overlay-review.json`](evidence/exhibit-overlay-review.json) and [320px mobile chooser/dock capture](evidence/exhibit-selector-320-mobile.png).
+- Remaining for this milestone: improve search/recommendation relevance and inspect preview scheduling/first paint under a clean profile.
 
 ### 3 — New product capabilities: in progress
 
@@ -38,7 +40,7 @@
 - Closed the cross-exhibit support gap found during the browser sweep: The Adder now shares/restores its width, architecture, valid operands and speed. Its changed 8-bit look-ahead link restored 23 + 17 and the displayed result was 40.
 - The Living Network restores its bounded 48-character message payload as well as endpoints; the input, save form and privacy page warn that this text appears in saved/shared settings and should not contain private information.
 
-### 4–10 — Performance, accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: queued
+### 4–10 — Performance, broader accessibility/mobile, automated QA, developer infrastructure, scientific integrity, creative innovation, final review: queued
 
 Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpoint does not claim completion of these milestones.
 
@@ -51,6 +53,8 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - Curated path data contains only stable exhibit IDs and editorial transition notes. Path context is a non-sensitive `journey` query value; no progress is stored or sent elsewhere.
 - A path's About panel remains open while navigating between its stops, but the shared dock's ordinary navigation remains free to leave the path.
 - URL settings are Base64 URL encoded, not encrypted. Version 1 is unwrapped for exhibit consumers; versionless links remain supported. Named settings live only in local storage (or current-tab memory if storage is unavailable), with a 12-entry/128-KiB notebook cap.
+- At phone widths, the collection selector is the primary route navigator; this preserves all nineteen destinations and frees space for 44 px home, settings, About, pause and fullscreen targets.
+- Shared overlay focus waits for lazily mounted exhibit controls, then returns to the opening trigger on Escape. The observer disconnects on focus, overlay close or after 2.5 seconds if a failed module never creates its panel.
 
 ## Latest verification
 
@@ -63,7 +67,10 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run test:storage` — passed schema, validation, legacy/future version, size, count, recovery, removal, and storage-fallback cases.
 - `npm run qa:saved-experiments` — passed setting changes, named save, URL restoration, deep-link refresh, 390px and 320px gallery fit, removal target size, deletion, privacy disclosure, and zero browser/network errors. Screenshots and results are in [`evidence/`](evidence/).
 - `npm run qa:state-sharing` — passed share → reload for all 19 exhibits, state-size and current-envelope checks, including edited Adder values; no browser or HTTP errors. The harness also verifies restored Adder controls and calculated result.
+- `npm run verify` — passed after the shared-shell changes, including all simulations, exhaustive 4-/8-bit Adder cases, storage validation, 19 exhibit metadata/routes, and static SEO/sitemap checks.
+- `npm run qa:exhibit-overlays` — passed 456 checks for the dock, Controls, About and selector over 19 exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. All focus movement, Escape close/return, panel bounds, scroll reach, selector row height, mobile dock target size, and browser/network-error checks passed. This is headless SwiftShader plus viewport/touch emulation, not a physical phone or screen-reader test.
+- Current build payload: initial JS 351.64 kB raw / 113.45 kB gzip; initial CSS 107.92 / 23.45 kB gzip. Exhibit chunks remain lazy; no dependency or service was added.
 
 ## Next action
 
-Review the full diff, commit this checkpoint, then continue with concept-search relevance, all-route overlay review, preview scheduling, and accessibility/mobile audit. Keep the source branch and production untouched.
+Next: investigate gallery preview startup and concept-based search/recommendations. Follow with reduced-motion, keyboard and screen-reader review across the full collection; physical-device claims remain open until a real device is available.

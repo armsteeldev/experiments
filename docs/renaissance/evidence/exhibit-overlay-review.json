@@ -1,0 +1,104 @@
+{
+  "base": "http://127.0.0.1:5215",
+  "chromium": "HeadlessChrome 157, SwiftShader WebGL, viewport and touch emulation",
+  "coverage": {
+    "exhibitCount": 19,
+    "viewports": [
+      {
+        "width": 320,
+        "height": 740,
+        "mobile": true,
+        "name": "narrow portrait"
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "mobile": true,
+        "name": "phone portrait"
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "mobile": true,
+        "name": "tablet portrait"
+      },
+      {
+        "width": 1024,
+        "height": 768,
+        "mobile": false,
+        "name": "tablet landscape"
+      },
+      {
+        "width": 1440,
+        "height": 900,
+        "mobile": false,
+        "name": "desktop"
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "mobile": true,
+        "name": "phone landscape"
+      }
+    ],
+    "checks": 456,
+    "groups": {
+      "dock": 114,
+      "controls": 114,
+      "information": 114,
+      "selector": 114
+    }
+  },
+  "representative": {
+    "narrowPhoneDock": {
+      "bounds": {
+        "x": 7.5,
+        "right": 312.5,
+        "width": 305
+      },
+      "targets": [
+        {
+          "label": "Return to exhibition",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Choose experiment. Current experiment: The Infinite Shore",
+          "width": 66,
+          "height": 44
+        },
+        {
+          "label": "Toggle experiment controls",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Toggle experiment information",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Pause experiment",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Enter fullscreen",
+          "width": 44,
+          "height": 44
+        }
+      ]
+    },
+    "narrowPhoneSelector": {
+      "rowCount": 19,
+      "minRowHeight": 44,
+      "lastRowReachable": true
+    },
+    "lazyControlFocus": {
+      "focusedIntoPanel": true,
+      "EscapeReturnedFocus": true
+    }
+  },
+  "issues": [],
+  "browserErrors": []
+}

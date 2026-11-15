@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the active `renaissance/next-generation` notebook checkpoint. Items are ordered by visitor value, risk and dependency.
+Status is current to the `renaissance/next-generation` shared-shell/mobile checkpoint. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -23,8 +23,10 @@ Status is current to the active `renaissance/next-generation` notebook checkpoin
 
 ## P1 — Product accessibility and mobile
 
-- [ ] Sweep all 19 routes at 320, 390, 768, 1024 and 1440 CSS pixels, portrait and landscape, including every overlay.
-- [ ] Review label size, contrast, focus order, dialog semantics, touch target geometry, and screen-reader descriptions.
+- [x] Sweep all 19 routes at 320×740, 390×844, 768×1024, 1024×768, 1440×900, and 844×390, including Controls, About, and the route selector.
+- [x] Keep every core phone dock action inside the viewport with 44×44 px targets; verify that all nineteen 44 px selector rows remain reachable by scrolling.
+- [x] Move focus into shared overlays and return it to the trigger on Escape, including when an exhibit control panel mounts after its lazy module loads.
+- [ ] Review label size, contrast, reading order, dialog semantics and screen-reader descriptions with assistive technology.
 - [ ] Verify keyboard and touch equivalents for primary actions and support reduced-motion preferences.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
 
