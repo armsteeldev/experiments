@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current through the Neural Networks replay work following `ad13449` on `renaissance/next-generation`: bounded custom lessons and model initialization seeds join the versioned share state; compact cellular and custom Logic/Invisible Forces/Gravity/Flocking replay, Canvas 2D/GPU state parity, a measured high-density Flocking optimization, background-tab suspension, Mandelbrot WebGL fallback/restoration, and complete nineteen-route lifecycle passes remain validated. Items are ordered by visitor value, risk and dependency.
+Status is current through the cancellable Where Light Falls rendering work in `368a298` on `renaissance/next-generation`: cooperative table/source/raster preparation and a main-thread fallback join bounded reproducible state across the collection, targeted WebGL recovery, hidden-tab suspension and measured high-density Flocking improvements. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -54,7 +54,8 @@ Status is current through the Neural Networks replay work following `ad13449` on
 - [x] Profile the 1,400-agent Flocking predator scenario before/after optimization under a fixed headless browser and workload; preserve exact trial data and the software-renderer caveat.
 - [x] Test a real background-tab switch: network ticks ignore throttled hidden callbacks; deep Mandelbrot worker work cancels, stays idle, and resumes in a newer generation.
 - [x] Force fast Mandelbrot WebGL context loss/restoration; verify the progressive fallback and rebuilt shader output in the browser.
-- [ ] Test resize behavior, cancellation during heavy lensing work, and physical WebGPU device-loss recovery.
+- [x] Test lensing resize, hidden-tab cancellation/resume, and cancellation during an in-flight sky raster, including a forced no-worker recovery; numerical checks require byte-identical synchronous/cooperative source pixels and raster output.
+- [ ] Exercise the Mandelbrot WebGPU `device.lost` recovery with a real WebGPU-capable implementation; headless SwiftShader only exposes WebGL in the current run.
 - [ ] Repeat suitable performance samples on a physical GPU and mid-range mobile; keep SwiftShader results separate.
 
 ## P2 — Automated QA and scientific quality
