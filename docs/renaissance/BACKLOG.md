@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the gallery-preview lifecycle checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
+Status is current to the collection-discovery checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -49,8 +49,9 @@ Status is current to the gallery-preview lifecycle checkpoint on `renaissance/ne
 
 - [x] Inspect first paint for all 19 previews on desktop and phone; test interactive hover/reset and reduced-motion behavior.
 - [x] Terminate the shared Mandelbrot preview worker and clear preview canvases when the gallery unmounts; verify the worker does not return on gallery remount with cached previews.
-- [ ] Test that live previews suspend promptly while cards remain outside the visible region.
-- [ ] Check concept search, no-results behavior, favorites/recent handling, and the usefulness of each related link.
+- [x] Test that a live preview evolves while visible, suspends outside the visible region, and resumes on return.
+- [x] Add six optional idea searches backed by structured concepts across all 19 exhibits, and curate two to three related destinations per exhibit.
+- [x] Check concept search result accuracy, no-results recovery, favourites/recent behavior, phone targets, and related links across all 19 routes.
 - [ ] Keep a single preview budget; do not mount nineteen full simulation engines.
 - [ ] Improve card and microcopy legibility where browser review shows a real issue.
 

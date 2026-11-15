@@ -1,0 +1,252 @@
+{
+  "browser": "HeadlessChrome 157, SwiftShader WebGL, desktop and touch-emulated phone",
+  "concepts": {
+    "desktopSuggestions": [
+      "Emergence",
+      "Recursion",
+      "Waves",
+      "Learning",
+      "Fields",
+      "Computation"
+    ],
+    "conceptChecks": [
+      {
+        "term": "emergence",
+        "results": [
+          "automata",
+          "boids",
+          "garden",
+          "reaction"
+        ]
+      },
+      {
+        "term": "recursion",
+        "results": [
+          "lsystem"
+        ]
+      },
+      {
+        "term": "waves",
+        "results": [
+          "reaction",
+          "waves"
+        ]
+      },
+      {
+        "term": "learning",
+        "results": [
+          "neural"
+        ]
+      },
+      {
+        "term": "fields",
+        "results": [
+          "fluid",
+          "forces",
+          "waves"
+        ]
+      },
+      {
+        "term": "computation",
+        "results": [
+          "adder",
+          "machine"
+        ]
+      }
+    ],
+    "noResultsRecovery": {
+      "count": "00 STUDIES",
+      "status": "∅No studies found in this corner of the gallery.Return to all works",
+      "clearAvailable": true
+    },
+    "mobileSuggestions": [
+      "Emergence",
+      "Recursion",
+      "Waves",
+      "Learning",
+      "Fields",
+      "Computation"
+    ],
+    "mobileTouchTargets": [
+      40,
+      40,
+      40,
+      40,
+      40,
+      40
+    ],
+    "mobileOverflow": false,
+    "mobileFieldResults": [
+      "fluid",
+      "forces",
+      "waves"
+    ]
+  },
+  "existingDiscovery": {
+    "favorites": [
+      "mandelbrot"
+    ],
+    "recentVisit": "The Infinite Shore"
+  },
+  "relatedStudies": {
+    "exhibitsChecked": 19,
+    "checks": [
+      {
+        "exhibit": "mandelbrot",
+        "related": [
+          "attractors",
+          "lsystem",
+          "automata"
+        ]
+      },
+      {
+        "exhibit": "fluid",
+        "related": [
+          "waves",
+          "forces",
+          "reaction"
+        ]
+      },
+      {
+        "exhibit": "boids",
+        "related": [
+          "garden",
+          "automata",
+          "reaction"
+        ]
+      },
+      {
+        "exhibit": "attractors",
+        "related": [
+          "mandelbrot",
+          "reaction",
+          "neural"
+        ]
+      },
+      {
+        "exhibit": "reaction",
+        "related": [
+          "automata",
+          "garden",
+          "lsystem"
+        ]
+      },
+      {
+        "exhibit": "lsystem",
+        "related": [
+          "mandelbrot",
+          "garden",
+          "automata"
+        ]
+      },
+      {
+        "exhibit": "gravity",
+        "related": [
+          "forces",
+          "lensing",
+          "optics"
+        ]
+      },
+      {
+        "exhibit": "machine",
+        "related": [
+          "logic",
+          "adder",
+          "network"
+        ]
+      },
+      {
+        "exhibit": "neural",
+        "related": [
+          "machine",
+          "attractors",
+          "garden"
+        ]
+      },
+      {
+        "exhibit": "logic",
+        "related": [
+          "adder",
+          "machine",
+          "network"
+        ]
+      },
+      {
+        "exhibit": "forces",
+        "related": [
+          "gravity",
+          "waves",
+          "optics"
+        ]
+      },
+      {
+        "exhibit": "automata",
+        "related": [
+          "reaction",
+          "lsystem",
+          "boids"
+        ]
+      },
+      {
+        "exhibit": "adder",
+        "related": [
+          "logic",
+          "machine",
+          "network"
+        ]
+      },
+      {
+        "exhibit": "waves",
+        "related": [
+          "fluid",
+          "optics",
+          "forces"
+        ]
+      },
+      {
+        "exhibit": "optics",
+        "related": [
+          "waves",
+          "lensing",
+          "forces"
+        ]
+      },
+      {
+        "exhibit": "sound",
+        "related": [
+          "waves",
+          "network",
+          "optics"
+        ]
+      },
+      {
+        "exhibit": "garden",
+        "related": [
+          "boids",
+          "reaction",
+          "automata"
+        ]
+      },
+      {
+        "exhibit": "network",
+        "related": [
+          "machine",
+          "logic",
+          "sound"
+        ]
+      },
+      {
+        "exhibit": "lensing",
+        "related": [
+          "gravity",
+          "optics"
+        ]
+      }
+    ],
+    "linkFollowed": {
+      "from": "mandelbrot",
+      "to": "attractors"
+    }
+  },
+  "browserErrors": []
+}

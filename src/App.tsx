@@ -6,6 +6,7 @@ import ExperimentBoundary from './components/ExperimentBoundary'
 import { Icon } from './components/Icon'
 import { experiments } from './registry'
 import journeyData from './data/journeys.json'
+import discoveryConcepts from './data/discovery-concepts.json'
 import siteCopy from './data/site-copy.json'
 import { decodeState, encodeState, getFavorites, getRecent, getSavedExperiments, rememberVisit, removeSavedExperiment, saveExperimentState, toggleFavorite } from './lib/storage'
 import { SITE_ORIGIN, updatePageMetadata } from './lib/metadata'
@@ -135,7 +136,7 @@ function Exhibition() {
     const needle = normalized(query.trim())
     return experiments.filter((item) => {
       const matchesFilter = filter === 'All works' || (filter === 'Favourites' ? favorites.includes(item.id) : item.category === filter)
-      const haystack = normalized([item.title, item.category, item.description, item.subtitle, item.about, item.method, item.metaDescription].join(' '))
+      const haystack = normalized([item.title, item.category, item.description, item.subtitle, item.about, item.method, item.metaDescription, ...item.concepts].join(' '))
       return matchesFilter && (!needle || haystack.includes(needle))
     })
   }, [filter, query, favorites])
@@ -214,6 +215,10 @@ function Exhibition() {
         <input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="A pattern, a feeling, a name…" aria-label="Search studies by name, discipline or idea" aria-controls="gallery-grid" />
         {query && <button className="search-clear" onClick={() => setQuery('')} aria-label="Clear search"><Icon name="close" /></button>}
         <kbd>ESC</kbd>
+      </div>}
+      {searchOpen && !query.trim() && <div className="search-ideas" role="group" aria-label="Explore the collection by idea">
+        <span>START WITH AN IDEA</span>
+        {discoveryConcepts.map(({ term, label }) => <button key={term} type="button" onClick={() => setQuery(term)} aria-pressed={normalized(query.trim()) === normalized(term)}>{label}</button>)}
       </div>}
       <div className="filter-row" role="group" aria-label="Filter the collection by discipline">
         {filters.map((item) => <button key={item} className={'filter-chip' + (filter === item ? ' active' : '')} onClick={() => setFilter(item)} aria-pressed={filter === item}>

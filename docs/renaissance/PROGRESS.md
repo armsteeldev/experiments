@@ -5,7 +5,7 @@
 - **Branch/worktree:** `renaissance/next-generation` at `/home/charlie/experiments-next`.
 - **Base:** `cd76da9` (nineteen-exhibit expansion), verified to contain `dfe47f7` combined-release history.
 - **Safety:** Source branches/worktrees and the public site have not been modified. No push or deployment.
-- **Working tree:** Clean at the gallery preview lifecycle checkpoint; curated paths, local experiment notebook, shared navigation/overlays and gallery preview cleanup are committed and browser-verified.
+- **Working tree:** Clean at the collection-discovery checkpoint; curated paths, local experiment notebook, shared navigation/overlays, gallery preview cleanup and concept search are committed and browser-verified.
 
 ## Milestones
 
@@ -31,7 +31,10 @@
 - Added a gallery preview browser sweep across all 19 cards at desktop and touch-emulated phone sizes. All 38 previews paint visibly, neither viewport has horizontal overflow, L-system hover changes the rendered pixels and pointer leave restores the exact sampled base image. Emulated reduced motion keeps that preview static.
 - The sweep exposed a lifecycle leak: the shared Mandelbrot preview raster worker remained alive after leaving the gallery. Preview canvases now use reference-counted ownership; when the last gallery preview unmounts, pending cache entries and raster/background canvases are cleared and the worker terminates. Returning to the gallery reuses its cached preview without reopening the worker. Browser instrumentation verified one worker created, one terminated, zero active after unmount and still zero active on return.
 - Captures and the machine-readable run are in [`evidence/`](evidence/); browser validation is HeadlessChrome 157 with SwiftShader and phone emulation, not physical hardware. The production build is 351.89 kB initial JS raw / 113.55 kB gzip and 107.92 kB initial CSS raw / 23.45 kB gzip; exhibit chunks remain lazy.
-- Remaining for this milestone: improve concept search/recommendation relevance and test preview suspension while cards are outside the visible region.
+- Added a pixel-signature regression check for visibility-driven scheduling: the live attractor preview evolves while visible, becomes static outside the viewport, and resumes on return. The full gallery preview harness still passes all 38 first-paint checks with no browser/network errors.
+- Added curated concept tags for all nineteen studies. The optional search panel offers six idea prompts—Emergence, Recursion, Waves, Learning, Fields and Computation—and concept searches include editorial terms absent from titles. Every study now links to two or three hand-picked related works; the lensing panel intentionally has two to avoid a weaker third connection.
+- `qa:collection-discovery` passed all six concept queries against expected result sets, no-result recovery and Escape/focus return, favourites, recent visits, six 40 px mobile targets without overflow, all nineteen About-panel recommendation lists, and a real related-link transition. It recorded no browser/network errors. Desktop and phone captures plus the full result matrix are in [`evidence/`](evidence/).
+- The gallery continues to expose its category and favourites filters alongside idea search and editorial paths. Remaining for this milestone: review the gallery’s first-visit hierarchy and improve card legibility only where further browser evidence shows a clear need.
 
 ### 3 — New product capabilities: in progress
 
@@ -70,10 +73,10 @@ Priorities and acceptance limits are in [`BACKLOG.md`](BACKLOG.md). This checkpo
 - `npm run test:storage` — passed schema, validation, legacy/future version, size, count, recovery, removal, and storage-fallback cases.
 - `npm run qa:saved-experiments` — passed setting changes, named save, URL restoration, deep-link refresh, 390px and 320px gallery fit, removal target size, deletion, privacy disclosure, and zero browser/network errors. Screenshots and results are in [`evidence/`](evidence/).
 - `npm run qa:state-sharing` — passed share → reload for all 19 exhibits, state-size and current-envelope checks, including edited Adder values; no browser or HTTP errors. The harness also verifies restored Adder controls and calculated result.
-- `npm run verify` — passed after the shared-shell changes, including all simulations, exhaustive 4-/8-bit Adder cases, storage validation, 19 exhibit metadata/routes, and static SEO/sitemap checks.
+- `npm run verify` — passed after the shared-shell changes and again after the structured discovery update, including all simulations, exhaustive 4-/8-bit Adder cases, storage validation, 19 exhibit metadata/routes and static SEO/sitemap checks.
 - `npm run qa:exhibit-overlays` — passed 456 checks for the dock, Controls, About and selector over 19 exhibits at 320×740, 390×844, 768×1024, 1024×768, 1440×900 and 844×390. All focus movement, Escape close/return, panel bounds, scroll reach, selector row height, mobile dock target size, and browser/network-error checks passed. This is headless SwiftShader plus viewport/touch emulation, not a physical phone or screen-reader test.
-- Current build payload: initial JS 351.89 kB raw / 113.55 kB gzip; initial CSS 107.92 / 23.45 kB gzip. Exhibit chunks remain lazy; no dependency or service was added.
+- Current build payload: initial JS 354.35 kB raw / 114.25 kB gzip; initial CSS 108.79 / 23.66 kB gzip. Exhibit chunks remain lazy; no dependency or service was added.
 
 ## Next action
 
-Next: investigate gallery preview startup and concept-based search/recommendations. Follow with reduced-motion, keyboard and screen-reader review across the full collection; physical-device claims remain open until a real device is available.
+Next: continue the full accessibility and mobile review, then prioritize measured route/resource lifecycle and scientific-model gaps. Physical-device claims remain open until a real device is available.

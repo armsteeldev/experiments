@@ -6,6 +6,7 @@ const root = resolve(import.meta.dirname, '..')
 const dist = resolve(root, 'dist')
 const site = 'https://experiments.armsteel.dev'
 const metadata = JSON.parse(await readFile(resolve(root, 'src/data/experiments.json'), 'utf8'))
+const discoveryConcepts = JSON.parse(await readFile(resolve(root, 'src/data/discovery-concepts.json'), 'utf8'))
 const registry = await readFile(resolve(root, 'src/registry.ts'), 'utf8')
 
 assert.equal(metadata.length, 19, 'the registry contains the thirteen established exhibits and six Invisible World studies')
@@ -17,8 +18,15 @@ for (const item of metadata) {
   assert.ok(item.title.trim(), `${item.id} has a title`)
   assert.ok(item.metaDescription.trim().length >= 60 && item.metaDescription.length <= 180, `${item.id} has a useful search description`)
   assert.match(registry, new RegExp(`\\b${item.id}:\\s*lazy\\(`), `${item.id} has a lazy component registration`)
-  assert.ok((item.related ?? []).every((id) => id !== item.id && metadata.some((candidate) => candidate.id === id)), `${item.id} has valid related-study links`)
+  assert.ok(Array.isArray(item.concepts) && item.concepts.length >= 3 && item.concepts.length <= 5, `${item.id} has three to five curated search concepts`)
+  assert.ok(item.concepts.every((concept) => concept === concept.trim().toLocaleLowerCase() && concept.length > 1), `${item.id} concepts use normalized searchable phrases`)
+  assert.equal(new Set(item.concepts).size, item.concepts.length, `${item.id} has no duplicate concepts`)
+  assert.ok(Array.isArray(item.related) && item.related.length >= 2 && item.related.length <= 4, `${item.id} has two to four curated related studies`)
+  assert.equal(new Set(item.related).size, item.related.length, `${item.id} has no duplicate recommendations`)
+  assert.ok(item.related.every((id) => id !== item.id && metadata.some((candidate) => candidate.id === id)), `${item.id} has valid related-study links`)
 }
+assert.equal(new Set(discoveryConcepts.map(({ term }) => term)).size, discoveryConcepts.length, 'suggested concepts are unique')
+for (const idea of discoveryConcepts) assert.ok(metadata.some((item) => item.concepts.includes(idea.term)), `suggested concept ${idea.term} matches at least one exhibit`)
 
 const readPage = (route) => readFile(resolve(dist, route), 'utf8')
 const attribute = (tag, name) => tag?.match(new RegExp(`\\b${name}="([^"]*)"`, 'i'))?.[1]
@@ -108,4 +116,4 @@ assert.equal(manifest.name, 'Armsteel Experiments')
 for (const icon of manifest.icons) await access(resolve(dist, icon.src.slice(1)))
 for (const asset of ['favicon.svg', 'apple-touch-icon.png', 'og-image.svg', 'og-image.png']) await access(resolve(dist, asset))
 
-console.log(`Production page checks passed: ${metadata.length} exhibits, ${sitemapUrls.length} canonical URLs, metadata, JSON-LD, icons, robots.txt, and sitemap.xml.`)
+console.log(`Production page checks passed: ${metadata.length} exhibits, curated concept/recommendation metadata, ${sitemapUrls.length} canonical URLs, SEO, JSON-LD, icons, robots.txt, and sitemap.xml.`)

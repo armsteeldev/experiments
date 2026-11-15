@@ -88,6 +88,22 @@ const lsystemSignature = `(() => {
   return (hash >>> 0).toString(16)
 })()`
 
+const heroSignature = `(() => {
+  const canvas = document.querySelector('.hero-study-art canvas.artwork-preview')
+  const context = canvas?.getContext('2d')
+  if (!canvas || !context) return null
+  const { width, height } = canvas
+  const pixels = context.getImageData(0, 0, width, height).data
+  let hash = 2166136261
+  for (let row = 0; row < 28; row++) for (let column = 0; column < 40; column++) {
+    const x = Math.min(width - 1, Math.floor((column + .5) * width / 40))
+    const y = Math.min(height - 1, Math.floor((row + .5) * height / 28))
+    const index = (y * width + x) * 4
+    for (let channel = 0; channel < 3; channel++) hash = Math.imul(hash ^ pixels[index + channel], 16777619)
+  }
+  return (hash >>> 0).toString(16)
+})()`
+
 function previewSweep(viewportLabel) {
   return `(() => {
     const exhibits = ${JSON.stringify(exhibits.map(({ id }) => id))}
@@ -161,9 +177,22 @@ await setViewport(1440, 900, false)
 await call('Page.navigate', { url: `${base}/` })
 await waitFor(`location.pathname === '/' && document.querySelectorAll('.artwork-preview').length >= 20`, 'gallery and its preview canvases')
 await sleep(350)
+const heroVisibleStart = await evaluate(heroSignature)
+await sleep(420)
+const heroVisibleEnd = await evaluate(heroSignature)
+const visibleHeroAnimating = heroVisibleStart !== null && heroVisibleEnd !== null && heroVisibleStart !== heroVisibleEnd
 await evaluate(`document.querySelector('.gallery-grid')?.scrollIntoView({ block: 'start', behavior: 'instant' })`)
 await sleep(150)
 await capture('gallery-collection-desktop.png')
+await sleep(350)
+const heroOffscreenStart = await evaluate(heroSignature)
+await sleep(420)
+const heroOffscreenEnd = await evaluate(heroSignature)
+const offscreenHeroPaused = heroOffscreenStart !== null && heroOffscreenStart === heroOffscreenEnd
+await evaluate('window.scrollTo(0, 0)')
+await sleep(650)
+const heroAfterReturn = await evaluate(heroSignature)
+const offscreenHeroResumed = heroOffscreenEnd !== null && heroAfterReturn !== null && heroOffscreenEnd !== heroAfterReturn
 const desktop = await evaluate(previewSweep('desktop 1440×900'))
 
 const hoverTarget = await evaluate(`(() => {
@@ -214,6 +243,7 @@ const report = {
   coverage: { exhibits: exhibits.length, viewports: [desktop.viewport, mobile.viewport], firstPaintChecks: desktop.previews.length + mobile.previews.length },
   firstPaint: { desktopPassed: desktop.previews.filter((preview) => preview.state?.painted && preview.visible).length, mobilePassed: mobile.previews.filter((preview) => preview.state?.painted && preview.visible).length, unpainted, horizontalOverflow: { desktop: desktop.pageOverflow, mobile: mobile.pageOverflow } },
   interaction: { preview: 'lsystem', baseSignature: hoverInitial, hoveredSignature: hoverSignature, resetSignature, hoverChangesPixels: hoverSignature !== hoverInitial, pointerLeaveRestoresBase: resetSignature === hoverInitial, reducedMotion: { emulated: reducedMotion, hoverSignatureUnchanged: reducedHoverSignature === hoverInitial } },
+  visibilityScheduling: { visibleHeroAnimating, offscreenHeroPaused, offscreenHeroResumed },
   workerLifecycle: { inGallery: workersInGallery, afterGalleryUnmount: workersAfterGalleryUnmount, afterGalleryReturn: workersAfterReturn },
   browserErrors,
 }
@@ -224,6 +254,9 @@ if (desktop.pageOverflow || mobile.pageOverflow) issues.push('gallery has horizo
 if (!report.interaction.hoverChangesPixels) issues.push('hover did not change the preview pixels')
 if (!report.interaction.pointerLeaveRestoresBase) issues.push('pointer leave did not restore the representative state')
 if (!reducedMotion || !report.interaction.reducedMotion.hoverSignatureUnchanged) issues.push('reduced motion did not keep a hovered preview static')
+if (!visibleHeroAnimating) issues.push('visible live preview did not evolve')
+if (!offscreenHeroPaused) issues.push('live preview pixels changed while it was well outside the viewport')
+if (!offscreenHeroResumed) issues.push('live preview did not resume after returning to the viewport')
 if (workersAfterGalleryUnmount?.active > 0) issues.push(`${workersAfterGalleryUnmount.active} preview worker(s) remain active after gallery unmount`)
 if (workersAfterReturn?.active > 1) issues.push(`${workersAfterReturn.active} workers are active after returning to the gallery`)
 if (browserErrors.length) issues.push(`${browserErrors.length} browser or network error(s)`)

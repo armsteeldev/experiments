@@ -11,7 +11,18 @@
     "year": "1980",
     "updated": "Just added",
     "featured": true,
-    "metaDescription": "Explore the Mandelbrot and Julia sets, from their shared complex-plane patterns to an interactive deep zoom."
+    "metaDescription": "Explore the Mandelbrot and Julia sets, from their shared complex-plane patterns to an interactive deep zoom.",
+    "concepts": [
+      "fractals",
+      "iteration",
+      "self-similarity",
+      "complex numbers"
+    ],
+    "related": [
+      "attractors",
+      "lsystem",
+      "automata"
+    ]
   },
   {
     "id": "fluid",
@@ -24,7 +35,19 @@
     "method": "Stable fluids · semi-Lagrangian advection",
     "year": "1999",
     "updated": "Just added",
-    "metaDescription": "Stir an interactive fluid simulation and watch pigment move through an incompressible flow field."
+    "metaDescription": "Stir an interactive fluid simulation and watch pigment move through an incompressible flow field.",
+    "concepts": [
+      "flow",
+      "fluid dynamics",
+      "fields",
+      "advection",
+      "transport"
+    ],
+    "related": [
+      "waves",
+      "forces",
+      "reaction"
+    ]
   },
   {
     "id": "boids",
@@ -37,7 +60,19 @@
     "method": "Boids · separation, alignment, cohesion",
     "year": "1986",
     "updated": "Just added",
-    "metaDescription": "Guide a flocking simulation and explore how separation, alignment, and cohesion produce collective motion."
+    "metaDescription": "Guide a flocking simulation and explore how separation, alignment, and cohesion produce collective motion.",
+    "concepts": [
+      "emergence",
+      "flocking",
+      "local rules",
+      "collective motion",
+      "agent-based models"
+    ],
+    "related": [
+      "garden",
+      "automata",
+      "reaction"
+    ]
   },
   {
     "id": "attractors",
@@ -50,7 +85,19 @@
     "method": "Lorenz & Rössler systems · fourth-order integration",
     "year": "1963",
     "updated": "Recently added",
-    "metaDescription": "Explore the Lorenz, Rössler, Thomas, Aizawa, and Halvorsen strange attractors through an interactive trajectory."
+    "metaDescription": "Explore the Lorenz, Rössler, Thomas, Aizawa, and Halvorsen strange attractors through an interactive trajectory.",
+    "concepts": [
+      "chaos",
+      "iteration",
+      "feedback",
+      "sensitive dependence",
+      "dynamical systems"
+    ],
+    "related": [
+      "mandelbrot",
+      "reaction",
+      "neural"
+    ]
   },
   {
     "id": "reaction",
@@ -63,7 +110,19 @@
     "method": "Gray–Scott reaction–diffusion",
     "year": "1983",
     "updated": "Recently added",
-    "metaDescription": "Grow spots, waves, and labyrinths in an interactive Gray–Scott reaction–diffusion simulation."
+    "metaDescription": "Grow spots, waves, and labyrinths in an interactive Gray–Scott reaction–diffusion simulation.",
+    "concepts": [
+      "emergence",
+      "diffusion",
+      "pattern formation",
+      "chemical systems",
+      "dynamical systems"
+    ],
+    "related": [
+      "automata",
+      "garden",
+      "lsystem"
+    ]
   },
   {
     "id": "lsystem",
@@ -76,7 +135,19 @@
     "method": "L-systems · parallel rewriting and turtle graphics",
     "year": "1968",
     "updated": "Recently added",
-    "metaDescription": "Generate branching forms with Lindenmayer grammars, then adjust rules, growth, angle, and color."
+    "metaDescription": "Generate branching forms with Lindenmayer grammars, then adjust rules, growth, angle, and color.",
+    "concepts": [
+      "recursion",
+      "growth",
+      "grammar",
+      "branching",
+      "iteration"
+    ],
+    "related": [
+      "mandelbrot",
+      "garden",
+      "automata"
+    ]
   },
   {
     "id": "gravity",
@@ -89,7 +160,19 @@
     "method": "N-body gravity · velocity-Verlet integration",
     "year": "1687",
     "updated": "Just added",
-    "metaDescription": "Launch bodies into an interactive N-body gravity simulation with velocity-Verlet integration and selectable collision rules."
+    "metaDescription": "Launch bodies into an interactive N-body gravity simulation with velocity-Verlet integration and selectable collision rules.",
+    "concepts": [
+      "gravity",
+      "orbits",
+      "motion",
+      "n-body systems",
+      "trajectories"
+    ],
+    "related": [
+      "forces",
+      "lensing",
+      "optics"
+    ]
   },
   {
     "id": "machine",
@@ -102,7 +185,18 @@
     "method": "Fetch · decode · execute · 8-bit register machine",
     "year": "1945",
     "updated": "Just added",
-    "metaDescription": "Step through an 8-bit teaching computer as instructions move through memory, registers, decoding, and arithmetic."
+    "metaDescription": "Step through an 8-bit teaching computer as instructions move through memory, registers, decoding, and arithmetic.",
+    "concepts": [
+      "computer architecture",
+      "instructions",
+      "memory",
+      "computation"
+    ],
+    "related": [
+      "logic",
+      "adder",
+      "network"
+    ]
   },
   {
     "id": "neural",
@@ -115,7 +209,19 @@
     "method": "Feedforward network · backpropagation · gradient descent",
     "year": "1986",
     "updated": "Just added",
-    "metaDescription": "Train a small neural network on interactive datasets and watch its learned decision boundary update."
+    "metaDescription": "Train a small neural network on interactive datasets and watch its learned decision boundary update.",
+    "concepts": [
+      "learning",
+      "prediction",
+      "patterns",
+      "feedback",
+      "adaptation"
+    ],
+    "related": [
+      "machine",
+      "attractors",
+      "garden"
+    ]
   },
   {
     "id": "logic",
@@ -128,7 +234,18 @@
     "method": "Boolean algebra · combinational circuits · topological evaluation",
     "year": "1854",
     "updated": "Just added",
-    "metaDescription": "Build and test Boolean logic circuits, including adders, multiplexers, and cycle detection."
+    "metaDescription": "Build and test Boolean logic circuits, including adders, multiplexers, and cycle detection.",
+    "concepts": [
+      "logic gates",
+      "digital signals",
+      "circuits",
+      "boolean rules"
+    ],
+    "related": [
+      "adder",
+      "machine",
+      "network"
+    ]
   },
   {
     "id": "forces",
@@ -141,7 +258,18 @@
     "method": "Electrostatics · Coulomb superposition · E = −∇Φ",
     "year": "1785",
     "updated": "Just added",
-    "metaDescription": "Place electric charges and explore their Coulomb field, potential contours, and test-particle paths."
+    "metaDescription": "Place electric charges and explore their Coulomb field, potential contours, and test-particle paths.",
+    "concepts": [
+      "electric fields",
+      "charge",
+      "potential",
+      "motion"
+    ],
+    "related": [
+      "gravity",
+      "waves",
+      "optics"
+    ]
   },
   {
     "id": "automata",
@@ -154,7 +282,18 @@
     "method": "Discrete dynamical systems · local transition rules",
     "year": "1970",
     "updated": "Just added",
-    "metaDescription": "Draw initial cells and explore Conway’s Life, HighLife, Seeds, and Brian’s Brain on a wrapped grid."
+    "metaDescription": "Draw initial cells and explore Conway’s Life, HighLife, Seeds, and Brian’s Brain on a wrapped grid.",
+    "concepts": [
+      "emergence",
+      "discrete rules",
+      "patterns",
+      "iteration"
+    ],
+    "related": [
+      "reaction",
+      "lsystem",
+      "boids"
+    ]
   },
   {
     "id": "adder",
@@ -167,7 +306,18 @@
     "method": "Gate-level arithmetic · ripple carry · Kogge–Stone prefix",
     "year": "2026",
     "updated": "Just added",
-    "metaDescription": "Trace binary sums through logic gates with ripple-carry and Kogge–Stone adder architectures."
+    "metaDescription": "Trace binary sums through logic gates with ripple-carry and Kogge–Stone adder architectures.",
+    "concepts": [
+      "binary arithmetic",
+      "logic gates",
+      "computation",
+      "carry"
+    ],
+    "related": [
+      "logic",
+      "machine",
+      "network"
+    ]
   },
   {
     "id": "waves",
@@ -180,8 +330,19 @@
     "method": "2D wave equation · leapfrog finite differences · Courant stability",
     "year": "1801",
     "updated": "Just added",
-    "related": ["fluid", "optics", "forces"],
-    "metaDescription": "Explore pulse propagation, coherent interference, diffraction and standing waves in a stable two-dimensional finite-difference wave model."
+    "related": [
+      "fluid",
+      "optics",
+      "forces"
+    ],
+    "metaDescription": "Explore pulse propagation, coherent interference, diffraction and standing waves in a stable two-dimensional finite-difference wave model.",
+    "concepts": [
+      "waves",
+      "interference",
+      "phase",
+      "diffraction",
+      "fields"
+    ]
   },
   {
     "id": "optics",
@@ -194,8 +355,19 @@
     "method": "Geometric ray tracing · Snell’s law · wavelength-dependent refraction",
     "year": "1621",
     "updated": "Just added",
-    "related": ["waves", "lensing", "forces"],
-    "metaDescription": "Build optical paths with interactive mirrors, prisms and thin lenses using ray intersections, reflection and Snell refraction."
+    "related": [
+      "waves",
+      "lensing",
+      "forces"
+    ],
+    "metaDescription": "Build optical paths with interactive mirrors, prisms and thin lenses using ray intersections, reflection and Snell refraction.",
+    "concepts": [
+      "optics",
+      "refraction",
+      "reflection",
+      "color",
+      "trajectories"
+    ]
   },
   {
     "id": "sound",
@@ -208,8 +380,19 @@
     "method": "Fourier series · radix-2 FFT · Web Audio synthesis and filtering",
     "year": "1822",
     "updated": "Just added",
-    "related": ["waves", "adder", "neural"],
-    "metaDescription": "Hear and see Fourier synthesis by combining harmonics, phase, waveform, frequency spectrum and an optional low-pass filter."
+    "related": [
+      "waves",
+      "network",
+      "optics"
+    ],
+    "metaDescription": "Hear and see Fourier synthesis by combining harmonics, phase, waveform, frequency spectrum and an optional low-pass filter.",
+    "concepts": [
+      "sound",
+      "frequency",
+      "harmonics",
+      "fourier",
+      "signals"
+    ]
   },
   {
     "id": "garden",
@@ -222,8 +405,19 @@
     "method": "Agent-based ecology · energy budgets · inheritance and mutation",
     "year": "2026",
     "updated": "Just added",
-    "related": ["boids", "reaction", "automata"],
-    "metaDescription": "Explore an inherited-trait ecosystem where resource search, metabolism, reproduction and mutation shape a bounded population."
+    "related": [
+      "boids",
+      "reaction",
+      "automata"
+    ],
+    "metaDescription": "Explore an inherited-trait ecosystem where resource search, metabolism, reproduction and mutation shape a bounded population.",
+    "concepts": [
+      "artificial life",
+      "evolution",
+      "ecology",
+      "emergence",
+      "growth"
+    ]
   },
   {
     "id": "network",
@@ -236,8 +430,19 @@
     "method": "Discrete-event packet routing · Dijkstra · bounded queues",
     "year": "1969",
     "updated": "Just added",
-    "related": ["machine", "logic", "neural"],
-    "metaDescription": "Send packets through a network with queue-aware shortest paths, latency, bandwidth, congestion, failures and rerouting."
+    "related": [
+      "machine",
+      "logic",
+      "sound"
+    ],
+    "metaDescription": "Send packets through a network with queue-aware shortest paths, latency, bandwidth, congestion, failures and rerouting.",
+    "concepts": [
+      "networks",
+      "routing",
+      "packets",
+      "algorithms",
+      "signals"
+    ]
   },
   {
     "id": "lensing",
@@ -250,7 +455,17 @@
     "method": "Schwarzschild null geodesics · RK4 · strong-field lensing",
     "year": "1919",
     "updated": "Just added",
-    "related": ["gravity", "optics", "waves"],
-    "metaDescription": "Explore numerically integrated photon paths, critical capture, strong deflection and a clearly bounded Schwarzschild lensing projection."
+    "related": [
+      "gravity",
+      "optics"
+    ],
+    "metaDescription": "Explore numerically integrated photon paths, critical capture, strong deflection and a clearly bounded Schwarzschild lensing projection.",
+    "concepts": [
+      "black holes",
+      "gravity",
+      "spacetime",
+      "light paths",
+      "trajectories"
+    ]
   }
 ]
