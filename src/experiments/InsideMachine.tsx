@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ExperimentControls } from '../types'
 import { ControlPanel, SelectControl } from '../components/Controls'
 import { createCpuDemoProgram, createCpuState, decodeCpuInstruction, executeCpuInstruction, fetchCpuInstruction, parseProgram, type CpuDemoTask, type CpuState, type Instruction } from '../simulations/cpu'
+import { boundedStateInteger } from '../lib/experimentState'
 import './ComputingRethink.css'
 
 type Task = CpuDemoTask | 'custom'
@@ -10,6 +11,9 @@ type OperationReadout = { heading: string; detail: string }
 const taskNames: Record<Task, string> = {
   sum: 'Add two numbers', compare: 'Are they equal?', memory: 'Store and find', count: 'Count to five', custom: 'Your program',
 }
+const demoTasks: readonly CpuDemoTask[] = ['sum', 'compare', 'memory', 'count']
+const MAX_SHARED_PROGRAM_LENGTH = 2000
+const importedProgram = (value: unknown) => typeof value === 'string' && value.length <= MAX_SHARED_PROGRAM_LENGTH ? value : null
 const byteBits = (value: number) => (value & 255).toString(2).padStart(8, '0')
 const byteText = (value: number) => String(value & 255).padStart(2, '0')
 const cloneCpu = (cpu: CpuState): CpuState => ({ ...cpu, registers: { ...cpu.registers }, memory: cpu.memory.slice(), transfer: [...cpu.transfer] })
@@ -60,12 +64,15 @@ function operationReadout(instruction: Instruction, before: CpuState, after: Cpu
 }
 
 export default function InsideMachine({ paused, controlsVisible, stateFromUrl, onShareState, onCloseControls }: ExperimentControls) {
-  const allowed = ['sum', 'compare', 'memory', 'count'] as const
-  const initial = allowed.includes(String(stateFromUrl?.program) as typeof allowed[number]) ? String(stateFromUrl?.program) as Exclude<Task, 'custom'> : 'sum'
-  const [task, setTask] = useState<Task>(initial)
-  const [numberA, setNumberA] = useState(7)
-  const [numberB, setNumberB] = useState(5)
-  const [source, setSource] = useState(() => createCpuDemoProgram(initial, 7, 5))
+  const savedSource = importedProgram(stateFromUrl?.source)
+  const initialDemoTask = demoTasks.includes(stateFromUrl?.program as CpuDemoTask) ? stateFromUrl?.program as CpuDemoTask : 'sum'
+  const initialTask: Task = savedSource !== null ? 'custom' : initialDemoTask
+  const initialA = boundedStateInteger(stateFromUrl?.a, 7, 0, 255)
+  const initialB = boundedStateInteger(stateFromUrl?.b, 5, 0, 255)
+  const [task, setTask] = useState<Task>(initialTask)
+  const [numberA, setNumberA] = useState(initialA)
+  const [numberB, setNumberB] = useState(initialB)
+  const [source, setSource] = useState(() => savedSource ?? createCpuDemoProgram(initialDemoTask, initialA, initialB))
   const [cpu, setCpu] = useState<CpuState>(createCpuState)
   const [phase, setPhase] = useState<'idle' | 'fetch' | 'decode' | 'execute'>('idle')
   const phaseRef = useRef(phase)
@@ -73,7 +80,9 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
   const [autoRun, setAutoRun] = useState(false)
   const [clock, setClock] = useState(0)
   const [lineNote, setLineNote] = useState('Choose a task or run this example to see how the computer works.')
-  const [readout, setReadout] = useState<OperationReadout>({ heading: '7 + 5 = ?', detail: 'Numbers wait in registers until the math unit combines them.' })
+  const [readout, setReadout] = useState<OperationReadout>(() => initialTask === 'sum'
+    ? { heading: `${initialA} + ${initialB} = ?`, detail: 'Numbers wait in registers until the math unit combines them.' }
+    : { heading: taskNames[initialTask], detail: 'The machine is ready to begin at its first instruction.' })
   const [trace, setTrace] = useState<string[]>([])
   const [error, setError] = useState('')
   const timers = useRef<number[]>([])
@@ -83,7 +92,7 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
   const line = cpu.ir ? Math.max(0, cpu.pc - 1) : cpu.pc
   const highlighted = (key: string) => trace.includes(key) ? ' is-live' : ''
 
-  useEffect(() => { onShareState({ program: task }); }, [task, onShareState])
+  useEffect(() => { onShareState({ program: task, a: numberA, b: numberB, ...(task === 'custom' ? { source } : {}) }); }, [task, numberA, numberB, source, onShareState])
   useEffect(() => () => { timers.current.forEach((timer) => window.clearTimeout(timer)) }, [])
 
   const reset = (keepTask = true) => {
@@ -224,8 +233,8 @@ export default function InsideMachine({ paused, controlsVisible, stateFromUrl, o
       <SelectControl label="Load a task" value={task} options={[["sum", "Add two numbers"], ["compare", "Check whether equal"], ["memory", "Store and retrieve"], ["count", "Count in a loop"], ...(task === 'custom' ? [["custom", "Your program"] as [string, string]] : [])]} onChange={(value) => value !== 'custom' && chooseTask(value as Exclude<Task, 'custom'>)} />
       <div className="machine-inspect-values"><span>REGISTERS</span>{(['A', 'B', 'C', 'D'] as const).map((name) => <i key={name}>R{name}<b>{byteText(cpu.registers[name])} · {byteBits(cpu.registers[name])}</b></i>)}</div>
       <div className="machine-inspect-memory"><span>ALL 16 MEMORY PLACES</span><div>{cpu.memory.map((value, address) => <i key={address}><small>{address.toString(16).toUpperCase()}</small><b>{byteText(value)}</b></i>)}</div></div>
-      <label className="machine-assembly-editor"><span>EDIT THE ACTUAL INSTRUCTIONS</span><textarea spellCheck={false} value={source} aria-label="Assembly program source" onChange={(event) => { setTask('custom'); setSource(event.target.value); reset(true) }} /></label>
-      <p className="control-note">This is the same program the machine executes. LDI loads a number, ADD and SUB use the ALU, STORE and LOAD move data through RAM, JNZ repeats a loop, and OUT updates the display. Values are unsigned 8-bit numbers and wrap at 256.</p>
+      <label className="machine-assembly-editor"><span>EDIT THE ACTUAL INSTRUCTIONS</span><textarea spellCheck={false} maxLength={MAX_SHARED_PROGRAM_LENGTH} value={source} aria-label="Assembly program source" onChange={(event) => { setTask('custom'); setSource(event.target.value); reset(true) }} /></label>
+      <p className="control-note">This is the same program the machine executes. LDI loads a number, ADD and SUB use the ALU, STORE and LOAD move data through RAM, JNZ repeats a loop, and OUT updates the display. Values are unsigned 8-bit numbers and wrap at 256. Links preserve up to 2,000 characters of custom source and restart at line one.</p>
     </ControlPanel>
   </section>
 }

@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status is current to the serializer-bounds and repeated-route lifecycle QA checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
+Status is current to the bounded CPU share/replay and repeated-route lifecycle QA checkpoint on `renaissance/next-generation`. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -19,6 +19,7 @@ Status is current to the serializer-bounds and repeated-route lifecycle QA check
 - [x] Apply exhibit-range bounds and valid-choice recovery to restored numerical settings in twelve high-risk routes, including procedural generations, simulation rates, force parameters, optical placements, mass-scaled photon impact, and uint32 seeds.
 - [x] Restore every serialized optics, wave, and lensing setting; state explicitly that shared wave links recreate the selected beginning, not live pulses or drawn walls.
 - [x] Bound imported Mandelbrot zoom to its supported 0.72×–10^500 range and reject overlong camera coordinates before fixed-point conversion.
+- [x] Share bounded CPU operands and up to 2,000 characters of custom assembly; restart safely at the first instruction and disclose that program text is included in the public link.
 - [x] Restore all Shape of Sound shareable settings and reject invalid Fourier partials by number, amplitude, phase, and duplicate order; sound remains off on entry.
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
 - [ ] Finish the route-by-route audit of deterministic seeds and replay limits, and document custom state that intentionally starts fresh.
@@ -52,7 +53,7 @@ Status is current to the serializer-bounds and repeated-route lifecycle QA check
 - [x] Add browser checks that assert actual state changes for Mandelbrot zoom/reset, Fluid pointer/button input, reaction-diffusion painting, gravity orbit creation/recovery, CPU stepping, neural training, keyboard-edited logic, gate-level addition and cellular-automaton stepping.
 - [x] Add representative browser state-change checks for geometry optics, sound synthesis, packet routing and gravitational lensing; prefer visible output or model values over fragile screenshot equality.
 - [x] On all 19 routes, reject a deeply nested shared-state envelope and recover with safe defaults without entering the error boundary.
-- [x] Exercise thirteen extreme/invalid shared-state cases across twelve routes; cover enum/default recovery, model bounds, optical placements, and an oversized fractal zoom/coordinate.
+- [x] Exercise fifteen extreme/invalid shared-state cases across thirteen routes; cover enum/default recovery, model bounds, optical placements, oversized fractal zoom/coordinates, and execution of a restored custom CPU program.
 - [ ] Exercise the Fluid Canvas2D fallback in a browser with WebGL disabled; the fallback code now applies paused strokes synchronously, but the current browser ran its WebGL renderer.
 - [ ] Add stable visual capture and tolerant image-diff workflow for representative desktop/mobile states.
 - [ ] Review scientific claims and visible approximations, especially Fluid, Garden, Networks, geometric optics and Where Light Falls.

@@ -133,6 +133,17 @@ const cases = [
     state: { mass: 1e100, distance: -1e100, sourceRatio: 1e100, impact: -1e100, viewMode: 'unknown' },
     expected: { mass: 1.45, distance: 22, sourceRatio: 0.88, impact: 4.495, viewMode: 'lensed sky' },
   },
+  {
+    id: 'machine',
+    state: { program: 'custom', a: 254, b: 17, source: 'LDI A, 9\nLDI B, 3\nADD A, B\nOUT A\nHLT' },
+    expected: { program: 'custom', a: 254, b: 17, source: 'LDI A, 9\nLDI B, 3\nADD A, B\nOUT A\nHLT' },
+    machineRun: true,
+  },
+  {
+    id: 'machine',
+    state: { program: 'custom', a: -1, b: 1e100, source: 'LDI A, 9\n'.repeat(224) },
+    expected: { program: 'sum', a: 0, b: 255 },
+  },
 ]
 
 const results = []
@@ -141,8 +152,18 @@ for (const test of cases) {
   await call('Page.navigate', { url: `${base}/exhibits/${test.id}?state=${envelope}` })
   await waitFor(`location.pathname === ${JSON.stringify(`/exhibits/${test.id}`)} && Boolean(document.querySelector('.dock-current span')) && !document.querySelector('.experience-loading')`, `${test.id} restored and mounted under extreme settings`)
   assert.equal(await evaluate(`Boolean(document.querySelector('.experience-error'))`), false, `${test.id} remains usable with bounded settings`)
+  let machineOutputAfterFourInstructions = null
+  if (test.machineRun) {
+    for (let step = 1; step <= 4; step++) {
+      await click('.machine-step-button')
+      await waitFor(`Number(document.querySelector('.machine-status strong')?.textContent) === ${step} && !document.querySelector('.machine-step-button')?.disabled`, `custom CPU program step ${step}`)
+    }
+    machineOutputAfterFourInstructions = await evaluate(`document.querySelector('.machine-output strong')?.textContent.trim()`)
+    assert.equal(machineOutputAfterFourInstructions, '12', 'A restored custom CPU program executes its shared instructions')
+  }
   await click('button[aria-label="Toggle experiment information"]')
   await waitFor(`Boolean(document.querySelector('.info-actions button:last-child'))`, `${test.id} share action`)
+  if (test.id === 'machine') assert.ok((await evaluate(`document.querySelector('#saved-experiment-note')?.textContent`)).includes('avoid private comments'), 'The About panel warns that custom assembly is shared as public URL text')
   await click('.info-actions button:last-child')
   await waitFor(`typeof window.__armsteelCopied === 'string' && window.__armsteelCopied.length > 0`, `${test.id} sanitized share link`)
   const copied = await evaluate('window.__armsteelCopied')
@@ -156,14 +177,14 @@ for (const test of cases) {
   }
   if (test.id === 'sound' && test.harmonicRestore === 'custom') assert.deepEqual(state.harmonics, test.state.harmonics, 'valid custom Fourier partials restore exactly')
   if (test.id === 'sound') assert.equal(await evaluate(`document.querySelector('.iw-sound-actions span')?.textContent.trim()`), 'AUDIO OFF', 'Restored audio settings remain silent until explicitly started')
-  results.push({ id: test.id, checkedSettings: Object.keys(test.expected), boundedStateRemounted: true })
+  results.push({ id: test.id, checkedSettings: Object.keys(test.expected), boundedStateRemounted: true, ...(test.machineRun ? { machineOutputAfterFourInstructions, publicProgramDisclosure: true } : {}) })
 }
 
 assert.deepEqual(errors, [], `Browser errors occurred: ${errors.join('; ')}`)
 const browser = await evaluate(`(() => { const gl = document.createElement('canvas').getContext('webgl2'); const debug = gl?.getExtension('WEBGL_debug_renderer_info'); return { userAgent: navigator.userAgent, devicePixelRatio, viewport: [innerWidth, innerHeight], renderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl?.getParameter(gl.RENDERER) ?? 'unavailable' } })()`)
 const summary = {
   browser,
-  method: 'Thirteen state cases across twelve exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.',
+  method: 'Fifteen state cases across thirteen exhibit routes check bounded URL recovery and actual shared output. A restored custom CPU program executes four instructions and produces 12; an oversized program falls back safely.',
   cases: results,
   errors,
 }

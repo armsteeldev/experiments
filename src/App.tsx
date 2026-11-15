@@ -573,7 +573,7 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
         <label id="saved-experiment-form-heading" htmlFor="saved-experiment-name">Save these settings</label>
         <div><input id="saved-experiment-name" value={savedName} maxLength={64} onChange={(event) => { setSavedName(event.target.value); setSavedMessage('') }} aria-describedby="saved-experiment-note" />
           <button type="button" onClick={saveCurrentSettings} disabled={!savedName.trim()}>Save</button></div>
-        <p id="saved-experiment-note">Presets and settings are saved. A running simulation’s full history is not.{experiment.id === 'network' ? ' The message is included, so avoid private text.' : ''}</p>
+        <p id="saved-experiment-note">Presets and settings are saved. A running simulation’s full history is not.{experiment.id === 'network' ? ' The message is included, so avoid private text.' : ''}{experiment.id === 'machine' ? ' Your edited assembly is included when you save or share; avoid private comments.' : ''}</p>
         {savedMessage && <p className="saved-experiment-status" role="status">{savedMessage}</p>}
       </section>
       <div className="info-actions">

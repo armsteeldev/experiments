@@ -8,7 +8,7 @@
     ],
     "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
   },
-  "method": "Thirteen state cases across twelve exhibit routes send extreme or invalid settings through the actual share action and compare the recovered state with model bounds and enum defaults.",
+  "method": "Fifteen state cases across thirteen exhibit routes check bounded URL recovery and actual shared output. A restored custom CPU program executes four instructions and produces 12; an oversized program falls back safely.",
   "cases": [
     {
       "id": "mandelbrot",
@@ -169,6 +169,27 @@
         "sourceRatio",
         "impact",
         "viewMode"
+      ],
+      "boundedStateRemounted": true
+    },
+    {
+      "id": "machine",
+      "checkedSettings": [
+        "program",
+        "a",
+        "b",
+        "source"
+      ],
+      "boundedStateRemounted": true,
+      "machineOutputAfterFourInstructions": "12",
+      "publicProgramDisclosure": true
+    },
+    {
+      "id": "machine",
+      "checkedSettings": [
+        "program",
+        "a",
+        "b"
       ],
       "boundedStateRemounted": true
     }

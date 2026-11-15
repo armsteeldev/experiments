@@ -119,9 +119,11 @@
     {
       "id": "machine",
       "keys": [
-        "program"
+        "program",
+        "a",
+        "b"
       ],
-      "bytes": 41,
+      "bytes": 53,
       "routeRestored": true,
       "invalidStateRecovery": true
     },
