@@ -89,10 +89,9 @@ async function inspect(label) {
     nodeCount: tree.nodes.length,
     interactiveCount: controls.length,
     roles: Object.fromEntries([...new Set(controls.map((node) => node.role.value))].sort().map((role) => [role, controls.filter((node) => node.role.value === role).length])),
-    interactive: controls.map((node) => ({ role: node.role.value, name: node.name?.value ?? '', disabled: read(node, 'disabled') === true })),
-    sliders,
-    incompleteSliders,
-    unnamed,
+    sliderCount: sliders.length,
+    unnamedCount: unnamed.length,
+    unboundedSliderCount: incompleteSliders.length,
   }
 }
 
@@ -118,14 +117,15 @@ await navigate('/')
 await evaluate(`localStorage.removeItem('armsteel:saved-scenes'); location.reload()`)
 await waitFor(`Boolean(document.querySelector('.gallery-grid') && document.querySelector('.saved-experiments-empty'))`, 'an empty, deterministic gallery notebook')
 results.push(await inspect('gallery'))
-const galleryActions = results.at(-1)
-assert.ok(galleryActions.interactive.some((node) => node.name === 'Export saved setups as a notebook file' && node.disabled), 'the computed tree exposes disabled export state for an empty notebook')
-assert.ok(galleryActions.interactive.some((node) => node.name === 'Import setups from a notebook file' && !node.disabled), 'the computed tree keeps notebook import available')
+const galleryTree = await call('Accessibility.getFullAXTree')
+assert.ok(nodeHas(galleryTree, 'button', 'Export saved setups as a notebook file') && nodeProperty(galleryTree, 'button', 'Export saved setups as a notebook file', 'disabled') === true, 'the computed tree exposes disabled export state for an empty notebook')
+assert.ok(nodeHas(galleryTree, 'button', 'Import setups from a notebook file') && nodeProperty(galleryTree, 'button', 'Import setups from a notebook file', 'disabled') !== true, 'the computed tree keeps notebook import available')
 
 await evaluate(`document.querySelector('button[aria-label="Search the collection"]')?.click()`)
 await waitFor(`Boolean(document.querySelector('.search-panel input'))`, 'the gallery search field')
 const gallerySearch = await inspect('gallery search')
-assert.ok(gallerySearch.interactive.some((node) => ['searchbox', 'textbox'].includes(node.role) && node.name === 'Search studies by name, discipline or idea'), 'the computed tree names the collection search field')
+const searchTree = await call('Accessibility.getFullAXTree')
+assert.ok(['searchbox', 'textbox'].some((role) => nodeHas(searchTree, role, 'Search studies by name, discipline or idea')), 'the computed tree names the collection search field')
 results.push(gallerySearch)
 
 const panelChecks = []
@@ -154,7 +154,7 @@ for (const exhibit of exhibits) {
     assert.ok(expanded, `${exhibit.id} ${panel.kind}: trigger exposes expanded state`)
     const focusState = await evaluate(`(() => { const root=document.querySelector(${JSON.stringify(panel.root)}), active=document.activeElement; return { withinPanel:Boolean(root && active && root.contains(active)), name:active?.getAttribute('aria-label') || active?.textContent?.trim().replace(/\\s+/g,' ').slice(0,100) || active?.tagName || '' } })()`)
     assert.ok(focusState.withinPanel, `${exhibit.id} ${panel.kind}: focus must be inside the opened panel`)
-    const panelCheck = { exhibit: exhibit.id, panel: panel.kind, role: panel.role, name: expectedDialogName, landmarkVerified: hasRoot, expandedStateVerified: expanded, focusWithinPanelVerified: focusState.withinPanel, focusedElement: focusState.name, interactiveCount: state.interactiveCount, sliders: state.sliders.length }
+    const panelCheck = { exhibit: exhibit.id, panel: panel.kind, role: panel.role, name: expectedDialogName, landmarkVerified: hasRoot, expandedStateVerified: expanded, focusWithinPanelVerified: focusState.withinPanel, focusedElement: focusState.name, interactiveCount: state.interactiveCount, sliders: state.sliderCount }
     panelChecks.push(panelCheck)
     let phoneCheck = null
     results.push(state)
@@ -169,7 +169,7 @@ for (const exhibit of exhibits) {
       results.push(phoneState)
       const phoneFocus = await evaluate(`Boolean(document.querySelector(${JSON.stringify(panel.root)})?.contains(document.activeElement))`)
       assert.ok(phoneFocus, `${exhibit.id} controls: phone viewport retains focus inside the panel`)
-      phoneCheck = { exhibit: exhibit.id, panel: 'controls-phone', role: panel.role, name: expectedDialogName, landmarkVerified: hasRoot, expandedStateVerified: expanded, focusWithinPanelVerified: phoneFocus, focusedElement: focusState.name, interactiveCount: phoneState.interactiveCount, sliders: phoneState.sliders.length }
+      phoneCheck = { exhibit: exhibit.id, panel: 'controls-phone', role: panel.role, name: expectedDialogName, landmarkVerified: hasRoot, expandedStateVerified: expanded, focusWithinPanelVerified: phoneFocus, focusedElement: focusState.name, interactiveCount: phoneState.interactiveCount, sliders: phoneState.sliderCount }
       panelChecks.push(phoneCheck)
       await call('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false, screenWidth: 1440, screenHeight: 900 })
       await waitFor('innerWidth === 1440', `${exhibit.id} desktop viewport restoration`)
@@ -192,8 +192,8 @@ const report = {
   method: 'Chrome Accessibility.getFullAXTree against the rendered gallery, search field, and shared controls/about/selector surfaces; reduced motion enabled for route traversal. This checks computed browser semantics, not speech output from an assistive technology.',
   coverage: { exhibits: exhibits.length, panelChecks: panelChecks.length, treeSnapshots: results.length, browserErrors },
   findings: {
-    unnamedInteractiveControls: results.reduce((total, snapshot) => total + snapshot.unnamed.length, 0),
-    unboundedSliders: results.reduce((total, snapshot) => total + snapshot.incompleteSliders.length, 0),
+    unnamedInteractiveControls: results.reduce((total, snapshot) => total + snapshot.unnamedCount, 0),
+    unboundedSliders: results.reduce((total, snapshot) => total + snapshot.unboundedSliderCount, 0),
     unnamedSharedLandmarks: panelChecks.filter((check) => !check.landmarkVerified).length,
     missingExpandedTriggerState: panelChecks.filter((check) => !check.expandedStateVerified).length,
     missingPanelFocus: panelChecks.filter((check) => !check.focusWithinPanelVerified).length,
