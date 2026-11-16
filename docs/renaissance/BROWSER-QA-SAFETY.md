@@ -52,7 +52,7 @@ The user’s other Chrome/Chromium and Firefox sessions, ChatGPT/Codex, MIDAS, R
 All qa:* package commands now use scripts/run-browser-qa.mjs, and each individual QA script rejects direct execution outside that supervisor. The runner:
 
 - allows one browser QA session per user at a time, identifies its lock owner by PID/start time, and fails closed on a stale or incomplete lock until processes are inspected;
-- checks RAM, free swap, system load, CPU pressure and CPU temperature before starting, then checks resource pressure every 15 seconds while the test runs;
+- checks RAM, free swap, system load, CPU pressure and CPU temperature before starting, then checks pressure every 15 seconds through preview/browser startup and the test run;
 - refuses to build implicitly and requires an existing dist/index.html;
 - starts one loopback-only Vite preview and one isolated Chromium profile on dynamically assigned ports, with CDP bound to IPv4 loopback;
 - does not pass SwiftShader or --disable-gpu flags;

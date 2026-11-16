@@ -24,6 +24,7 @@ let browserProcess
 let qaProcess
 let cdpPort
 let requestedSignal
+let resourceFailure
 let resolveSignal
 const signalPromise = new Promise((resolve) => { resolveSignal = resolve })
 let resolveSafetyTrip
@@ -40,6 +41,11 @@ for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
 
 function fail(message) {
   throw new Error(message)
+}
+
+function throwIfStopped() {
+  if (requestedSignal) throw new Error('Interrupted by ' + requestedSignal)
+  if (resourceFailure) throw new Error('Host resource safety limit was crossed: ' + resourceFailure.message)
 }
 
 function formatBytes(bytes) {
@@ -289,7 +295,7 @@ async function terminateTree(child, label) {
 async function waitForHttp(url, child, label) {
   const deadline = Date.now() + startupTimeoutMs
   while (Date.now() < deadline) {
-    if (requestedSignal) throw new Error('Interrupted by ' + requestedSignal)
+    throwIfStopped()
     if (childHasExited(child)) fail(label + ' exited before it became ready.')
     try {
       const response = await fetch(url, { signal: AbortSignal.timeout(800) })
@@ -314,6 +320,7 @@ function startResourceMonitor() {
     try {
       await checkHostHealth(false)
     } catch (error) {
+      resourceFailure = error
       clearInterval(resourceMonitor)
       resourceMonitor = null
       resolveSafetyTrip(error)
@@ -325,7 +332,7 @@ async function waitForCdpPort(profileDir, child) {
   const activePortFile = path.join(profileDir, 'DevToolsActivePort')
   const deadline = Date.now() + startupTimeoutMs
   while (Date.now() < deadline) {
-    if (requestedSignal) throw new Error('Interrupted by ' + requestedSignal)
+    throwIfStopped()
     if (childHasExited(child)) fail('Chromium exited before the CDP endpoint became ready.')
     const value = await readFile(activePortFile, 'utf8').catch(() => '')
     const port = Number(value.split(/\r?\n/)[0])
@@ -431,14 +438,17 @@ async function run() {
 
   await acquireLock()
   await checkHostHealth()
+  startResourceMonitor()
 
   const previewPort = await reservePort()
+  throwIfStopped()
   previewProcess = watchChild(spawn(process.execPath, [
     viteCli, 'preview', '--host', '127.0.0.1', '--port', String(previewPort), '--strictPort',
   ], { cwd: projectRoot, stdio: ['ignore', 'inherit', 'inherit'] }), 'Vite preview')
   await waitForHttp('http://127.0.0.1:' + previewPort + '/', previewProcess, 'Vite preview')
 
   profileDir = await mkdtemp(path.join(tempRoot, 'armsteel-renaissance-qa-'))
+  throwIfStopped()
   browserProcess = watchChild(spawn(chrome, [
     '--headless=new',
     '--remote-debugging-address=127.0.0.1',
@@ -455,6 +465,7 @@ async function run() {
   ], { cwd: projectRoot, stdio: ['ignore', 'ignore', 'inherit'] }), 'Chromium')
   cdpPort = await waitForCdpPort(profileDir, browserProcess)
   await waitForHttp('http://127.0.0.1:' + cdpPort + '/json/version', browserProcess, 'Chromium CDP endpoint')
+  throwIfStopped()
 
   const childEnv = {
     ...process.env,
@@ -470,7 +481,6 @@ async function run() {
   }), 'browser QA script')
   console.log('[qa supervisor] running ' + path.basename(scriptPath) + ' with one owned headless browser; timeout=' + Math.round(timeoutMs / 1000) + 's.')
 
-  startResourceMonitor()
   const exitPromise = new Promise((resolve, reject) => {
     qaProcess.once('error', reject)
     qaProcess.once('close', (code, signal) => resolve({ code, signal }))
