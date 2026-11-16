@@ -13,7 +13,7 @@
       {
         "heading": "Saved in your browser",
         "paragraphs": [
-          "Favourites are stored in this browser’s local storage under [armsteel:favorites]. Named experiment setups are stored under [armsteel:saved-scenes], up to twelve small entries. These keep supported settings, presets, and seeds; they do not include the full history or live buffers of a running simulation. They remain on this device until you remove them or clear this site’s stored data. Neither favourites nor saved setups are sent to the site during normal browsing.",
+          "Favourites are stored in this browser’s local storage under [armsteel:favorites]. Named experiment setups are stored under [armsteel:saved-scenes], up to twelve small entries. These keep supported settings, presets, and seeds; they do not include the full history or live buffers of a running simulation. They remain on this device until you remove them or clear this site’s stored data. Neither favourites nor saved setups are sent to the site during normal browsing. Notebook export creates readable JSON on your device. Import validates and merges supported settings locally without replacing existing entries; neither action uploads the file.",
           "Recently viewed studies are kept in memory only for the open tab. They are cleared when the tab is reloaded or closed. Search text, filters, and other temporary interface state are not saved.",
           "The app does not set cookies, use analytics or advertising trackers, or load external fonts or third-party scripts. It uses no tracking identifiers or non-essential tracking storage."
         ]
@@ -21,7 +21,7 @@
       {
         "heading": "Shared experiment links",
         "paragraphs": [
-          "If you choose Share, the app copies the current study URL and its supported settings to your clipboard. Settings are encoded in the URL using Base64 URL encoding; this is not encryption. The app does not send the copied link anywhere. Anyone who receives it can read the settings, and opening it sends that URL, including its query string, as part of the request to the site. The Living Network includes its message text in saved and shared settings; use fictional text, not private or sensitive information."
+          "If you choose Share, the app copies the current study URL and its supported settings to your clipboard. Settings are encoded in the URL using Base64 URL encoding; this is not encryption. The app does not send the copied link anywhere. Anyone who receives it can read the settings, and opening it sends that URL, including its query string, as part of the request to the site. Notebook export files are readable JSON too. Custom CPU source, network message text, and positions and labels from a neural lesson can appear in saved, shared, or exported settings; use fictional data, not private or sensitive information."
         ]
       },
       {
@@ -34,7 +34,7 @@
       {
         "heading": "Clear saved data or ask a question",
         "paragraphs": [
-          "Remove favourites with the heart control and saved setups with their remove button in the collection, or clear site data for [experiments.armsteel.dev] in your browser’s privacy settings. Recently viewed studies disappear when you close or reload the tab.",
+          "Remove favourites with the heart control and saved setups with their remove button in the collection, or clear site data for [experiments.armsteel.dev] in your browser’s privacy settings. Export a notebook file to keep a separate copy; imported entries can be deleted from the collection. Recently viewed studies disappear when you close or reload the tab.",
           "For a privacy question, contact the site operator at [email] or use the [contact page]."
         ]
       }

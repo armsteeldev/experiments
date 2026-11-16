@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict'
-import { mkdir, writeFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { rmSync } from 'node:fs'
+import { join, resolve } from 'node:path'
 
 const port = Number(process.env.ARMSTEEL_CDP_PORT ?? 9350)
 const base = process.env.ARMSTEEL_PREVIEW_URL ?? 'http://127.0.0.1:5198'
 const evidenceRoot = resolve('docs/renaissance/evidence')
+const downloadRoot = await mkdtemp(resolve('.armsteel-notebook-qa-'))
+process.once('exit', () => { try { rmSync(downloadRoot, { recursive: true, force: true }) } catch { /* remove task-local browser artifacts on failure too */ } })
 const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
 const page = targets.find((target) => target.type === 'page' && target.url === 'about:blank') ?? targets.find((target) => target.type === 'page')
 assert.ok(page, `No page target found on CDP port ${port}`)
@@ -17,6 +20,7 @@ await new Promise((resolveOpen, reject) => {
 let nextId = 0
 const waiting = new Map()
 const browserErrors = []
+const downloadEvents = []
 socket.addEventListener('message', (event) => {
   const message = JSON.parse(event.data)
   if (message.id && waiting.has(message.id)) {
@@ -30,6 +34,7 @@ socket.addEventListener('message', (event) => {
   if (message.method === 'Runtime.consoleAPICalled' && message.params.type === 'error') browserErrors.push(`console: ${message.params.args.map((item) => item.value ?? item.description ?? '').join(' ')}`)
   if (message.method === 'Log.entryAdded' && message.params.entry.level === 'error') browserErrors.push(`log: ${message.params.entry.text}`)
   if (message.method === 'Network.responseReceived' && message.params.response.status >= 400) browserErrors.push(`http ${message.params.response.status}: ${message.params.response.url}`)
+  if (message.method?.startsWith('Browser.download')) downloadEvents.push({ method: message.method, ...message.params })
 })
 
 function call(method, params = {}) {
@@ -69,6 +74,25 @@ async function click(selector) {
   assert.ok(found, `Could not click ${selector}`)
 }
 
+async function chooseNotebookFile(path) {
+  const document = await call('DOM.getDocument', { depth: -1 })
+  const input = await call('DOM.querySelector', { nodeId: document.root.nodeId, selector: '#saved-notebook-import' })
+  assert.ok(input.nodeId, 'the notebook import has a real browser file input')
+  assert.equal(await evaluate(`document.querySelector('#saved-notebook-import')?.type`), 'file', 'the notebook importer is a browser file input')
+  await call('DOM.setFileInputFiles', { files: [path], nodeId: input.nodeId })
+}
+
+async function waitForDownload() {
+  for (let attempt = 0; attempt < 80; attempt++) {
+    const completed = downloadEvents.find((event) => event.method === 'Browser.downloadProgress' && event.state === 'completed' && event.filePath)
+    if (completed) {
+      try { if ((await stat(completed.filePath)).isFile()) return completed.filePath } catch { /* wait for the filesystem to finish its final rename */ }
+    }
+    await sleep(100)
+  }
+  throw new Error(`The notebook export did not produce a completed JSON download. Events: ${JSON.stringify(downloadEvents)}`)
+}
+
 async function setViewport(width, height, mobile) {
   await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile, screenWidth: width, screenHeight: height })
   await call('Emulation.setTouchEmulationEnabled', { enabled: mobile, maxTouchPoints: 1 })
@@ -84,6 +108,8 @@ await call('Page.enable')
 await call('Runtime.enable')
 await call('Network.enable')
 await call('Log.enable')
+await call('DOM.enable')
+await call('Page.setInterceptFileChooserDialog', { enabled: false })
 await setViewport(1440, 900, false)
 await navigate('/exhibits/automata')
 await waitFor(`location.pathname === '/exhibits/automata' && Boolean(document.querySelector('.automata-surface'))`, 'the Cellular Automata exhibit')
@@ -129,11 +155,45 @@ const entry = await evaluate(`(() => { const link = document.querySelector('.sav
 assert.equal(entry.name, 'Pulsar with HighLife')
 assert.equal(entry.count, 1)
 assert.match(entry.href, /^\/exhibits\/automata\?state=/, 'saved setup links carry only its serialized exhibit settings')
+const notebookActions = await evaluate(`(() => [...document.querySelectorAll('.saved-notebook-actions button')].map(button=>({name:button.textContent.trim(),height:button.getBoundingClientRect().height,disabled:button.disabled})))()`)
+assert.deepEqual(notebookActions.map((item) => item.name), ['Export notebook', 'Import notebook'], 'the gallery exposes both portable notebook actions')
+assert.ok(notebookActions.every((item) => item.height >= 43.9), `Notebook controls meet the phone touch target size: ${JSON.stringify(notebookActions)}`)
+assert.equal(notebookActions[0].disabled, false, 'a saved notebook can be exported')
+await call('Browser.setDownloadBehavior', { behavior: 'allow', downloadPath: downloadRoot, eventsEnabled: true })
+await click('.saved-notebook-export')
+await waitFor(`document.querySelector('.saved-notebook-status')?.textContent.startsWith('Exported 1 settings-only setup.')`, 'the notebook export confirmation')
+const exportedPath = await waitForDownload()
+const exportedNotebookText = await readFile(exportedPath, 'utf8')
+const exportedNotebook = JSON.parse(exportedNotebookText)
+assert.equal(exportedNotebook.$armsteelNotebook, 1, 'the downloaded JSON has the supported notebook version')
+assert.equal(exportedNotebook.experiments.length, 1, 'the downloaded JSON contains the named setup')
+assert.deepEqual(exportedNotebook.experiments[0].state, savedRecord.experiments[0].state, 'the downloaded file preserves the supported exhibit settings')
+await click('.saved-experiment-card > button')
+await waitFor(`!document.querySelector('.saved-experiment-card') && Boolean(document.querySelector('.saved-notebook-empty-note'))`, 'the empty but import-ready notebook')
+assert.equal(await evaluate(`document.querySelector('.saved-notebook-status')?.textContent`), 'Saved setup removed from this browser. Any exported notebook file remains unchanged.', 'removal replaces the earlier export confirmation with current notebook state')
+const emptyActions = await evaluate(`(() => [...document.querySelectorAll('.saved-notebook-actions button')].map(button=>({name:button.textContent.trim(),disabled:button.disabled})))()`)
+assert.deepEqual(emptyActions, [{ name: 'Export notebook', disabled: true }, { name: 'Import notebook', disabled: false }], 'an empty notebook disables export while keeping import available')
 await evaluate(`(() => { document.documentElement.style.scrollBehavior = 'auto'; document.querySelector('.saved-experiments')?.scrollIntoView({ block: 'center', behavior: 'instant' }) })()`)
 await sleep(100)
-const desktopNotebook = await evaluate(`(() => { const rect = document.querySelector('.saved-experiments')?.getBoundingClientRect(); return { scrollY, top: rect?.top, bottom: rect?.bottom, viewport: innerHeight } })()`)
+await capture('saved-notebook-empty-desktop.png')
+await chooseNotebookFile(exportedPath)
+await waitFor(`document.querySelector('.saved-notebook-status')?.textContent.startsWith('Imported 1 setup.') && Boolean(document.querySelector('.saved-experiment-card'))`, 'importing the actual downloaded notebook')
+const importedRecord = await evaluate(`JSON.parse(localStorage.getItem('armsteel:saved-scenes'))`)
+assert.equal(importedRecord.experiments.length, 1, 'the import restores the saved setup into local storage')
+assert.equal(importedRecord.experiments[0].name, 'Pulsar with HighLife', 'the import restores the visitor name')
+await evaluate(`(() => { document.querySelector('.saved-experiments')?.scrollIntoView({ block: 'center', behavior: 'instant' }) })()`)
+await sleep(100)
+const desktopNotebook = await evaluate(`(() => { const rect=document.querySelector('.saved-experiments')?.getBoundingClientRect();return {top:rect?.top,bottom:rect?.bottom,viewport:innerHeight} })()`)
 assert.ok(desktopNotebook.top < desktopNotebook.viewport && desktopNotebook.bottom > 0, `Desktop notebook section is not in the screenshot viewport: ${JSON.stringify(desktopNotebook)}`)
 await capture('saved-notebook-gallery-desktop.png')
+await chooseNotebookFile(exportedPath)
+await waitFor(`document.querySelector('.saved-notebook-status')?.textContent.includes('No new setups imported. 1 duplicate')`, 'reimporting an archive without duplicating entries')
+assert.equal(await evaluate(`JSON.parse(localStorage.getItem('armsteel:saved-scenes')).experiments.length`), 1, 'a repeat import does not duplicate saved setups')
+const unsupportedPath = join(downloadRoot, 'unsupported-notebook.json')
+await writeFile(unsupportedPath, JSON.stringify({ $armsteelNotebook: 99, exportedAt: new Date().toISOString(), experiments: exportedNotebook.experiments }))
+await chooseNotebookFile(unsupportedPath)
+await waitFor(`document.querySelector('.saved-notebook-status')?.textContent.includes('not a supported Armsteel notebook')`, 'rejecting an unsupported notebook version')
+assert.equal(await evaluate(`JSON.parse(localStorage.getItem('armsteel:saved-scenes')).experiments.length`), 1, 'invalid notebook import leaves existing records unchanged')
 await click('.saved-experiment-card > a')
 await waitFor(`location.pathname === '/exhibits/automata' && new URLSearchParams(location.search).has('state') && Boolean(document.querySelector('.automata-surface'))`, 'opening the saved configuration')
 const urlState = await evaluate(`JSON.parse(decodeURIComponent(escape(atob(new URLSearchParams(location.search).get('state').replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(new URLSearchParams(location.search).get('state').length / 4) * 4, '=')))))`)
@@ -158,14 +218,14 @@ await sleep(100)
 const mobile = await evaluate(`(() => { const section = document.querySelector('.saved-experiments'), card = document.querySelector('.saved-experiment-card'), remove = card?.querySelector('button'), rect = remove?.getBoundingClientRect(); return { width: innerWidth, documentWidth: document.documentElement.scrollWidth, cardWidth: card?.getBoundingClientRect().width, removeTarget: rect && { width: rect.width, height: rect.height }, name: card?.querySelector('strong')?.textContent } })()`)
 assert.ok(await evaluate(`(() => { const rect = document.querySelector('.saved-experiments')?.getBoundingClientRect(); return rect && rect.top < innerHeight && rect.bottom > 0 })()`), 'The mobile notebook section is in view')
 assert.ok(mobile.documentWidth <= mobile.width + 1, `The mobile notebook overflows: ${JSON.stringify(mobile)}`)
-assert.ok(mobile.removeTarget.width >= 36 && mobile.removeTarget.height >= 36, `The remove target is too small: ${JSON.stringify(mobile)}`)
+assert.ok(mobile.removeTarget.width >= 43.9 && mobile.removeTarget.height >= 43.9, `The remove target is too small: ${JSON.stringify(mobile)}`)
 assert.equal(mobile.name, 'Pulsar with HighLife')
 await capture('saved-notebook-gallery-mobile.png')
 await setViewport(320, 740, true)
 const narrow = await evaluate(`({ width: innerWidth, documentWidth: document.documentElement.scrollWidth, cardWidth: document.querySelector('.saved-experiment-card')?.getBoundingClientRect().width })`)
 assert.ok(narrow.documentWidth <= narrow.width + 1, `The narrow notebook overflows: ${JSON.stringify(narrow)}`)
 await click('.saved-experiment-card > button')
-await waitFor(`!document.querySelector('.saved-experiment-card')`, 'removing a saved setup')
+await waitFor(`!document.querySelector('.saved-experiment-card') && Boolean(document.querySelector('.saved-notebook-empty-note'))`, 'removing a saved setup')
 assert.deepEqual(await evaluate(`JSON.parse(localStorage.getItem('armsteel:saved-scenes')).experiments`), [], 'removal updates local storage')
 
 const unknownState = Buffer.from(JSON.stringify({ $armsteel: 99, state: { pattern: 'glider' } })).toString('base64url')
@@ -178,15 +238,20 @@ await waitFor(`location.pathname === '/privacy' && document.querySelector('.priv
 const privacy = await evaluate(`document.querySelector('.privacy-content')?.textContent`)
 assert.match(privacy, /not include the full history/i)
 assert.match(privacy, /favourites nor saved setups are sent to the site/i)
+assert.match(privacy, /readable JSON/i)
+assert.match(privacy, /neural lesson/i)
 assert.deepEqual(browserErrors, [], `Browser or network errors occurred: ${browserErrors.join('; ')}`)
 
 await writeFile(resolve(evidenceRoot, 'saved-experiment-browser-checks.json'), JSON.stringify({
   browser: await evaluate('navigator.userAgent'),
-  scenarios: ['changed exhibit settings saved with a local name', 'versioned and validated local record', 'URL restoration of rule, pattern and rendering', 'deep-link refresh', 'mobile gallery layout and removal target', 'delete and privacy disclosure'],
+  scenarios: ['changed exhibit settings saved with a local name', 'versioned and validated local record', 'downloaded notebook JSON export', 'empty import-ready notebook', 'import into an empty notebook', 'repeat import without duplicates', 'unsupported-version recovery without data loss', 'URL restoration of rule, pattern and rendering', 'deep-link refresh', 'mobile gallery layout and 44px removal target', 'delete and privacy disclosure'],
   savedState: savedRecord.experiments[0].state,
+  exportedArchive: { version: exportedNotebook.$armsteelNotebook, entries: exportedNotebook.experiments.length, bytes: Buffer.byteLength(exportedNotebookText) },
+  importedRecord,
   mobile,
   narrow,
   errors: browserErrors,
 }, null, 2) + '\n')
 socket.close()
-console.log('Saved experiment browser checks passed: save, restore, refresh, mobile layout, delete, privacy disclosure, and no browser/network errors.')
+await rm(downloadRoot, { recursive: true, force: true })
+console.log('Saved experiment browser checks passed: save, JSON export, import, duplicate protection, invalid-version recovery, restore, refresh, mobile layout, delete, privacy disclosure, and no browser/network errors.')

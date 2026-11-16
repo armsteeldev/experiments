@@ -3,9 +3,14 @@
   "scenarios": [
     "changed exhibit settings saved with a local name",
     "versioned and validated local record",
+    "downloaded notebook JSON export",
+    "empty import-ready notebook",
+    "import into an empty notebook",
+    "repeat import without duplicates",
+    "unsupported-version recovery without data loss",
     "URL restoration of rule, pattern and rendering",
     "deep-link refresh",
-    "mobile gallery layout and removal target",
+    "mobile gallery layout and 44px removal target",
     "delete and privacy disclosure"
   ],
   "savedState": {
@@ -15,13 +20,36 @@
     "renderMode": "ember",
     "seed": 919
   },
+  "exportedArchive": {
+    "version": 1,
+    "entries": 1,
+    "bytes": 414
+  },
+  "importedRecord": {
+    "version": 1,
+    "experiments": [
+      {
+        "id": "scene-mwijqgg7-hcww7rar",
+        "exhibitId": "automata",
+        "name": "Pulsar with HighLife",
+        "savedAt": "2026-11-16T00:49:43.111Z",
+        "state": {
+          "pattern": "glider",
+          "rule": "highlife",
+          "speed": 8,
+          "renderMode": "ember",
+          "seed": 919
+        }
+      }
+    ]
+  },
   "mobile": {
     "width": 390,
     "documentWidth": 390,
     "cardWidth": 350,
     "removeTarget": {
-      "width": 36,
-      "height": 36
+      "width": 44,
+      "height": 44
     },
     "name": "Pulsar with HighLife"
   },

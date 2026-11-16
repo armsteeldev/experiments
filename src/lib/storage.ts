@@ -2,9 +2,12 @@ const FAVORITES_KEY = 'armsteel:favorites'
 const SAVED_EXPERIMENTS_KEY = 'armsteel:saved-scenes'
 const SHARED_STATE_MARKER = '$armsteel'
 const SHARED_STATE_VERSION = 1
+const NOTEBOOK_MARKER = '$armsteelNotebook'
+const NOTEBOOK_VERSION = 1
 const MAX_SHARED_STATE_BYTES = 16 * 1024
 const MAX_SAVED_EXPERIMENTS = 12
 const MAX_SAVED_EXPERIMENTS_BYTES = 128 * 1024
+export const MAX_NOTEBOOK_FILE_BYTES = MAX_SAVED_EXPERIMENTS_BYTES * 2
 
 export type SavedExperiment = {
   id: string
@@ -212,6 +215,63 @@ function writeSavedExperiments(experiments: SavedExperiment[]): boolean {
 
 function newSavedExperimentId(): string {
   return `scene-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+}
+
+export function exportSavedExperimentNotebook(allowedIds?: readonly string[]): string | null {
+  const experiments = getSavedExperiments(allowedIds)
+  if (!experiments.length) return null
+  try {
+    return JSON.stringify({ [NOTEBOOK_MARKER]: NOTEBOOK_VERSION, exportedAt: new Date().toISOString(), experiments }, null, 2)
+  } catch {
+    return null
+  }
+}
+
+function sameSavedSetup(left: SavedExperiment, right: SavedExperiment): boolean {
+  return left.exhibitId === right.exhibitId && left.name === right.name && JSON.stringify(left.state) === JSON.stringify(right.state)
+}
+
+export function importSavedExperimentNotebook(value: unknown, allowedIds?: readonly string[]) {
+  const current = getSavedExperiments(allowedIds)
+  let serialized: string
+  try { serialized = JSON.stringify(value) } catch {
+    return { status: 'invalid' as const, importedCount: 0, skippedCount: 0, experiments: current }
+  }
+  if (!serialized || new TextEncoder().encode(serialized).byteLength > MAX_NOTEBOOK_FILE_BYTES || !value || typeof value !== 'object' || Array.isArray(value)) {
+    return { status: 'invalid' as const, importedCount: 0, skippedCount: 0, experiments: current }
+  }
+  const archive = value as { [NOTEBOOK_MARKER]?: unknown; exportedAt?: unknown; experiments?: unknown }
+  if (archive[NOTEBOOK_MARKER] !== NOTEBOOK_VERSION || typeof archive.exportedAt !== 'string' || !Number.isFinite(Date.parse(archive.exportedAt)) || !Array.isArray(archive.experiments) || archive.experiments.length > MAX_SAVED_EXPERIMENTS * 4) {
+    return { status: 'invalid' as const, importedCount: 0, skippedCount: 0, experiments: current }
+  }
+
+  const candidates = sanitizeSavedExperiments({ version: 1, experiments: archive.experiments }, allowedIds)
+  let skippedCount = archive.experiments.length - candidates.length
+  const additions: SavedExperiment[] = []
+  const ids = new Set(current.map((item) => item.id))
+  for (const candidate of candidates) {
+    const collision = [...current, ...additions].find((item) => item.id === candidate.id)
+    if (collision && sameSavedSetup(collision, candidate)) {
+      skippedCount++
+      continue
+    }
+    let imported = candidate
+    if (collision || ids.has(imported.id)) imported = { ...candidate, id: newSavedExperimentId() }
+    while (ids.has(imported.id)) imported = { ...candidate, id: newSavedExperimentId() }
+
+    const proposed = [...additions, imported, ...current]
+    if (proposed.length > MAX_SAVED_EXPERIMENTS || serializedSize({ version: 1, experiments: proposed }) > MAX_SAVED_EXPERIMENTS_BYTES) {
+      skippedCount++
+      continue
+    }
+    additions.push(imported)
+    ids.add(imported.id)
+  }
+
+  if (!additions.length) return { status: 'no-new' as const, importedCount: 0, skippedCount, experiments: current }
+  const next = [...additions, ...current]
+  const status = writeSavedExperiments(next) ? 'imported' as const : 'memory-only' as const
+  return { status, importedCount: additions.length, skippedCount, experiments: next }
 }
 
 export function saveExperimentState(exhibitId: string, nameValue: string, stateValue: unknown, allowedIds?: readonly string[]) {

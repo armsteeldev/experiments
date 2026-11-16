@@ -1978,6 +1978,19 @@ body.immersive-active { height: 100%; min-height: 0; }
   font-size: 10px;
   line-height: 1.65;
 }
+.saved-notebook-toolbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin:0 0 10px; }
+.saved-notebook-toolbar > span { color:#8494a3; font:8px var(--mono); letter-spacing:.08em; }
+.saved-notebook-actions { display:flex; flex-wrap:wrap; gap:7px; }
+.saved-notebook-actions button { min-width:126px; min-height:44px; padding:0 14px; color:#c5d6dd; border:1px solid rgba(194,218,229,.15); border-radius:9px; background:rgba(127,160,179,.07); font-size:10px; cursor:pointer; transition:background .18s,border-color .18s,color .18s; }
+.saved-notebook-actions button:hover:not(:disabled) { color:#f0f5f6; border-color:rgba(194,218,229,.34); background:rgba(127,160,179,.13); }
+.saved-notebook-actions button.saved-notebook-import { color:#dfefe9; border-color:rgba(165,213,198,.25); background:rgba(123,174,158,.12); }
+.saved-notebook-actions button:disabled { opacity:.42; cursor:not-allowed; }
+.saved-notebook-actions button:focus-visible { outline:2px solid #c5e2eb; outline-offset:3px; }
+.saved-notebook-privacy,.saved-notebook-status,.saved-notebook-empty-note { max-width:690px; margin:8px 0 17px; color:#8492a1; font-size:10px; line-height:1.65; }
+.saved-notebook-status { color:#c1dfd2; }
+.saved-notebook-empty-note { color:#abb8c3; }
+.saved-experiments-empty { padding-bottom:2px; }
+.saved-experiments-empty .saved-notebook-privacy { margin-bottom:0; }
 .saved-experiments-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2001,7 +2014,7 @@ body.immersive-active { height: 100%; min-height: 0; }
 .saved-experiment-card strong { overflow: hidden; color: #e1e9ee; font: 500 17px/1.2 var(--serif); text-overflow: ellipsis; }
 .saved-experiment-card > a > small { display: flex; align-items: center; gap: 7px; color: #a8bec9; font-size: 9px; }
 .saved-experiment-card > a > small svg { width: 12px; height: 12px; }
-.saved-experiment-card > button { align-self: center; justify-self: center; width: 36px; height: 36px; display: grid; place-items: center; color: #8294a3; border: 1px solid transparent; border-radius: 50%; background: transparent; cursor: pointer; }
+.saved-experiment-card > button { align-self: center; justify-self: center; width: 44px; height: 44px; display: grid; place-items: center; color: #8294a3; border: 1px solid transparent; border-radius: 50%; background: transparent; cursor: pointer; }
 .saved-experiment-card > button:hover { color: #f2dedc; border-color: rgba(225, 185, 180, .23); background: rgba(119, 72, 75, .14); }
 .saved-experiment-card > button svg { width: 14px; height: 14px; }
 .saved-experiment-card a:focus-visible, .saved-experiment-card button:focus-visible { outline: 2px solid #c5e2eb; outline-offset: 2px; }
@@ -2019,6 +2032,10 @@ body.immersive-active { height: 100%; min-height: 0; }
   .saved-experiments-heading { display: block; margin-bottom: 14px; }
   .saved-experiments-heading h2 { margin-top: 8px; font-size: 27px; }
   .saved-experiments-heading > p { margin-top: 7px; font-size: 9px; }
+  .saved-notebook-toolbar { align-items:flex-start; flex-direction:column-reverse; gap:8px; }
+  .saved-notebook-actions { width:100%; }
+  .saved-notebook-actions button { min-width:0; flex:1; padding-inline:8px; }
+  .saved-notebook-privacy,.saved-notebook-status,.saved-notebook-empty-note { font-size:10px; }
   .saved-experiments-grid { grid-template-columns: minmax(0, 1fr); gap: 7px; }
   .saved-experiment-card > a { padding: 11px 12px; }
 }

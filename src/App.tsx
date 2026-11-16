@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Link, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import AmbientField from './components/AmbientField'
 import ArtworkPreview from './components/ArtworkPreview'
@@ -8,7 +8,7 @@ import { experiments } from './registry'
 import journeyData from './data/journeys.json'
 import discoveryConcepts from './data/discovery-concepts.json'
 import siteCopy from './data/site-copy.json'
-import { decodeState, encodeState, getFavorites, getRecent, getSavedExperiments, rememberVisit, removeSavedExperiment, saveExperimentState, toggleFavorite } from './lib/storage'
+import { decodeState, encodeState, exportSavedExperimentNotebook, getFavorites, getRecent, getSavedExperiments, importSavedExperimentNotebook, MAX_NOTEBOOK_FILE_BYTES, rememberVisit, removeSavedExperiment, saveExperimentState, toggleFavorite } from './lib/storage'
 import { SITE_ORIGIN, updatePageMetadata } from './lib/metadata'
 import type { ExperimentDefinition } from './types'
 
@@ -125,11 +125,13 @@ function Exhibition() {
   const [query, setQuery] = useState('')
   const [favorites, setFavorites] = useState<string[]>(() => getFavorites(experimentIds))
   const [savedExperiments, setSavedExperiments] = useState(() => getSavedExperiments(experimentIds))
+  const [notebookMessage, setNotebookMessage] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [selectedJourneyId, setSelectedJourneyId] = useState(journeys[0]?.id ?? '')
   const navigate = useNavigate()
   const searchRef = useRef<HTMLInputElement>(null)
   const searchButtonRef = useRef<HTMLButtonElement>(null)
+  const notebookFileRef = useRef<HTMLInputElement>(null)
   const recent = getRecent()
   const filters = useMemo(() => ['All works', ...new Set(experiments.map((item) => item.category)), 'Favourites'], [])
   const shown = useMemo(() => {
@@ -183,7 +185,58 @@ function Exhibition() {
     if (choice) navigate('/exhibits/' + choice.id)
   }
   const favorite = (id: string) => setFavorites(toggleFavorite(id, experimentIds))
-  const removeSaved = (id: string) => setSavedExperiments(removeSavedExperiment(id, experimentIds).experiments)
+  const removeSaved = (id: string) => {
+    setSavedExperiments(removeSavedExperiment(id, experimentIds).experiments)
+    setNotebookMessage('Saved setup removed from this browser. Any exported notebook file remains unchanged.')
+  }
+  const exportNotebook = () => {
+    const contents = exportSavedExperimentNotebook(experimentIds)
+    if (!contents) { setNotebookMessage('There are no saved setups to export.'); return }
+    try {
+      const url = URL.createObjectURL(new Blob([contents], { type: 'application/json' }))
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `armsteel-notebook-${new Date().toISOString().slice(0, 10)}.json`
+      link.click()
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+      setNotebookMessage(`Exported ${savedExperiments.length} settings-only ${savedExperiments.length === 1 ? 'setup' : 'setups'}. This JSON file is readable and was not uploaded.`)
+    } catch {
+      setNotebookMessage('The notebook could not be exported. Your saved setups remain here.')
+    }
+  }
+  const importNotebook = async (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget
+    const file = input.files?.[0]
+    if (!file) return
+    try {
+      if (file.size > MAX_NOTEBOOK_FILE_BYTES) {
+        setNotebookMessage(`That file exceeds the ${Math.round(MAX_NOTEBOOK_FILE_BYTES / 1024)} KiB import limit. Your notebook was not changed.`)
+        return
+      }
+      const content = await file.text()
+      if (new TextEncoder().encode(content).byteLength > MAX_NOTEBOOK_FILE_BYTES) {
+        setNotebookMessage(`That file exceeds the ${Math.round(MAX_NOTEBOOK_FILE_BYTES / 1024)} KiB import limit. Your notebook was not changed.`)
+        return
+      }
+      const archive: unknown = JSON.parse(content)
+      const result = importSavedExperimentNotebook(archive, experimentIds)
+      setSavedExperiments(result.experiments)
+      if (result.status === 'invalid') setNotebookMessage('This is not a supported Armsteel notebook file. Nothing was imported and your saved setups were left unchanged.')
+      else if (result.status === 'no-new') {
+        setNotebookMessage(result.skippedCount
+          ? `No new setups imported. ${result.skippedCount} duplicate, unsupported, or over-limit ${result.skippedCount === 1 ? 'entry was' : 'entries were'} skipped; your notebook is unchanged.`
+          : 'This notebook file contains no saved setups. Your notebook is unchanged.')
+      } else if (result.status === 'memory-only') {
+        setNotebookMessage(`Imported ${result.importedCount} ${result.importedCount === 1 ? 'setup' : 'setups'} for this tab only because browser storage is unavailable. ${result.skippedCount} ${result.skippedCount === 1 ? 'entry was' : 'entries were'} skipped.`)
+      } else {
+        setNotebookMessage(`Imported ${result.importedCount} ${result.importedCount === 1 ? 'setup' : 'setups'}. ${result.skippedCount} duplicate, unsupported, or over-limit ${result.skippedCount === 1 ? 'entry was' : 'entries were'} skipped; existing setups were kept.`)
+      }
+    } catch {
+      setNotebookMessage('The file could not be read as a notebook. Nothing was imported and your saved setups were left unchanged.')
+    } finally {
+      input.value = ''
+    }
+  }
 
   return <main className="exhibition-page">
     <a className="skip-link" href="#collection">Skip to collection</a>
@@ -274,12 +327,22 @@ function Exhibition() {
         </div>
       </section>}
 
-      {savedExperiments.length > 0 && <section className="saved-experiments" aria-labelledby="saved-experiments-heading">
+      <section className={`saved-experiments${savedExperiments.length ? '' : ' saved-experiments-empty'}`} aria-labelledby="saved-experiments-heading">
         <div className="saved-experiments-heading">
-          <div><p className="eyebrow"><span className="eyebrow-rule" /> YOUR NOTEBOOK</p><h2 id="saved-experiments-heading">Keep a particular setup.</h2></div>
-          <p>Settings saved on this device. A running simulation’s full history is not included.</p>
+          <div><p className="eyebrow"><span className="eyebrow-rule" /> YOUR NOTEBOOK</p><h2 id="saved-experiments-heading">{savedExperiments.length ? 'Keep a particular setup.' : 'Take a setup with you.'}</h2></div>
+          <p>{savedExperiments.length ? 'Settings stay on this device. Imports merge without replacing what you have; running simulation history is not included.' : 'Save settings from any study, or bring saved setups back with an Armsteel notebook file.'}</p>
         </div>
-        <div className="saved-experiments-grid">
+        <div className="saved-notebook-toolbar">
+          <div className="saved-notebook-actions">
+            <button type="button" className="saved-notebook-export" onClick={exportNotebook} disabled={!savedExperiments.length} aria-label="Export saved setups as a notebook file">Export notebook</button>
+            <button type="button" className="saved-notebook-import" onClick={() => notebookFileRef.current?.click()} aria-label="Import setups from a notebook file">Import notebook</button>
+            <input id="saved-notebook-import" ref={notebookFileRef} className="visually-hidden" type="file" accept="application/json,.json" aria-hidden="true" tabIndex={-1} onChange={importNotebook} />
+          </div>
+          <span>{savedExperiments.length} / 12 saved</span>
+        </div>
+        <p className="saved-notebook-privacy">Exports are readable JSON, not encrypted. A file can include custom programs, messages, or lesson examples; keep it private. Import stays in this browser.</p>
+        {notebookMessage && <p className="saved-notebook-status" role="status" aria-live="polite" aria-atomic="true">{notebookMessage}</p>}
+        {savedExperiments.length > 0 ? <div className="saved-experiments-grid">
           {savedExperiments.map((saved) => {
             const item = experiments.find((candidate) => candidate.id === saved.exhibitId)
             if (!item) return null
@@ -292,8 +355,8 @@ function Exhibition() {
               <button type="button" onClick={() => removeSaved(saved.id)} aria-label={`Remove saved setup ${saved.name}`} title="Remove saved setup"><Icon name="close" /></button>
             </article>
           })}
-        </div>
-      </section>}
+        </div> : <p className="saved-notebook-empty-note">No setups saved yet. Start with any study’s <em>Save these settings</em> action.</p>}
+      </section>
 
       {gridItems.length ? <div className="gallery-grid" id="gallery-grid" aria-live="polite">
         {gridItems.map((item, index) => <article className="gallery-card" key={item.id} style={{ '--card-index': index } as React.CSSProperties}>
