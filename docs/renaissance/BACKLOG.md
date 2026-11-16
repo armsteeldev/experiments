@@ -72,6 +72,7 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [ ] Repeat suitable performance samples on a physical GPU and mid-range mobile; keep SwiftShader results separate.
 - [x] Add route-level progress reporting and supervise lifecycle-test timeout, browser shutdown and child-process cleanup.
 - [ ] After the host gate passes, rerun lifecycle QA with one owned browser; verify Fluid shared-shader accounting and investigate the prior Shape of Sound CDP timeout.
+- [ ] On a healthy host, exercise the supervisor's role-token cleanup with a short-lived test child, a reparented child, and a child that ignores SIGTERM; confirm only matching PIDs are stopped and the lock/profile are retained if SIGKILL cannot be confirmed.
 
 ## P2 — Automated QA and scientific quality
 

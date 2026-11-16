@@ -57,9 +57,9 @@ All qa:* package commands now use scripts/run-browser-qa.mjs, and each individua
 - starts one loopback-only Vite preview and one isolated Chromium profile on dynamically assigned ports, with CDP bound to IPv4 loopback;
 - does not pass SwiftShader or --disable-gpu flags;
 - applies 20-second startup bounds, an eight-minute default test limit and a ten-minute hard maximum, with no automatic retries;
-- closes the owned browser through CDP, stops the preview, cleans its own temporary profile, and terminates only its own child process trees after errors, timeouts or handled interruption signals. It verifies captured child PIDs exit after termination; if any remain after escalation, it retains the lock and profile to prevent a second run.
+- tags each owned role (preview, Chromium and QA script) with a unique per-run environment token inherited by its subprocesses. Cleanup locates only processes carrying that exact token, confirms each PID's start time before signaling, and repeats the check after graceful CDP close so reparented Chromium or script subprocesses cannot be missed. It applies SIGTERM then bounded SIGKILL escalation; if tagged processes remain, it retains the lock and profile to prevent a second run.
 
-The preview and browser are ordinary foreground children of the runner; none are detached. Test output continues to use the existing paths and is not removed by cleanup.
+The preview and browser are ordinary foreground children of the runner; none are detached. The owner token is local process metadata only and is not logged or sent to a service. Test output continues to use the existing paths and is not removed by cleanup.
 
 Run npm run build only when the machine is healthy, then invoke an individual npm run qa:<name>. QA now fails closed when the host has less than 20% or 2 GiB available RAM (whichever is greater), less than 10% or 64 MiB free swap (capped at 512 MiB), sustained CPU pressure over 25%, one-minute load over 1.5 per logical CPU (minimum threshold 4), or CPU temperature at/above 85°C.
 

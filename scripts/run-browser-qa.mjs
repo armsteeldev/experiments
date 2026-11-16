@@ -210,58 +210,34 @@ function waitForChild(child, ms) {
   ])
 }
 
-async function waitForOwnedRecords(child, records, ms) {
+async function waitForOwnedRecords(role, ms) {
   const deadline = Date.now() + ms
   while (Date.now() < deadline) {
-    const rootAlive = !childHasExited(child)
-    let descendantAlive = false
-    for (const record of records) {
-      if (record.pid === child?.pid) continue
-      if (await readProcessStartTicks(record.pid) === record.startTicks) {
-        descendantAlive = true
-        break
-      }
-    }
-    if (!rootAlive && !descendantAlive) return true
-    await sleep(100)
+    if ((await processSnapshot(role)).size === 0) return true
+    await sleep(250)
   }
-  const rootAlive = !childHasExited(child)
-  for (const record of records) {
-    if (record.pid === child?.pid) continue
-    if (await readProcessStartTicks(record.pid) === record.startTicks) return false
-  }
-  return !rootAlive
+  return (await processSnapshot(role)).size === 0
 }
 
-async function processSnapshot() {
+async function processSnapshot(role) {
   const entries = await readdir('/proc').catch(() => [])
   const records = new Map()
   await Promise.all(entries.filter((entry) => /^\d+$/.test(entry)).map(async (entry) => {
     const pid = Number(entry)
-    const source = await readFile('/proc/' + pid + '/stat', 'utf8').catch(() => '')
+    const [source, environment] = await Promise.all([
+      readFile('/proc/' + pid + '/stat', 'utf8').catch(() => ''),
+      readFile('/proc/' + pid + '/environ', 'utf8').catch(() => ''),
+    ])
     const end = source.lastIndexOf(')')
     if (end < 0) return
     const fields = source.slice(end + 2).trim().split(/\s+/)
     const ppid = Number(fields[1])
     const startTicks = fields[19]
-    if (Number.isInteger(ppid) && startTicks) records.set(pid, { pid, ppid, startTicks })
+    if (!Number.isInteger(ppid) || !startTicks) return
+    if (!environment.split('\0').includes('ARMSTEEL_QA_PROCESS_OWNER=' + token + ':' + role)) return
+    records.set(pid, { pid, ppid, startTicks })
   }))
   return records
-}
-
-async function descendantsOf(rootPid) {
-  const records = await processSnapshot()
-  const selected = new Map()
-  const queue = [rootPid]
-  while (queue.length) {
-    const parent = queue.shift()
-    for (const record of records.values()) {
-      if (record.ppid !== parent || selected.has(record.pid)) continue
-      selected.set(record.pid, record)
-      queue.push(record.pid)
-    }
-  }
-  return [...selected.values()]
 }
 
 async function signalOwnedRecords(records, signal) {
@@ -275,18 +251,15 @@ async function signalOwnedRecords(records, signal) {
   }
 }
 
-async function terminateTree(child, label) {
+async function terminateTree(child, label, role) {
   if (!child || child.pid == null) return true
-  const descendants = await descendantsOf(child.pid)
-  const records = [...descendants.reverse(), {
-    pid: child.pid,
-    startTicks: await readProcessStartTicks(child.pid),
-  }].filter((record) => record.startTicks)
-  await signalOwnedRecords(records, 'SIGTERM')
-  if (await waitForOwnedRecords(child, records, 3_000)) return true
-  await signalOwnedRecords(records, 'SIGKILL')
-  if (!(await waitForOwnedRecords(child, records, 2_000))) {
-    console.error('[qa supervisor] ' + label + ' process tree did not report exit after SIGKILL (root PID ' + child.pid + ').')
+  const records = await processSnapshot(role)
+  if (records.size === 0) return true
+  await signalOwnedRecords([...records.values()], 'SIGTERM')
+  if (await waitForOwnedRecords(role, 3_000)) return true
+  await signalOwnedRecords([...(await processSnapshot(role)).values()], 'SIGKILL')
+  if (!(await waitForOwnedRecords(role, 2_000))) {
+    console.error('[qa supervisor] ' + label + ' owned processes did not report exit after SIGKILL (root PID ' + child.pid + ', role ' + role + ').')
     return false
   }
   return true
@@ -391,16 +364,15 @@ async function closeBrowser(port) {
 async function cleanup() {
   let cleanupSafe = true
   if (qaProcess) {
-    cleanupSafe = await terminateTree(qaProcess, 'browser QA script') && cleanupSafe
+    cleanupSafe = await terminateTree(qaProcess, 'browser QA script', 'script') && cleanupSafe
   }
   if (browserProcess) {
     const graceful = await closeBrowser(cdpPort)
-    if (!graceful || !(await waitForChild(browserProcess, 3_000))) {
-      cleanupSafe = await terminateTree(browserProcess, 'Chromium') && cleanupSafe
-    }
+    if (graceful) await waitForChild(browserProcess, 3_000)
+    cleanupSafe = await terminateTree(browserProcess, 'Chromium', 'chromium') && cleanupSafe
   }
   if (previewProcess) {
-    cleanupSafe = await terminateTree(previewProcess, 'Vite preview') && cleanupSafe
+    cleanupSafe = await terminateTree(previewProcess, 'Vite preview', 'preview') && cleanupSafe
   }
   if (!cleanupSafe) {
     console.error('[qa supervisor] retaining the lock and temporary profile because an owned process did not exit; inspect before another QA run.')
@@ -444,7 +416,11 @@ async function run() {
   throwIfStopped()
   previewProcess = watchChild(spawn(process.execPath, [
     viteCli, 'preview', '--host', '127.0.0.1', '--port', String(previewPort), '--strictPort',
-  ], { cwd: projectRoot, stdio: ['ignore', 'inherit', 'inherit'] }), 'Vite preview')
+  ], {
+    cwd: projectRoot,
+    env: { ...process.env, ARMSTEEL_QA_PROCESS_OWNER: token + ':preview' },
+    stdio: ['ignore', 'inherit', 'inherit'],
+  }), 'Vite preview')
   await waitForHttp('http://127.0.0.1:' + previewPort + '/', previewProcess, 'Vite preview')
 
   profileDir = await mkdtemp(path.join(tempRoot, 'armsteel-renaissance-qa-'))
@@ -462,7 +438,11 @@ async function run() {
     '--disable-component-update',
     '--window-size=1280,800',
     'about:blank',
-  ], { cwd: projectRoot, stdio: ['ignore', 'ignore', 'inherit'] }), 'Chromium')
+  ], {
+    cwd: projectRoot,
+    env: { ...process.env, ARMSTEEL_QA_PROCESS_OWNER: token + ':chromium' },
+    stdio: ['ignore', 'ignore', 'inherit'],
+  }), 'Chromium')
   cdpPort = await waitForCdpPort(profileDir, browserProcess)
   await waitForHttp('http://127.0.0.1:' + cdpPort + '/json/version', browserProcess, 'Chromium CDP endpoint')
   throwIfStopped()
@@ -471,6 +451,7 @@ async function run() {
     ...process.env,
     ARMSTEEL_CDP_PORT: String(cdpPort),
     ARMSTEEL_PREVIEW_URL: 'http://127.0.0.1:' + previewPort,
+    ARMSTEEL_QA_PROCESS_OWNER: token + ':script',
     ARMSTEEL_QA_SUPERVISOR_PID: String(process.pid),
   }
   delete childEnv.ARMSTEEL_QA_TIMEOUT_MS
@@ -497,21 +478,20 @@ async function run() {
   ]).finally(() => clearTimeout(timer))
 
   if (result.resourceFailure) {
-    const stopped = await terminateTree(qaProcess, 'resource-limit-stopped browser QA script')
+    const stopped = await terminateTree(qaProcess, 'resource-limit-stopped browser QA script', 'script')
     if (stopped) qaProcess = null
     fail('Browser QA stopped because host pressure crossed its safety limit: ' + result.resourceFailure.message)
   }
   if (result.timeout) {
-    const stopped = await terminateTree(qaProcess, 'timed-out browser QA script')
+    const stopped = await terminateTree(qaProcess, 'timed-out browser QA script', 'script')
     if (stopped) qaProcess = null
     fail('Browser QA exceeded its ' + Math.round(timeoutMs / 1000) + ' second hard timeout. No automatic retry was attempted.')
   }
   if (result.interrupted) {
-    const stopped = await terminateTree(qaProcess, 'interrupted browser QA script')
+    const stopped = await terminateTree(qaProcess, 'interrupted browser QA script', 'script')
     if (stopped) qaProcess = null
     fail('Browser QA was interrupted by ' + result.interrupted + '.')
   }
-  qaProcess = null
   if (result.code !== 0) fail('Browser QA exited with code ' + result.code + (result.signal ? ' after ' + result.signal : '') + '.')
   console.log('[qa supervisor] browser QA completed successfully; closing owned Chromium and preview.')
 }
