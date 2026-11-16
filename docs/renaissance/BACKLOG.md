@@ -60,7 +60,8 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 ## P1 — Performance and lifecycle
 
 - [x] Profile cold homepage/gallery loading, search, main-thread long tasks, animation callbacks, and GPU/compositor traces in HeadlessChrome 157 / SwiftShader; reduce only decorative ambient pixel density after repeated slow frames and preserve before/after evidence.
-- [ ] Measure lazy exhibit chunks, mounting duration, frame cadence and worker/AudioContext/WebGL cleanup after repeated route changes.
+- [x] Measure lazy exhibit chunks, mounting duration, frame cadence and worker/AudioContext/WebGL cleanup after repeated route changes (`qa:route-lifecycle`).
+- [ ] Re-measure route-mount outliers and frame pacing in a controlled, uninstrumented browser on physical GPU and mid-range mobile hardware when available.
 - [x] Instrument workers and audio contexts during two complete nineteen-route SPA passes; confirm every route-owned worker terminates and each explicitly started audio context closes on exit.
 - [x] Profile the 1,400-agent Flocking predator scenario before/after optimization under a fixed headless browser and workload; preserve exact trial data and the software-renderer caveat.
 - [x] Test a real background-tab switch: network ticks ignore throttled hidden callbacks; deep Mandelbrot worker work cancels, stays idle, and resumes in a newer generation.
@@ -68,6 +69,8 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Test lensing resize, hidden-tab cancellation/resume, and cancellation during an in-flight sky raster, including a forced no-worker recovery; numerical checks require byte-identical synchronous/cooperative source pixels and raster output.
 - [ ] Exercise the Mandelbrot WebGPU `device.lost` recovery with a real WebGPU-capable implementation; headless SwiftShader only exposes WebGL in the current run.
 - [ ] Repeat suitable performance samples on a physical GPU and mid-range mobile; keep SwiftShader results separate.
+- [x] Add route-level progress reporting and supervise lifecycle-test timeout, browser shutdown and child-process cleanup.
+- [ ] After the host gate passes, rerun lifecycle QA with one owned browser; verify Fluid shared-shader accounting and investigate the prior Shape of Sound CDP timeout.
 
 ## P2 — Automated QA and scientific quality
 

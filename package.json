@@ -36,6 +36,7 @@
     "qa:flocking-performance": "node scripts/run-browser-qa.mjs scripts/qa-flocking-performance.mjs",
     "qa:background-suspension": "node scripts/run-browser-qa.mjs scripts/qa-background-suspension.mjs",
     "qa:fallback-restoration": "node scripts/run-browser-qa.mjs scripts/qa-fallback-restoration.mjs",
+    "qa:fluid-entry": "node scripts/run-browser-qa.mjs scripts/qa-fluid-entry.mjs",
     "qa:route-lifecycle": "node scripts/run-browser-qa.mjs scripts/qa-route-lifecycle.mjs",
     "qa:exhibit-overlays": "node scripts/run-browser-qa.mjs scripts/qa-exhibit-overlays.mjs",
     "qa:accessibility": "node scripts/run-browser-qa.mjs scripts/qa-accessibility.mjs",

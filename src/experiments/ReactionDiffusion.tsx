@@ -219,7 +219,8 @@ function resizeBundle(bundle: Bundle, canvas: HTMLCanvasElement, quality: string
   const simScale = Math.min(1, Math.sqrt((quality === 'detail' ? 1_800_000 : 850_000) / (width * height)))
   const simWidth = Math.max(64, Math.floor(width * simScale)), simHeight = Math.max(64, Math.floor(height * simScale))
   if (bundle.width === width && bundle.height === height && bundle.fields[0].width === simWidth && bundle.fields[0].height === simHeight) return false
-  if (bundle.width > 1) { destroy(bundle.fields[0], bundle.gl); destroy(bundle.fields[1], bundle.gl) }
+  destroy(bundle.fields[0], bundle.gl)
+  destroy(bundle.fields[1], bundle.gl)
   canvas.width = width; canvas.height = height
   bundle.width = width; bundle.height = height
   bundle.fields = [makeTarget(bundle.gl, simWidth, simHeight), makeTarget(bundle.gl, simWidth, simHeight)]

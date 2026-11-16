@@ -72,22 +72,31 @@ function createShader(gl: WebGL2RenderingContext, type: number, source: string) 
   if (!shader) throw new Error('Could not allocate a simulation shader')
   gl.shaderSource(shader, source)
   gl.compileShader(shader)
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(shader) || 'Simulation shader compilation failed')
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const error = gl.getShaderInfoLog(shader) || 'Simulation shader compilation failed'
+    gl.deleteShader(shader)
+    throw new Error(error)
+  }
   return shader
 }
 
-function createProgram(gl: WebGL2RenderingContext, source: string): Program {
-  const vertex = createShader(gl, gl.VERTEX_SHADER, fullscreenVertex)
+function createProgram(gl: WebGL2RenderingContext, source: string, vertex: WebGLShader): Program {
   const fragment = createShader(gl, gl.FRAGMENT_SHADER, source)
-  const handle = gl.createProgram()
-  if (!handle) throw new Error('Could not allocate a simulation program')
-  gl.attachShader(handle, vertex)
-  gl.attachShader(handle, fragment)
-  gl.linkProgram(handle)
-  gl.deleteShader(vertex)
-  gl.deleteShader(fragment)
-  if (!gl.getProgramParameter(handle, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(handle) || 'Could not link simulation shaders')
-  return { handle, uniforms: new Map() }
+  let handle: WebGLProgram | null = null
+  try {
+    handle = gl.createProgram()
+    if (!handle) throw new Error('Could not allocate a simulation program')
+    gl.attachShader(handle, vertex)
+    gl.attachShader(handle, fragment)
+    gl.linkProgram(handle)
+    if (!gl.getProgramParameter(handle, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(handle) || 'Could not link simulation shaders')
+    return { handle, uniforms: new Map() }
+  } catch (error) {
+    if (handle) gl.deleteProgram(handle)
+    throw error
+  } finally {
+    gl.deleteShader(fragment)
+  }
 }
 
 function target(gl: WebGL2RenderingContext, width: number, height: number): Target {
@@ -249,9 +258,20 @@ function createBundle(canvas: HTMLCanvasElement): Bundle {
   const vao = gl.createVertexArray()
   if (!vao) throw new Error('Vertex array support is unavailable')
   gl.bindVertexArray(vao)
-  const programs = Object.fromEntries(Object.entries(shaderSource).map(([name, source]) => [name, createProgram(gl, source)]))
-  const initial = { gl, vao, programs, velocity: null, velocityOriginal: null, dye: null, pressure: null, divergence: null, curl: null, width: 1, height: 1, velocityIndex: 0, dyeIndex: 0 } as unknown as Bundle
-  return initial
+  const programs: Record<string, Program> = {}
+  let vertex: WebGLShader | null = null
+  try {
+    vertex = createShader(gl, gl.VERTEX_SHADER, fullscreenVertex)
+    for (const [name, source] of Object.entries(shaderSource)) programs[name] = createProgram(gl, source, vertex)
+    gl.deleteShader(vertex)
+    vertex = null
+    return { gl, vao, programs, velocity: null, velocityOriginal: null, dye: null, pressure: null, divergence: null, curl: null, width: 1, height: 1, velocityIndex: 0, dyeIndex: 0 } as unknown as Bundle
+  } catch (error) {
+    if (vertex) gl.deleteShader(vertex)
+    for (const program of Object.values(programs)) gl.deleteProgram(program.handle)
+    gl.deleteVertexArray(vao)
+    throw error
+  }
 }
 
 function resizeBundle(bundle: Bundle, canvas: HTMLCanvasElement) {

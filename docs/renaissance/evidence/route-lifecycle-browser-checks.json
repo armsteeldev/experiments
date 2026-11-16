@@ -8,15 +8,529 @@
     ],
     "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
   },
-  "method": "Traverse the full ordered exhibit list twice through the real SPA next control. Instrument Worker and AudioContext creation and termination in the browser document, check each owner after unmount, start sound only through a trusted browser click, and sample JS heap after V8 collection at three checkpoints. Heap values are estimates and do not establish device-wide memory or long-run boundedness.",
+  "method": "Traverse the full ordered exhibit list twice through the real SPA next control. Instrument Worker, AudioContext, Canvas2D and WebGL creation/cleanup in the browser document; time mounted routes; record first-seen same-origin script/style resources from Resource Timing; sample one-second requestAnimationFrame windows and draw API calls on five representative renderer paths; and sample JS heap plus weak graphics references after forced V8 collection at three route checkpoints and after gallery return. Invalid negative Resource Timing durations are null and marked invalid. Heap values are estimates and do not establish device-wide memory or long-run boundedness. Renderer monkey-patching adds measurement overhead; frame values are software-rendered browser behavior, not physical GPU performance.",
   "exhibits": 19,
   "routeEntries": 38,
   "transitions": 38,
+  "initialMount": {
+    "exhibit": "mandelbrot",
+    "durationMs": 3361,
+    "readyAtPerformanceMs": 3165.3
+  },
+  "mountDurationSummaryMs": {
+    "count": 38,
+    "median": 390.6,
+    "p95": 5992.5,
+    "maximum": 9303.4
+  },
+  "firstSeenAssets": [
+    {
+      "path": "/assets/index-Cl4_DBsq.js",
+      "initiatorType": "script",
+      "transferSize": 117108,
+      "encodedBodySize": 116808,
+      "decodedBodySize": 361849,
+      "durationMs": 37.3,
+      "firstRoute": "mandelbrot",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/index-Ebg23dNu.css",
+      "initiatorType": "link",
+      "transferSize": 24706,
+      "encodedBodySize": 24406,
+      "decodedBodySize": 113252,
+      "durationMs": 31.9,
+      "firstRoute": "mandelbrot",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/Mandelbrot-DFuoB7bd.js",
+      "initiatorType": "script",
+      "transferSize": 18054,
+      "encodedBodySize": 17754,
+      "decodedBodySize": 54597,
+      "durationMs": 23.3,
+      "firstRoute": "mandelbrot",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/Controls-BIm25uZo.js",
+      "initiatorType": "script",
+      "transferSize": 968,
+      "encodedBodySize": 668,
+      "decodedBodySize": 1715,
+      "durationMs": 23,
+      "firstRoute": "mandelbrot",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/useDiscoveryHint-CKDCtC_v.js",
+      "initiatorType": "script",
+      "transferSize": 703,
+      "encodedBodySize": 403,
+      "decodedBodySize": 403,
+      "durationMs": 22.7,
+      "firstRoute": "mandelbrot",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/experimentState-DI0xqCIQ.js",
+      "initiatorType": "script",
+      "transferSize": 655,
+      "encodedBodySize": 355,
+      "decodedBodySize": 355,
+      "durationMs": 22.9,
+      "firstRoute": "mandelbrot",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/mandelbrot.worker-CtDbzTt0.js",
+      "initiatorType": "other",
+      "transferSize": 3601,
+      "encodedBodySize": 3301,
+      "decodedBodySize": 7772,
+      "durationMs": null,
+      "firstRoute": "mandelbrot",
+      "timingValid": false
+    },
+    {
+      "path": "/assets/Fluid-Cx6dY2JQ.js",
+      "initiatorType": "script",
+      "transferSize": 10578,
+      "encodedBodySize": 10278,
+      "decodedBodySize": 30082,
+      "durationMs": 14.4,
+      "firstRoute": "fluid",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/Boids-B5xU7uA3.js",
+      "initiatorType": "script",
+      "transferSize": 6028,
+      "encodedBodySize": 5728,
+      "decodedBodySize": 13533,
+      "durationMs": 49.4,
+      "firstRoute": "boids",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/Attractors-BM3MdmLe.js",
+      "initiatorType": "script",
+      "transferSize": 6140,
+      "encodedBodySize": 5840,
+      "decodedBodySize": 14664,
+      "durationMs": 18.3,
+      "firstRoute": "attractors",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/ReactionDiffusion-DwC2RidV.js",
+      "initiatorType": "script",
+      "transferSize": 9075,
+      "encodedBodySize": 8775,
+      "decodedBodySize": 24050,
+      "durationMs": 6.5,
+      "firstRoute": "reaction",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/LSystems-CXeiBH7o.js",
+      "initiatorType": "script",
+      "transferSize": 8108,
+      "encodedBodySize": 7808,
+      "decodedBodySize": 18968,
+      "durationMs": 27.5,
+      "firstRoute": "lsystem",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/GravityPlayground-ob3N4Dtl.js",
+      "initiatorType": "script",
+      "transferSize": 9663,
+      "encodedBodySize": 9363,
+      "decodedBodySize": 24223,
+      "durationMs": 6.2,
+      "firstRoute": "gravity",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/ExpandedExhibits-DFQmNgbX.css",
+      "initiatorType": "link",
+      "transferSize": 11463,
+      "encodedBodySize": 11163,
+      "decodedBodySize": 47640,
+      "durationMs": 13.5,
+      "firstRoute": "gravity",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/InsideMachine-BFQCGD7Y.js",
+      "initiatorType": "script",
+      "transferSize": 6326,
+      "encodedBodySize": 6026,
+      "decodedBodySize": 16800,
+      "durationMs": 18.1,
+      "firstRoute": "machine",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/ComputingRethink-B5waIeKA.css",
+      "initiatorType": "link",
+      "transferSize": 10906,
+      "encodedBodySize": 10606,
+      "decodedBodySize": 46586,
+      "durationMs": 17.1,
+      "firstRoute": "machine",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/NeuralNetworks-BTIgS_ZJ.js",
+      "initiatorType": "script",
+      "transferSize": 8301,
+      "encodedBodySize": 8001,
+      "decodedBodySize": 20679,
+      "durationMs": 20.6,
+      "firstRoute": "neural",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/LogicLaboratory-CBMPj6u0.js",
+      "initiatorType": "script",
+      "transferSize": 9484,
+      "encodedBodySize": 9184,
+      "decodedBodySize": 25913,
+      "durationMs": 19.5,
+      "firstRoute": "logic",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/InvisibleForces-DFGOc4FO.js",
+      "initiatorType": "script",
+      "transferSize": 6692,
+      "encodedBodySize": 6392,
+      "decodedBodySize": 15682,
+      "durationMs": 9.3,
+      "firstRoute": "forces",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/CellularAutomata-CBrnXeBS.js",
+      "initiatorType": "script",
+      "transferSize": 7681,
+      "encodedBodySize": 7381,
+      "decodedBodySize": 17879,
+      "durationMs": 23.5,
+      "firstRoute": "automata",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/Adder-D5HAq90Q.js",
+      "initiatorType": "script",
+      "transferSize": 8136,
+      "encodedBodySize": 7836,
+      "decodedBodySize": 19613,
+      "durationMs": 29.5,
+      "firstRoute": "adder",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/WaveChamber-CNBo930l.js",
+      "initiatorType": "script",
+      "transferSize": 6810,
+      "encodedBodySize": 6510,
+      "decodedBodySize": 17160,
+      "durationMs": 8.8,
+      "firstRoute": "waves",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/invisible-world-CuhDQ6rQ.js",
+      "initiatorType": "script",
+      "transferSize": 845,
+      "encodedBodySize": 545,
+      "decodedBodySize": 545,
+      "durationMs": 6.3,
+      "firstRoute": "waves",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/invisible-world-DJ3s1M0y.css",
+      "initiatorType": "link",
+      "transferSize": 4119,
+      "encodedBodySize": 3819,
+      "decodedBodySize": 15348,
+      "durationMs": 6.2,
+      "firstRoute": "waves",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/GeometryOfLight-uJk_RGPH.js",
+      "initiatorType": "script",
+      "transferSize": 6220,
+      "encodedBodySize": 5920,
+      "decodedBodySize": 14544,
+      "durationMs": 16.2,
+      "firstRoute": "optics",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/ShapeOfSound-DezhEEdQ.js",
+      "initiatorType": "script",
+      "transferSize": 6792,
+      "encodedBodySize": 6492,
+      "decodedBodySize": 16033,
+      "durationMs": 18.3,
+      "firstRoute": "sound",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/LivingGarden-BWiIGKJp.js",
+      "initiatorType": "script",
+      "transferSize": 7422,
+      "encodedBodySize": 7122,
+      "decodedBodySize": 18528,
+      "durationMs": 30.1,
+      "firstRoute": "garden",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/LivingNetwork-BFAnOUCZ.js",
+      "initiatorType": "script",
+      "transferSize": 6802,
+      "encodedBodySize": 6502,
+      "decodedBodySize": 16511,
+      "durationMs": 7.6,
+      "firstRoute": "network",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/WhereLightFalls-DdikriPZ.js",
+      "initiatorType": "script",
+      "transferSize": 8081,
+      "encodedBodySize": 7781,
+      "decodedBodySize": 19515,
+      "durationMs": 3.9,
+      "firstRoute": "lensing",
+      "timingValid": true
+    },
+    {
+      "path": "/assets/lensing.worker-BfOu5MkA.js",
+      "initiatorType": "other",
+      "transferSize": 3337,
+      "encodedBodySize": 3037,
+      "decodedBodySize": 6936,
+      "durationMs": null,
+      "firstRoute": "lensing",
+      "timingValid": false
+    }
+  ],
+  "frameSamples": [
+    {
+      "exhibit": "mandelbrot",
+      "frames": 48,
+      "durationMs": 1013.5,
+      "finishedBy": "one-second-window",
+      "intervalMedianMs": 16.7,
+      "intervalP95Ms": 16.8,
+      "intervalsMs": [
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.8,
+        50,
+        100,
+        116.6
+      ],
+      "drawOperations": {
+        "webgl2": {
+          "contexts": 1,
+          "drawOperations": 0,
+          "operationsPerSecond": 0
+        }
+      }
+    },
+    {
+      "exhibit": "fluid",
+      "frames": 1,
+      "durationMs": 1812,
+      "finishedBy": "one-second-window",
+      "intervalMedianMs": 1849.9,
+      "intervalP95Ms": 1849.9,
+      "intervalsMs": [
+        1849.9
+      ],
+      "drawOperations": {
+        "webgl2": {
+          "contexts": 1,
+          "drawOperations": 114,
+          "operationsPerSecond": 62.9
+        }
+      }
+    },
+    {
+      "exhibit": "attractors",
+      "frames": 12,
+      "durationMs": 1041.4,
+      "finishedBy": "one-second-window",
+      "intervalMedianMs": 66.6,
+      "intervalP95Ms": 116.7,
+      "intervalsMs": [
+        16.7,
+        50.1,
+        66.6,
+        66.6,
+        66.6,
+        66.6,
+        66.7,
+        66.7,
+        83.3,
+        100,
+        116.7,
+        133.3
+      ],
+      "drawOperations": {
+        "2d": {
+          "contexts": 1,
+          "drawOperations": 342,
+          "operationsPerSecond": 328.4
+        }
+      }
+    },
+    {
+      "exhibit": "reaction",
+      "frames": 2,
+      "durationMs": 1118.3,
+      "finishedBy": "one-second-window",
+      "intervalMedianMs": 450,
+      "intervalP95Ms": 450,
+      "intervalsMs": [
+        450,
+        583.4
+      ],
+      "drawOperations": {
+        "webgl2": {
+          "contexts": 1,
+          "drawOperations": 12,
+          "operationsPerSecond": 10.7
+        }
+      }
+    },
+    {
+      "exhibit": "garden",
+      "frames": 10,
+      "durationMs": 1034.6,
+      "finishedBy": "one-second-window",
+      "intervalMedianMs": 83.3,
+      "intervalP95Ms": 133.4,
+      "intervalsMs": [
+        50,
+        66.7,
+        66.7,
+        83.3,
+        83.3,
+        83.3,
+        83.3,
+        116.7,
+        133.4,
+        216.5
+      ],
+      "drawOperations": {
+        "2d": {
+          "contexts": 1,
+          "drawOperations": 4084,
+          "operationsPerSecond": 3947.4
+        }
+      }
+    }
+  ],
   "workers": {
     "totalCreated": 6,
     "totalTerminated": 6,
     "exhibitCreated": 6,
     "exhibitTerminated": 6
+  },
+  "graphics": {
+    "contextsCreated": 38,
+    "byType": {
+      "webgl2": {
+        "contexts": 6,
+        "drawCalls": 1106,
+        "resourceCreates": {
+          "shader": 68,
+          "program": 34,
+          "vertexArray": 4,
+          "texture": 26,
+          "framebuffer": 26
+        },
+        "resourceDeletes": {
+          "program": 34,
+          "shader": 68,
+          "texture": 26,
+          "framebuffer": 26,
+          "vertexArray": 4
+        }
+      },
+      "2d": {
+        "contexts": 32,
+        "drawCalls": 36177,
+        "resourceCreates": {},
+        "resourceDeletes": {}
+      }
+    }
+  },
+  "canvasCleanupChecks": 38,
+  "finalHeapSnapshot": {
+    "route": "/",
+    "usedBytes": 6661745,
+    "graphicsContextsTracked": 38,
+    "detachedCanvasReferences": 0,
+    "detachedContextsStillLive": 0,
+    "detachedContextsOutsideActiveRoute": 0,
+    "activeRouteDetachedContexts": 0,
+    "connectedExhibitCanvases": 0,
+    "connectedCanvasesOutsideActiveRoute": 0
   },
   "activeGalleryWorkers": [],
   "audioContextsCreated": 2,
@@ -26,205 +540,344 @@
       "id": "mandelbrot",
       "cycle": 1,
       "workers": 2,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "webgl2"
+      ]
     },
     {
       "id": "fluid",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "webgl2"
+      ]
     },
     {
       "id": "boids",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "attractors",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "reaction",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "webgl2"
+      ]
     },
     {
       "id": "lsystem",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "gravity",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "machine",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "neural",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "logic",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "forces",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "automata",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "adder",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "waves",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "optics",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "sound",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "garden",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "network",
       "cycle": 1,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "lensing",
       "cycle": 1,
       "workers": 1,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 3,
+      "graphicsTypes": [
+        "2d",
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "mandelbrot",
       "cycle": 2,
       "workers": 2,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "webgl2",
+        "webgl2"
+      ]
     },
     {
       "id": "fluid",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "webgl2",
+        "webgl2"
+      ]
     },
     {
       "id": "boids",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "attractors",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "reaction",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "webgl2",
+        "webgl2"
+      ]
     },
     {
       "id": "lsystem",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "gravity",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "machine",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "neural",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "logic",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "forces",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 4,
+      "graphicsTypes": [
+        "2d",
+        "2d",
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "automata",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "adder",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "waves",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "optics",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "sound",
@@ -232,272 +885,951 @@
       "workers": 0,
       "audioStates": [
         "closed"
+      ],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
       ]
     },
     {
       "id": "garden",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "network",
       "cycle": 2,
       "workers": 0,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 2,
+      "graphicsTypes": [
+        "2d",
+        "2d"
+      ]
     },
     {
       "id": "lensing",
       "cycle": 2,
       "workers": 1,
-      "audioStates": []
+      "audioStates": [],
+      "graphicsContexts": 7,
+      "graphicsTypes": [
+        "2d",
+        "2d",
+        "2d",
+        "2d",
+        "2d",
+        "2d",
+        "2d"
+      ]
     }
   ],
   "heapSamples": [
     {
       "route": "/exhibits/logic",
-      "usedBytes": 9012815
+      "usedBytes": 4240572,
+      "graphicsContextsTracked": 7,
+      "detachedCanvasReferences": 0,
+      "detachedContextsStillLive": 0,
+      "detachedContextsOutsideActiveRoute": 0,
+      "activeRouteDetachedContexts": 0,
+      "connectedExhibitCanvases": 0,
+      "connectedCanvasesOutsideActiveRoute": 0
     },
     {
       "route": "/exhibits/lensing",
-      "usedBytes": 11191218
+      "usedBytes": 5530458,
+      "graphicsContextsTracked": 19,
+      "detachedCanvasReferences": 1,
+      "detachedContextsStillLive": 1,
+      "detachedContextsOutsideActiveRoute": 0,
+      "activeRouteDetachedContexts": 1,
+      "connectedExhibitCanvases": 1,
+      "connectedCanvasesOutsideActiveRoute": 0
     },
     {
       "route": "/exhibits/lensing",
-      "usedBytes": 10391922
+      "usedBytes": 5850009,
+      "graphicsContextsTracked": 38,
+      "detachedCanvasReferences": 1,
+      "detachedContextsStillLive": 1,
+      "detachedContextsOutsideActiveRoute": 0,
+      "activeRouteDetachedContexts": 1,
+      "connectedExhibitCanvases": 1,
+      "connectedCanvasesOutsideActiveRoute": 0
     }
   ],
   "transitionChecks": [
     {
       "from": "mandelbrot",
       "to": "fluid",
+      "mountDurationMs": 7533.7,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {
+          "shader": 2,
+          "program": 1
+        },
+        "resourceDeletes": {
+          "program": 1,
+          "shader": 2
+        },
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/Fluid-Cx6dY2JQ.js",
+          "initiatorType": "script",
+          "transferSize": 10578,
+          "encodedBodySize": 10278,
+          "decodedBodySize": 30082,
+          "durationMs": 14.4
+        }
+      ]
     },
     {
       "from": "fluid",
       "to": "boids",
+      "mountDurationMs": 5992.5,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 0,
+        "resourceCreates": {
+          "vertexArray": 1,
+          "shader": 24,
+          "program": 12,
+          "texture": 9,
+          "framebuffer": 9
+        },
+        "resourceDeletes": {
+          "shader": 24,
+          "texture": 9,
+          "framebuffer": 9,
+          "vertexArray": 1,
+          "program": 12
+        },
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/Boids-B5xU7uA3.js",
+          "initiatorType": "script",
+          "transferSize": 6028,
+          "encodedBodySize": 5728,
+          "decodedBodySize": 13533,
+          "durationMs": 49.4
+        }
+      ]
     },
     {
       "from": "boids",
       "to": "attractors",
+      "mountDurationMs": 447.3,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/Attractors-BM3MdmLe.js",
+          "initiatorType": "script",
+          "transferSize": 6140,
+          "encodedBodySize": 5840,
+          "decodedBodySize": 14664,
+          "durationMs": 18.3
+        }
+      ]
     },
     {
       "from": "attractors",
       "to": "reaction",
+      "mountDurationMs": 1881.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/ReactionDiffusion-DwC2RidV.js",
+          "initiatorType": "script",
+          "transferSize": 9075,
+          "encodedBodySize": 8775,
+          "decodedBodySize": 24050,
+          "durationMs": 6.5
+        }
+      ]
     },
     {
       "from": "reaction",
       "to": "lsystem",
+      "mountDurationMs": 1819.3,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 0,
+        "resourceCreates": {
+          "vertexArray": 1,
+          "texture": 4,
+          "framebuffer": 4,
+          "shader": 8,
+          "program": 4
+        },
+        "resourceDeletes": {
+          "shader": 8,
+          "texture": 4,
+          "framebuffer": 4,
+          "program": 4,
+          "vertexArray": 1
+        },
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/LSystems-CXeiBH7o.js",
+          "initiatorType": "script",
+          "transferSize": 8108,
+          "encodedBodySize": 7808,
+          "decodedBodySize": 18968,
+          "durationMs": 27.5
+        }
+      ]
     },
     {
       "from": "lsystem",
       "to": "gravity",
+      "mountDurationMs": 531.4,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/GravityPlayground-ob3N4Dtl.js",
+          "initiatorType": "script",
+          "transferSize": 9663,
+          "encodedBodySize": 9363,
+          "decodedBodySize": 24223,
+          "durationMs": 6.2
+        },
+        {
+          "path": "/assets/ExpandedExhibits-DFQmNgbX.css",
+          "initiatorType": "link",
+          "transferSize": 11463,
+          "encodedBodySize": 11163,
+          "decodedBodySize": 47640,
+          "durationMs": 13.5
+        }
+      ]
     },
     {
       "from": "gravity",
       "to": "machine",
+      "mountDurationMs": 348.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/InsideMachine-BFQCGD7Y.js",
+          "initiatorType": "script",
+          "transferSize": 6326,
+          "encodedBodySize": 6026,
+          "decodedBodySize": 16800,
+          "durationMs": 18.1
+        },
+        {
+          "path": "/assets/ComputingRethink-B5waIeKA.css",
+          "initiatorType": "link",
+          "transferSize": 10906,
+          "encodedBodySize": 10606,
+          "decodedBodySize": 46586,
+          "durationMs": 17.1
+        }
+      ]
     },
     {
       "from": "machine",
       "to": "neural",
+      "mountDurationMs": 460.7,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/NeuralNetworks-BTIgS_ZJ.js",
+          "initiatorType": "script",
+          "transferSize": 8301,
+          "encodedBodySize": 8001,
+          "decodedBodySize": 20679,
+          "durationMs": 20.6
+        }
+      ]
     },
     {
       "from": "neural",
       "to": "logic",
+      "mountDurationMs": 327,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/LogicLaboratory-CBMPj6u0.js",
+          "initiatorType": "script",
+          "transferSize": 9484,
+          "encodedBodySize": 9184,
+          "decodedBodySize": 25913,
+          "durationMs": 19.5
+        }
+      ]
     },
     {
       "from": "logic",
       "to": "forces",
+      "mountDurationMs": 443.7,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/InvisibleForces-DFGOc4FO.js",
+          "initiatorType": "script",
+          "transferSize": 6692,
+          "encodedBodySize": 6392,
+          "decodedBodySize": 15682,
+          "durationMs": 9.3
+        }
+      ]
     },
     {
       "from": "forces",
       "to": "automata",
+      "mountDurationMs": 381.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/CellularAutomata-CBrnXeBS.js",
+          "initiatorType": "script",
+          "transferSize": 7681,
+          "encodedBodySize": 7381,
+          "decodedBodySize": 17879,
+          "durationMs": 23.5
+        }
+      ]
     },
     {
       "from": "automata",
       "to": "adder",
+      "mountDurationMs": 418.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/Adder-D5HAq90Q.js",
+          "initiatorType": "script",
+          "transferSize": 8136,
+          "encodedBodySize": 7836,
+          "decodedBodySize": 19613,
+          "durationMs": 29.5
+        }
+      ]
     },
     {
       "from": "adder",
       "to": "waves",
+      "mountDurationMs": 412.6,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/WaveChamber-CNBo930l.js",
+          "initiatorType": "script",
+          "transferSize": 6810,
+          "encodedBodySize": 6510,
+          "decodedBodySize": 17160,
+          "durationMs": 8.8
+        },
+        {
+          "path": "/assets/invisible-world-CuhDQ6rQ.js",
+          "initiatorType": "script",
+          "transferSize": 845,
+          "encodedBodySize": 545,
+          "decodedBodySize": 545,
+          "durationMs": 6.3
+        },
+        {
+          "path": "/assets/invisible-world-DJ3s1M0y.css",
+          "initiatorType": "link",
+          "transferSize": 4119,
+          "encodedBodySize": 3819,
+          "decodedBodySize": 15348,
+          "durationMs": 6.2
+        }
+      ]
     },
     {
       "from": "waves",
       "to": "optics",
+      "mountDurationMs": 404.6,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 2,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/GeometryOfLight-uJk_RGPH.js",
+          "initiatorType": "script",
+          "transferSize": 6220,
+          "encodedBodySize": 5920,
+          "decodedBodySize": 14544,
+          "durationMs": 16.2
+        }
+      ]
     },
     {
       "from": "optics",
       "to": "sound",
+      "mountDurationMs": 505.3,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/ShapeOfSound-DezhEEdQ.js",
+          "initiatorType": "script",
+          "transferSize": 6792,
+          "encodedBodySize": 6492,
+          "decodedBodySize": 16033,
+          "durationMs": 18.3
+        }
+      ]
     },
     {
       "from": "sound",
       "to": "garden",
+      "mountDurationMs": 687.1,
       "workersReleased": true,
       "audioStatesAfterExit": [
         "closed"
+      ],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/LivingGarden-BWiIGKJp.js",
+          "initiatorType": "script",
+          "transferSize": 7422,
+          "encodedBodySize": 7122,
+          "decodedBodySize": 18528,
+          "durationMs": 30.1
+        }
       ]
     },
     {
       "from": "garden",
       "to": "network",
+      "mountDurationMs": 390.6,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/LivingNetwork-BFAnOUCZ.js",
+          "initiatorType": "script",
+          "transferSize": 6802,
+          "encodedBodySize": 6502,
+          "decodedBodySize": 16511,
+          "durationMs": 7.6
+        }
+      ]
     },
     {
       "from": "network",
       "to": "lensing",
+      "mountDurationMs": 440.1,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/WhereLightFalls-DdikriPZ.js",
+          "initiatorType": "script",
+          "transferSize": 8081,
+          "encodedBodySize": 7781,
+          "decodedBodySize": 19515,
+          "durationMs": 3.9
+        },
+        {
+          "path": "/assets/lensing.worker-BfOu5MkA.js",
+          "initiatorType": "other",
+          "transferSize": 3337,
+          "encodedBodySize": 3037,
+          "decodedBodySize": 6936,
+          "durationMs": -58.7
+        }
+      ]
     },
     {
       "from": "lensing",
       "to": "mandelbrot",
+      "mountDurationMs": 2285.5,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 3,
+        "detachedCanvases": 3,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "mandelbrot",
       "to": "fluid",
+      "mountDurationMs": 9303.4,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {
+          "shader": 4,
+          "program": 2
+        },
+        "resourceDeletes": {
+          "program": 2,
+          "shader": 4
+        },
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "fluid",
       "to": "boids",
+      "mountDurationMs": 5985,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {
+          "vertexArray": 2,
+          "shader": 48,
+          "program": 24,
+          "texture": 18,
+          "framebuffer": 18
+        },
+        "resourceDeletes": {
+          "shader": 48,
+          "texture": 18,
+          "framebuffer": 18,
+          "vertexArray": 2,
+          "program": 24
+        },
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "boids",
       "to": "attractors",
+      "mountDurationMs": 285.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "attractors",
       "to": "reaction",
+      "mountDurationMs": 1996,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "reaction",
       "to": "lsystem",
+      "mountDurationMs": 90.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 0,
+        "resourceCreates": {
+          "vertexArray": 2,
+          "texture": 8,
+          "framebuffer": 8,
+          "shader": 16,
+          "program": 8
+        },
+        "resourceDeletes": {
+          "shader": 16,
+          "texture": 8,
+          "framebuffer": 8,
+          "program": 8,
+          "vertexArray": 2
+        },
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "lsystem",
       "to": "gravity",
+      "mountDurationMs": 45.4,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "gravity",
       "to": "machine",
+      "mountDurationMs": 165.9,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "machine",
       "to": "neural",
+      "mountDurationMs": 40.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "neural",
       "to": "logic",
+      "mountDurationMs": 103.5,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "logic",
       "to": "forces",
+      "mountDurationMs": 27.2,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "forces",
       "to": "automata",
+      "mountDurationMs": 113.1,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 4,
+        "detachedCanvases": 4,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "automata",
       "to": "adder",
+      "mountDurationMs": 307.9,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "adder",
       "to": "waves",
+      "mountDurationMs": 367.6,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "waves",
       "to": "optics",
+      "mountDurationMs": 32.8,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "optics",
       "to": "sound",
+      "mountDurationMs": 70.3,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 0,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "sound",
       "to": "garden",
+      "mountDurationMs": 118.7,
       "workersReleased": true,
       "audioStatesAfterExit": [
         "closed",
         "closed"
-      ]
+      ],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "garden",
       "to": "network",
+      "mountDurationMs": 37,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "network",
       "to": "lensing",
+      "mountDurationMs": 381.5,
       "workersReleased": true,
-      "audioStatesAfterExit": []
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": []
     },
     {
       "from": "lensing",
       "to": "/",
+      "mountDurationMs": 2259.2,
       "workersReleased": true,
       "audioStatesAfterExit": [
         "closed",
@@ -505,5 +1837,15 @@
       ]
     }
   ],
-  "browserErrors": []
+  "browserErrors": [],
+  "invalidResourceTimingEntries": [
+    {
+      "path": "/assets/mandelbrot.worker-CtDbzTt0.js",
+      "firstRoute": "mandelbrot"
+    },
+    {
+      "path": "/assets/lensing.worker-BfOu5MkA.js",
+      "firstRoute": "lensing"
+    }
+  ]
 }
