@@ -54,15 +54,16 @@ The focused checks cover wave propagation, the Courant boundary, long-run bounde
 
 `npm run qa:resources` records an 18-second evolving-garden sample, 120 requestAnimationFrame intervals and eight SPA remounts in `evidence/runtime-resource-samples.json`. In the clean software-Chromium run, post-GC listeners settled at 177, DOM nodes at 266, and heap estimates fluctuated around 5.5 MiB by the last remounts. Frame intervals were 33.4 ms median and 50.1 ms at p95. These short-run process counters and frame intervals are not a device-wide memory or physical-GPU benchmark.
 
-`scripts/qa-invisible-world.mjs` runs the six routes through Chrome DevTools Protocol. It captures opening, evolved, interaction, advanced, mobile interaction and mobile controls states, checks viewport overflow, exercises mobile touch and keyboard input, verifies audio starts muted and is closed on route exit, confirms messages sent by selecting graph nodes arrive, captures the double-slit, standing-wave and resonant-chamber presets, exercises the garden near its population cap, revisits each route twice through the SPA gallery, and captures the collection previews plus search. The evidence set contains 50 PNGs. Start an isolated local Chromium first, with a fresh profile and the CDP port expected by the script:
+`scripts/qa-invisible-world.mjs` runs the six routes through Chrome DevTools Protocol. It captures opening, evolved, interaction, advanced, mobile interaction and mobile controls states, checks viewport overflow, exercises mobile touch and keyboard input, verifies audio starts muted and is closed on route exit, confirms messages sent by selecting graph nodes arrive, captures the double-slit, standing-wave and resonant-chamber presets, exercises the garden near its population cap, revisits each route twice through the SPA gallery, and captures the collection previews plus search. The evidence set contains 50 PNGs.
+
+Run this check through the resource supervisor, which owns its preview, Chromium profile and browser lifecycle:
 
 ```sh
-/snap/bin/chromium --headless=new --no-sandbox --disable-dev-shm-usage \
-  --user-data-dir=/tmp/armsteel-invisible-review \
-  --remote-debugging-port=9345 --remote-allow-origins='*' \
-  --no-first-run --no-default-browser-check about:blank
-node scripts/qa-invisible-world.mjs
+npm run build
+npm run qa:invisible-world
 ```
+
+Run it only when the QA supervisor reports that host memory, swap, CPU pressure and temperature are within its safety limits. It does not force SwiftShader or delete test evidence. Do not start a separate Chromium for the script.
 
 The script writes review captures to [`evidence/`](evidence/). Desktop captures use 1440 × 900 and mobile captures use 390 × 844 CSS pixels. These are review artifacts, not production or GPU benchmark evidence. No video recording was needed for this pass; the states are preserved as PNGs.
 

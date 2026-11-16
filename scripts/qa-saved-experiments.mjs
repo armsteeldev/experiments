@@ -1,3 +1,4 @@
+import './require-browser-qa-supervisor.mjs'
 import assert from 'node:assert/strict'
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { rmSync } from 'node:fs'

@@ -1,3 +1,4 @@
+import './require-browser-qa-supervisor.mjs'
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { readFile } from 'node:fs/promises'
