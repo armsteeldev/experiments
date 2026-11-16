@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, the nineteen-study model-boundary audit in `6ba7883`, and the verified shared-control readability/accessibility checkpoint. Items are ordered by visitor value, risk and dependency.
+Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, the nineteen-study model-boundary audit in `6ba7883`, the verified shared-control readability/accessibility checkpoint, and the source-grounded exhibit integration guide. Items are ordered by visitor value, risk and dependency.
 
 ## P0 — Make nineteen exhibits navigable by idea
 
@@ -102,7 +102,7 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 
 ## P3 — Developer workflow
 
-- [ ] Document small exhibit integration contracts for metadata, lazy registration, state sharing, controls, accessibility and cleanup.
+- [x] Document small exhibit integration contracts for metadata, lazy registration, state sharing, controls, accessibility and cleanup in `EXHIBIT-GUIDE.md`.
 - [ ] Add a thin exhibit scaffolder only if review confirms routine omissions are recurring.
 - [ ] Add development-only rendering/worker diagnostics if they help diagnose measured performance issues.
 - [ ] Establish fast, production, browser and extended QA tiers without adding deployment to development CI.

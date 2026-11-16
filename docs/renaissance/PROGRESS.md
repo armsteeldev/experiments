@@ -208,3 +208,13 @@ The QA supervisor now tags the preview, Chromium, and test-script processes with
 ## Next action
 
 Recheck host health before running any production or browser validation. Once every supervisor gate passes, run the Neural Networks interaction test and the route-lifecycle suite sequentially; investigate the existing Shape of Sound CDP timeout. Continue the contrast, reading-order, dialog and screen-reader review, and address the remaining performance, numerical, visual-diff, preview-budget and developer-workflow items in [`BACKLOG.md`](BACKLOG.md). Do not claim physical-GPU/mobile performance or formal accessibility conformance from the current harness.
+
+## Seventeenth checkpoint: exhibit integration contract and host gate
+
+Added [`EXHIBIT-GUIDE.md`](EXHIBIT-GUIDE.md), grounded in the current registry, component props, state serializer, preview renderer, error boundary, accessibility controls, and 19-route site checks. It explains how metadata, lazy modules, previews, validated state, visible interactions, and resource cleanup fit together. The open P3 documentation item is complete; a scaffolder remains deferred until recurring omissions justify one.
+
+At 21:32 CET on 2026-11-16, read-only sampling showed 5,533,480 kB MemAvailable (about 5.3 GiB), 10,088 kB SwapFree (about 9.9 MiB of 4 GiB), load average 1.56/1.84/2.08, CPU PSI `some avg10=32.35%`, memory PSI `some avg10=0.00%`, and a 59°C CPU package. This still fails the supervisor's free-swap and CPU-pressure thresholds. A bounded process-list inspection found no Renaissance QA runner, Vite preview, or `/tmp/armsteel-renaissance-*` process; the visible Chromium and Vite candidates belong to the logged-in Chrome profile and `/home/charlie/maproom`, and are left untouched. No build, test, browser, or benchmark was started. The documentation and backlog edits have not been built or browser-verified.
+
+## Next action
+
+Recheck host health before any build, test, browser QA, or benchmark; the supervisor requires at least 10% free swap (with its 64 MiB floor and 512 MiB cap) and CPU PSI below 25%, in addition to its RAM, load, and temperature gates. When all gates pass, run focused verification sequentially, beginning with `qa:canvas-editing` and then `qa:route-lifecycle`; inspect any failures and confirm clean browser shutdown before broader work. Continue outstanding items in [`BACKLOG.md`](BACKLOG.md), with the Neural Networks keyboard workflow still unverified. No physical-GPU, mobile-device, screen-reader, or formal conformance claim follows from existing emulated/headless evidence.
