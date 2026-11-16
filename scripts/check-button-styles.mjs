@@ -14,6 +14,6 @@ const roles = [
   ['floating dock active state', /\.dock-button\.is-active/],
 ]
 for (const [role, expression] of roles) assert.match(styles, expression, `button styling must define ${role}`)
-assert.match(styles, /@media \(max-width: 720px\)[\s\S]*?\.exhibition-page \.filter-chip \{ min-height: 42px;/, 'mobile filter chips keep a comfortable touch target')
+assert.match(styles, /@media \(max-width: 720px\)[\s\S]*?\.exhibition-page \.filter-chip \{ min-height: 44px; font-size: 11px;/, 'mobile filter chips keep a readable label and comfortable touch target')
 
 console.log('Button style checks passed: distinct roles, selected/disabled/focus states, and mobile filter targets.')

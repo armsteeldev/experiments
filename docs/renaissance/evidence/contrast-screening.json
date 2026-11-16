@@ -1,0 +1,37 @@
+{
+  "method": "Targeted WCAG relative-luminance spot checks. CSS foreground colors were alpha-composited against nearby background pixels sampled from the rendered screenshots. This is a small sample, not a page-wide or formal conformance audit.",
+  "browser": "HeadlessChrome 157 with viewport emulation",
+  "checks": [
+    {
+      "surface": "Collection search placeholder",
+      "screenshot": "collection-ideas-mobile.png",
+      "viewport": "390x844",
+      "foregroundCss": "rgba(173, 191, 203, 0.88)",
+      "sampledBackgrounds": [
+        { "pixel": [220, 163], "rgb": [18, 24, 34], "contrast": 7.53 },
+        { "pixel": [230, 163], "rgb": [17, 25, 35], "contrast": 7.48 },
+        { "pixel": [240, 163], "rgb": [18, 25, 34], "contrast": 7.48 },
+        { "pixel": [250, 163], "rgb": [18, 27, 35], "contrast": 7.36 }
+      ],
+      "contrastRange": [7.36, 7.53]
+    },
+    {
+      "surface": "Saved notebook privacy note",
+      "screenshot": "saved-notebook-gallery-mobile.png",
+      "viewport": "390x844",
+      "foregroundCss": "#8492a1",
+      "sampledBackgrounds": [
+        { "pixel": [374, 460], "rgb": [18, 24, 32], "contrast": 5.61 },
+        { "pixel": [375, 470], "rgb": [18, 24, 33], "contrast": 5.61 },
+        { "pixel": [376, 480], "rgb": [17, 24, 32], "contrast": 5.62 },
+        { "pixel": [375, 490], "rgb": [17, 25, 32], "contrast": 5.58 }
+      ],
+      "contrastRange": [5.58, 5.62]
+    }
+  ],
+  "limitations": [
+    "These two sampled surfaces do not establish contrast for every route or component.",
+    "Gradient and translucent surfaces vary with position; the listed ratios apply only to the recorded nearby samples.",
+    "A complete accessibility review still requires broader contrast, reading-order, and assistive-technology evaluation."
+  ]
+}

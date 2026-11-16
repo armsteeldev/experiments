@@ -8,7 +8,7 @@ const evidenceRoot = resolve('docs/renaissance/evidence')
 const exhibits = JSON.parse(await readFile(resolve('src/data/experiments.json'), 'utf8'))
 const concepts = JSON.parse(await readFile(resolve('src/data/discovery-concepts.json'), 'utf8'))
 const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
-const page = targets.find((target) => target.type === 'page' && target.url === 'about:blank') ?? targets.find((target) => target.type === 'page')
+const page = targets.find((target) => target.type === 'page' && (target.url === 'about:blank' || target.url.startsWith(base)))
 assert.ok(page, `No page target found on CDP port ${port}`)
 
 const socket = new WebSocket(page.webSocketDebuggerUrl)
@@ -71,6 +71,11 @@ function normalize(value) {
   return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase()
 }
 
+function colorChannels(value) {
+  const match = value.match(/rgba?\(([^)]+)\)/)
+  return match ? match[1].split(',').map((channel) => Number.parseFloat(channel.trim())) : []
+}
+
 function matchingIds(query, category = null) {
   return exhibits.filter((item) => {
     const text = normalize([item.title, item.category, item.description, item.subtitle, item.about, item.method, item.metaDescription, ...item.concepts].join(' '))
@@ -115,10 +120,15 @@ await waitFor(`Boolean(document.querySelector('.search-panel input') && document
 const desktopSuggestions = await evaluate(`({
   labels: [...document.querySelectorAll('.search-ideas button')].map((button) => button.textContent.trim()),
   heights: [...document.querySelectorAll('.search-ideas button')].map((button) => button.getBoundingClientRect().height),
+  fontSizes: [...document.querySelectorAll('.search-ideas button')].map((button) => Number.parseFloat(getComputedStyle(button).fontSize)),
+  placeholderColor: getComputedStyle(document.querySelector('.search-panel input'), '::placeholder').color,
   overflow: document.documentElement.scrollWidth > innerWidth + 1,
 })`)
 assert.deepEqual(desktopSuggestions.labels.map((label) => normalize(label)), concepts.map(({ term }) => term), 'desktop search presents each curated idea')
-assert.ok(desktopSuggestions.heights.every((height) => height >= 32), 'desktop idea suggestions have usable targets')
+assert.ok(desktopSuggestions.heights.every((height) => height >= 40), 'desktop idea suggestions have 40 px targets')
+assert.ok(desktopSuggestions.fontSizes.every((size) => size >= 11), 'desktop idea labels are at least 11 px')
+const desktopPlaceholder = colorChannels(desktopSuggestions.placeholderColor)
+assert.ok(desktopPlaceholder.length >= 4 && desktopPlaceholder[0] >= 165 && desktopPlaceholder[1] >= 180 && desktopPlaceholder[2] >= 190 && desktopPlaceholder[3] >= .85, `The search prompt is too faint: ${desktopSuggestions.placeholderColor}`)
 assert.equal(desktopSuggestions.overflow, false, 'desktop idea suggestions do not cause horizontal overflow')
 await capture('collection-ideas-desktop.png')
 
@@ -168,11 +178,16 @@ await waitFor(`Boolean(document.querySelector('.search-panel input'))`, 'phone s
 const mobileSuggestions = await evaluate(`({
   labels: [...document.querySelectorAll('.search-ideas button')].map((button) => button.textContent.trim()),
   heights: [...document.querySelectorAll('.search-ideas button')].map((button) => button.getBoundingClientRect().height),
+  fontSizes: [...document.querySelectorAll('.search-ideas button')].map((button) => Number.parseFloat(getComputedStyle(button).fontSize)),
+  placeholderColor: getComputedStyle(document.querySelector('.search-panel input'), '::placeholder').color,
   overflow: document.documentElement.scrollWidth > innerWidth + 1,
   outside: [...document.querySelectorAll('.search-ideas button')].filter((button) => { const rect = button.getBoundingClientRect(); return rect.left < 0 || rect.right > innerWidth }).map((button) => button.textContent.trim()),
 })`)
 assert.deepEqual(mobileSuggestions.labels.map((label) => normalize(label)), concepts.map(({ term }) => term))
 assert.ok(mobileSuggestions.heights.every((height) => height >= 40), 'phone idea suggestions meet the 40 px touch target')
+assert.ok(mobileSuggestions.fontSizes.every((size) => size >= 11), 'phone idea labels are at least 11 px')
+const mobilePlaceholder = colorChannels(mobileSuggestions.placeholderColor)
+assert.ok(mobilePlaceholder.length >= 4 && mobilePlaceholder[0] >= 165 && mobilePlaceholder[1] >= 180 && mobilePlaceholder[2] >= 190 && mobilePlaceholder[3] >= .85, `The phone search prompt is too faint: ${mobileSuggestions.placeholderColor}`)
 assert.equal(mobileSuggestions.overflow, false, 'phone idea suggestions do not cause horizontal overflow')
 assert.deepEqual(mobileSuggestions.outside, [], 'every phone idea suggestion is inside the viewport')
 await capture('collection-ideas-mobile.png')
@@ -183,6 +198,46 @@ assert.deepEqual(mobileFieldResults, matchingIds('fields'), 'phone concept searc
 await evaluate(`document.querySelector('button[aria-label="Clear search"]')?.click()`)
 await evaluate(`window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`)
 await waitFor(`!document.querySelector('.search-panel')`, 'close phone collection search')
+const mobileFilters = await evaluate(`(() => {
+  const row = document.querySelector('.filter-row')
+  const chips = [...(row?.querySelectorAll('.filter-chip') ?? [])]
+  if (!row || !chips.length) return null
+  row.scrollLeft = row.scrollWidth
+  const rowRect = row.getBoundingClientRect()
+  const lastRect = chips.at(-1).getBoundingClientRect()
+  const metrics = {
+    count: chips.length,
+    minimumHeight: Math.min(...chips.map((chip) => chip.getBoundingClientRect().height)),
+    minimumFontPx: Math.min(...chips.map((chip) => Number.parseFloat(getComputedStyle(chip).fontSize))),
+    scrollable: row.scrollWidth > row.clientWidth,
+    lastTargetReachable: lastRect.left >= rowRect.left - 1 && lastRect.right <= rowRect.right + 1,
+    documentWidth: document.documentElement.scrollWidth,
+    viewportWidth: innerWidth,
+  }
+  row.scrollLeft = 0
+  return metrics
+})()`)
+assert.ok(mobileFilters && mobileFilters.count >= 8, 'the mobile filter row exposes every collection category and favourites')
+assert.ok(mobileFilters.minimumHeight >= 43.9, `Mobile category hit areas are too small: ${JSON.stringify(mobileFilters)}`)
+assert.ok(mobileFilters.minimumFontPx >= 11, `Mobile category labels are too small: ${JSON.stringify(mobileFilters)}`)
+assert.equal(mobileFilters.scrollable, true, 'the category row communicates a horizontally scrollable collection')
+assert.equal(mobileFilters.lastTargetReachable, true, 'the last category can be scrolled fully into view')
+assert.ok(mobileFilters.documentWidth <= mobileFilters.viewportWidth + 1, 'mobile category scrolling does not overflow the page')
+const swipe = await evaluate(`(() => {
+  const row = document.querySelector('.filter-row')
+  row.scrollLeft = 0
+  const rect = row.getBoundingClientRect()
+  return { startX: Math.min(rect.right - 10, innerWidth - 10), endX: rect.left + 10, y: rect.top + rect.height / 2 }
+})()`)
+assert.ok(swipe.startX - swipe.endX >= 100, `The phone filter row has too little horizontal travel for a swipe: ${JSON.stringify(swipe)}`)
+await call('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: swipe.startX, y: swipe.y, id: 1 }] })
+await call('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: swipe.startX - 50, y: swipe.y, id: 1 }] })
+await call('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: swipe.endX, y: swipe.y, id: 1 }] })
+await call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+await sleep(120)
+const mobileFilterSwipe = await evaluate(`({ scrollLeft: document.querySelector('.filter-row').scrollLeft, viewportWidth: innerWidth, documentWidth: document.documentElement.scrollWidth })`)
+assert.ok(mobileFilterSwipe.scrollLeft > 0, `A real touch swipe did not move the collection filters: ${JSON.stringify(mobileFilterSwipe)}`)
+assert.ok(mobileFilterSwipe.documentWidth <= mobileFilterSwipe.viewportWidth + 1, 'touch scrolling stays inside the page viewport')
 await setViewport(1440, 900, false)
 const relatedChecks = []
 let relationshipClick = null
@@ -212,7 +267,7 @@ socket.close()
 await mkdir(evidenceRoot, { recursive: true })
 const report = {
   browser: 'HeadlessChrome 157, SwiftShader WebGL, desktop and touch-emulated phone',
-  concepts: { desktopSuggestions: desktopSuggestions.labels, conceptChecks, noResultsRecovery: emptyState, mobileSuggestions: mobileSuggestions.labels, mobileTouchTargets: mobileSuggestions.heights, mobileOverflow: mobileSuggestions.overflow, mobileFieldResults },
+  concepts: { desktopSuggestions: desktopSuggestions.labels, desktopSuggestionTargets: desktopSuggestions.heights, desktopSuggestionFontPx: desktopSuggestions.fontSizes, desktopSearchPlaceholderColor: desktopSuggestions.placeholderColor, conceptChecks, noResultsRecovery: emptyState, mobileSuggestions: mobileSuggestions.labels, mobileSuggestionTargets: mobileSuggestions.heights, mobileSuggestionFontPx: mobileSuggestions.fontSizes, mobileSearchPlaceholderColor: mobileSuggestions.placeholderColor, mobileOverflow: mobileSuggestions.overflow, mobileFilterTargets: mobileFilters, mobileFilterSwipe, mobileFieldResults },
   existingDiscovery: { favorites: favoriteIds, recentVisit },
   relatedStudies: { exhibitsChecked: relatedChecks.length, checks: relatedChecks, linkFollowed: relationshipClick },
   browserErrors,

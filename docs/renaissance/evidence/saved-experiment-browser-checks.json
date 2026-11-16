@@ -29,10 +29,10 @@
     "version": 1,
     "experiments": [
       {
-        "id": "scene-mwijqgg7-hcww7rar",
+        "id": "scene-mwjkrph5-g3692ut9",
         "exhibitId": "automata",
         "name": "Pulsar with HighLife",
-        "savedAt": "2026-11-16T00:49:43.111Z",
+        "savedAt": "2026-11-16T18:06:27.257Z",
         "state": {
           "pattern": "glider",
           "rule": "highlife",
@@ -51,6 +51,9 @@
       "width": 44,
       "height": 44
     },
+    "privacyFontPx": 12,
+    "actionFontPx": 12,
+    "countFontPx": 10,
     "name": "Pulsar with HighLife"
   },
   "narrow": {

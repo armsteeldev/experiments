@@ -981,17 +981,235 @@
       "viewportWidth": 1440,
       "viewportHeight": 900,
       "panel": {
-        "x": 1070,
-        "y": 29,
+        "x": 1065,
+        "y": 19,
         "right": 1421,
-        "bottom": 547,
-        "width": 351,
-        "height": 518
+        "bottom": 545,
+        "width": 356,
+        "height": 526
       },
       "documentWidth": 1440,
-      "text": [],
-      "interactive": [],
-      "selectionGroups": []
+      "text": [
+        {
+          "text": "Cartography",
+          "fontPx": 12,
+          "width": 71,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Sat",
+          "fontPx": 12,
+          "width": 155,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Navigate",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "−",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "+",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Reset",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Equation",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Mandelbrot",
+          "fontPx": 12,
+          "width": 156,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "chosen"
+        },
+        {
+          "text": "Julia",
+          "fontPx": 12,
+          "width": 156,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Pigment",
+          "fontPx": 12,
+          "width": 47,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Abyss Mineral Twilight Ice Ember",
+          "fontPx": 12,
+          "width": 80,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Escape detail 680",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Each pixel starts a number that is repeatedly squared and added. Points that stay bounded belong to ",
+          "fontPx": 12,
+          "width": 316,
+          "height": 96,
+          "tag": "P",
+          "selector": "control-note"
+        }
+      ],
+      "interactive": [
+        {
+          "text": "Close controls",
+          "fontPx": 13.3333,
+          "width": 44,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-close"
+        },
+        {
+          "text": "The whole set Seahorse valley The whirlpool Miniature Mandelbrot Filament lace Satellite antenna Sat",
+          "fontPx": 12,
+          "width": 155,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "−",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "+",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Reset",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Mandelbrot",
+          "fontPx": 12,
+          "width": 156,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "chosen"
+        },
+        {
+          "text": "Julia",
+          "fontPx": 12,
+          "width": 156,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Abyss Mineral Twilight Ice Ember",
+          "fontPx": 12,
+          "width": 80,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 316,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        }
+      ],
+      "selectionGroups": [
+        {
+          "label": "Fractal view navigation",
+          "role": "group",
+          "hasChoiceState": false,
+          "buttons": [
+            {
+              "text": "−",
+              "pressed": null,
+              "selectedStyle": false
+            },
+            {
+              "text": "+",
+              "pressed": null,
+              "selectedStyle": false
+            },
+            {
+              "text": "Reset",
+              "pressed": null,
+              "selectedStyle": false
+            }
+          ]
+        },
+        {
+          "label": "Equation",
+          "role": "group",
+          "hasChoiceState": true,
+          "buttons": [
+            {
+              "text": "Mandelbrot",
+              "pressed": "true",
+              "selectedStyle": true
+            },
+            {
+              "text": "Julia",
+              "pressed": "false",
+              "selectedStyle": false
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "information",
@@ -6603,17 +6821,269 @@
       "viewportWidth": 1440,
       "viewportHeight": 900,
       "panel": {
-        "x": 1070,
-        "y": 29,
+        "x": 1065,
+        "y": 19,
         "right": 1421,
-        "bottom": 797,
-        "width": 351,
-        "height": 768
+        "bottom": 799,
+        "width": 356,
+        "height": 780
       },
       "documentWidth": 1440,
-      "text": [],
-      "interactive": [],
-      "selectionGroups": []
+      "text": [
+        {
+          "text": "Reaction regime",
+          "fontPx": 12,
+          "width": 92,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Pearl field Coral branching Labyrinth Traveling pulses Replication",
+          "fontPx": 12,
+          "width": 126,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Fresh supply · feed 0.0545",
+          "fontPx": 12,
+          "width": 306,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Pattern removal · kill 0.0620",
+          "fontPx": 12,
+          "width": 306,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "More feed replenishes the first ingredient. A higher kill rate removes the second faster; together t",
+          "fontPx": 12,
+          "width": 306,
+          "height": 58,
+          "tag": "P",
+          "selector": "control-note"
+        },
+        {
+          "text": "Diffusion 1.00",
+          "fontPx": 12,
+          "width": 306,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Reaction speed 3 steps/frame",
+          "fontPx": 12,
+          "width": 306,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Pigment",
+          "fontPx": 12,
+          "width": 47,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "River stone Red coral Verdigris Ultraviolet Warm earth",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Simulation detail",
+          "fontPx": 12,
+          "width": 95,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "High detail Balanced",
+          "fontPx": 12,
+          "width": 97,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Brush",
+          "fontPx": 12,
+          "width": 306,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Seed",
+          "fontPx": 12,
+          "width": 151,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "chosen"
+        },
+        {
+          "text": "Erase",
+          "fontPx": 12,
+          "width": 151,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "Brush radius 28 px",
+          "fontPx": 12,
+          "width": 306,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Begin a new pattern ↻",
+          "fontPx": 12,
+          "width": 306,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
+          "text": "A 32-bit Gray–Scott field evolves at high resolution. Paint localized chemical disturbances into the",
+          "fontPx": 12,
+          "width": 306,
+          "height": 96,
+          "tag": "P",
+          "selector": "control-note"
+        }
+      ],
+      "interactive": [
+        {
+          "text": "Close controls",
+          "fontPx": 13.3333,
+          "width": 44,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-close"
+        },
+        {
+          "text": "Pearl field Coral branching Labyrinth Traveling pulses Replication",
+          "fontPx": 12,
+          "width": 126,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 306,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 306,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 306,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 306,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "River stone Red coral Verdigris Ultraviolet Warm earth",
+          "fontPx": 12,
+          "width": 103,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "High detail Balanced",
+          "fontPx": 12,
+          "width": 97,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Seed",
+          "fontPx": 12,
+          "width": 151,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "chosen"
+        },
+        {
+          "text": "Erase",
+          "fontPx": 12,
+          "width": 151,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "button"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 306,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "Begin a new pattern ↻",
+          "fontPx": 12,
+          "width": 306,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        }
+      ],
+      "selectionGroups": [
+        {
+          "label": "Brush",
+          "role": "group",
+          "hasChoiceState": true,
+          "buttons": [
+            {
+              "text": "Seed",
+              "pressed": "true",
+              "selectedStyle": true
+            },
+            {
+              "text": "Erase",
+              "pressed": "false",
+              "selectedStyle": false
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "information",
@@ -7695,16 +8165,202 @@
       "viewportWidth": 1440,
       "viewportHeight": 900,
       "panel": {
-        "x": 1070,
-        "y": 29,
+        "x": 1065,
+        "y": 19,
         "right": 1421,
-        "bottom": 633,
-        "width": 351,
-        "height": 604
+        "bottom": 632,
+        "width": 356,
+        "height": 613
       },
       "documentWidth": 1440,
-      "text": [],
-      "interactive": [],
+      "text": [
+        {
+          "text": "Growth form",
+          "fontPx": 12,
+          "width": 72,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passag",
+          "fontPx": 12,
+          "width": 141,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Generations 6",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Branch angle 28.0°",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Wind / asymmetry 26%",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Ink weight 2.4",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Pigment",
+          "fontPx": 12,
+          "width": 47,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Moss and lichen Winter glass Autumn ember Ultraviolet garden",
+          "fontPx": 12,
+          "width": 137,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Replay the growth ↗",
+          "fontPx": 12,
+          "width": 155,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
+          "text": "Pause growth Ⅱ",
+          "fontPx": 12,
+          "width": 155,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
+          "text": "Let the wind decide ↻",
+          "fontPx": 12,
+          "width": 316,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
+          "text": "The fern and tree use seeded parametric botany. Coral, sea fan and the geometric patterns use visibl",
+          "fontPx": 12,
+          "width": 316,
+          "height": 77,
+          "tag": "P",
+          "selector": "control-note"
+        }
+      ],
+      "interactive": [
+        {
+          "text": "Close controls",
+          "fontPx": 13.3333,
+          "width": 44,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-close"
+        },
+        {
+          "text": "Wind-shaped tree Unfurling fern Branching coral Sea fan Folded coastline Paper dragon Hilbert passag",
+          "fontPx": 12,
+          "width": 141,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 316,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 316,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 316,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 316,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "Moss and lichen Winter glass Autumn ember Ultraviolet garden",
+          "fontPx": 12,
+          "width": 137,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "How this fern is constructed",
+          "fontPx": 16,
+          "width": 316,
+          "height": 22,
+          "tag": "SUMMARY",
+          "selector": "summary"
+        },
+        {
+          "text": "Replay the growth ↗",
+          "fontPx": 12,
+          "width": 155,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
+          "text": "Pause growth Ⅱ",
+          "fontPx": 12,
+          "width": 155,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        },
+        {
+          "text": "Let the wind decide ↻",
+          "fontPx": 12,
+          "width": 316,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "panel-action"
+        }
+      ],
       "selectionGroups": []
     },
     {
@@ -10783,16 +11439,162 @@
       "viewportWidth": 1440,
       "viewportHeight": 900,
       "panel": {
-        "x": 1070,
-        "y": 29,
+        "x": 1065,
+        "y": 19,
         "right": 1421,
-        "bottom": 612,
-        "width": 351,
-        "height": 583
+        "bottom": 611,
+        "width": 356,
+        "height": 592
       },
       "documentWidth": 1440,
-      "text": [],
-      "interactive": [],
+      "text": [
+        {
+          "text": "Training pattern",
+          "fontPx": 12,
+          "width": 91,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Opposite corners Inside the ring Across a diagonal My own examples",
+          "fontPx": 12,
+          "width": 136,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Neurons in each hidden layer",
+          "fontPx": 12,
+          "width": 165,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
+          "fontPx": 12,
+          "width": 92,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Number of hidden layers",
+          "fontPx": 12,
+          "width": 141,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "One layer Two layers",
+          "fontPx": 12,
+          "width": 95,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Activation function",
+          "fontPx": 12,
+          "width": 106,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "tanh sigmoid ReLU",
+          "fontPx": 12,
+          "width": 81,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "Learning rate 0.080",
+          "fontPx": 12,
+          "width": 316,
+          "height": 17,
+          "tag": "SPAN",
+          "selector": "span"
+        },
+        {
+          "text": "Reset the weights",
+          "fontPx": 12,
+          "width": 316,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "small-action"
+        },
+        {
+          "text": "The canvas colours come from the actual network output at each location. It learns from labelled exa",
+          "fontPx": 12,
+          "width": 316,
+          "height": 134,
+          "tag": "P",
+          "selector": "control-note"
+        }
+      ],
+      "interactive": [
+        {
+          "text": "Close controls",
+          "fontPx": 13.3333,
+          "width": 44,
+          "height": 44,
+          "tag": "BUTTON",
+          "selector": "panel-close"
+        },
+        {
+          "text": "Opposite corners Inside the ring Across a diagonal My own examples",
+          "fontPx": 12,
+          "width": 136,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "3 neurons 4 neurons 5 neurons 6 neurons 8 neurons",
+          "fontPx": 12,
+          "width": 92,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "One layer Two layers",
+          "fontPx": 12,
+          "width": 95,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "tanh sigmoid ReLU",
+          "fontPx": 12,
+          "width": 81,
+          "height": 40,
+          "tag": "SELECT",
+          "selector": "select"
+        },
+        {
+          "text": "",
+          "fontPx": 13.3333,
+          "width": 316,
+          "height": 3,
+          "tag": "INPUT",
+          "selector": "input"
+        },
+        {
+          "text": "Reset the weights",
+          "fontPx": 12,
+          "width": 316,
+          "height": 40,
+          "tag": "BUTTON",
+          "selector": "small-action"
+        }
+      ],
       "selectionGroups": []
     },
     {

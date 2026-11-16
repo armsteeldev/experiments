@@ -37,6 +37,7 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 ## P1 — Product accessibility and mobile
 
 - [x] Sweep all 19 routes at 320×740, 390×844, 768×1024, 1024×768, 1440×900, and 844×390, including Controls, About, and the route selector.
+- [x] Read Chrome's computed accessibility tree for the gallery/search and every exhibit's Controls, About and selector; verify interactive names, shared-landmark names, expanded state, moved focus, and bounded slider values (`qa:accessibility-tree`).
 - [x] Keep every core phone dock action inside the viewport with 44×44 px targets; verify that all nineteen 44 px selector rows remain reachable by scrolling.
 - [x] Move focus into shared overlays and return it to the trigger on Escape, including when an exhibit control panel mounts after its lazy module loads.
 - [x] Audit visible controls in shared Controls, About and selector surfaces for a discoverable DOM name across all exhibits and viewport shapes.
@@ -92,7 +93,7 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Add six optional idea searches backed by structured concepts across all 19 exhibits, and curate two to three related destinations per exhibit.
 - [x] Check concept search result accuracy, no-results recovery, favourites/recent behavior, phone targets, and related links across all 19 routes.
 - [ ] Keep a single preview budget; do not mount nineteen full simulation engines.
-- [ ] Improve card and microcopy legibility where browser review shows a real issue.
+- [x] Improve collection concept labels, category-chip size and phone target reach after screenshot review; browser checks verify 11 px text, 44 px targets, an actual touch swipe, full filter reach and no overflow.
 
 ## P3 — Developer workflow
 
