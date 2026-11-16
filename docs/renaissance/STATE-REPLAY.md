@@ -2,6 +2,8 @@
 
 Share links and named notebook entries store validated exhibit settings. Most links reconstruct a selected setup; they do not freeze an evolving simulation. URLs are Base64 URL encoded, not encrypted. Custom CPU source, network messages, and the positions and labels in a custom neural lesson are carried in the encoded state; avoid putting private material in them.
 
+The collection can export and import named settings as a version 1 `armsteel-notebook-YYYY-MM-DD.json` file. This file is ordinary readable JSON, not encrypted. It can contain custom CPU programs, network message text, or neural lesson positions and labels. The browser import path accepts files up to 256 KiB, validates their envelope, timestamp, exhibit IDs and settings, and merges supported entries with the local notebook. Existing entries are not replaced; duplicate entries are skipped, conflicting IDs are regenerated, and entries beyond the 12-entry/128-KiB local cap are skipped. Unknown versions are rejected without changing the current notebook. A notebook file preserves named settings and seeds only, not live simulation buffers or histories; it is not uploaded to a server.
+
 | Exhibit | Recreated from a link | Starts fresh or is omitted |
 | --- | --- | --- |
 | Mandelbrot | Camera center and scale, iteration limit, palette, render mode | Fractal tiles are recalculated |

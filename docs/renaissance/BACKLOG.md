@@ -26,7 +26,7 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Add optional named local saves, safe JSON/exhibit validation, reopen/delete actions, browser recovery tests and honest replay/privacy copy.
 - [x] Finish the route-by-route audit of deterministic seeds and replay limits, with emphasis on starting dimensions, reset behavior and which random histories are intentionally regenerated. Current scope is documented in `STATE-REPLAY.md`.
 - [x] Share up to 128 bounded user examples and the model initialization seed for Neural Networks; browser-check a custom lesson and fresh-weight reset round trip, reject malformed examples, and disclose that point positions and labels appear in the public URL.
-- [ ] Add export/import only where the state can be accurately restored; document that shared URL data is public.
+- [x] Add bounded, versioned JSON notebook export/import for settings-only states; merge without replacing, deduplicate, reject unknown versions, disclose readable file contents, and exercise the real browser download/import workflow (`4034d22`).
 - [x] Share and restore user-built Logic Laboratory circuits with validated node/wire limits, switch values and goal state; verify a custom XOR build and challenge after reload.
 - [x] Share and restore bounded Invisible Forces source charges and normalized camera framing while leaving released particle history out of the URL.
 - [x] Share and restore bounded Gravity body edits and normalized camera framing; trails and collision history restart, and restored IDs remain collision-free.
