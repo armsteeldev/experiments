@@ -51,7 +51,8 @@ Status includes the validated home/gallery performance sample and adaptive ambie
 - [x] Make the cellular grid Tab-focusable and editable with arrows, Enter and Home; show its active cell and announce row, column and population changes.
 - [x] Name the cellular Paint/Erase/Pan group and expose pressed state; size its tools, Step/Pause and shared-panel buttons to 44px on mobile, tablet and coarse-pointer layouts.
 - [x] Exercise the flock and automaton tasks in Chromium at 320×740, 390×844, 844×390 and 1024×768; check rendered state changes, recovery, status and mobile instruction spacing.
-- [x] Add keyboard body selection/nudging in Gravity and coordinate-based Add/Probe/Erase in Neural Networks; validate live status, recovery and visible canvas changes across phone, landscape and desktop sizes. Neural example dragging remains pointer-first.
+- [x] Add keyboard body selection/nudging in Gravity and coordinate-based Add/Probe/Erase in Neural Networks; validate live status, recovery and visible canvas changes across phone, landscape and desktop sizes. A separate keyboard path for moving existing Neural examples is awaiting browser verification below.
+- [ ] Browser-verify the new Neural Networks keyboard workflow for selecting, moving, deleting and undoing an existing example across narrow, phone, landscape and desktop layouts; the code and assertions are staged in `qa:canvas-editing`, but the host gate currently blocks browser runs.
 - [ ] Review formal contrast, reading order, dialog semantics, status announcements and screen-reader descriptions with assistive technology.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
 - [x] Keep simulation diagnostics development-only and verify they are absent from production JavaScript.
