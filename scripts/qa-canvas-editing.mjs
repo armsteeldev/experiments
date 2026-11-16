@@ -323,6 +323,34 @@ for (const viewport of viewports) {
   await clickText('↶ Undo', 'document.querySelector(".neural-example-tools")')
   await waitFor(`document.querySelector('.neural-tool-status small')?.textContent === 'Last example edit undone.'`, 'undoing a keyboard-moved training example')
   assert.equal(await evaluate(`document.querySelector('.neural-score small')?.textContent.trim()`), '1 coral · 1 teal', 'undo restores the original count after moving a training example')
+  const neuralDragPoints = await evaluate(`(() => {const canvas=document.querySelector('.neural-learning-map'),rect=canvas.getBoundingClientRect(),mobile=rect.width<720,plot=mobile?{x:16,y:Math.max(132,rect.height*.2),w:rect.width-32,h:Math.max(210,rect.height*.55)}:{x:44,y:154,w:rect.width-88,h:Math.max(280,rect.height-294)},point=(x,y)=>({x:rect.left+plot.x+(x+1)*plot.w/2,y:rect.top+plot.y+(1-y)*plot.h/2});return {start:point(0,0),clickNear:point(.02,0),intermediate:point(.2,.2),finish:point(.4,.4)}})()`)
+  await call('Input.dispatchMouseEvent', { type: 'mouseMoved', ...neuralDragPoints.clickNear, buttons: 0 })
+  await call('Input.dispatchMouseEvent', { type: 'mousePressed', ...neuralDragPoints.clickNear, button: 'left', buttons: 1, clickCount: 1 })
+  await call('Input.dispatchMouseEvent', { type: 'mouseReleased', ...neuralDragPoints.clickNear, button: 'left', buttons: 0, clickCount: 1 })
+  await evaluate(`document.querySelector('.neural-learning-map').focus()`)
+  await key('Home', 'Home', 36)
+  await key('m', 'KeyM', 77)
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('Selected the teal example at x 0.00, y 0.00')`, 'a click near an example leaves it at its original location')
+  await key('Escape', 'Escape', 27)
+  const neuralBeforePointerDrag = await pixelHash('.neural-learning-map')
+  await call('Input.dispatchMouseEvent', { type: 'mouseMoved', ...neuralDragPoints.start, buttons: 0 })
+  await call('Input.dispatchMouseEvent', { type: 'mousePressed', ...neuralDragPoints.start, button: 'left', buttons: 1, clickCount: 1 })
+  await Promise.all([
+    call('Input.dispatchMouseEvent', { type: 'mouseMoved', ...neuralDragPoints.intermediate, button: 'left', buttons: 1 }),
+    call('Input.dispatchMouseEvent', { type: 'mouseMoved', ...neuralDragPoints.finish, button: 'left', buttons: 1 }),
+  ])
+  await call('Input.dispatchMouseEvent', { type: 'mouseReleased', ...neuralDragPoints.finish, button: 'left', buttons: 0, clickCount: 1 })
+  const neuralPointerMoved = await waitForPixelChange('.neural-learning-map', neuralBeforePointerDrag, 'pointer release commits the last position inside the drag throttle window')
+  await evaluate(`document.querySelector('.neural-learning-map').focus()`)
+  await key('m', 'KeyM', 77)
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('Selected the teal example at x 0.40, y 0.40')`, 'keyboard selection following a pointer-moved example')
+  await key('Escape', 'Escape', 27)
+  await clickText('↶ Undo', 'document.querySelector(".neural-example-tools")')
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent === 'Last example edit undone.'`, 'undoing a pointer-moved neural example')
+  await key('Home', 'Home', 36)
+  await key('m', 'KeyM', 77)
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('Selected the teal example at x 0.00, y 0.00')`, 'keyboard selection following pointer-drag undo')
+  await key('Escape', 'Escape', 27)
   await key('Home', 'Home', 36)
   await key('m', 'KeyM', 77)
   await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('Selected the teal example at x 0.00, y 0.00')`, 'selecting a neural example for keyboard deletion')
@@ -361,7 +389,7 @@ for (const viewport of viewports) {
   await waitFor(`document.querySelector('.neural-score small')?.textContent === 'Add examples to begin'`, 'keyboard erasure of the final neural example')
   await waitForPixelChange('.neural-learning-map', neuralEraseSelection, 'Enter removes the selected neural example from the map')
   assert.match(await evaluate(`document.querySelector('.neural-tool-status small')?.textContent.trim()??''`), /Removed the example at x 0\.00, y 0\.00/, 'the erase action announces which map point changed')
-  results.push({ exhibit: 'neural', viewport, focus: neuralFocus, liveStatus: neuralLiveStatus, oneExample: neuralOne, twoExamples: neuralTwo, movedExample: neuralMoved, deletedExample: neuralDeleted, probe: neuralProbe, trainingEnabled: !neuralTargets.teachDisabled, keyboardPlacement: true, keyboardMoveAndUndo: true, keyboardDeleteAndUndo: true, keyboardProbeWithoutAdding: true, keyboardErase: true, undoRecovery: true, screenshot: viewport.name === 'phone' ? 'canvas-keyboard-neural-phone.png' : null })
+  results.push({ exhibit: 'neural', viewport, focus: neuralFocus, liveStatus: neuralLiveStatus, oneExample: neuralOne, twoExamples: neuralTwo, movedExample: neuralMoved, pointerMovedExample: neuralPointerMoved, deletedExample: neuralDeleted, probe: neuralProbe, trainingEnabled: !neuralTargets.teachDisabled, keyboardPlacement: true, keyboardMoveAndUndo: true, keyboardDeleteAndUndo: true, keyboardProbeWithoutAdding: true, keyboardErase: true, pointerDragKeyboardSelection: true, undoRecovery: true, screenshot: viewport.name === 'phone' ? 'canvas-keyboard-neural-phone.png' : null })
 }
 
 await call('Emulation.setEmulatedMedia', { media: 'screen', features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] })
@@ -369,10 +397,10 @@ socket.close()
 assert.deepEqual(browserErrors, [], `Browser errors: ${browserErrors.join('; ')}`)
 const report = {
   browser: 'HeadlessChrome 157 with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation',
-  method: 'Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero. Gravity arrow keys select distinct bodies, Shift+arrow moves the selected body by 0.25 world units and the inspector plus rendered pixels confirm the move, then Home clears focus. Neural Networks arrow/Enter keyboard input places examples at stated coordinates; M selects a nearby existing example, arrows move it, Escape finishes and Undo restores its position. Prediction probing visibly updates the test point without adding training data, and erase/undo recover the lesson. The browser waits for image changes between edits and checks focus hints, touch targets and overlay geometry at every viewport.',
+  method: 'Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero. Gravity arrow keys select distinct bodies, Shift+arrow moves the selected body by 0.25 world units and the inspector plus rendered pixels confirm the move, then Home clears focus. Neural Networks arrow/Enter keyboard input places examples at stated coordinates; M selects a nearby existing example, arrows move it, Escape finishes and Undo restores its position. A near-dot click leaves the example in place. A pointer-dragged example is selected at its final coordinate and undone, checking pointer/keyboard cursor synchronization and recovery when release lands inside the drag throttle interval. Prediction probing visibly updates the test point without adding training data, and erase/undo recover the lesson. The browser waits for image changes between edits and checks focus hints, touch targets and overlay geometry at every viewport.',
   cases: results,
   browserErrors,
 }
 await mkdir(resolve('docs/renaissance/evidence'), { recursive: true })
 await writeFile(resolve('docs/renaissance/evidence/canvas-editing-browser-checks.json'), `${JSON.stringify(report, null, 2)}\n`)
-console.log(`Canvas interaction checks passed: ${results.length} viewport/study states across Boids, Cellular Automata, Gravity and Neural Networks; centre placement, keyboard editing/probing, moved-example undo, recovery, focus guidance, status semantics, touch targets and rendered/model changes verified; 0 browser errors.`)
+console.log(`Canvas interaction checks passed: ${results.length} viewport/study states across Boids, Cellular Automata, Gravity and Neural Networks; centre placement, keyboard editing/probing, pointer/keyboard example synchronization, undo recovery, focus guidance, status semantics, touch targets and rendered/model changes verified; 0 browser errors.`)

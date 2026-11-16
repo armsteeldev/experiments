@@ -102,6 +102,8 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   const undoStack = useRef<Sample[][]>([])
   const dragIndex = useRef<number | null>(null)
   const dragRecorded = useRef(false)
+  const dragOrigin = useRef<[number, number] | null>(null)
+  const dragMoved = useRef(false)
   const keyboardEditRecorded = useRef(false)
   const lastDragPaint = useRef(0)
   const drawFrame = useRef<number | null>(null)
@@ -228,6 +230,9 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     setMapFocused(false)
     setKeyboardSampleIndex(null); keyboardEditRecorded.current = false
     setKeyboardPoint(point)
+    dragIndex.current = null; dragRecorded.current = false
+    dragOrigin.current = tool === 'draw' ? [event.clientX, event.clientY] : null
+    dragMoved.current = false
     if (tool === 'probe') {
       setInput(point); setNote(`The network guesses ${outputValue(forwardNetwork(network, point, activation).output[0], activation) >= .5 ? 'teal' : 'coral'} at this new point. It is not added to the examples.`)
       return
@@ -247,18 +252,38 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     } else { pushUndo(); dragIndex.current = next.length; dragRecorded.current = true; next.push({ x: point, y: classToAdd }); setExamples(next, `Added a ${classToAdd === 1 ? 'teal' : 'coral'} example. Drag to place it precisely.`) }
   }
   const handlePointerMove = (event: ReactPointerEvent<HTMLCanvasElement>) => {
-    if (!(event.buttons & 1) || dragIndex.current === null || tool !== 'draw') return
+    const origin = dragOrigin.current
+    if (!(event.buttons & 1) || dragIndex.current === null || tool !== 'draw' || !origin) return
+    if (Math.hypot(event.clientX - origin[0], event.clientY - origin[1]) <= 2) return
+    dragMoved.current = true
     const point = coords(event), now = performance.now()
     if (!point || now - lastDragPaint.current < 70) return
     if (!dragRecorded.current) { pushUndo(); dragRecorded.current = true }
     lastDragPaint.current = now
+    setKeyboardPoint(point)
     const next = samplesRef.current.map((sample, index) => index === dragIndex.current ? { x: point, y: sample.y } : sample)
     setExamples(next, 'Moving an example. The network is paused while its lesson changes.')
   }
-  const handlePointerUp = () => { dragIndex.current = null; dragRecorded.current = false; updateStats(); setDataVersion((version) => version + 1) }
+  const handlePointerUp = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    const index = dragIndex.current
+    const point = index !== null && tool === 'draw' && dragMoved.current ? coords(event) : null
+    const current = index === null ? null : samplesRef.current[index]
+    if (point) setKeyboardPoint(point)
+    if (point && current && (current.x[0] !== point[0] || current.x[1] !== point[1])) {
+      if (!dragRecorded.current) { pushUndo(); dragRecorded.current = true }
+      const next = samplesRef.current.map((sample, sampleIndex) => sampleIndex === index ? { x: point, y: sample.y } : sample)
+      setExamples(next, 'Example position updated. Training is paused while its lesson changes.')
+    }
+    dragIndex.current = null
+    dragRecorded.current = false
+    dragOrigin.current = null
+    dragMoved.current = false
+    updateStats()
+    setDataVersion((version) => version + 1)
+  }
 
   const chooseDataset = (next: DatasetName) => {
-    pushUndo(); haltTraining(); dragIndex.current = null; setDataset(next)
+    pushUndo(); haltTraining(); dragIndex.current = null; dragRecorded.current = false; dragOrigin.current = null; dragMoved.current = false; setDataset(next)
     setKeyboardSampleIndex(null); keyboardEditRecorded.current = false
     const nextSamples = next === 'custom' ? [] : makeDataset(next)
     samplesRef.current = nextSamples; setSamples(nextSamples)
@@ -270,10 +295,11 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   const undo = () => {
     const prior = undoStack.current.pop()
     if (!prior) return
-    setUndoCount(undoStack.current.length); dragIndex.current = null; dragRecorded.current = false; setKeyboardSampleIndex(null); keyboardEditRecorded.current = false
+    setUndoCount(undoStack.current.length); dragIndex.current = null; dragRecorded.current = false; dragOrigin.current = null; dragMoved.current = false; setKeyboardSampleIndex(null); keyboardEditRecorded.current = false
     setExamples(prior.map((sample) => ({ x: [...sample.x], y: sample.y })), 'Last example edit undone.')
   }
   const clearExamples = () => {
+    dragIndex.current = null; dragRecorded.current = false; dragOrigin.current = null; dragMoved.current = false
     setKeyboardSampleIndex(null); keyboardEditRecorded.current = false
     pushUndo(); setExamples([], 'The map is clear. Add examples in both colours, then train it.')
   }
