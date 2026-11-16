@@ -60,6 +60,7 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
   const [throwMode, setThrowMode] = useState(false)
   const [hovered, setHovered] = useState<number | null>(null)
   const [launchFeedback, setLaunchFeedback] = useState('')
+  const [keyboardFocusMessage, setKeyboardFocusMessage] = useState('')
   const [selected, setSelected] = useState<number | null>(null)
   const [readout, setReadout] = useState({ bodies: initialBodies.length, energy: '—' })
   const params = useRef<Params>({ paused, speed, collision, trails, prediction })
@@ -368,8 +369,38 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
     setLaunchFeedback('Selected body removed.')
   }
 
+  const moveKeyboardFocus = (direction: -1 | 1) => {
+    const bodies = state.current.bodies
+    if (!bodies.length) { setKeyboardFocusMessage('There are no bodies to focus.'); return }
+    const currentIndex = bodies.findIndex((body) => body.id === selected)
+    const nextIndex = (currentIndex + direction + bodies.length) % bodies.length
+    const body = bodies[nextIndex]
+    setSelected(body.id)
+    setLaunchFeedback('')
+    setKeyboardFocusMessage(`Body ${nextIndex + 1} of ${bodies.length} focused. Mass ${body.mass.toFixed(1)}. Use the Controls panel to adjust mass or velocity.`)
+  }
+  const nudgeSelected = (key: string) => {
+    const s = state.current, body = s.bodies.find((item) => item.id === selected)
+    if (!body) { setKeyboardFocusMessage('Focus a body first, then use Shift plus the arrow keys to nudge it.'); return }
+    if (key === 'ArrowLeft') body.x -= .25
+    if (key === 'ArrowRight') body.x += .25
+    if (key === 'ArrowUp') body.y += .25
+    if (key === 'ArrowDown') body.y -= .25
+    s.revision++
+    setReadout({ bodies: s.bodies.length, energy: gravityEnergy(s.bodies).toFixed(1) })
+    captureBodies()
+    setLaunchFeedback('')
+    setKeyboardFocusMessage(`Body moved to x ${body.x.toFixed(2)}, y ${body.y.toFixed(2)}.`)
+  }
+
   return <section className="experiment-surface gravity-surface" aria-label="Gravity simulator">
-    <canvas ref={canvasRef} tabIndex={0} className={`experiment-canvas gravity-canvas ${launchMode ? 'gravity-launch-cursor' : ''}`} aria-label="Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan." aria-describedby={hint.visible ? 'gravity-first-move' : undefined} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={(event) => cancelPointer(event.pointerId)} onLostPointerCapture={(event) => cancelPointer(event.pointerId)} onPointerLeave={() => { if (!state.current.pointer) setHovered(null) }} onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); const pointer = state.current.pointer; if (pointer) cancelPointer(pointer.id); else { setSelected(null); setLaunchMode(false) } } }} />
+    <canvas ref={canvasRef} tabIndex={0} className={`experiment-canvas gravity-canvas ${launchMode ? 'gravity-launch-cursor' : ''}`} aria-label="Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan. Keyboard: arrows cycle focus between bodies, Shift plus arrows nudge the selected body by a quarter unit, and Home clears body focus." aria-describedby={hint.visible ? 'gravity-first-move' : undefined} aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Shift+ArrowUp Shift+ArrowDown Shift+ArrowLeft Shift+ArrowRight Home Escape" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={(event) => cancelPointer(event.pointerId)} onLostPointerCapture={(event) => cancelPointer(event.pointerId)} onPointerLeave={() => { if (!state.current.pointer) setHovered(null) }} onKeyDown={(event) => {
+      if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.key)) { event.preventDefault(); if (event.shiftKey) nudgeSelected(event.key); else moveKeyboardFocus(event.key === 'ArrowUp' || event.key === 'ArrowLeft' ? -1 : 1) }
+      else if (event.key === 'Home') { event.preventDefault(); setSelected(null); setKeyboardFocusMessage('Body focus cleared.') }
+      else if (event.key === 'Escape') { event.preventDefault(); const pointer = state.current.pointer; if (pointer) cancelPointer(pointer.id); else { setSelected(null); setLaunchMode(false); setKeyboardFocusMessage('Body focus cleared.') } }
+    }} />
+    <span className="gravity-keyboard-help" aria-hidden="true">←/↑ previous · →/↓ next · Shift+arrow moves · Home clears</span>
+    <span className="visually-hidden gravity-keyboard-status" role="status" aria-live="polite" aria-atomic="true">{keyboardFocusMessage}</span>
     {hint.visible ? <aside className="scene-nudge scene-nudge-high" id="gravity-first-move" role="note"><span>Try this · Gravity Playground</span><p>Launch a small moon, then change its path. More mass pulls harder; a sideways launch can bend the orbit.</p><button onClick={hint.dismiss} aria-label="Dismiss first-move hint">×</button><button className="scene-nudge-action" onClick={launchCircularBody}>Launch a gentle orbit</button></aside> : <button className="scene-nudge-reopen scene-nudge-reopen-high" onClick={hint.show} aria-label="Show interaction tip" title="Show interaction tip">i</button>}
     <div className="exp-hud gravity-hud"><span className="exp-eyebrow">N-BODY DYNAMICS <i /></span><strong>{readout.bodies.toString().padStart(2, '0')} <small>BODIES</small></strong><span>MECHANICAL ENERGY <b>{readout.energy}</b></span></div>
     <div className="exp-prompt gravity-prompt">{launchMode ? 'CLICK TO PLACE AN ORBIT · DRAG TO GIVE THE NEW BODY A VELOCITY' : state.current.pointer?.mode === 'body' ? (throwMode ? 'THROW MODE · RELEASE TO SET MOMENTUM · ESCAPE TO CANCEL' : 'MOVE MODE · RELEASE KEEPS THE ORIGINAL MOMENTUM · ESCAPE TO CANCEL') : launchFeedback || 'GRAB A BODY TO MOVE IT · SELECT THROW TO LAUNCH · DRAG EMPTY SPACE TO PAN'}</div>
@@ -380,7 +411,7 @@ export default function GravityPlayground({ paused, controlsVisible, stateFromUr
       </div>
       <button className={launchMode ? 'selected' : ''} onClick={() => { setLaunchMode((v) => !v); setLaunchFeedback('') }} aria-pressed={launchMode}><span>＋</span> Launch body</button>{selectedBody && <button onClick={removeSelected} aria-label="Remove selected body">Remove body</button>}<button onClick={() => setSelected(null)} aria-label="Clear body selection">Clear focus</button>
     </div>
-    {selected !== null && <div className="gravity-inspect"><span>SELECTED BODY</span>{(() => { const body = state.current.bodies.find((item) => item.id === selected); return body ? <><strong>{body.mass.toFixed(1)} <small>mass</small></strong><small>v {Math.hypot(body.vx, body.vy).toFixed(2)} units / time</small></> : <small>Choose a body</small> })()}</div>}
+    {selected !== null && <div className="gravity-inspect"><span>SELECTED BODY</span>{(() => { const body = state.current.bodies.find((item) => item.id === selected); return body ? <><strong>{body.mass.toFixed(1)} <small>mass</small></strong><small>x {body.x.toFixed(2)} · y {body.y.toFixed(2)}</small><small>v {Math.hypot(body.vx, body.vy).toFixed(2)} units / time</small></> : <small>Choose a body</small> })()}</div>}
     <ControlPanel title="Gravity Playground" note="Newtonian attraction · velocity Verlet" visible={controlsVisible} onClose={onCloseControls}>
       <SelectControl label="Initial system" value={scene} options={sceneNames} onChange={(value) => setScene(value as Scene)} />
       <RangeControl label="Simulation speed" value={speed} min={.25} max={2.2} step={.05} format={(v) => `${v.toFixed(2)}×`} onChange={setSpeed} />

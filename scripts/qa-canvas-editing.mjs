@@ -58,8 +58,8 @@ async function waitFor(expression, description) {
   throw new Error(`Timed out waiting for ${description}`)
 }
 
-async function key(key, code, windowsVirtualKeyCode) {
-  const params = { key, code, windowsVirtualKeyCode, nativeVirtualKeyCode: windowsVirtualKeyCode }
+async function key(key, code, windowsVirtualKeyCode, shiftKey = false) {
+  const params = { key, code, windowsVirtualKeyCode, nativeVirtualKeyCode: windowsVirtualKeyCode, shiftKey, modifiers: shiftKey ? 8 : 0 }
   await call('Input.dispatchKeyEvent', { ...params, type: 'keyDown' })
   await call('Input.dispatchKeyEvent', { ...params, type: 'keyUp' })
 }
@@ -97,11 +97,21 @@ async function pixelHash(selector) {
     const context = canvas?.getContext('2d')
     if (!context || !canvas.width || !canvas.height) return null
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
-    const stride = 4
     let hash = 2166136261
-    for (let i = 0; i < pixels.length; i += stride) hash = Math.imul(hash ^ pixels[i], 16777619)
+    for (let i = 0; i < pixels.length; i++) hash = Math.imul(hash ^ pixels[i], 16777619)
     return { hash: hash >>> 0, width: canvas.width, height: canvas.height }
   })()`)
+}
+
+async function waitForPixelChange(selector, before, description) {
+  let latest = before
+  for (let attempt = 0; attempt < 40; attempt++) {
+    latest = await pixelHash(selector)
+    if (latest && (latest.hash !== before.hash || latest.width !== before.width || latest.height !== before.height)) return latest
+    await sleep(50)
+  }
+  assert.notDeepEqual(latest, before, `${description} produces a visible canvas change`)
+  return latest
 }
 
 await call('Page.enable')
@@ -185,26 +195,24 @@ for (const viewport of viewports) {
   if (viewport.mobile) assert.ok(automataTargets.every((target) => target.height >= 43.9), `cell tools and step/pause actions meet mobile touch size: ${JSON.stringify(automataTargets)}`)
   const automataBefore = await pixelHash('.automata-canvas')
   await key('Enter', 'Enter', 13)
-  await sleep(80)
   await waitForCount('.automata-stats > div:nth-child(2) strong', '0001', 'one keyboard-painted cell')
-  const oneCell = await pixelHash('.automata-canvas')
-  assert.notEqual(oneCell.hash, automataBefore.hash, 'Enter paints one real cell into the empty rendered board')
+  const oneCell = await waitForPixelChange('.automata-canvas', automataBefore, 'Enter paints one real cell into the empty rendered board')
   assert.match(await evaluate('document.querySelector(".automata-change")?.textContent.trim() ?? ""'), /Lit cell at column 91, row 57/, 'the live status identifies the painted cell')
   await key('ArrowRight', 'ArrowRight', 39)
-  await key('Enter', 'Enter', 13)
   await sleep(80)
+  const twoCellSelection = await pixelHash('.automata-canvas')
+  await key('Enter', 'Enter', 13)
   await waitForCount('.automata-stats > div:nth-child(2) strong', '0002', 'a second keyboard-painted cell')
-  const twoCells = await pixelHash('.automata-canvas')
-  assert.notEqual(twoCells.hash, oneCell.hash, 'arrow selection then Enter paints a neighbouring cell')
+  const twoCells = await waitForPixelChange('.automata-canvas', twoCellSelection, 'Enter paints a neighbouring cell after keyboard selection')
   await clickText('ERASE', 'document.querySelector(".automata-tools")')
   assert.equal(await evaluate(`document.querySelector('.automata-tools button[aria-pressed="true"]')?.textContent.trim()`), 'ERASE', 'the selected erase tool is announced')
   await evaluate(`document.querySelector('.automata-canvas').focus()`)
   await key('Home', 'Home', 36)
-  await key('Enter', 'Enter', 13)
   await sleep(80)
+  const eraseSelection = await pixelHash('.automata-canvas')
+  await key('Enter', 'Enter', 13)
   await waitForCount('.automata-stats > div:nth-child(2) strong', '0001', 'erasing the first keyboard-painted cell')
-  const erased = await pixelHash('.automata-canvas')
-  assert.notEqual(erased.hash, twoCells.hash, 'Home returns the cursor and Enter removes the selected cell')
+  const erased = await waitForPixelChange('.automata-canvas', eraseSelection, 'Home returns the cursor and Enter removes the selected cell')
   assert.match(await evaluate('document.querySelector(".automata-change")?.textContent.trim() ?? ""'), /Cleared cell at column 91, row 57/, 'the live status identifies the cleared cell')
   let automataScreenshot
   if (viewport.name === 'phone') automataScreenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
@@ -218,20 +226,119 @@ for (const viewport of viewports) {
   await click('[aria-label="Toggle experiment controls"]', 'close the automaton rule controls')
   await click('[aria-label="Pause and advance exactly one generation"]', 'advance the Brian’s Brain model once')
   await waitForCount('.automata-stats > div:nth-child(2) strong', '0000', 'the resting state is excluded from the live-cell count')
-  await sleep(80)
-  const restingState = await pixelHash('.automata-canvas')
-  assert.notEqual(restingState.hash, erased.hash, 'one Brian’s Brain step renders its refractory state')
+  const restingState = await waitForPixelChange('.automata-canvas', erased, 'one Brian’s Brain step renders its refractory state')
   await clickText('ERASE', 'document.querySelector(".automata-tools")')
   await evaluate(`document.querySelector('.automata-canvas').focus()`)
   await key('Home', 'Home', 36)
   await key('ArrowRight', 'ArrowRight', 39)
-  await key('Enter', 'Enter', 13)
   await sleep(80)
+  const refractoryEraseSelection = await pixelHash('.automata-canvas')
+  await key('Enter', 'Enter', 13)
   await waitForCount('.automata-stats > div:nth-child(2) strong', '0000', 'clearing a refractory cell without reducing the live count')
-  const clearedRestingState = await pixelHash('.automata-canvas')
-  assert.notEqual(clearedRestingState.hash, restingState.hash, 'Enter erases a resting Brian’s Brain cell')
+  const clearedRestingState = await waitForPixelChange('.automata-canvas', refractoryEraseSelection, 'Enter erases a resting Brian’s Brain cell')
   assert.match(await evaluate('document.querySelector(".automata-change")?.textContent.trim() ?? ""'), /Cleared cell at column 92, row 57\. 0 cells alive\./, 'the resting-cell edit reports a correct zero live count')
   results.push({ exhibit: 'automata', viewport, focus, targets: automataTargets, before: automataBefore, oneCell, twoCells, erased, restingState, clearedRestingState, keyboardPaint: true, keyboardErase: true, refractoryEraseKeepsCount: true, liveStatus: true, screenshot: automataScreenshot ? 'canvas-editing-automata-phone.png' : null })
+
+  await call('Page.navigate', { url: `${base}/exhibits/gravity` })
+  await waitFor(`location.pathname === '/exhibits/gravity' && Boolean(document.querySelector('.gravity-canvas'))`, 'the N-body gravity study')
+  if (!await evaluate(`Boolean(document.querySelector('[aria-label="Resume experiment"]'))`)) await click('[aria-label="Pause experiment"]', 'pause the gravity scene')
+  await waitFor(`Boolean(document.querySelector('[aria-label="Resume experiment"]'))`, 'a paused gravity scene')
+  const gravityCanvas = await evaluate(`(() => { const canvas=document.querySelector('.gravity-canvas'); return {tabIndex:canvas?.tabIndex??-1,label:canvas?.getAttribute('aria-label')??'',describedBy:canvas?.getAttribute('aria-describedby')??''} })()`)
+  assert.equal(gravityCanvas.tabIndex, 0, 'the gravity canvas is in the normal Tab order')
+  assert.match(gravityCanvas.label, /arrows cycle focus between bodies/i, 'the gravity canvas describes keyboard body navigation')
+  await evaluate('document.activeElement instanceof HTMLElement && document.activeElement.blur()')
+  await key('Tab', 'Tab', 9)
+  await waitFor(`document.activeElement === document.querySelector('.gravity-canvas')`, 'keyboard focus on the gravity canvas')
+  await waitFor(`Number.parseFloat(getComputedStyle(document.querySelector('.gravity-keyboard-help')).opacity) > .9`, 'Gravity keyboard help visibility')
+  await sleep(180)
+  const gravityFocus = await evaluate(`(() => { const canvas=document.querySelector('.gravity-canvas'),help=document.querySelector('.gravity-keyboard-help'),hud=document.querySelector('.gravity-hud'),a=help?.getBoundingClientRect(),b=hud?.getBoundingClientRect();return {onCanvas:document.activeElement===canvas,ring:canvas?.matches(':focus-visible')??false,outline:getComputedStyle(canvas).outlineWidth,hintVisible:Number.parseFloat(getComputedStyle(help).opacity)>.9,hintOverlap:Boolean(a&&b&&a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)} })()`)
+  assert.ok(gravityFocus.onCanvas && gravityFocus.ring && Number.parseFloat(gravityFocus.outline) >= 2, `Gravity receives visible keyboard focus: ${JSON.stringify(gravityFocus)}`)
+  assert.ok(gravityFocus.hintVisible && !gravityFocus.hintOverlap, `Gravity help is visible and clear of its HUD: ${JSON.stringify(gravityFocus)}`)
+  await key('ArrowRight', 'ArrowRight', 39)
+  await waitFor(`document.querySelector('.gravity-keyboard-status')?.textContent.includes('Body 1 of')`, 'keyboard focus on the first body')
+  await sleep(80)
+  const gravityBeforeNudge = await pixelHash('.gravity-canvas')
+  const gravityFirst = await evaluate(`({message:document.querySelector('.gravity-keyboard-status')?.textContent.trim(),inspection:document.querySelector('.gravity-inspect')?.textContent.trim()})`)
+  assert.match(gravityFirst.inspection ?? '', /980\.0/, 'keyboard focus exposes the first body in its inspection readout')
+  await key('ArrowRight', 'ArrowRight', 39, true)
+  await waitFor(`document.querySelector('.gravity-keyboard-status')?.textContent.includes('Body moved to x 0.25, y 0.00')`, 'a keyboard-nudged selected body')
+  const gravityMoved = await waitForPixelChange('.gravity-canvas', gravityBeforeNudge, 'Shift plus arrow visibly moves the selected gravity body')
+  const gravityNudged = await evaluate(`({message:document.querySelector('.gravity-keyboard-status')?.textContent.trim(),inspection:document.querySelector('.gravity-inspect')?.textContent.trim()})`)
+  assert.match(gravityNudged.inspection ?? '', /x 0\.25 · y 0\.00/, 'Shift plus arrow changes the real body position')
+  await key('ArrowDown', 'ArrowDown', 40)
+  await waitFor(`document.querySelector('.gravity-keyboard-status')?.textContent.includes('Body 2 of')`, 'keyboard focus on the next body')
+  const gravitySecond = await evaluate(`({message:document.querySelector('.gravity-keyboard-status')?.textContent.trim(),inspection:document.querySelector('.gravity-inspect')?.textContent.trim()})`)
+  assert.notEqual(gravitySecond.inspection, gravityFirst.inspection, 'arrow navigation selects a different real body')
+  if (viewport.name === 'phone') {
+    const screenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+    await writeFile(resolve('docs/renaissance/evidence/canvas-keyboard-gravity-phone.png'), Buffer.from(screenshot.data, 'base64'))
+  }
+  await key('Home', 'Home', 36)
+  await waitFor(`document.querySelector('.gravity-keyboard-status')?.textContent === 'Body focus cleared.'`, 'keyboard recovery of body focus')
+  assert.equal(await evaluate(`Boolean(document.querySelector('.gravity-inspect'))`), false, 'Home clears the selected body and its inspection readout')
+  results.push({ exhibit: 'gravity', viewport, canvas: gravityCanvas, focus: gravityFocus, first: gravityFirst, nudged: gravityNudged, renderedAfterNudge: gravityMoved, second: gravitySecond, homeClearsSelection: true, keyboardBodyNavigation: true, keyboardPositioning: true, screenshot: viewport.name === 'phone' ? 'canvas-keyboard-gravity-phone.png' : null })
+
+  await call('Page.navigate', { url: `${base}/exhibits/neural` })
+  await waitFor(`location.pathname === '/exhibits/neural' && Boolean(document.querySelector('.neural-learning-map'))`, 'the neural network study')
+  await clickText('Blank canvas', 'document.querySelector(".neural-patterns")')
+  await click('.class-tool.class-one', 'select teal examples')
+  await evaluate('document.activeElement instanceof HTMLElement && document.activeElement.blur()')
+  await key('Tab', 'Tab', 9)
+  await waitFor(`document.activeElement === document.querySelector('.neural-learning-map')`, 'keyboard focus on the neural map')
+  await waitFor(`Number.parseFloat(getComputedStyle(document.querySelector('.neural-map-keyboard-help')).opacity) > .9`, 'Neural keyboard help visibility')
+  await sleep(180)
+  const neuralFocus = await evaluate(`(() => { const canvas=document.querySelector('.neural-learning-map'),help=document.querySelector('.neural-map-keyboard-help'),bounds=help?.getBoundingClientRect();const names=['.neural-example-tools','.neural-map-legend','.neural-learning-controls'].map(selector=>{const rect=document.querySelector(selector)?.getBoundingClientRect();return {selector,overlap:Boolean(rect&&bounds&&bounds.left<rect.right&&bounds.right>rect.left&&bounds.top<rect.bottom&&bounds.bottom>rect.top)}});return {onCanvas:document.activeElement===canvas,tabIndex:canvas?.tabIndex??-1,label:canvas?.getAttribute('aria-label')??'',ring:canvas?.matches(':focus-visible')??false,outline:getComputedStyle(canvas).outlineWidth,hintVisible:Number.parseFloat(getComputedStyle(help).opacity)>.9,overlaps:names} })()`)
+  assert.equal(neuralFocus.tabIndex, 0, 'the neural map is in the normal Tab order')
+  assert.ok(neuralFocus.onCanvas && neuralFocus.ring && Number.parseFloat(neuralFocus.outline) >= 2, `Neural map receives visible keyboard focus: ${JSON.stringify(neuralFocus)}`)
+  assert.ok(neuralFocus.label.includes('arrows move a point by 0.05') && neuralFocus.label.includes('Enter uses the selected tool'), 'the neural canvas describes coordinate movement and tool behavior')
+  assert.ok(neuralFocus.hintVisible && neuralFocus.overlaps.every((entry) => !entry.overlap), `Neural key help is visible without covering controls at ${viewport.name}: ${JSON.stringify(neuralFocus)}`)
+  const neuralLiveStatus = await evaluate(`(() => {const node=document.querySelector('.neural-tool-status');return {role:node?.getAttribute('role'),live:node?.getAttribute('aria-live'),atomic:node?.getAttribute('aria-atomic')}})()`)
+  assert.deepEqual(neuralLiveStatus, { role: 'status', live: 'polite', atomic: 'true' }, 'Neural feedback announces the complete result with status semantics')
+  await key('Home', 'Home', 36)
+  const neuralBefore = await pixelHash('.neural-learning-map')
+  await key('Enter', 'Enter', 13)
+  await waitFor(`document.querySelector('.neural-score small')?.textContent.includes('1 teal')`, 'the first keyboard-placed neural example')
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('at x 0.00, y 0.00')`, 'the announced neural-map placement')
+  const neuralOne = await waitForPixelChange('.neural-learning-map', neuralBefore, 'Enter adds a real training example to the rendered map')
+  await click('.class-tool.class-zero', 'select coral examples')
+  await evaluate(`document.querySelector('.neural-learning-map').focus()`)
+  await key('ArrowRight', 'ArrowRight', 39)
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('Keyboard point at x 0.05, y 0.00')`, 'the announced neural keyboard coordinates')
+  await sleep(80)
+  const neuralSecondSelection = await pixelHash('.neural-learning-map')
+  await key('Enter', 'Enter', 13)
+  await waitFor(`document.querySelector('.neural-score small')?.textContent.includes('1 coral · 1 teal')`, 'a second example at a moved keyboard coordinate')
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('at x 0.05, y 0.00')`, 'the second neural-map placement announcement')
+  const neuralTwo = await waitForPixelChange('.neural-learning-map', neuralSecondSelection, 'Enter adds an example at the newly selected map location')
+  const neuralTargets = await evaluate(`({teachDisabled:document.querySelector('.neural-learn-button')?.disabled,controls:[...document.querySelectorAll('.neural-patterns button,.neural-example-tools button,.neural-learning-controls > button')].map(button=>({name:button.textContent.trim(),height:button.getBoundingClientRect().height}))})`)
+  assert.equal(neuralTargets.teachDisabled, false, 'keyboard-placed examples enable actual network training')
+  if (viewport.mobile) assert.ok(neuralTargets.controls.filter((button) => button.height > 0).every((button) => button.height >= 43.9), `Neural Network visible controls meet the mobile touch target size: ${JSON.stringify(neuralTargets.controls)}`)
+  await click('.neural-probe-button', 'select the neural prediction probe')
+  await evaluate(`document.querySelector('.neural-learning-map').focus()`)
+  await key('Home', 'Home', 36)
+  await sleep(80)
+  const neuralProbeSelection = await pixelHash('.neural-learning-map')
+  await key('Enter', 'Enter', 13)
+  await waitFor(`document.querySelector('.neural-tool-status strong')?.textContent.includes('The model guesses')`, 'keyboard testing a neural prediction')
+  await waitFor(`document.querySelector('.neural-tool-status small')?.textContent.includes('test points stay out of training')`, 'the non-training probe explanation')
+  assert.equal(await evaluate(`document.querySelector('.neural-score small')?.textContent.trim()`), '1 coral · 1 teal', 'keyboard prediction probes leave the training examples unchanged')
+  const neuralProbe = await waitForPixelChange('.neural-learning-map', neuralProbeSelection, 'Enter places a visible neural prediction probe')
+  if (viewport.name === 'phone') {
+    const screenshot = await call('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+    await writeFile(resolve('docs/renaissance/evidence/canvas-keyboard-neural-phone.png'), Buffer.from(screenshot.data, 'base64'))
+  }
+  await clickText('↶ Undo', 'document.querySelector(".neural-example-tools")')
+  await waitFor(`document.querySelector('.neural-score small')?.textContent.includes('1 teal')`, 'recovering the prior neural pattern')
+  await clickText('⌫ Erase', 'document.querySelector(".neural-example-tools")')
+  await evaluate(`document.querySelector('.neural-learning-map').focus()`)
+  await key('Home', 'Home', 36)
+  await sleep(80)
+  const neuralEraseSelection = await pixelHash('.neural-learning-map')
+  await key('Enter', 'Enter', 13)
+  await waitFor(`document.querySelector('.neural-score small')?.textContent === 'Add examples to begin'`, 'keyboard erasure of the final neural example')
+  await waitForPixelChange('.neural-learning-map', neuralEraseSelection, 'Enter removes the selected neural example from the map')
+  assert.match(await evaluate(`document.querySelector('.neural-tool-status small')?.textContent.trim()??''`), /Removed the example at x 0\.00, y 0\.00/, 'the erase action announces which map point changed')
+  results.push({ exhibit: 'neural', viewport, focus: neuralFocus, liveStatus: neuralLiveStatus, oneExample: neuralOne, twoExamples: neuralTwo, probe: neuralProbe, trainingEnabled: !neuralTargets.teachDisabled, keyboardPlacement: true, keyboardProbeWithoutAdding: true, keyboardErase: true, undoRecovery: true, screenshot: viewport.name === 'phone' ? 'canvas-keyboard-neural-phone.png' : null })
 }
 
 await call('Emulation.setEmulatedMedia', { media: 'screen', features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] })
@@ -239,10 +346,10 @@ socket.close()
 assert.deepEqual(browserErrors, [], `Browser errors: ${browserErrors.join('; ')}`)
 const report = {
   browser: 'HeadlessChrome 157 with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation',
-  method: 'Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero.',
+  method: 'Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero. Gravity arrow keys select distinct bodies, Shift+arrow moves the selected body by 0.25 world units and the inspector plus rendered pixels confirm the move, then Home clears focus. Neural Networks arrow/Enter keyboard input places examples at stated coordinates, prediction probing visibly updates the test point without adding training data, and erase/undo recover the lesson. The browser waits for image changes between edits and checks focus hints, touch targets and overlay geometry at every viewport.',
   cases: results,
   browserErrors,
 }
 await mkdir(resolve('docs/renaissance/evidence'), { recursive: true })
 await writeFile(resolve('docs/renaissance/evidence/canvas-editing-browser-checks.json'), `${JSON.stringify(report, null, 2)}\n`)
-console.log(`Canvas editing checks passed: ${results.length} narrow/phone/landscape/desktop states across Boids and Cellular Automata; centre placement/clear, Tab focus, cell navigation, keyboard paint/erase, Brian’s Brain refractory accounting, live status and pixel changes verified; 0 browser errors.`)
+console.log(`Canvas interaction checks passed: ${results.length} viewport/study states across Boids, Cellular Automata, Gravity and Neural Networks; centre placement, keyboard editing/probing, recovery, focus guidance, status semantics, touch targets and rendered/model changes verified; 0 browser errors.`)

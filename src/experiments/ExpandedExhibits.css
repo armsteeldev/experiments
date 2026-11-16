@@ -9,6 +9,9 @@
 .gravity-canvas:active { cursor:grabbing; }
 .gravity-canvas.gravity-launch-cursor { cursor:crosshair; }
 .gravity-canvas { touch-action:none; }
+.gravity-keyboard-help { position:absolute; z-index:2; top:38px; right:30px; padding:7px 10px; color:#a9bfbe; border:1px solid rgba(190,220,228,.14); border-radius:7px; background:rgba(9,18,25,.82); font:8px var(--mono); letter-spacing:.04em; opacity:0; pointer-events:none; transition:opacity .15s; }
+.gravity-surface:has(.gravity-canvas:focus-visible) .gravity-keyboard-help { opacity:1; }
+.gravity-canvas:focus-visible { outline:2px solid #c5e2eb; outline-offset:-5px; }
 .gravity-hud { position:absolute; top:36px; left:36px; display:flex; flex-direction:column; gap:10px; min-width:205px; padding:14px 16px; border-radius:10px; color:#b9c9ce; }
 .gravity-hud > strong { color:#e9eee6; font:300 29px var(--serif); letter-spacing:.04em; }
 .gravity-hud > strong small { color:#87999e; font:8px var(--mono); letter-spacing:.15em; }
@@ -237,6 +240,7 @@
 @media (max-width:720px) {
   .exp-prompt { left:14px; bottom:76px; max-width:calc(100% - 28px); font-size:6px; line-height:1.6; }
   .gravity-hud { top:13px; left:13px; min-width:148px; gap:7px; padding:10px 11px; }
+  .gravity-keyboard-help { top:14px; right:12px; max-width:calc(100% - 180px); font-size:7px; }
   .gravity-hud > strong { font-size:22px; }
   .gravity-hud > span:last-child { font-size:6px; }
   .gravity-tools { left:12px; bottom:calc(88px + env(safe-area-inset-bottom)); right:12px; max-width:calc(100% - 24px); gap:4px; flex-wrap:wrap; }

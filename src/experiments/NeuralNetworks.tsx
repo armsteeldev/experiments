@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PointerEvent as ReactPointerEvent } from 'react'
+import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from 'react'
 import type { ExperimentControls } from '../types'
 import { boundedStateSeed } from '../lib/experimentState'
 import { MAX_SHARED_NEURAL_SAMPLES, restoreNeuralSamples } from '../lib/neuralState'
@@ -91,6 +91,8 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   const [undoCount, setUndoCount] = useState(0)
   const [networkOpen, setNetworkOpen] = useState(false)
   const [weightSeed, setWeightSeed] = useState(() => boundedStateSeed(stateFromUrl?.weightSeed, 1))
+  const [keyboardPoint, setKeyboardPoint] = useState<[number, number]>([0, 0])
+  const [mapFocused, setMapFocused] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [network, setNetwork] = useState(() => createNetwork([2, hidden, 1], weightSeed))
   const samplesRef = useRef(samples)
@@ -185,6 +187,11 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
       const guessColor = prediction >= .5 ? colors.one : colors.zero
       ctx.beginPath(); ctx.arc(px, py, width < 720 ? 10 : 13, 0, Math.PI * 2); ctx.strokeStyle = colors.pale; ctx.lineWidth = 1.5; ctx.stroke()
       ctx.beginPath(); ctx.arc(px, py, width < 720 ? 4 : 5, 0, Math.PI * 2); ctx.fillStyle = guessColor; ctx.fill()
+      if (mapFocused) {
+        const kx = plot.x + (keyboardPoint[0] + 1) * plot.w / 2, ky = plot.y + (1 - keyboardPoint[1]) * plot.h / 2
+        ctx.beginPath(); ctx.arc(kx, ky, width < 720 ? 11 : 14, 0, Math.PI * 2); ctx.strokeStyle = '#f3e9ba'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([])
+        ctx.beginPath(); ctx.moveTo(kx - 16, ky); ctx.lineTo(kx + 16, ky); ctx.moveTo(kx, ky - 16); ctx.lineTo(kx, ky + 16); ctx.strokeStyle = '#f3e9ba'; ctx.lineWidth = 1; ctx.stroke()
+      }
       ctx.restore()
       ctx.strokeStyle = 'rgba(196,222,221,.29)'; ctx.lineWidth = 1; ctx.strokeRect(plot.x, plot.y, plot.w, plot.h)
       ctx.strokeStyle = 'rgba(199,224,223,.17)'; ctx.setLineDash([3, 8]); ctx.beginPath(); ctx.moveTo(plot.x + plot.w / 2, plot.y); ctx.lineTo(plot.x + plot.w / 2, plot.y + plot.h); ctx.moveTo(plot.x, plot.y + plot.h / 2); ctx.lineTo(plot.x + plot.w, plot.y + plot.h / 2); ctx.stroke(); ctx.setLineDash([])
@@ -193,7 +200,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     const scheduleDraw = () => { if (drawFrame.current !== null) cancelAnimationFrame(drawFrame.current); drawFrame.current = requestAnimationFrame(draw) }
     const observer = new ResizeObserver(scheduleDraw); observer.observe(canvas); scheduleDraw()
     return () => { observer.disconnect(); if (drawFrame.current !== null) cancelAnimationFrame(drawFrame.current) }
-  }, [networkVersion, dataVersion, input, activation])
+  }, [networkVersion, dataVersion, input, activation, keyboardPoint, mapFocused])
 
   const coords = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
@@ -215,6 +222,8 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     const point = coords(event)
     if (!point) return
     event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId)
+    setMapFocused(false)
+    setKeyboardPoint(point)
     if (tool === 'probe') {
       setInput(point); setNote(`The network guesses ${outputValue(forwardNetwork(network, point, activation).output[0], activation) >= .5 ? 'teal' : 'coral'} at this new point. It is not added to the examples.`)
       return
@@ -270,9 +279,47 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
     if (training) { haltTraining(); setNote('Training paused. The current weights are kept.') }
     else if (samplesRef.current.length >= 2) { trainingRef.current = true; setTraining(true); setTool('probe'); setNote('Learning from the coloured examples. The boundary is the network’s current prediction.') }
   }
+  const useKeyboardTool = () => {
+    const point = keyboardPoint
+    if (tool === 'probe') {
+      setInput(point)
+      setNote(`Test point at x ${point[0].toFixed(2)}, y ${point[1].toFixed(2)}. It is not added to the examples.`)
+      return
+    }
+    if (tool === 'erase') {
+      const near = nearestSample(point)
+      if (near < 0) { setNote(`No example close to x ${point[0].toFixed(2)}, y ${point[1].toFixed(2)}.`); return }
+      pushUndo()
+      setExamples(samplesRef.current.filter((_, index) => index !== near), `Removed the example at x ${point[0].toFixed(2)}, y ${point[1].toFixed(2)}. Undo is ready.`)
+      return
+    }
+    if (samplesRef.current.length >= MAX_SHARED_NEURAL_SAMPLES) {
+      setNote(`This lesson is limited to ${MAX_SHARED_NEURAL_SAMPLES} examples so it stays quick to train and easy to share. Erase one to make room.`)
+      return
+    }
+    haltTraining()
+    pushUndo()
+    const next = [...samplesRef.current.map((sample) => ({ x: [...sample.x], y: sample.y })), { x: point, y: classToAdd }]
+    setExamples(next, `Placed a ${classToAdd === 1 ? 'teal' : 'coral'} example at x ${point[0].toFixed(2)}, y ${point[1].toFixed(2)}.`)
+  }
+  const handleMapKeyDown = (event: ReactKeyboardEvent<HTMLCanvasElement>) => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault(); setMapFocused(true)
+      const step = event.shiftKey ? .1 : .05
+      const round = (value: number) => Math.round(Math.max(-1, Math.min(1, value)) * 20) / 20
+      const point: [number, number] = [round(keyboardPoint[0] + (event.key === 'ArrowLeft' ? -step : event.key === 'ArrowRight' ? step : 0)), round(keyboardPoint[1] + (event.key === 'ArrowDown' ? -step : event.key === 'ArrowUp' ? step : 0))]
+      setKeyboardPoint(point)
+      setNote(`Keyboard point at x ${point[0].toFixed(2)}, y ${point[1].toFixed(2)}. Press Enter to use the selected tool.`)
+    } else if (event.key === 'Home') {
+      event.preventDefault(); setMapFocused(true); setKeyboardPoint([0, 0]); setNote('Keyboard point returned to the centre of the map.')
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault(); setMapFocused(true); useKeyboardTool()
+    }
+  }
 
   return <section className={`experiment-surface neural-playground${tool === 'erase' ? ' tool-erasing' : tool === 'probe' ? ' tool-probing' : ''}`} aria-label="Neural Networks, an interactive learning playground">
-    <canvas ref={canvasRef} className="neural-learning-map" aria-label="Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess." onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} />
+    <canvas ref={canvasRef} tabIndex={0} className="neural-learning-map" aria-label="Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10, Enter uses the selected tool, and Home returns to the centre." aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Shift+ArrowUp Shift+ArrowDown Shift+ArrowLeft Shift+ArrowRight Enter Space Home" onFocus={() => setMapFocused(true)} onBlur={() => setMapFocused(false)} onKeyDown={handleMapKeyDown} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} />
+    <span className="neural-map-keyboard-help" aria-hidden="true">Arrow keys move · Shift moves farther · Enter uses the selected tool · Home centres</span>
     <header className="neural-playground-head">
       <div><span className="neural-kicker"><i /> TEACH A TINY MACHINE</span><h1>Show it a <em>pattern.</em></h1><p>Tap to add an example. Watch the colour map change as it learns.</p></div>
       <div className="neural-score" aria-live="polite"><span>{samples.length} EXAMPLES · {Math.round(correct * samples.length)} GUESSED RIGHT</span><strong>{samples.length ? `${Math.round(correct * 100)}%` : '—'}</strong><small>{samples.length ? `${classCounts[0]} coral · ${classCounts[1]} teal` : 'Add examples to begin'}</small></div>
@@ -295,7 +342,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
 
     <div className="neural-map-legend"><span><i className="legend-zero" /> CORAL EXAMPLE</span><span><i className="legend-one" /> TEAL EXAMPLE</span><span><i className="legend-miss" /> WRONG GUESS</span><span><i className="legend-probe" /> TEST POINT</span></div>
     <div className="neural-learning-controls">
-      <div className="neural-tool-status" aria-live="polite"><strong>{tool === 'probe' ? `The model guesses ${prediction >= .5 ? 'TEAL' : 'CORAL'}` : tool === 'erase' ? 'ERASE AN EXAMPLE' : `ADDING ${classToAdd === 1 ? 'TEAL' : 'CORAL'} EXAMPLES`}</strong><small>{tool === 'probe' ? `${prediction.toFixed(3)} confidence · test points stay out of training` : note}</small></div>
+      <div className="neural-tool-status" role="status" aria-live="polite" aria-atomic="true"><strong>{tool === 'probe' ? `The model guesses ${prediction >= .5 ? 'TEAL' : 'CORAL'}` : tool === 'erase' ? 'ERASE AN EXAMPLE' : `ADDING ${classToAdd === 1 ? 'TEAL' : 'CORAL'} EXAMPLES`}</strong><small>{tool === 'probe' ? `${prediction.toFixed(3)} confidence · test points stay out of training` : note}</small></div>
       <button className={`neural-probe-button${tool === 'probe' ? ' probe-active' : ''}`} onClick={() => { haltTraining(); setTool(tool === 'probe' ? 'draw' : 'probe'); setNote('Tap anywhere on the map to test a new point. It will not be added to the examples.') }} aria-pressed={tool === 'probe'}>Test a guess <span>◎</span></button>
       <button className={`neural-learn-button${training ? ' learning-now' : ''}`} onClick={toggleTraining} disabled={samples.length < 2}>{training ? 'Pause learning' : 'Teach it this pattern'} <span>{training ? 'Ⅱ' : '▶'}</span></button>
       <div className="neural-loss-readout"><span>LOSS</span><strong>{metrics.loss.toFixed(3)}</strong></div>

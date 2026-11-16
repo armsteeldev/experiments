@@ -211,6 +211,9 @@
 /* NEURAL NETWORKS — a tactile data and classification laboratory */
 .neural-playground { position: absolute; inset: 0; overflow: hidden; color: #e6e8df; background: #071017; }
 .neural-learning-map { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.neural-learning-map:focus-visible { outline: 2px solid #d7e7c1; outline-offset: -5px; }
+.neural-map-keyboard-help { position:absolute; z-index:3; left:50%; bottom:205px; padding:7px 10px; color:#c4d6c8; border:1px solid #b5d0c333; border-radius:7px; background:#0b171ddd; font:8px var(--mono); letter-spacing:.04em; white-space:nowrap; opacity:0; transform:translate(-50%,4px); pointer-events:none; transition:opacity .15s,transform .15s; }
+.neural-playground:has(.neural-learning-map:focus-visible) .neural-map-keyboard-help { opacity:1; transform:translate(-50%,0); }
 .neural-playground.tool-erasing .neural-learning-map { cursor: cell; }
 .neural-playground.tool-probing .neural-learning-map { cursor: copy; }
 .neural-playground-head { position: absolute; z-index: 2; top: 25px; left: clamp(16px,3vw,40px); right: clamp(16px,3vw,40px); display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
@@ -374,6 +377,8 @@
   .machine-memory-peek { grid-template-columns: 100px 1fr; }
   .machine-memory-peek > em { display: none; }
   .neural-example-tools { top: auto; bottom: 188px; left: 50%; right: auto; transform: translateX(-50%); }
+  .neural-map-keyboard-help { bottom: 250px; }
+  .neural-patterns button,.neural-example-tools button,.neural-learning-controls > button { min-height: 44px; }
   .neural-patterns { top: 115px; }
   .neural-map-legend { bottom: 174px; }
   .logic-workbench .circuit-canvas { inset: 154px 0 180px; }
@@ -487,10 +492,11 @@
   .neural-patterns { top: 103px; left: 10px; right: 10px; gap: 4px; overflow-x: auto; padding-bottom: 3px; scrollbar-width: none; }
   .neural-patterns::-webkit-scrollbar { display:none; }
   .neural-patterns > span { font-size: 5px; }
-  .neural-patterns button { min-height: 29px; padding-inline: 8px; font-size: 7px; }
+  .neural-patterns button { min-height: 44px; padding-inline: 8px; font-size: 7px; }
   .neural-example-tools { left: 50%; right: auto; bottom: calc(200px + env(safe-area-inset-bottom)); width: calc(100% - 18px); justify-content: center; gap: 4px; transform: translateX(-50%); }
+  .neural-map-keyboard-help { bottom:calc(244px + env(safe-area-inset-bottom)); max-width:calc(100% - 20px); overflow:hidden; text-overflow:ellipsis; font-size:7px; line-height:1.35; white-space:normal; text-align:center; }
   .neural-example-tools > span { display: none; }
-  .neural-example-tools button { min-height: 34px; padding-inline: 9px; font-size: 7px; }
+  .neural-example-tools button { min-height: 44px; padding-inline: 9px; font-size: 7px; }
   .neural-map-legend { bottom: calc(185px + env(safe-area-inset-bottom)); gap: 9px; }
   .neural-map-legend span { gap: 4px; font-size: 5px; }
   .neural-map-legend i { width: 6px; height: 6px; }
@@ -498,7 +504,7 @@
   .neural-tool-status { grid-column: 1 / -1; gap: 2px; }
   .neural-tool-status strong { font-size: 6px; }
   .neural-tool-status small { font-size: 8px; }
-  .neural-learning-controls > button { min-height: 34px; padding-inline: 8px; font-size: 7px; }
+  .neural-learning-controls > button { min-height: 44px; padding-inline: 8px; font-size: 7px; }
   .neural-loss-readout { display: none; }
   .neural-learning-controls .neural-inspect-button { display: none; }
   .neural-network-inspector { top: auto; left: 8px; right: 8px; bottom: calc(184px + env(safe-area-inset-bottom)); width: auto; padding: 9px; }
