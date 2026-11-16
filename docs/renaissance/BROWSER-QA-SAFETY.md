@@ -57,7 +57,7 @@ All qa:* package commands now use scripts/run-browser-qa.mjs, and each individua
 - starts one loopback-only Vite preview and one isolated Chromium profile on dynamically assigned ports, with CDP bound to IPv4 loopback;
 - does not pass SwiftShader or --disable-gpu flags;
 - applies 20-second startup bounds, an eight-minute default test limit and a ten-minute hard maximum, with no automatic retries;
-- tags each owned role (preview, Chromium and QA script) with a unique per-run environment token inherited by its subprocesses. Cleanup locates only processes carrying that exact token, confirms each PID's start time before signaling, and repeats the check after graceful CDP close so reparented Chromium or script subprocesses cannot be missed. It applies SIGTERM then bounded SIGKILL escalation; if tagged processes remain, it retains the lock and profile to prevent a second run.
+- tags each owned role (preview, Chromium and QA script) with a unique per-run environment token inherited by its subprocesses. Cleanup scans `/proc` in bounded batches for processes carrying that exact token, confirms each PID's start time before signaling, and repeats the check after graceful CDP close so reparented Chromium or script subprocesses cannot be missed. It applies SIGTERM then bounded SIGKILL escalation; if tagged processes remain, it retains the lock and profile to prevent a second run.
 
 The preview and browser are ordinary foreground children of the runner; none are detached. The owner token is local process metadata only and is not logged or sent to a service. Test output continues to use the existing paths and is not removed by cleanup.
 

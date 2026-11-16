@@ -222,21 +222,24 @@ async function waitForOwnedRecords(role, ms) {
 async function processSnapshot(role) {
   const entries = await readdir('/proc').catch(() => [])
   const records = new Map()
-  await Promise.all(entries.filter((entry) => /^\d+$/.test(entry)).map(async (entry) => {
-    const pid = Number(entry)
-    const [source, environment] = await Promise.all([
-      readFile('/proc/' + pid + '/stat', 'utf8').catch(() => ''),
-      readFile('/proc/' + pid + '/environ', 'utf8').catch(() => ''),
-    ])
-    const end = source.lastIndexOf(')')
-    if (end < 0) return
-    const fields = source.slice(end + 2).trim().split(/\s+/)
-    const ppid = Number(fields[1])
-    const startTicks = fields[19]
-    if (!Number.isInteger(ppid) || !startTicks) return
-    if (!environment.split('\0').includes('ARMSTEEL_QA_PROCESS_OWNER=' + token + ':' + role)) return
-    records.set(pid, { pid, ppid, startTicks })
-  }))
+  const processIds = entries.filter((entry) => /^\d+$/.test(entry))
+  for (let offset = 0; offset < processIds.length; offset += 32) {
+    await Promise.all(processIds.slice(offset, offset + 32).map(async (entry) => {
+      const pid = Number(entry)
+      const [source, environment] = await Promise.all([
+        readFile('/proc/' + pid + '/stat', 'utf8').catch(() => ''),
+        readFile('/proc/' + pid + '/environ', 'utf8').catch(() => ''),
+      ])
+      const end = source.lastIndexOf(')')
+      if (end < 0) return
+      const fields = source.slice(end + 2).trim().split(/\s+/)
+      const ppid = Number(fields[1])
+      const startTicks = fields[19]
+      if (!Number.isInteger(ppid) || !startTicks) return
+      if (!environment.split('\0').includes('ARMSTEEL_QA_PROCESS_OWNER=' + token + ':' + role)) return
+      records.set(pid, { pid, ppid, startTicks })
+    }))
+  }
   return records
 }
 

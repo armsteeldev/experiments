@@ -283,7 +283,7 @@ export default function NeuralNetworks({ paused, controlsVisible, stateFromUrl, 
   const changeActivation = (next: Activation) => { setActivation(next); resetWeights(hidden, depth, next) }
   const toggleTraining = () => {
     if (training) { haltTraining(); setNote('Training paused. The current weights are kept.') }
-    else if (samplesRef.current.length >= 2) { trainingRef.current = true; setTraining(true); setTool('probe'); setNote('Learning from the coloured examples. The boundary is the network’s current prediction.') }
+    else if (samplesRef.current.length >= 2) { setKeyboardSampleIndex(null); keyboardEditRecorded.current = false; trainingRef.current = true; setTraining(true); setTool('probe'); setNote('Learning from the coloured examples. The boundary is the network’s current prediction.') }
   }
   const useKeyboardTool = () => {
     const point = keyboardPoint
