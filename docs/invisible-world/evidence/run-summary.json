@@ -1,6 +1,6 @@
 {
   "browser": {
-    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
     "devicePixelRatio": 1,
     "webgl": "WebKit WebGL"
   },
@@ -23,7 +23,7 @@
     "lensingLink": true
   },
   "networkDelivery": {
-    "tick": 91,
+    "tick": 96,
     "delivered": 6,
     "status": "Sent “a small idea” · route selected\norigin → west → relay → south → arrival"
   },

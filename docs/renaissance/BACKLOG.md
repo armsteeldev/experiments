@@ -1,6 +1,6 @@
 # Renaissance prioritized backlog
 
-Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, the nineteen-study model-boundary audit in `6ba7883`, the verified shared-control readability/accessibility checkpoint, and the source-grounded exhibit integration guide. Items are ordered by visitor value, risk and dependency.
+Status includes the validated home/gallery performance sample and adaptive ambient-field resolution change in `9e258c7`, the nineteen-study model-boundary audit in `6ba7883`, the verified shared-control readability/accessibility checkpoint, and the source-grounded exhibit integration guide. Final sequential verification completed on 2026-11-16; remaining items below are explicitly deferred limitations or future work.
 
 Finalization phase: scope is frozen. Open items below are unfinished verification, known issues, or deferred review work; do not treat them as approval to add features or start new architecture.
 
@@ -53,8 +53,8 @@ Finalization phase: scope is frozen. Open items below are unfinished verificatio
 - [x] Make the cellular grid Tab-focusable and editable with arrows, Enter and Home; show its active cell and announce row, column and population changes.
 - [x] Name the cellular Paint/Erase/Pan group and expose pressed state; size its tools, Step/Pause and shared-panel buttons to 44px on mobile, tablet and coarse-pointer layouts.
 - [x] Exercise the flock and automaton tasks in Chromium at 320×740, 390×844, 844×390 and 1024×768; check rendered state changes, recovery, status and mobile instruction spacing.
-- [x] Add keyboard body selection/nudging in Gravity and coordinate-based Add/Probe/Erase in Neural Networks; validate live status, recovery and visible canvas changes across phone, landscape and desktop sizes. A separate keyboard path for moving existing Neural examples is awaiting browser verification below.
-- [ ] Browser-verify the new Neural Networks keyboard workflow for selecting, moving, deleting and undoing an existing example, plus pointer-drag cursor synchronization and final-position recovery, across narrow, phone, landscape and desktop layouts; the code and assertions are staged in `qa:canvas-editing`, but the host gate currently blocks browser runs.
+- [x] Add keyboard body selection/nudging in Gravity and coordinate-based Add/Probe/Erase in Neural Networks; validate live status, recovery and visible canvas changes across phone, landscape and desktop sizes.
+- [x] Browser-verify the Neural Networks keyboard workflow for selecting, moving, deleting and undoing an existing example, plus pointer-drag cursor synchronization and final-position recovery, across narrow, phone, landscape and desktop layouts (`qa:canvas-editing`, 16 study/viewport states; all assertions passed).
 - [ ] Review formal contrast, reading order, dialog semantics, status announcements and screen-reader descriptions with assistive technology.
 - [ ] Perform a manual phone session if an actual device is available; emulation alone is layout evidence.
 - [x] Keep simulation diagnostics development-only and verify they are absent from production JavaScript.
@@ -73,7 +73,7 @@ Finalization phase: scope is frozen. Open items below are unfinished verificatio
 - [ ] Exercise the Mandelbrot WebGPU `device.lost` recovery with a real WebGPU-capable implementation; headless SwiftShader only exposes WebGL in the current run.
 - [ ] Repeat suitable performance samples on a physical GPU and mid-range mobile; keep SwiftShader results separate.
 - [x] Add route-level progress reporting and supervise lifecycle-test timeout, browser shutdown and child-process cleanup.
-- [ ] After the host gate passes, rerun lifecycle QA with one owned browser; verify Fluid shared-shader accounting and investigate the prior Shape of Sound CDP timeout.
+- [x] Rerun lifecycle QA with one owned browser; WebGL create/delete counts balance, six workers and two AudioContexts close, and Shape of Sound completes without the prior CDP timeout (`qa:route-lifecycle`).
 - [ ] On a healthy host, exercise the supervisor's role-token cleanup with a short-lived test child, a reparented child, and a child that ignores SIGTERM; confirm only matching PIDs are stopped and the lock/profile are retained if SIGKILL cannot be confirmed.
 
 ## P2 — Automated QA and scientific quality

@@ -393,10 +393,11 @@ for (const viewport of viewports) {
 }
 
 await call('Emulation.setEmulatedMedia', { media: 'screen', features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] })
+const browserUserAgent = await evaluate('navigator.userAgent')
 socket.close()
 assert.deepEqual(browserErrors, [], `Browser errors: ${browserErrors.join('; ')}`)
 const report = {
-  browser: 'HeadlessChrome 157 with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation',
+  browser: `${browserUserAgent} with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation`,
   method: 'Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero. Gravity arrow keys select distinct bodies, Shift+arrow moves the selected body by 0.25 world units and the inspector plus rendered pixels confirm the move, then Home clears focus. Neural Networks arrow/Enter keyboard input places examples at stated coordinates; M selects a nearby existing example, arrows move it, Escape finishes and Undo restores its position. A near-dot click leaves the example in place. A pointer-dragged example is selected at its final coordinate and undone, checking pointer/keyboard cursor synchronization and recovery when release lands inside the drag throttle interval. Prediction probing visibly updates the test point without adding training data, and erase/undo recover the lesson. The browser waits for image changes between edits and checks focus hints, touch targets and overlay geometry at every viewport.',
   cases: results,
   browserErrors,

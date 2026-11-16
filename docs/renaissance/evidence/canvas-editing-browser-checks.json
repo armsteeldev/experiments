@@ -1,6 +1,6 @@
 {
-  "browser": "HeadlessChrome 157 with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation",
-  "method": "Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero. Gravity arrow keys select distinct bodies, Shift+arrow moves the selected body by 0.25 world units and the inspector plus rendered pixels confirm the move, then Home clears focus. Neural Networks arrow/Enter keyboard input places examples at stated coordinates, prediction probing visibly updates the test point without adding training data, and erase/undo recover the lesson. The browser waits for image changes between edits and checks focus hints, touch targets and overlay geometry at every viewport.",
+  "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 with SwiftShader; 320×740 narrow portrait, 390×844 phone portrait, 844×390 phone landscape and 1024×768 desktop touch/viewport emulation",
+  "method": "Pause the deterministic flocking scene, choose Barrier, place it using the always-available centre action, compare rendered Canvas2D pixels and clear it. On a cleared cellular board, Tab focuses the canvas, CDP arrow and Enter events paint and erase real cells, and the live status announces the changed row and column. Brian’s Brain advances one firing cell to its refractory state before keyboard erasure checks that live-cell accounting remains at zero. Gravity arrow keys select distinct bodies, Shift+arrow moves the selected body by 0.25 world units and the inspector plus rendered pixels confirm the move, then Home clears focus. Neural Networks arrow/Enter keyboard input places examples at stated coordinates; M selects a nearby existing example, arrows move it, Escape finishes and Undo restores its position. A near-dot click leaves the example in place. A pointer-dragged example is selected at its final coordinate and undone, checking pointer/keyboard cursor synchronization and recovery when release lands inside the drag throttle interval. Prediction probing visibly updates the test point without adding training data, and erase/undo recover the lesson. The browser waits for image changes between edits and checks focus hints, touch targets and overlay geometry at every viewport.",
   "cases": [
     {
       "exhibit": "boids",
@@ -16,19 +16,19 @@
         "selected": "Barrier"
       },
       "before": {
-        "hash": 735760329,
-        "width": 320,
-        "height": 740
+        "hash": 1044207509,
+        "width": 323,
+        "height": 748
       },
       "afterPlacement": {
-        "hash": 738923632,
-        "width": 320,
-        "height": 740
+        "hash": 3872137526,
+        "width": 323,
+        "height": 748
       },
       "afterClear": {
-        "hash": 735760329,
-        "width": 320,
-        "height": 740
+        "hash": 1044207509,
+        "width": 323,
+        "height": 748
       },
       "centerPlacement": true,
       "clearRecovery": true,
@@ -75,7 +75,7 @@
         }
       ],
       "before": {
-        "hash": 2064013246,
+        "hash": 1059107261,
         "width": 323,
         "height": 748
       },
@@ -121,7 +121,7 @@
       "canvas": {
         "tabIndex": 0,
         "label": "Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan. Keyboard: arrows cycle focus between bodies, Shift plus arrows nudge the selected body by a quarter unit, and Home clears body focus.",
-        "describedBy": ""
+        "describedBy": "gravity-first-move"
       },
       "focus": {
         "onCanvas": true,
@@ -163,7 +163,7 @@
       "focus": {
         "onCanvas": true,
         "tabIndex": 0,
-        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10, Enter uses the selected tool, and Home returns to the centre.",
+        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10. Press M near an example to select it, arrows move the selected example, Enter or Escape finishes, and Delete removes it. Enter uses the selected tool when no example is selected; Home returns the crosshair to centre.",
         "ring": true,
         "outline": "2px",
         "hintVisible": true,
@@ -197,6 +197,21 @@
         "width": 320,
         "height": 740
       },
+      "movedExample": {
+        "hash": 369680591,
+        "width": 320,
+        "height": 740
+      },
+      "pointerMovedExample": {
+        "hash": 1507469763,
+        "width": 320,
+        "height": 740
+      },
+      "deletedExample": {
+        "hash": 4007022187,
+        "width": 320,
+        "height": 740
+      },
       "probe": {
         "hash": 51851108,
         "width": 320,
@@ -204,8 +219,11 @@
       },
       "trainingEnabled": true,
       "keyboardPlacement": true,
+      "keyboardMoveAndUndo": true,
+      "keyboardDeleteAndUndo": true,
       "keyboardProbeWithoutAdding": true,
       "keyboardErase": true,
+      "pointerDragKeyboardSelection": true,
       "undoRecovery": true,
       "screenshot": null
     },
@@ -262,23 +280,23 @@
       "targets": [
         {
           "name": "Ⅱ PAUSE",
-          "height": 44.52799987792969
+          "height": 44
         },
         {
           "name": "STEP →",
-          "height": 44.527992248535156
+          "height": 44
         },
         {
           "name": "PAINT",
-          "height": 44.5279541015625
+          "height": 44
         },
         {
           "name": "ERASE",
-          "height": 44.5279541015625
+          "height": 44
         },
         {
           "name": "PAN",
-          "height": 44.5279541015625
+          "height": 44
         }
       ],
       "before": {
@@ -328,7 +346,7 @@
       "canvas": {
         "tabIndex": 0,
         "label": "Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan. Keyboard: arrows cycle focus between bodies, Shift plus arrows nudge the selected body by a quarter unit, and Home clears body focus.",
-        "describedBy": ""
+        "describedBy": "gravity-first-move"
       },
       "focus": {
         "onCanvas": true,
@@ -370,7 +388,7 @@
       "focus": {
         "onCanvas": true,
         "tabIndex": 0,
-        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10, Enter uses the selected tool, and Home returns to the centre.",
+        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10. Press M near an example to select it, arrows move the selected example, Enter or Escape finishes, and Delete removes it. Enter uses the selected tool when no example is selected; Home returns the crosshair to centre.",
         "ring": true,
         "outline": "2px",
         "hintVisible": true,
@@ -404,6 +422,21 @@
         "width": 390,
         "height": 844
       },
+      "movedExample": {
+        "hash": 1939693599,
+        "width": 390,
+        "height": 844
+      },
+      "pointerMovedExample": {
+        "hash": 2159946782,
+        "width": 390,
+        "height": 844
+      },
+      "deletedExample": {
+        "hash": 4260755549,
+        "width": 390,
+        "height": 844
+      },
       "probe": {
         "hash": 3427692276,
         "width": 390,
@@ -411,8 +444,11 @@
       },
       "trainingEnabled": true,
       "keyboardPlacement": true,
+      "keyboardMoveAndUndo": true,
+      "keyboardDeleteAndUndo": true,
       "keyboardProbeWithoutAdding": true,
       "keyboardErase": true,
+      "pointerDragKeyboardSelection": true,
       "undoRecovery": true,
       "screenshot": "canvas-keyboard-neural-phone.png"
     },
@@ -489,7 +525,7 @@
         }
       ],
       "before": {
-        "hash": 1770623259,
+        "hash": 13451595,
         "width": 854,
         "height": 394
       },
@@ -535,7 +571,7 @@
       "canvas": {
         "tabIndex": 0,
         "label": "Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan. Keyboard: arrows cycle focus between bodies, Shift plus arrows nudge the selected body by a quarter unit, and Home clears body focus.",
-        "describedBy": ""
+        "describedBy": "gravity-first-move"
       },
       "focus": {
         "onCanvas": true,
@@ -577,7 +613,7 @@
       "focus": {
         "onCanvas": true,
         "tabIndex": 0,
-        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10, Enter uses the selected tool, and Home returns to the centre.",
+        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10. Press M near an example to select it, arrows move the selected example, Enter or Escape finishes, and Delete removes it. Enter uses the selected tool when no example is selected; Home returns the crosshair to centre.",
         "ring": true,
         "outline": "2px",
         "hintVisible": true,
@@ -611,6 +647,21 @@
         "width": 844,
         "height": 390
       },
+      "movedExample": {
+        "hash": 339478460,
+        "width": 844,
+        "height": 390
+      },
+      "pointerMovedExample": {
+        "hash": 2528879639,
+        "width": 844,
+        "height": 390
+      },
+      "deletedExample": {
+        "hash": 1297489614,
+        "width": 844,
+        "height": 390
+      },
       "probe": {
         "hash": 1815662994,
         "width": 844,
@@ -618,8 +669,11 @@
       },
       "trainingEnabled": true,
       "keyboardPlacement": true,
+      "keyboardMoveAndUndo": true,
+      "keyboardDeleteAndUndo": true,
       "keyboardProbeWithoutAdding": true,
       "keyboardErase": true,
+      "pointerDragKeyboardSelection": true,
       "undoRecovery": true,
       "screenshot": null
     },
@@ -676,32 +730,32 @@
       "targets": [
         {
           "name": "Ⅱ PAUSE",
-          "height": 36.43199920654297
+          "height": 36
         },
         {
           "name": "STEP →",
-          "height": 36.43199920654297
+          "height": 36
         },
         {
           "name": "PAINT",
-          "height": 36.4320068359375
+          "height": 36
         },
         {
           "name": "ERASE",
-          "height": 36.4320068359375
+          "height": 36
         },
         {
           "name": "PAN",
-          "height": 36.4320068359375
+          "height": 36
         }
       ],
       "before": {
-        "hash": 1024884112,
+        "hash": 4173891449,
         "width": 1036,
         "height": 777
       },
       "oneCell": {
-        "hash": 1341358346,
+        "hash": 4016047849,
         "width": 1036,
         "height": 777
       },
@@ -742,7 +796,7 @@
       "canvas": {
         "tabIndex": 0,
         "label": "Moving bodies pull on one another. Drag a body to reposition or throw it; drag empty space to pan. Keyboard: arrows cycle focus between bodies, Shift plus arrows nudge the selected body by a quarter unit, and Home clears body focus.",
-        "describedBy": ""
+        "describedBy": "gravity-first-move"
       },
       "focus": {
         "onCanvas": true,
@@ -784,7 +838,7 @@
       "focus": {
         "onCanvas": true,
         "tabIndex": 0,
-        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10, Enter uses the selected tool, and Home returns to the centre.",
+        "label": "Interactive map of the network’s predictions and training examples. Click to add an example, drag a dot to move it, or choose Test a guess. Keyboard: arrows move a point by 0.05, Shift plus arrows move by 0.10. Press M near an example to select it, arrows move the selected example, Enter or Escape finishes, and Delete removes it. Enter uses the selected tool when no example is selected; Home returns the crosshair to centre.",
         "ring": true,
         "outline": "2px",
         "hintVisible": true,
@@ -818,6 +872,21 @@
         "width": 1024,
         "height": 768
       },
+      "movedExample": {
+        "hash": 3963417892,
+        "width": 1024,
+        "height": 768
+      },
+      "pointerMovedExample": {
+        "hash": 970171699,
+        "width": 1024,
+        "height": 768
+      },
+      "deletedExample": {
+        "hash": 3963417892,
+        "width": 1024,
+        "height": 768
+      },
       "probe": {
         "hash": 340572060,
         "width": 1024,
@@ -825,8 +894,11 @@
       },
       "trainingEnabled": true,
       "keyboardPlacement": true,
+      "keyboardMoveAndUndo": true,
+      "keyboardDeleteAndUndo": true,
       "keyboardProbeWithoutAdding": true,
       "keyboardErase": true,
+      "pointerDragKeyboardSelection": true,
       "undoRecovery": true,
       "screenshot": null
     }

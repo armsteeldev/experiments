@@ -1,6 +1,6 @@
 {
   "browser": {
-    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
     "devicePixelRatio": 1,
     "viewport": [
       1440,
@@ -14,25 +14,25 @@
   "transitions": 38,
   "initialMount": {
     "exhibit": "mandelbrot",
-    "durationMs": 3361,
-    "readyAtPerformanceMs": 3165.3
+    "durationMs": 729,
+    "readyAtPerformanceMs": 545.2
   },
   "mountDurationSummaryMs": {
     "count": 38,
-    "median": 390.6,
-    "p95": 5992.5,
-    "maximum": 9303.4
+    "median": 316.1,
+    "p95": 1003.2,
+    "maximum": 1556.5
   },
   "firstSeenAssets": [
     {
-      "path": "/assets/index-Cl4_DBsq.js",
+      "path": "/assets/index-B1rMaTfm.js",
       "initiatorType": "script",
-      "transferSize": 117108,
-      "encodedBodySize": 116808,
+      "transferSize": 117103,
+      "encodedBodySize": 116803,
       "decodedBodySize": 361849,
-      "durationMs": 37.3,
-      "firstRoute": "mandelbrot",
-      "timingValid": true
+      "durationMs": 22.1,
+      "timingValid": true,
+      "firstRoute": "mandelbrot"
     },
     {
       "path": "/assets/index-Ebg23dNu.css",
@@ -40,39 +40,39 @@
       "transferSize": 24706,
       "encodedBodySize": 24406,
       "decodedBodySize": 113252,
-      "durationMs": 31.9,
-      "firstRoute": "mandelbrot",
-      "timingValid": true
+      "durationMs": 13.8,
+      "timingValid": true,
+      "firstRoute": "mandelbrot"
     },
     {
-      "path": "/assets/Mandelbrot-DFuoB7bd.js",
+      "path": "/assets/Mandelbrot-DAmlOwKW.js",
       "initiatorType": "script",
-      "transferSize": 18054,
-      "encodedBodySize": 17754,
+      "transferSize": 18055,
+      "encodedBodySize": 17755,
       "decodedBodySize": 54597,
-      "durationMs": 23.3,
-      "firstRoute": "mandelbrot",
-      "timingValid": true
+      "durationMs": 14.7,
+      "timingValid": true,
+      "firstRoute": "mandelbrot"
     },
     {
-      "path": "/assets/Controls-BIm25uZo.js",
+      "path": "/assets/Controls-BOF9KMt2.js",
       "initiatorType": "script",
-      "transferSize": 968,
-      "encodedBodySize": 668,
+      "transferSize": 966,
+      "encodedBodySize": 666,
       "decodedBodySize": 1715,
-      "durationMs": 23,
-      "firstRoute": "mandelbrot",
-      "timingValid": true
+      "durationMs": 14.5,
+      "timingValid": true,
+      "firstRoute": "mandelbrot"
     },
     {
-      "path": "/assets/useDiscoveryHint-CKDCtC_v.js",
+      "path": "/assets/useDiscoveryHint-DzUgwVXD.js",
       "initiatorType": "script",
       "transferSize": 703,
       "encodedBodySize": 403,
       "decodedBodySize": 403,
-      "durationMs": 22.7,
-      "firstRoute": "mandelbrot",
-      "timingValid": true
+      "durationMs": 12.7,
+      "timingValid": true,
+      "firstRoute": "mandelbrot"
     },
     {
       "path": "/assets/experimentState-DI0xqCIQ.js",
@@ -80,79 +80,79 @@
       "transferSize": 655,
       "encodedBodySize": 355,
       "decodedBodySize": 355,
-      "durationMs": 22.9,
-      "firstRoute": "mandelbrot",
-      "timingValid": true
+      "durationMs": 13.2,
+      "timingValid": true,
+      "firstRoute": "mandelbrot"
     },
     {
       "path": "/assets/mandelbrot.worker-CtDbzTt0.js",
       "initiatorType": "other",
-      "transferSize": 3601,
+      "transferSize": 300,
       "encodedBodySize": 3301,
       "decodedBodySize": 7772,
       "durationMs": null,
-      "firstRoute": "mandelbrot",
-      "timingValid": false
+      "timingValid": false,
+      "firstRoute": "mandelbrot"
     },
     {
-      "path": "/assets/Fluid-Cx6dY2JQ.js",
+      "path": "/assets/Fluid-cF3WiS1l.js",
       "initiatorType": "script",
-      "transferSize": 10578,
-      "encodedBodySize": 10278,
-      "decodedBodySize": 30082,
-      "durationMs": 14.4,
-      "firstRoute": "fluid",
-      "timingValid": true
+      "transferSize": 10663,
+      "encodedBodySize": 10363,
+      "decodedBodySize": 30308,
+      "durationMs": 7.3,
+      "timingValid": true,
+      "firstRoute": "fluid"
     },
     {
-      "path": "/assets/Boids-B5xU7uA3.js",
+      "path": "/assets/Boids-D_fbFWjw.js",
       "initiatorType": "script",
       "transferSize": 6028,
       "encodedBodySize": 5728,
       "decodedBodySize": 13533,
-      "durationMs": 49.4,
-      "firstRoute": "boids",
-      "timingValid": true
+      "durationMs": 4.6,
+      "timingValid": true,
+      "firstRoute": "boids"
     },
     {
-      "path": "/assets/Attractors-BM3MdmLe.js",
+      "path": "/assets/Attractors-aqpaVc-i.js",
       "initiatorType": "script",
-      "transferSize": 6140,
-      "encodedBodySize": 5840,
+      "transferSize": 6139,
+      "encodedBodySize": 5839,
       "decodedBodySize": 14664,
-      "durationMs": 18.3,
-      "firstRoute": "attractors",
-      "timingValid": true
+      "durationMs": 2.2,
+      "timingValid": true,
+      "firstRoute": "attractors"
     },
     {
-      "path": "/assets/ReactionDiffusion-DwC2RidV.js",
+      "path": "/assets/ReactionDiffusion-C0W28EFt.js",
       "initiatorType": "script",
       "transferSize": 9075,
       "encodedBodySize": 8775,
       "decodedBodySize": 24050,
-      "durationMs": 6.5,
-      "firstRoute": "reaction",
-      "timingValid": true
+      "durationMs": 2.2,
+      "timingValid": true,
+      "firstRoute": "reaction"
     },
     {
-      "path": "/assets/LSystems-CXeiBH7o.js",
+      "path": "/assets/LSystems-B48ShyGX.js",
       "initiatorType": "script",
-      "transferSize": 8108,
-      "encodedBodySize": 7808,
+      "transferSize": 8109,
+      "encodedBodySize": 7809,
       "decodedBodySize": 18968,
-      "durationMs": 27.5,
-      "firstRoute": "lsystem",
-      "timingValid": true
+      "durationMs": 11.3,
+      "timingValid": true,
+      "firstRoute": "lsystem"
     },
     {
-      "path": "/assets/GravityPlayground-ob3N4Dtl.js",
+      "path": "/assets/GravityPlayground-CrRzcEef.js",
       "initiatorType": "script",
-      "transferSize": 9663,
-      "encodedBodySize": 9363,
+      "transferSize": 9664,
+      "encodedBodySize": 9364,
       "decodedBodySize": 24223,
-      "durationMs": 6.2,
-      "firstRoute": "gravity",
-      "timingValid": true
+      "durationMs": 3.4,
+      "timingValid": true,
+      "firstRoute": "gravity"
     },
     {
       "path": "/assets/ExpandedExhibits-DFQmNgbX.css",
@@ -160,19 +160,19 @@
       "transferSize": 11463,
       "encodedBodySize": 11163,
       "decodedBodySize": 47640,
-      "durationMs": 13.5,
-      "firstRoute": "gravity",
-      "timingValid": true
+      "durationMs": 6.6,
+      "timingValid": true,
+      "firstRoute": "gravity"
     },
     {
-      "path": "/assets/InsideMachine-BFQCGD7Y.js",
+      "path": "/assets/InsideMachine-B66SZlRs.js",
       "initiatorType": "script",
       "transferSize": 6326,
       "encodedBodySize": 6026,
       "decodedBodySize": 16800,
-      "durationMs": 18.1,
-      "firstRoute": "machine",
-      "timingValid": true
+      "durationMs": 5.2,
+      "timingValid": true,
+      "firstRoute": "machine"
     },
     {
       "path": "/assets/ComputingRethink-B5waIeKA.css",
@@ -180,69 +180,69 @@
       "transferSize": 10906,
       "encodedBodySize": 10606,
       "decodedBodySize": 46586,
-      "durationMs": 17.1,
-      "firstRoute": "machine",
-      "timingValid": true
+      "durationMs": 4.7,
+      "timingValid": true,
+      "firstRoute": "machine"
     },
     {
-      "path": "/assets/NeuralNetworks-BTIgS_ZJ.js",
+      "path": "/assets/NeuralNetworks-B-SXLino.js",
       "initiatorType": "script",
-      "transferSize": 8301,
-      "encodedBodySize": 8001,
-      "decodedBodySize": 20679,
-      "durationMs": 20.6,
-      "firstRoute": "neural",
-      "timingValid": true
+      "transferSize": 8983,
+      "encodedBodySize": 8683,
+      "decodedBodySize": 23385,
+      "durationMs": 6,
+      "timingValid": true,
+      "firstRoute": "neural"
     },
     {
-      "path": "/assets/LogicLaboratory-CBMPj6u0.js",
+      "path": "/assets/LogicLaboratory-CVoQthsL.js",
       "initiatorType": "script",
       "transferSize": 9484,
       "encodedBodySize": 9184,
       "decodedBodySize": 25913,
-      "durationMs": 19.5,
-      "firstRoute": "logic",
-      "timingValid": true
+      "durationMs": 8.2,
+      "timingValid": true,
+      "firstRoute": "logic"
     },
     {
-      "path": "/assets/InvisibleForces-DFGOc4FO.js",
+      "path": "/assets/InvisibleForces-CimhT53l.js",
       "initiatorType": "script",
-      "transferSize": 6692,
-      "encodedBodySize": 6392,
+      "transferSize": 6694,
+      "encodedBodySize": 6394,
       "decodedBodySize": 15682,
-      "durationMs": 9.3,
-      "firstRoute": "forces",
-      "timingValid": true
+      "durationMs": 2.3,
+      "timingValid": true,
+      "firstRoute": "forces"
     },
     {
-      "path": "/assets/CellularAutomata-CBrnXeBS.js",
+      "path": "/assets/CellularAutomata-kvljxrK6.js",
       "initiatorType": "script",
       "transferSize": 7681,
       "encodedBodySize": 7381,
       "decodedBodySize": 17879,
-      "durationMs": 23.5,
-      "firstRoute": "automata",
-      "timingValid": true
+      "durationMs": 3.5,
+      "timingValid": true,
+      "firstRoute": "automata"
     },
     {
-      "path": "/assets/Adder-D5HAq90Q.js",
+      "path": "/assets/Adder-B6hxbaHU.js",
       "initiatorType": "script",
-      "transferSize": 8136,
-      "encodedBodySize": 7836,
+      "transferSize": 8135,
+      "encodedBodySize": 7835,
       "decodedBodySize": 19613,
-      "durationMs": 29.5,
-      "firstRoute": "adder",
-      "timingValid": true
+      "durationMs": 4.2,
+      "timingValid": true,
+      "firstRoute": "adder"
     },
     {
-      "path": "/assets/WaveChamber-CNBo930l.js",
+      "path": "/assets/WaveChamber-B1iQEJJ6.js",
       "initiatorType": "script",
       "transferSize": 6810,
       "encodedBodySize": 6510,
       "decodedBodySize": 17160,
-      "durationMs": 8.8,
-      "firstRoute": "waves",
-      "timingValid": true
+      "durationMs": 5.3,
+      "timingValid": true,
+      "firstRoute": "waves"
     },
     {
       "path": "/assets/invisible-world-CuhDQ6rQ.js",
@@ -250,9 +250,9 @@
       "transferSize": 845,
       "encodedBodySize": 545,
       "decodedBodySize": 545,
-      "durationMs": 6.3,
-      "firstRoute": "waves",
-      "timingValid": true
+      "durationMs": 4.1,
+      "timingValid": true,
+      "firstRoute": "waves"
     },
     {
       "path": "/assets/invisible-world-DJ3s1M0y.css",
@@ -260,59 +260,59 @@
       "transferSize": 4119,
       "encodedBodySize": 3819,
       "decodedBodySize": 15348,
-      "durationMs": 6.2,
-      "firstRoute": "waves",
-      "timingValid": true
+      "durationMs": 6.1,
+      "timingValid": true,
+      "firstRoute": "waves"
     },
     {
-      "path": "/assets/GeometryOfLight-uJk_RGPH.js",
+      "path": "/assets/GeometryOfLight-Dniwr9a5.js",
       "initiatorType": "script",
-      "transferSize": 6220,
-      "encodedBodySize": 5920,
+      "transferSize": 6219,
+      "encodedBodySize": 5919,
       "decodedBodySize": 14544,
-      "durationMs": 16.2,
-      "firstRoute": "optics",
-      "timingValid": true
+      "durationMs": 2.7,
+      "timingValid": true,
+      "firstRoute": "optics"
     },
     {
-      "path": "/assets/ShapeOfSound-DezhEEdQ.js",
+      "path": "/assets/ShapeOfSound-B6NZegBv.js",
       "initiatorType": "script",
-      "transferSize": 6792,
-      "encodedBodySize": 6492,
+      "transferSize": 6790,
+      "encodedBodySize": 6490,
       "decodedBodySize": 16033,
-      "durationMs": 18.3,
-      "firstRoute": "sound",
-      "timingValid": true
+      "durationMs": 14.3,
+      "timingValid": true,
+      "firstRoute": "sound"
     },
     {
-      "path": "/assets/LivingGarden-BWiIGKJp.js",
+      "path": "/assets/LivingGarden-DuKq8W2k.js",
       "initiatorType": "script",
-      "transferSize": 7422,
-      "encodedBodySize": 7122,
+      "transferSize": 7421,
+      "encodedBodySize": 7121,
       "decodedBodySize": 18528,
-      "durationMs": 30.1,
-      "firstRoute": "garden",
-      "timingValid": true
+      "durationMs": 6.7,
+      "timingValid": true,
+      "firstRoute": "garden"
     },
     {
-      "path": "/assets/LivingNetwork-BFAnOUCZ.js",
+      "path": "/assets/LivingNetwork-BXoONDdQ.js",
       "initiatorType": "script",
-      "transferSize": 6802,
-      "encodedBodySize": 6502,
+      "transferSize": 6801,
+      "encodedBodySize": 6501,
       "decodedBodySize": 16511,
-      "durationMs": 7.6,
-      "firstRoute": "network",
-      "timingValid": true
+      "durationMs": 3.8,
+      "timingValid": true,
+      "firstRoute": "network"
     },
     {
-      "path": "/assets/WhereLightFalls-DdikriPZ.js",
+      "path": "/assets/WhereLightFalls-DuQH8b5B.js",
       "initiatorType": "script",
       "transferSize": 8081,
       "encodedBodySize": 7781,
       "decodedBodySize": 19515,
-      "durationMs": 3.9,
-      "firstRoute": "lensing",
-      "timingValid": true
+      "durationMs": 3.3,
+      "timingValid": true,
+      "firstRoute": "lensing"
     },
     {
       "path": "/assets/lensing.worker-BfOu5MkA.js",
@@ -321,18 +321,28 @@
       "encodedBodySize": 3037,
       "decodedBodySize": 6936,
       "durationMs": null,
-      "firstRoute": "lensing",
-      "timingValid": false
+      "timingValid": false,
+      "firstRoute": "lensing"
+    }
+  ],
+  "invalidResourceTimingEntries": [
+    {
+      "path": "/assets/mandelbrot.worker-CtDbzTt0.js",
+      "firstRoute": "mandelbrot"
+    },
+    {
+      "path": "/assets/lensing.worker-BfOu5MkA.js",
+      "firstRoute": "lensing"
     }
   ],
   "frameSamples": [
     {
       "exhibit": "mandelbrot",
-      "frames": 48,
-      "durationMs": 1013.5,
+      "frames": 31,
+      "durationMs": 1015,
       "finishedBy": "one-second-window",
       "intervalMedianMs": 16.7,
-      "intervalP95Ms": 16.8,
+      "intervalP95Ms": 66.6,
       "intervalsMs": [
         16.6,
         16.6,
@@ -341,32 +351,6 @@
         16.6,
         16.6,
         16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
         16.7,
         16.7,
         16.7,
@@ -379,9 +363,18 @@
         16.7,
         16.7,
         16.8,
+        33.2,
+        33.3,
+        49.9,
         50,
-        100,
-        116.6
+        50,
+        50,
+        50,
+        50.1,
+        50.1,
+        66.6,
+        83.3,
+        83.4
       ],
       "drawOperations": {
         "webgl2": {
@@ -393,94 +386,126 @@
     },
     {
       "exhibit": "fluid",
-      "frames": 1,
-      "durationMs": 1812,
+      "frames": 4,
+      "durationMs": 1195.9,
       "finishedBy": "one-second-window",
-      "intervalMedianMs": 1849.9,
-      "intervalP95Ms": 1849.9,
+      "intervalMedianMs": 283.3,
+      "intervalP95Ms": 300,
       "intervalsMs": [
-        1849.9
+        250,
+        283.3,
+        300,
+        366.7
       ],
       "drawOperations": {
         "webgl2": {
           "contexts": 1,
-          "drawOperations": 114,
-          "operationsPerSecond": 62.9
+          "drawOperations": 190,
+          "operationsPerSecond": 158.9
         }
       }
     },
     {
       "exhibit": "attractors",
-      "frames": 12,
-      "durationMs": 1041.4,
+      "frames": 21,
+      "durationMs": 1082.3,
       "finishedBy": "one-second-window",
-      "intervalMedianMs": 66.6,
-      "intervalP95Ms": 116.7,
+      "intervalMedianMs": 50,
+      "intervalP95Ms": 83.2,
       "intervalsMs": [
-        16.7,
+        33.2,
+        33.3,
+        33.3,
+        33.3,
+        33.3,
+        33.4,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
         50.1,
-        66.6,
-        66.6,
-        66.6,
-        66.6,
+        50.1,
         66.7,
         66.7,
-        83.3,
-        100,
-        116.7,
-        133.3
+        83.2,
+        100
       ],
       "drawOperations": {
         "2d": {
           "contexts": 1,
-          "drawOperations": 342,
-          "operationsPerSecond": 328.4
+          "drawOperations": 1153,
+          "operationsPerSecond": 1065.3
         }
       }
     },
     {
       "exhibit": "reaction",
-      "frames": 2,
-      "durationMs": 1118.3,
+      "frames": 9,
+      "durationMs": 1061.7,
       "finishedBy": "one-second-window",
-      "intervalMedianMs": 450,
-      "intervalP95Ms": 450,
+      "intervalMedianMs": 100,
+      "intervalP95Ms": 116.7,
       "intervalsMs": [
-        450,
-        583.4
+        50,
+        50,
+        83.3,
+        100,
+        100,
+        100,
+        100.1,
+        116.7,
+        349.9
       ],
       "drawOperations": {
         "webgl2": {
           "contexts": 1,
-          "drawOperations": 12,
-          "operationsPerSecond": 10.7
+          "drawOperations": 38,
+          "operationsPerSecond": 35.8
         }
       }
     },
     {
       "exhibit": "garden",
-      "frames": 10,
-      "durationMs": 1034.6,
+      "frames": 23,
+      "durationMs": 1009.3,
       "finishedBy": "one-second-window",
-      "intervalMedianMs": 83.3,
-      "intervalP95Ms": 133.4,
+      "intervalMedianMs": 50,
+      "intervalP95Ms": 50,
       "intervalsMs": [
+        33.3,
+        33.3,
+        33.3,
+        33.3,
+        33.3,
+        33.3,
+        33.3,
+        33.3,
+        33.4,
+        49.9,
         50,
-        66.7,
-        66.7,
-        83.3,
-        83.3,
-        83.3,
-        83.3,
-        116.7,
-        133.4,
-        216.5
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50.1,
+        50.1
       ],
       "drawOperations": {
         "2d": {
           "contexts": 1,
-          "drawOperations": 4084,
-          "operationsPerSecond": 3947.4
+          "drawOperations": 9132,
+          "operationsPerSecond": 9047.9
         }
       }
     }
@@ -492,13 +517,13 @@
     "exhibitTerminated": 6
   },
   "graphics": {
-    "contextsCreated": 38,
+    "contextsCreated": 40,
     "byType": {
       "webgl2": {
         "contexts": 6,
-        "drawCalls": 1106,
+        "drawCalls": 764,
         "resourceCreates": {
-          "shader": 68,
+          "shader": 46,
           "program": 34,
           "vertexArray": 4,
           "texture": 26,
@@ -506,15 +531,15 @@
         },
         "resourceDeletes": {
           "program": 34,
-          "shader": 68,
+          "shader": 46,
           "texture": 26,
           "framebuffer": 26,
           "vertexArray": 4
         }
       },
       "2d": {
-        "contexts": 32,
-        "drawCalls": 36177,
+        "contexts": 34,
+        "drawCalls": 46647,
         "resourceCreates": {},
         "resourceDeletes": {}
       }
@@ -523,8 +548,8 @@
   "canvasCleanupChecks": 38,
   "finalHeapSnapshot": {
     "route": "/",
-    "usedBytes": 6661745,
-    "graphicsContextsTracked": 38,
+    "usedBytes": 6134074,
+    "graphicsContextsTracked": 40,
     "detachedCanvasReferences": 0,
     "detachedContextsStillLive": 0,
     "detachedContextsOutsideActiveRoute": 0,
@@ -561,10 +586,8 @@
       "cycle": 1,
       "workers": 0,
       "audioStates": [],
-      "graphicsContexts": 1,
-      "graphicsTypes": [
-        "2d"
-      ]
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "attractors",
@@ -581,18 +604,18 @@
       "cycle": 1,
       "workers": 0,
       "audioStates": [],
-      "graphicsContexts": 1,
-      "graphicsTypes": [
-        "webgl2"
-      ]
+      "graphicsContexts": 0,
+      "graphicsTypes": []
     },
     {
       "id": "lsystem",
       "cycle": 1,
       "workers": 0,
       "audioStates": [],
-      "graphicsContexts": 0,
-      "graphicsTypes": []
+      "graphicsContexts": 1,
+      "graphicsTypes": [
+        "2d"
+      ]
     },
     {
       "id": "gravity",
@@ -749,9 +772,8 @@
       "cycle": 2,
       "workers": 0,
       "audioStates": [],
-      "graphicsContexts": 2,
+      "graphicsContexts": 1,
       "graphicsTypes": [
-        "2d",
         "2d"
       ]
     },
@@ -782,8 +804,9 @@
       "cycle": 2,
       "workers": 0,
       "audioStates": [],
-      "graphicsContexts": 1,
+      "graphicsContexts": 2,
       "graphicsTypes": [
+        "2d",
         "2d"
       ]
     },
@@ -862,8 +885,10 @@
       "cycle": 2,
       "workers": 0,
       "audioStates": [],
-      "graphicsContexts": 2,
+      "graphicsContexts": 4,
       "graphicsTypes": [
+        "2d",
+        "2d",
         "2d",
         "2d"
       ]
@@ -934,7 +959,7 @@
   "heapSamples": [
     {
       "route": "/exhibits/logic",
-      "usedBytes": 4240572,
+      "usedBytes": 4251433,
       "graphicsContextsTracked": 7,
       "detachedCanvasReferences": 0,
       "detachedContextsStillLive": 0,
@@ -945,7 +970,7 @@
     },
     {
       "route": "/exhibits/lensing",
-      "usedBytes": 5530458,
+      "usedBytes": 5559157,
       "graphicsContextsTracked": 19,
       "detachedCanvasReferences": 1,
       "detachedContextsStillLive": 1,
@@ -956,8 +981,8 @@
     },
     {
       "route": "/exhibits/lensing",
-      "usedBytes": 5850009,
-      "graphicsContextsTracked": 38,
+      "usedBytes": 5910213,
+      "graphicsContextsTracked": 40,
       "detachedCanvasReferences": 1,
       "detachedContextsStillLive": 1,
       "detachedContextsOutsideActiveRoute": 0,
@@ -970,7 +995,7 @@
     {
       "from": "mandelbrot",
       "to": "fluid",
-      "mountDurationMs": 7533.7,
+      "mountDurationMs": 1556.5,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -989,34 +1014,35 @@
       },
       "newAssets": [
         {
-          "path": "/assets/Fluid-Cx6dY2JQ.js",
+          "path": "/assets/Fluid-cF3WiS1l.js",
           "initiatorType": "script",
-          "transferSize": 10578,
-          "encodedBodySize": 10278,
-          "decodedBodySize": 30082,
-          "durationMs": 14.4
+          "transferSize": 10663,
+          "encodedBodySize": 10363,
+          "decodedBodySize": 30308,
+          "durationMs": 7.3,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "fluid",
       "to": "boids",
-      "mountDurationMs": 5992.5,
+      "mountDurationMs": 1010.5,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 1,
         "detachedCanvases": 1,
-        "liveWeakContexts": 0,
+        "liveWeakContexts": 1,
         "resourceCreates": {
           "vertexArray": 1,
-          "shader": 24,
+          "shader": 13,
           "program": 12,
           "texture": 9,
           "framebuffer": 9
         },
         "resourceDeletes": {
-          "shader": 24,
+          "shader": 13,
           "texture": 9,
           "framebuffer": 9,
           "vertexArray": 1,
@@ -1026,24 +1052,25 @@
       },
       "newAssets": [
         {
-          "path": "/assets/Boids-B5xU7uA3.js",
+          "path": "/assets/Boids-D_fbFWjw.js",
           "initiatorType": "script",
           "transferSize": 6028,
           "encodedBodySize": 5728,
           "decodedBodySize": 13533,
-          "durationMs": 49.4
+          "durationMs": 4.6,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "boids",
       "to": "attractors",
-      "mountDurationMs": 447.3,
+      "mountDurationMs": 325,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
-        "contextsObserved": 1,
-        "detachedCanvases": 1,
+        "contextsObserved": 0,
+        "detachedCanvases": 0,
         "liveWeakContexts": 0,
         "resourceCreates": {},
         "resourceDeletes": {},
@@ -1051,19 +1078,20 @@
       },
       "newAssets": [
         {
-          "path": "/assets/Attractors-BM3MdmLe.js",
+          "path": "/assets/Attractors-aqpaVc-i.js",
           "initiatorType": "script",
-          "transferSize": 6140,
-          "encodedBodySize": 5840,
+          "transferSize": 6139,
+          "encodedBodySize": 5839,
           "decodedBodySize": 14664,
-          "durationMs": 18.3
+          "durationMs": 2.2,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "attractors",
       "to": "reaction",
-      "mountDurationMs": 1881.2,
+      "mountDurationMs": 400.7,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1076,25 +1104,26 @@
       },
       "newAssets": [
         {
-          "path": "/assets/ReactionDiffusion-DwC2RidV.js",
+          "path": "/assets/ReactionDiffusion-C0W28EFt.js",
           "initiatorType": "script",
           "transferSize": 9075,
           "encodedBodySize": 8775,
           "decodedBodySize": 24050,
-          "durationMs": 6.5
+          "durationMs": 2.2,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "reaction",
       "to": "lsystem",
-      "mountDurationMs": 1819.3,
+      "mountDurationMs": 327.4,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 1,
         "detachedCanvases": 1,
-        "liveWeakContexts": 0,
+        "liveWeakContexts": 1,
         "resourceCreates": {
           "vertexArray": 1,
           "texture": 4,
@@ -1113,37 +1142,39 @@
       },
       "newAssets": [
         {
-          "path": "/assets/LSystems-CXeiBH7o.js",
+          "path": "/assets/LSystems-B48ShyGX.js",
           "initiatorType": "script",
-          "transferSize": 8108,
-          "encodedBodySize": 7808,
+          "transferSize": 8109,
+          "encodedBodySize": 7809,
           "decodedBodySize": 18968,
-          "durationMs": 27.5
+          "durationMs": 11.3,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "lsystem",
       "to": "gravity",
-      "mountDurationMs": 531.4,
+      "mountDurationMs": 323.5,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
-        "contextsObserved": 0,
-        "detachedCanvases": 0,
-        "liveWeakContexts": 0,
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
       },
       "newAssets": [
         {
-          "path": "/assets/GravityPlayground-ob3N4Dtl.js",
+          "path": "/assets/GravityPlayground-CrRzcEef.js",
           "initiatorType": "script",
-          "transferSize": 9663,
-          "encodedBodySize": 9363,
+          "transferSize": 9664,
+          "encodedBodySize": 9364,
           "decodedBodySize": 24223,
-          "durationMs": 6.2
+          "durationMs": 3.4,
+          "timingValid": true
         },
         {
           "path": "/assets/ExpandedExhibits-DFQmNgbX.css",
@@ -1151,14 +1182,15 @@
           "transferSize": 11463,
           "encodedBodySize": 11163,
           "decodedBodySize": 47640,
-          "durationMs": 13.5
+          "durationMs": 6.6,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "gravity",
       "to": "machine",
-      "mountDurationMs": 348.2,
+      "mountDurationMs": 347.6,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1171,12 +1203,13 @@
       },
       "newAssets": [
         {
-          "path": "/assets/InsideMachine-BFQCGD7Y.js",
+          "path": "/assets/InsideMachine-B66SZlRs.js",
           "initiatorType": "script",
           "transferSize": 6326,
           "encodedBodySize": 6026,
           "decodedBodySize": 16800,
-          "durationMs": 18.1
+          "durationMs": 5.2,
+          "timingValid": true
         },
         {
           "path": "/assets/ComputingRethink-B5waIeKA.css",
@@ -1184,14 +1217,15 @@
           "transferSize": 10906,
           "encodedBodySize": 10606,
           "decodedBodySize": 46586,
-          "durationMs": 17.1
+          "durationMs": 4.7,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "machine",
       "to": "neural",
-      "mountDurationMs": 460.7,
+      "mountDurationMs": 365.9,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1204,44 +1238,46 @@
       },
       "newAssets": [
         {
-          "path": "/assets/NeuralNetworks-BTIgS_ZJ.js",
+          "path": "/assets/NeuralNetworks-B-SXLino.js",
           "initiatorType": "script",
-          "transferSize": 8301,
-          "encodedBodySize": 8001,
-          "decodedBodySize": 20679,
-          "durationMs": 20.6
+          "transferSize": 8983,
+          "encodedBodySize": 8683,
+          "decodedBodySize": 23385,
+          "durationMs": 6,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "neural",
       "to": "logic",
-      "mountDurationMs": 327,
+      "mountDurationMs": 358.8,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 1,
         "detachedCanvases": 1,
-        "liveWeakContexts": 1,
+        "liveWeakContexts": 0,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
       },
       "newAssets": [
         {
-          "path": "/assets/LogicLaboratory-CBMPj6u0.js",
+          "path": "/assets/LogicLaboratory-CVoQthsL.js",
           "initiatorType": "script",
           "transferSize": 9484,
           "encodedBodySize": 9184,
           "decodedBodySize": 25913,
-          "durationMs": 19.5
+          "durationMs": 8.2,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "logic",
       "to": "forces",
-      "mountDurationMs": 443.7,
+      "mountDurationMs": 316.1,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1254,44 +1290,46 @@
       },
       "newAssets": [
         {
-          "path": "/assets/InvisibleForces-DFGOc4FO.js",
+          "path": "/assets/InvisibleForces-CimhT53l.js",
           "initiatorType": "script",
-          "transferSize": 6692,
-          "encodedBodySize": 6392,
+          "transferSize": 6694,
+          "encodedBodySize": 6394,
           "decodedBodySize": 15682,
-          "durationMs": 9.3
+          "durationMs": 2.3,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "forces",
       "to": "automata",
-      "mountDurationMs": 381.2,
+      "mountDurationMs": 323.7,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 2,
         "detachedCanvases": 2,
-        "liveWeakContexts": 0,
+        "liveWeakContexts": 1,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
       },
       "newAssets": [
         {
-          "path": "/assets/CellularAutomata-CBrnXeBS.js",
+          "path": "/assets/CellularAutomata-kvljxrK6.js",
           "initiatorType": "script",
           "transferSize": 7681,
           "encodedBodySize": 7381,
           "decodedBodySize": 17879,
-          "durationMs": 23.5
+          "durationMs": 3.5,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "automata",
       "to": "adder",
-      "mountDurationMs": 418.2,
+      "mountDurationMs": 316.4,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1304,19 +1342,20 @@
       },
       "newAssets": [
         {
-          "path": "/assets/Adder-D5HAq90Q.js",
+          "path": "/assets/Adder-B6hxbaHU.js",
           "initiatorType": "script",
-          "transferSize": 8136,
-          "encodedBodySize": 7836,
+          "transferSize": 8135,
+          "encodedBodySize": 7835,
           "decodedBodySize": 19613,
-          "durationMs": 29.5
+          "durationMs": 4.2,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "adder",
       "to": "waves",
-      "mountDurationMs": 412.6,
+      "mountDurationMs": 335.9,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1329,12 +1368,13 @@
       },
       "newAssets": [
         {
-          "path": "/assets/WaveChamber-CNBo930l.js",
+          "path": "/assets/WaveChamber-B1iQEJJ6.js",
           "initiatorType": "script",
           "transferSize": 6810,
           "encodedBodySize": 6510,
           "decodedBodySize": 17160,
-          "durationMs": 8.8
+          "durationMs": 5.3,
+          "timingValid": true
         },
         {
           "path": "/assets/invisible-world-CuhDQ6rQ.js",
@@ -1342,7 +1382,8 @@
           "transferSize": 845,
           "encodedBodySize": 545,
           "decodedBodySize": 545,
-          "durationMs": 6.3
+          "durationMs": 4.1,
+          "timingValid": true
         },
         {
           "path": "/assets/invisible-world-DJ3s1M0y.css",
@@ -1350,64 +1391,67 @@
           "transferSize": 4119,
           "encodedBodySize": 3819,
           "decodedBodySize": 15348,
-          "durationMs": 6.2
+          "durationMs": 6.1,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "waves",
       "to": "optics",
-      "mountDurationMs": 404.6,
+      "mountDurationMs": 316.3,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 2,
         "detachedCanvases": 2,
-        "liveWeakContexts": 2,
+        "liveWeakContexts": 1,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
       },
       "newAssets": [
         {
-          "path": "/assets/GeometryOfLight-uJk_RGPH.js",
+          "path": "/assets/GeometryOfLight-Dniwr9a5.js",
           "initiatorType": "script",
-          "transferSize": 6220,
-          "encodedBodySize": 5920,
+          "transferSize": 6219,
+          "encodedBodySize": 5919,
           "decodedBodySize": 14544,
-          "durationMs": 16.2
+          "durationMs": 2.7,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "optics",
       "to": "sound",
-      "mountDurationMs": 505.3,
+      "mountDurationMs": 315.5,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 1,
         "detachedCanvases": 1,
-        "liveWeakContexts": 0,
+        "liveWeakContexts": 1,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
       },
       "newAssets": [
         {
-          "path": "/assets/ShapeOfSound-DezhEEdQ.js",
+          "path": "/assets/ShapeOfSound-B6NZegBv.js",
           "initiatorType": "script",
-          "transferSize": 6792,
-          "encodedBodySize": 6492,
+          "transferSize": 6790,
+          "encodedBodySize": 6490,
           "decodedBodySize": 16033,
-          "durationMs": 18.3
+          "durationMs": 14.3,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "sound",
       "to": "garden",
-      "mountDurationMs": 687.1,
+      "mountDurationMs": 325.4,
       "workersReleased": true,
       "audioStatesAfterExit": [
         "closed"
@@ -1422,44 +1466,20 @@
       },
       "newAssets": [
         {
-          "path": "/assets/LivingGarden-BWiIGKJp.js",
+          "path": "/assets/LivingGarden-DuKq8W2k.js",
           "initiatorType": "script",
-          "transferSize": 7422,
-          "encodedBodySize": 7122,
+          "transferSize": 7421,
+          "encodedBodySize": 7121,
           "decodedBodySize": 18528,
-          "durationMs": 30.1
+          "durationMs": 6.7,
+          "timingValid": true
         }
       ]
     },
     {
       "from": "garden",
       "to": "network",
-      "mountDurationMs": 390.6,
-      "workersReleased": true,
-      "audioStatesAfterExit": [],
-      "graphicsAfterExit": {
-        "contextsObserved": 1,
-        "detachedCanvases": 1,
-        "liveWeakContexts": 1,
-        "resourceCreates": {},
-        "resourceDeletes": {},
-        "outstandingResources": {}
-      },
-      "newAssets": [
-        {
-          "path": "/assets/LivingNetwork-BFAnOUCZ.js",
-          "initiatorType": "script",
-          "transferSize": 6802,
-          "encodedBodySize": 6502,
-          "decodedBodySize": 16511,
-          "durationMs": 7.6
-        }
-      ]
-    },
-    {
-      "from": "network",
-      "to": "lensing",
-      "mountDurationMs": 440.1,
+      "mountDurationMs": 314.2,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1472,12 +1492,39 @@
       },
       "newAssets": [
         {
-          "path": "/assets/WhereLightFalls-DdikriPZ.js",
+          "path": "/assets/LivingNetwork-BXoONDdQ.js",
+          "initiatorType": "script",
+          "transferSize": 6801,
+          "encodedBodySize": 6501,
+          "decodedBodySize": 16511,
+          "durationMs": 3.8,
+          "timingValid": true
+        }
+      ]
+    },
+    {
+      "from": "network",
+      "to": "lensing",
+      "mountDurationMs": 341.5,
+      "workersReleased": true,
+      "audioStatesAfterExit": [],
+      "graphicsAfterExit": {
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
+        "liveWeakContexts": 1,
+        "resourceCreates": {},
+        "resourceDeletes": {},
+        "outstandingResources": {}
+      },
+      "newAssets": [
+        {
+          "path": "/assets/WhereLightFalls-DuQH8b5B.js",
           "initiatorType": "script",
           "transferSize": 8081,
           "encodedBodySize": 7781,
           "decodedBodySize": 19515,
-          "durationMs": 3.9
+          "durationMs": 3.3,
+          "timingValid": true
         },
         {
           "path": "/assets/lensing.worker-BfOu5MkA.js",
@@ -1485,14 +1532,15 @@
           "transferSize": 3337,
           "encodedBodySize": 3037,
           "decodedBodySize": 6936,
-          "durationMs": -58.7
+          "durationMs": null,
+          "timingValid": false
         }
       ]
     },
     {
       "from": "lensing",
       "to": "mandelbrot",
-      "mountDurationMs": 2285.5,
+      "mountDurationMs": 553.3,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1508,7 +1556,7 @@
     {
       "from": "mandelbrot",
       "to": "fluid",
-      "mountDurationMs": 9303.4,
+      "mountDurationMs": 1003.2,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1530,7 +1578,7 @@
     {
       "from": "fluid",
       "to": "boids",
-      "mountDurationMs": 5985,
+      "mountDurationMs": 30.2,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1539,13 +1587,13 @@
         "liveWeakContexts": 1,
         "resourceCreates": {
           "vertexArray": 2,
-          "shader": 48,
+          "shader": 26,
           "program": 24,
           "texture": 18,
           "framebuffer": 18
         },
         "resourceDeletes": {
-          "shader": 48,
+          "shader": 26,
           "texture": 18,
           "framebuffer": 18,
           "vertexArray": 2,
@@ -1558,12 +1606,12 @@
     {
       "from": "boids",
       "to": "attractors",
-      "mountDurationMs": 285.2,
+      "mountDurationMs": 22.3,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
-        "contextsObserved": 2,
-        "detachedCanvases": 2,
+        "contextsObserved": 1,
+        "detachedCanvases": 1,
         "liveWeakContexts": 1,
         "resourceCreates": {},
         "resourceDeletes": {},
@@ -1574,7 +1622,7 @@
     {
       "from": "attractors",
       "to": "reaction",
-      "mountDurationMs": 1996,
+      "mountDurationMs": 479.9,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1590,13 +1638,13 @@
     {
       "from": "reaction",
       "to": "lsystem",
-      "mountDurationMs": 90.2,
+      "mountDurationMs": 20.8,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 2,
         "detachedCanvases": 2,
-        "liveWeakContexts": 0,
+        "liveWeakContexts": 1,
         "resourceCreates": {
           "vertexArray": 2,
           "texture": 8,
@@ -1618,12 +1666,12 @@
     {
       "from": "lsystem",
       "to": "gravity",
-      "mountDurationMs": 45.4,
+      "mountDurationMs": 21.9,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
-        "contextsObserved": 1,
-        "detachedCanvases": 1,
+        "contextsObserved": 2,
+        "detachedCanvases": 2,
         "liveWeakContexts": 1,
         "resourceCreates": {},
         "resourceDeletes": {},
@@ -1634,7 +1682,7 @@
     {
       "from": "gravity",
       "to": "machine",
-      "mountDurationMs": 165.9,
+      "mountDurationMs": 22,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1650,7 +1698,7 @@
     {
       "from": "machine",
       "to": "neural",
-      "mountDurationMs": 40.2,
+      "mountDurationMs": 55,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1666,7 +1714,7 @@
     {
       "from": "neural",
       "to": "logic",
-      "mountDurationMs": 103.5,
+      "mountDurationMs": 15.8,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1682,7 +1730,7 @@
     {
       "from": "logic",
       "to": "forces",
-      "mountDurationMs": 27.2,
+      "mountDurationMs": 12.9,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1698,13 +1746,13 @@
     {
       "from": "forces",
       "to": "automata",
-      "mountDurationMs": 113.1,
+      "mountDurationMs": 26.2,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
         "contextsObserved": 4,
         "detachedCanvases": 4,
-        "liveWeakContexts": 1,
+        "liveWeakContexts": 2,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
@@ -1714,7 +1762,7 @@
     {
       "from": "automata",
       "to": "adder",
-      "mountDurationMs": 307.9,
+      "mountDurationMs": 24.1,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1730,7 +1778,7 @@
     {
       "from": "adder",
       "to": "waves",
-      "mountDurationMs": 367.6,
+      "mountDurationMs": 130.5,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1746,13 +1794,13 @@
     {
       "from": "waves",
       "to": "optics",
-      "mountDurationMs": 32.8,
+      "mountDurationMs": 11.6,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
-        "contextsObserved": 2,
-        "detachedCanvases": 2,
-        "liveWeakContexts": 0,
+        "contextsObserved": 4,
+        "detachedCanvases": 4,
+        "liveWeakContexts": 2,
         "resourceCreates": {},
         "resourceDeletes": {},
         "outstandingResources": {}
@@ -1762,7 +1810,7 @@
     {
       "from": "optics",
       "to": "sound",
-      "mountDurationMs": 70.3,
+      "mountDurationMs": 14.3,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1778,7 +1826,7 @@
     {
       "from": "sound",
       "to": "garden",
-      "mountDurationMs": 118.7,
+      "mountDurationMs": 66.1,
       "workersReleased": true,
       "audioStatesAfterExit": [
         "closed",
@@ -1797,7 +1845,7 @@
     {
       "from": "garden",
       "to": "network",
-      "mountDurationMs": 37,
+      "mountDurationMs": 8.4,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1813,7 +1861,7 @@
     {
       "from": "network",
       "to": "lensing",
-      "mountDurationMs": 381.5,
+      "mountDurationMs": 37.2,
       "workersReleased": true,
       "audioStatesAfterExit": [],
       "graphicsAfterExit": {
@@ -1829,7 +1877,7 @@
     {
       "from": "lensing",
       "to": "/",
-      "mountDurationMs": 2259.2,
+      "mountDurationMs": 408.8,
       "workersReleased": true,
       "audioStatesAfterExit": [
         "closed",
@@ -1837,15 +1885,5 @@
       ]
     }
   ],
-  "browserErrors": [],
-  "invalidResourceTimingEntries": [
-    {
-      "path": "/assets/mandelbrot.worker-CtDbzTt0.js",
-      "firstRoute": "mandelbrot"
-    },
-    {
-      "path": "/assets/lensing.worker-BfOu5MkA.js",
-      "firstRoute": "lensing"
-    }
-  ]
+  "browserErrors": []
 }
