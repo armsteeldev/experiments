@@ -1,14 +1,14 @@
 {
   "home": {
-    "title": "Armsteel Experiments — Where rules become worlds",
-    "description": "Explore nineteen interactive studies of mathematics, physics, computing, artificial life, electronics, and generative art in a browser-based digital museum.",
-    "intro": "An interactive museum of computational beauty."
+    "title": "The Shape of Motion — A collection by ARMSTEEL",
+    "description": "An open collection of interactive computational art: fluid forms, mathematical patterns, living systems, and worlds to explore.",
+    "intro": "An open collection of interactive computational art."
   },
   "privacy": {
-    "title": "Privacy — Armsteel Experiments",
-    "description": "How Armsteel Experiments uses browser storage and handles website requests.",
+    "title": "Privacy — The Shape of Motion",
+    "description": "How The Shape of Motion stores favourites in your browser and handles website requests.",
     "heading": "A small, local footprint.",
-    "intro": "Armsteel Experiments is a browser-based museum of interactive studies. The simulations run on your device; the site does not require an account.",
+    "intro": "The Shape of Motion is an open collection of interactive computational art. Each work runs on your device; no account is required.",
     "sections": [
       {
         "heading": "Saved in your browser",
@@ -41,9 +41,9 @@
     ]
   },
   "notFound": {
-    "title": "Page not found — Armsteel Experiments",
-    "description": "This page is not part of the Armsteel Experiments collection.",
-    "heading": "This page is not in the collection.",
-    "message": "The address may have changed, or the study may not exist."
+    "title": "Page not found — The Shape of Motion",
+    "description": "This page is outside The Shape of Motion collection. Return to the collection and keep exploring.",
+    "heading": "This page is outside the collection.",
+    "message": "The address may have changed, or the work may not exist."
   }
 }

@@ -1,12 +1,12 @@
 {
-  "name": "Armsteel Experiments",
-  "short_name": "Experiments",
-  "description": "A browser-based museum of interactive computational art and science.",
+  "name": "The Shape of Motion",
+  "short_name": "Shape of Motion",
+  "description": "Interactive computational art — a collection by ARMSTEEL.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#080c14",
-  "theme_color": "#080c14",
+  "background_color": "#090b0d",
+  "theme_color": "#090b0d",
   "icons": [
     {
       "src": "/favicon.svg",
@@ -19,6 +19,12 @@
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/shape-of-motion-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

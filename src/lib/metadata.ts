@@ -1,5 +1,6 @@
 export const SITE_ORIGIN = 'https://experiments.armsteel.dev'
 export const SOCIAL_IMAGE = `${SITE_ORIGIN}/og-image.png`
+export const SITE_NAME = 'The Shape of Motion'
 
 export type PageMetadata = {
   title: string
@@ -31,7 +32,7 @@ export function updatePageMetadata(page: PageMetadata) {
   setMeta('name', 'description', page.description)
   setMeta('name', 'robots', page.robots ?? 'index,follow')
   setMeta('property', 'og:type', page.type ?? 'website')
-  setMeta('property', 'og:site_name', 'Armsteel Experiments')
+  setMeta('property', 'og:site_name', SITE_NAME)
   setMeta('property', 'og:title', page.title)
   setMeta('property', 'og:description', page.description)
   setMeta('property', 'og:url', page.canonical)
@@ -39,12 +40,12 @@ export function updatePageMetadata(page: PageMetadata) {
   setMeta('property', 'og:image:type', 'image/png')
   setMeta('property', 'og:image:width', '1200')
   setMeta('property', 'og:image:height', '630')
-  setMeta('property', 'og:image:alt', 'Armsteel Experiments — Where rules become worlds')
+  setMeta('property', 'og:image:alt', 'The Shape of Motion — A collection by ARMSTEEL')
   setMeta('name', 'twitter:card', 'summary_large_image')
   setMeta('name', 'twitter:title', page.title)
   setMeta('name', 'twitter:description', page.description)
   setMeta('name', 'twitter:image', SOCIAL_IMAGE)
-  setMeta('name', 'twitter:image:alt', 'Armsteel Experiments — Where rules become worlds')
+  setMeta('name', 'twitter:image:alt', 'The Shape of Motion — A collection by ARMSTEEL')
 
   let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
   if (page.canonical) {

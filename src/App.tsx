@@ -39,15 +39,15 @@ function collectionStructuredData() {
         '@type': 'WebSite',
         '@id': `${SITE_ORIGIN}/#website`,
         url: `${SITE_ORIGIN}/`,
-        name: 'Armsteel Experiments',
-        description: 'A browser-based museum of interactive computational art and science.',
+        name: 'The Shape of Motion',
+        description: homeDescription,
         inLanguage: 'en',
       },
       {
         '@type': 'CollectionPage',
         '@id': `${SITE_ORIGIN}/#collection`,
         url: `${SITE_ORIGIN}/`,
-        name: 'The Collection — Armsteel Experiments',
+        name: 'The Shape of Motion — The collection',
         description: homeDescription,
         isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
         mainEntity: {
@@ -75,7 +75,7 @@ function experimentStructuredData(experiment: ExperimentDefinition) {
         name: experiment.title,
         description: experiment.metaDescription,
         url: `${SITE_ORIGIN}${path}`,
-        applicationCategory: 'EducationalApplication',
+        applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
         inLanguage: 'en',
@@ -91,16 +91,18 @@ function experimentStructuredData(experiment: ExperimentDefinition) {
   }
 }
 
-function Brand() {
-  return <Link className="brand" to="/" aria-label="Armsteel Experiments — exhibition entrance">
-    <span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>
-    <span className="brand-words"><strong>ARMSTEEL</strong><small>EXPERIMENTS</small></span>
+type BrandVariant = 'home' | 'lockup' | 'mark'
+
+function Brand({ variant = 'lockup' }: { variant?: BrandVariant }) {
+  return <Link className={`brand brand-${variant}`} to="/" aria-label="The Shape of Motion — home">
+    <img className="brand-mark" src="/shape-of-motion-symbol.png" alt="" />
+    {variant !== 'mark' && <span className="brand-words"><strong>THE SHAPE OF MOTION</strong>{variant === 'lockup' && <small>BY ARMSTEEL</small>}</span>}
   </Link>
 }
 
-function Header() {
+function Header({ variant = 'lockup' }: { variant?: BrandVariant } = {}) {
   return <header className="site-header">
-    <Brand />
+    <Brand variant={variant} />
     <nav className="header-nav" aria-label="Main navigation">
       <Link to="/#collection" className="header-link">Collection <span aria-hidden="true">↘</span></Link>
       <Link to="/privacy" className="header-link">Privacy</Link>
@@ -153,7 +155,7 @@ function Exhibition() {
   const gridItems = featured ? shown.filter((item) => item.id !== featured.id) : shown
 
   useEffect(() => updatePageMetadata({
-    title: 'Armsteel Experiments — Where rules become worlds',
+    title: 'The Shape of Motion — A collection by ARMSTEEL',
     description: homeDescription,
     canonical: '/',
     jsonLd: collectionStructuredData(),
@@ -242,30 +244,30 @@ function Exhibition() {
     <a className="skip-link" href="#collection">Skip to collection</a>
     <AmbientField />
     <div className="ambient-grain" aria-hidden="true" />
-    <Header />
+    <Header variant="home" />
 
     <section className="hero-shell portal-hero" aria-labelledby="entrance-title">
       <div className="hero-study-art" aria-hidden="true"><ArtworkPreview id="attractors" live /></div>
       <div className="hero-copy">
-        <h1 id="entrance-title"><span>Where rules</span><br /><span>become <em>worlds.</em></span></h1>
-        <p className="hero-description">{siteCopy.home.intro}</p>
-        <a href="#collection" className="glass-cta">Explore the collection <Icon name="arrow" /></a>
+        <h1 id="entrance-title"><span>The Shape</span><span>of Motion</span></h1>
+        <p className="hero-byline">A collection by <strong>ARMSTEEL</strong></p>
+        <a className="hero-explore" href="#collection">Explore the collection <Icon name="arrow" /></a>
       </div>
     </section>
 
     <section className="collection-section section-wrap" id="collection" aria-labelledby="collection-title">
       <div className="section-heading collection-heading">
-        <div><p className="eyebrow"><span className="eyebrow-rule" /> THE COLLECTION</p><h2 id="collection-title">Choose a world.</h2></div>
+        <div><p className="eyebrow"><span className="eyebrow-rule" /> THE COLLECTION</p><h2 id="collection-title">Choose a world.</h2><p className="collection-tagline">Where rules become worlds.</p></div>
         <div className="collection-tools">
           <button ref={searchButtonRef} className="quiet-button" onClick={() => setSearchOpen((value) => !value)} aria-label={searchOpen ? 'Close collection search' : 'Search the collection'} aria-expanded={searchOpen} aria-controls="collection-search">
-            <Icon name={searchOpen ? 'close' : 'search'} /><span>{searchOpen ? 'Close search' : 'Find a study'}</span><kbd>CTRL / ⌘ K</kbd>
+            <Icon name={searchOpen ? 'close' : 'search'} /><span>{searchOpen ? 'Close search' : 'Find a work'}</span><kbd>CTRL / ⌘ K</kbd>
           </button>
-          <button className="quiet-button" onClick={discover} aria-label="Surprise me with a study"><Icon name="shuffle" /><span>Surprise me</span></button>
+          <button className="quiet-button" onClick={discover} aria-label="Surprise me with a work"><Icon name="shuffle" /><span>Surprise me</span></button>
         </div>
       </div>
       {searchOpen && <div className="search-panel" id="collection-search" role="search">
         <Icon name="search" />
-        <input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="A pattern, a feeling, a name…" aria-label="Search studies by name, discipline or idea" aria-controls="gallery-grid" />
+        <input ref={searchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="A pattern, a feeling, a name…" aria-label="Search works by name, discipline or idea" aria-controls="gallery-grid" />
         {query && <button className="search-clear" onClick={() => setQuery('')} aria-label="Clear search"><Icon name="close" /></button>}
         <kbd>ESC</kbd>
       </div>}
@@ -277,7 +279,7 @@ function Exhibition() {
         {filters.map((item) => <button key={item} className={'filter-chip' + (filter === item ? ' active' : '')} onClick={() => setFilter(item)} aria-pressed={filter === item}>
           {item}{item === 'Favourites' && favorites.length > 0 ? <span>{favorites.length}</span> : null}
         </button>)}
-        <span className="result-count" aria-live="polite">{String(shown.length).padStart(2, '0')} {shown.length === 1 ? 'STUDY' : 'STUDIES'}</span>
+        <span className="result-count" aria-live="polite">{String(shown.length).padStart(2, '0')} {shown.length === 1 ? 'WORK' : 'WORKS'}</span>
       </div>
 
       {featured && <article className="featured-piece">
@@ -374,19 +376,19 @@ function Exhibition() {
         </article>)}
       </div> : <div className="empty-state" role="status">
         <span className="empty-glyph" aria-hidden="true">∅</span>
-        <p>{filter === 'Favourites' && favorites.length === 0 ? 'Saved studies will gather here.' : 'No studies found in this corner of the gallery.'}</p>
+        <p>{filter === 'Favourites' && favorites.length === 0 ? 'Saved works will gather here.' : 'No works found in this corner of the collection.'}</p>
         {filter === 'Favourites' && favorites.length === 0 && <small>Use the heart on any artwork to keep it close.</small>}
         <button className="text-link" onClick={() => { setFilter('All works'); setQuery('') }}>Return to all works <Icon name="arrow" /></button>
       </div>}
     </section>
 
     {recentlyViewed.length > 0 && <section className="recent-section section-wrap" aria-labelledby="recent-heading">
-      <div className="recent-label"><p className="eyebrow"><span className="eyebrow-rule" /> YOUR TRAIL</p><h2 id="recent-heading">Return to a study.</h2></div>
+      <div className="recent-label"><p className="eyebrow"><span className="eyebrow-rule" /> YOUR TRAIL</p><h2 id="recent-heading">Return to a work.</h2></div>
       <div className="recent-list">{recentlyViewed.slice(0, 4).map((item) => <Link to={'/exhibits/' + item.id} key={item.id}>
         <span>{item.number}</span><strong>{item.title}</strong><small>{item.category}</small><Icon name="arrow" />
       </Link>)}</div>
     </section>}
-    <footer className="portal-footer section-wrap"><Brand /><span>{experiments.length} studies · One living collection</span><Link to="/privacy">Privacy</Link></footer>
+    <footer className="portal-footer section-wrap"><Brand variant="mark" /><span>{experiments.length} works · One living collection</span><Link to="/privacy">Privacy</Link></footer>
   </main>
 }
 
@@ -436,7 +438,7 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
     stateRef.current = {}
     const path = `/exhibits/${experiment.id}`
     updatePageMetadata({
-      title: `${experiment.title} — Armsteel Experiments`,
+      title: `${experiment.title} — The Shape of Motion`,
       description: experiment.metaDescription,
       canonical: path,
       type: 'article',
@@ -643,7 +645,7 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
         {savedMessage && <p className="saved-experiment-status" role="status">{savedMessage}</p>}
       </section>
       <div className="info-actions">
-        <button onClick={() => setIsFavorite(toggleFavorite(experiment.id, experimentIds).includes(experiment.id))} aria-pressed={isFavorite}><Icon name="heart" />{isFavorite ? 'Saved to exhibition' : 'Save to exhibition'}</button>
+        <button onClick={() => setIsFavorite(toggleFavorite(experiment.id, experimentIds).includes(experiment.id))} aria-pressed={isFavorite}><Icon name="heart" />{isFavorite ? 'Saved to collection' : 'Save to collection'}</button>
         <button onClick={() => { void share() }}><Icon name="share" />{copied ? 'Link copied' : 'Share this experiment'}</button>
       </div>
     </section>}
@@ -660,9 +662,9 @@ function ExhibitExperience({ experiment }: { experiment: ExperimentDefinition })
     <button className="interface-reveal glass-material" onClick={() => setInterfaceVisible(true)} aria-label="Show experiment controls" hidden={interfaceVisible}><Icon name="menu" /><span>Show controls</span></button>
     <div className={'experience-chrome' + (interfaceVisible ? '' : ' chrome-hidden')} aria-hidden={!interfaceVisible} inert={!interfaceVisible}>
       <nav className="experience-dock glass-material" aria-label="Experiment navigation and controls">
-        <button className="dock-button dock-home" onClick={() => navigate('/')} aria-label="Return to exhibition" title="Return to exhibition" data-tooltip="Exhibition">
-          <Icon name="back" /><span className="dock-home-label">Exhibition</span>
-        </button>
+        <Link className="dock-button dock-home" to="/" aria-label="The Shape of Motion — return to the collection" title="Return to the collection" data-tooltip="Collection">
+          <img className="dock-brand-mark" src="/shape-of-motion-symbol.png" alt="" /><span className="dock-home-wordmark">THE SHAPE OF MOTION</span>
+        </Link>
         <span className="dock-divider" aria-hidden="true" />
         <button className="dock-button dock-step" onClick={() => move(-1)} aria-label="Previous experiment" title="Previous experiment · ←" data-tooltip="Previous"><Icon name="back" /></button>
         <button className="dock-current" onClick={() => overlay('selector')} aria-expanded={activeOverlay === 'selector'} aria-controls="experiment-selector" aria-label={'Choose experiment. Current experiment: ' + experiment.title} title="Choose an experiment">
@@ -723,7 +725,7 @@ function PrivacyPage() {
         {section.paragraphs.map((paragraph) => <p key={paragraph}>{renderParagraph(paragraph)}</p>)}
       </section>)}
     </main>
-    <footer className="portal-footer section-wrap"><Brand /><span>Armsteel Experiments</span><Link to="/">Return to the collection</Link></footer>
+    <footer className="portal-footer section-wrap"><Brand variant="mark" /><span>A collection by ARMSTEEL</span><Link to="/">Return to the collection</Link></footer>
   </div>
 }
 
@@ -741,9 +743,9 @@ function NotFoundPage() {
       <p className="eyebrow"><span className="eyebrow-rule" /> 404 · OUTSIDE THE COLLECTION</p>
       <h1 id="not-found-title">{siteCopy.notFound.heading}</h1>
       <p>{siteCopy.notFound.message}</p>
-      <Link className="glass-cta" to="/">Return to the exhibition <Icon name="arrow" /></Link>
+      <Link className="glass-cta" to="/">Return to the collection <Icon name="arrow" /></Link>
     </main>
-    <footer className="portal-footer section-wrap"><Brand /><span>Armsteel Experiments</span><Link to="/privacy">Privacy</Link></footer>
+    <footer className="portal-footer section-wrap"><Brand variant="mark" /><span>A collection by ARMSTEEL</span><Link to="/privacy">Privacy</Link></footer>
   </div>
 }
 

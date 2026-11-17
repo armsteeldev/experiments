@@ -2,8 +2,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 
 export const SITE_ORIGIN = 'https://experiments.armsteel.dev'
-const SITE_NAME = 'Armsteel Experiments'
+const SITE_NAME = 'The Shape of Motion'
 const SOCIAL_IMAGE = `${SITE_ORIGIN}/og-image.png`
+const SOCIAL_ALT = 'The Shape of Motion — A collection by ARMSTEEL'
 
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -25,7 +26,7 @@ function breadcrumb(...items) {
   }
 }
 
-function homeStructuredData(experiments) {
+function homeStructuredData(experiments, copy) {
   const items = experiments.map((experiment, index) => ({
     '@type': 'ListItem',
     position: index + 1,
@@ -40,15 +41,15 @@ function homeStructuredData(experiments) {
         '@id': `${SITE_ORIGIN}/#website`,
         url: `${SITE_ORIGIN}/`,
         name: SITE_NAME,
-        description: 'A browser-based museum of interactive computational art and science.',
+        description: copy.home.description,
         inLanguage: 'en',
       },
       {
         '@type': 'CollectionPage',
         '@id': `${SITE_ORIGIN}/#collection`,
         url: `${SITE_ORIGIN}/`,
-        name: 'The Collection — Armsteel Experiments',
-        description: 'Thirteen interactive studies across mathematics, physics, computing, electronics, artificial life, and generative art.',
+        name: 'The Shape of Motion — The collection',
+        description: copy.home.description,
         isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
         mainEntity: {
           '@type': 'ItemList',
@@ -72,7 +73,7 @@ function exhibitStructuredData(experiment) {
         name: experiment.title,
         description: experiment.metaDescription,
         url,
-        applicationCategory: 'EducationalApplication',
+        applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
         inLanguage: 'en',
@@ -115,12 +116,12 @@ function seoHead(page) {
     '<meta property="og:image:type" content="image/png">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
-    '<meta property="og:image:alt" content="Armsteel Experiments — Where rules become worlds">',
+    `<meta property="og:image:alt" content="${SOCIAL_ALT}">`,
     '<meta name="twitter:card" content="summary_large_image">',
     `<meta name="twitter:title" content="${escapeHtml(page.title)}">`,
     `<meta name="twitter:description" content="${escapeHtml(page.description)}">`,
     `<meta name="twitter:image" content="${SOCIAL_IMAGE}">`,
-    '<meta name="twitter:image:alt" content="Armsteel Experiments — Where rules become worlds">',
+    `<meta name="twitter:image:alt" content="${SOCIAL_ALT}">`,
   ]
   if (page.canonical) {
     const canonical = new URL(page.canonical, SITE_ORIGIN).href
@@ -189,7 +190,7 @@ export async function generateSitePages({ rootDir, outDir }) {
     title: copy.home.title,
     description: copy.home.description,
     canonical: '/',
-    jsonLd: homeStructuredData(experiments),
+    jsonLd: homeStructuredData(experiments, copy),
     fallbackBody: homeFallback(copy, experiments),
   }]
 
@@ -197,7 +198,7 @@ export async function generateSitePages({ rootDir, outDir }) {
     const path = `/exhibits/${experiment.id}`
     pages.push({
       path,
-      title: `${experiment.title} — Armsteel Experiments`,
+      title: `${experiment.title} — The Shape of Motion`,
       description: experiment.metaDescription,
       canonical: path,
       type: 'article',

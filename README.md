@@ -1,6 +1,10 @@
-# Armsteel Experiments
+# The Shape of Motion
 
-A browser-based digital museum of nineteen interactive studies in mathematics, physics, computing, electronics, artificial life, and generative art. The client uses React, TypeScript, and Vite with Canvas 2D, WebGL2, WebGPU, and Web Workers where available. Production is a static site served by Caddy; it has no application server or account system.
+**A collection by ARMSTEEL**
+
+*Where rules become worlds.*
+
+An open collection of nineteen interactive works in computational art: fluid forms, mathematical patterns, living systems, and worlds to explore. The client uses React, TypeScript, and Vite with Canvas 2D, WebGL2, WebGPU, and Web Workers where available. Production is a static site served by Caddy; it has no application server or account system.
 
 ## Local development
 
@@ -24,7 +28,7 @@ Focused checks are available as `npm run test:numerics`, `npm run test:simulatio
 
 ## The collection
 
-The public routes are generated from `src/data/experiments.json`:
+The collection lives at `src/data/experiments.json`:
 
 1. The Infinite Shore — Mandelbrot and Julia sets
 2. A Quiet Current — interactive fluid motion
@@ -56,6 +60,8 @@ Each study is lazy-loaded as its own route chunk. The shared shell handles navig
 4. Run `npm run verify`. The checks cover duplicate IDs/numbers, route output, descriptions, structured data, and sitemap membership.
 
 Titles, descriptions, canonicals, Open Graph tags, JSON-LD, route HTML, the sitemap, and `robots.txt` are generated from the registry and `src/data/site-copy.json` during the Vite production build. Route pages contain useful static HTML before React loads; the interactive application then takes over in the browser.
+
+The identity, approved symbol, color palette, typography, layout, and motion rules are documented in [docs/IDENTITY.md](docs/IDENTITY.md).
 
 ## Privacy and browser support
 

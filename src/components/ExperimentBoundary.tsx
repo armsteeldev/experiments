@@ -16,8 +16,8 @@ export default class ExperimentBoundary extends Component<Props, State> {
       return <div className="experience-error" role="alert">
         <span className="experience-error-mark" aria-hidden="true">∴</span>
         <h1>This world did not open.</h1>
-        <p>The study encountered an error. Return to the collection and choose another path.</p>
-        <button type="button" onClick={() => window.location.reload()}>Reload this study</button>
+        <p>This work could not open. Return to the collection or try again.</p>
+        <button type="button" onClick={() => window.location.reload()}>Try again</button>
         <Link to="/">Return to the collection <span aria-hidden="true">→</span></Link>
       </div>
     }
