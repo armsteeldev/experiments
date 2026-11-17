@@ -44,6 +44,7 @@
     "qa:canvas-keyboard": "node scripts/run-browser-qa.mjs scripts/qa-canvas-keyboard.mjs",
     "qa:canvas-editing": "node scripts/run-browser-qa.mjs scripts/qa-canvas-editing.mjs",
     "qa:gallery-previews": "node scripts/run-browser-qa.mjs scripts/qa-gallery-previews.mjs",
+    "qa:brand": "node scripts/run-browser-qa.mjs scripts/qa-homepage-brand.mjs",
     "qa:collection-performance": "node scripts/run-browser-qa.mjs scripts/qa-collection-performance.mjs",
     "qa:collection-discovery": "node scripts/run-browser-qa.mjs scripts/qa-collection-discovery.mjs",
     "qa:original-interactions": "node scripts/run-browser-qa.mjs scripts/qa-original-interactions.mjs",

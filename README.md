@@ -24,7 +24,7 @@ npm run preview
 
 `npm run verify` runs the TypeScript and production build, deep-zoom numerical checks, simulation checks, exhaustive Adder checks, the six Invisible World model checks, browser-storage checks, and generated SEO/site-file checks. It creates `dist/`, including a static HTML entry for each exhibit and the privacy page.
 
-Focused checks are available as `npm run test:numerics`, `npm run test:simulations`, `npm run test:adder`, `npm run test:invisible-world`, `npm run test:storage`, and `npm run check:site`. The numerical suite covers coordinates and rendering details through very deep zooms; actual render speed depends on the visitor's graphics hardware.
+Focused checks are available as `npm run test:numerics`, `npm run test:simulations`, `npm run test:adder`, `npm run test:invisible-world`, `npm run test:storage`, and `npm run check:site`. `npm run qa:brand` uses the supervised production preview to check the centered entrance, button, branding, metadata, keyboard entry, reduced motion, and responsive layouts while refreshing the rebrand screenshots. The numerical suite covers coordinates and rendering details through very deep zooms; actual render speed depends on the visitor's graphics hardware.
 
 ## The collection
 
@@ -85,5 +85,5 @@ src/
   lib/                  browser storage, metadata, and deep-zoom math
 scripts/                repeatable correctness and site-generation checks
 deploy/                 scoped Caddy configuration and release scripts
-docs/                   deployment details
+docs/                   identity, deployment, research, and verification records
 ```

@@ -1,6 +1,6 @@
 # Deployment
 
-Armsteel Experiments is published as static Vite output by the existing Caddy service on the Ubuntu host. Its document root is **/var/www/armsteel-experiments/current**; versioned files live under **/var/www/armsteel-experiments/releases/**. The site does not run a Node process after publication. The GitHub push does not deploy.
+The Shape of Motion is published as static Vite output by the existing Caddy service on the Ubuntu host. Its document root is **/var/www/armsteel-experiments/current**; versioned files live under **/var/www/armsteel-experiments/releases/**. The site does not run a Node process after publication. A GitHub push does not deploy.
 
 ## First installation
 
@@ -24,7 +24,7 @@ sudo bash deploy/update-caddy.sh
 
 Publish the static files first. The existing Caddy site can continue serving them while its routing and security policy are updated. **update-caddy.sh** replaces only the **experiments.armsteel.dev** site block in **/etc/caddy/Caddyfile**; it leaves every other site block untouched. The script validates the full candidate, saves a timestamped backup, installs it atomically, validates again, and reloads Caddy. If validation or reload fails, it restores the saved configuration.
 
-The production build generates **/**, thirteen **/exhibits/{id}** entries, **/privacy**, **/404.html**, **/robots.txt**, and **/sitemap.xml**. Each route has static metadata and page copy for direct requests and crawlers. Caddy serves the built routes, avoids falling back to the homepage for unknown paths, and serves the branded 404 page with an HTTP 404 status.
+The production build generates **/**, nineteen **/exhibits/{id}** entries, **/privacy**, **/404.html**, **/robots.txt**, and **/sitemap.xml**. Each route has static metadata and page copy for direct requests and crawlers. The sitemap contains 21 canonical URLs: the homepage, nineteen works, and the privacy page. Caddy serves the built routes, avoids falling back to the homepage for unknown paths, and serves the branded 404 page with an HTTP 404 status.
 
 The Caddy policy adds HTTPS-only transport, MIME sniffing and framing protections, a no-referrer policy, a scoped Permissions Policy, and a Content Security Policy. The policy permits same-origin scripts and connections, inline styles used by React and the exhibit controls, same-origin/blob workers, and the local data/blob images used by previews. WebGL and WebGPU shaders are created through their browser APIs; they do not require external script sources. Hashed **/assets/** files are cached as immutable for one year. HTML and generated site files use revalidation.
 
@@ -37,7 +37,7 @@ curl -fsSI https://experiments.armsteel.dev/
 curl -fsSI https://experiments.armsteel.dev/privacy
 curl -fsSI https://experiments.armsteel.dev/robots.txt
 curl -fsSI https://experiments.armsteel.dev/sitemap.xml
-for id in mandelbrot fluid boids attractors reaction lsystem gravity machine neural logic forces automata adder; do
+for id in mandelbrot fluid boids attractors reaction lsystem gravity machine neural logic forces automata adder waves optics sound garden network lensing; do
   curl -fsSI "https://experiments.armsteel.dev/exhibits/$id"
 done
 curl -sSI https://experiments.armsteel.dev/not-a-real-route

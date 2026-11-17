@@ -43,7 +43,7 @@ The existing responsive layouts remain in place. The branded entrance adds a 720
 
 ## Homepage entrance and motion
 
-The two-line title is centered in the viewport in the large editorial serif, with the live attractor preview continuing to move behind it. It fades into view over 1.4 seconds after the ambient field has started. “A collection by ARMSTEEL” settles beneath the title as a centered, secondary line. A small glass-like “Explore the collection” button follows directly below the attribution; its restrained border and soft surface keep it easy to find without competing with the title. The tagline is omitted from the hero and appears below “Choose a world.” in the collection heading.
+The two-line title is centered in the viewport in the large editorial serif, with the live attractor preview continuing to move behind it. It fades into view over 1.4 seconds after the ambient field has started. “A collection by ARMSTEEL” settles beneath the title as a centered, secondary line. A glass-like “Explore the collection” button follows directly below the attribution; a softly lit edge, translucent layered surface, and 18px backdrop blur give it enough presence to invite entry without competing with the title. The tagline is omitted from the hero and appears below “Choose a world.” in the collection heading.
 
 The header collection link and the collection below the entrance are usable immediately; the staged text is never a loading or splash screen. The title remains centered at desktop, tablet, and mobile widths; the logo lockup, byline, and collection link retain comfortable spacing at narrow widths. Under `prefers-reduced-motion: reduce`, the title and byline render without entrance animations, and page scrolling is immediate. The collection link has a generous target, visible keyboard focus, and a restrained arrow response.
 
@@ -53,18 +53,6 @@ The homepage, exhibit routes, privacy page, not-found state, manifest, favicon, 
 
 ## Rendered verification
 
-Screenshots below were captured from the local production preview in Chromium with reduced motion enabled. The homepage is shown at desktop, tablet, mobile, and narrow-phone sizes. The collection capture shows where the tagline now sits.
+Run `npm run qa:brand` after `npm run verify` to capture the final homepage in the production preview at 1440×900, 1024×768, 844×390, 390×844, and 320×740. The suite checks title and attribution centering, CTA placement, minimum target size, keyboard focus and activation, the interior wordmark, metadata, reduced motion, the live preview canvas, and mobile overflow. It refreshes the screenshots and writes `rebrand/screenshots/homepage-brand-checks.json`.
 
-![The Shape of Motion homepage at 1440×900](rebrand/screenshots/home-desktop.png)
-
-![The Shape of Motion homepage at 1024×768](rebrand/screenshots/home-tablet.png)
-
-![The Shape of Motion homepage at 390×844](rebrand/screenshots/home-mobile.png)
-
-![The Shape of Motion homepage at 320×740](rebrand/screenshots/home-narrow.png)
-
-![The Shape of Motion collection heading and tagline](rebrand/screenshots/collection-desktop.png)
-
-The centered hero pass checked the built homepage at 1440×900, 1024×768, 390×844, and 320×740. The title center matched the viewport center at each size; the mobile and narrow layouts had no horizontal overflow. The collection link received keyboard focus with a visible outline and opened the collection by pointer. Reduced-motion emulation removed the title and byline entrance animations. No runtime exceptions or browser error-level log entries occurred. The live preview renderer and its size, opacity, and transform were left untouched. `npm run verify` passed the TypeScript/Vite production build, simulation and numerical checks, Adder cases, storage checks, and site metadata/icon checks.
-
-The rendered review used Chromium's software WebGL fallback. It verifies browser layout and UI behavior, not physical GPU performance or physical-device touch feel.
+The homepage images currently stored under `rebrand/screenshots/` predate the final glass entry treatment and are retained as historical review material. They are not evidence of the final composition. The 2026-11-17 integration pass did not run the production build or browser checks because the project's host resource supervisor refused admission; see [the release handoff](RELEASE-HANDOFF.md). Refresh and inspect the final screenshots before publication.

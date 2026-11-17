@@ -2328,6 +2328,7 @@ body.immersive-active { height: 100%; min-height: 0; }
 .exhibition-page .hero-explore {
   position: absolute;
   z-index: 3;
+  isolation: isolate;
   top: calc(50dvh + clamp(136px, calc(7.9vw + 70px), 185px));
   left: 50%;
   display: inline-flex;
@@ -2335,16 +2336,17 @@ body.immersive-active { height: 100%; min-height: 0; }
   align-items: center;
   justify-content: center;
   gap: 11px;
+  overflow: hidden;
   padding: 0 21px;
-  border: 1px solid rgba(240, 238, 231, .25);
-  border-radius: var(--radius-pill);
+  border: 1px solid rgba(240, 238, 231, .3);
+  border-radius: 17px;
   color: rgba(240, 238, 231, .96);
   background:
-    linear-gradient(138deg, rgba(240, 238, 231, .095), rgba(240, 238, 231, .035) 48%, rgba(128, 150, 157, .07)),
-    rgba(9, 12, 14, .38);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), inset 0 -1px 0 rgba(255, 255, 255, .035), 0 9px 26px rgba(0, 0, 0, .18);
-  backdrop-filter: blur(12px) saturate(1.12);
-  -webkit-backdrop-filter: blur(12px) saturate(1.12);
+    linear-gradient(142deg, rgba(240, 238, 231, .15), rgba(240, 238, 231, .065) 48%, rgba(128, 150, 157, .095)),
+    rgba(9, 12, 14, .46);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .23), inset 0 -1px 0 rgba(255, 255, 255, .055), 0 11px 30px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(18px) saturate(1.22);
+  -webkit-backdrop-filter: blur(18px) saturate(1.22);
   font: 500 14px/1 var(--sans);
   letter-spacing: .025em;
   white-space: nowrap;
@@ -2352,8 +2354,17 @@ body.immersive-active { height: 100%; min-height: 0; }
   pointer-events: auto;
   transition: color var(--motion-base) var(--ease-graceful), border-color var(--motion-base) var(--ease-graceful), background var(--motion-base) var(--ease-graceful), box-shadow var(--motion-base) var(--ease-graceful);
 }
+.exhibition-page .hero-explore::before {
+  position: absolute;
+  z-index: -1;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(116deg, rgba(255, 255, 255, .19), transparent 35% 72%, rgba(197, 223, 239, .075));
+  content: "";
+  pointer-events: none;
+}
 .exhibition-page .hero-explore svg { width: 16px; height: 16px; color: var(--brand-ivory); transition: transform var(--motion-base) var(--ease-graceful); }
-.exhibition-page .hero-explore:hover { color: var(--brand-ivory); border-color: rgba(240, 238, 231, .48); background: linear-gradient(138deg, rgba(240, 238, 231, .13), rgba(240, 238, 231, .055) 48%, rgba(128, 150, 157, .09)), rgba(9, 12, 14, .44); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 11px 28px rgba(0, 0, 0, .22); }
+.exhibition-page .hero-explore:hover { color: var(--brand-ivory); border-color: rgba(240, 238, 231, .5); background: linear-gradient(142deg, rgba(240, 238, 231, .19), rgba(240, 238, 231, .085) 48%, rgba(128, 150, 157, .12)), rgba(9, 12, 14, .5); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 13px 32px rgba(0, 0, 0, .25); }
 .exhibition-page .hero-explore:hover svg { transform: translateX(3px); }
 .exhibition-page .hero-explore:active { color: rgba(240, 238, 231, .72); }
 .exhibition-page .hero-explore:focus-visible { outline: 2px solid var(--brand-ivory); outline-offset: 4px; }
@@ -2454,6 +2465,11 @@ body.immersive-active { height: 100%; min-height: 0; }
   .exhibition-page .hero-byline { top: calc(50dvh + clamp(90px, calc(7.24vw + 24px), 105px)); }
   .exhibition-page .hero-explore { top: calc(50dvh + clamp(132px, calc(7.24vw + 66.5px), 146px)); }
 }
+@media (max-height: 460px) and (max-width: 1100px) and (min-width: 721px) {
+  .exhibition-page .portal-hero .hero-copy h1 { font-size: clamp(62px, 7.7vw, 70px); }
+  .exhibition-page .hero-byline { top: calc(50dvh + 80px); font-size: 14px; }
+  .exhibition-page .hero-explore { top: calc(50dvh + 118px); min-height: 52px; }
+}
 
 @media (max-width: 720px) {
   .exhibition-page .site-header { width: calc(100% - 38px); height: 74px; }
@@ -2501,7 +2517,7 @@ body.immersive-active { height: 100%; min-height: 0; }
   }
   .exhibition-page .hero-byline { top: calc(50dvh + clamp(60px, calc(7.2vw + 39px), 87px)); font-size: 14px; letter-spacing: .01em; }
   .exhibition-page .hero-byline strong { letter-spacing: .11em; }
-  .exhibition-page .hero-explore { top: calc(50dvh + clamp(97px, calc(5.6vw + 79px), 120px)); min-height: 52px; gap: 9px; padding-inline: 18px; font-size: 13px; letter-spacing: .015em; }
+  .exhibition-page .hero-explore { top: calc(50dvh + clamp(97px, calc(5.6vw + 79px), 120px)); min-height: 54px; gap: 9px; padding-inline: 18px; font-size: 13px; letter-spacing: .015em; }
   .exhibition-page .collection-tagline { font-size: 15px; }
   .exhibition-page .collection-section { padding-top: 62px; }
   .exhibition-page .portal-footer { gap: 9px; flex-wrap: wrap; padding-block: 17px; }
@@ -2520,7 +2536,7 @@ body.immersive-active { height: 100%; min-height: 0; }
   .exhibition-page .brand-home .brand-words strong { font-size: 8.5px; letter-spacing: .025em; }
   .exhibition-page .portal-hero .hero-copy h1 { font-size: 43px; }
   .exhibition-page .hero-byline { top: calc(50dvh + 62px); font-size: 12px; }
-  .exhibition-page .hero-explore { min-height: 50px; padding-inline: 16px; font-size: 12px; }
+  .exhibition-page .hero-explore { min-height: 52px; padding-inline: 16px; font-size: 12px; }
   .information-page .site-header { width: calc(100% - 30px); }
   .information-page .brand-lockup { gap: 7px; }
   .information-page .brand-lockup .brand-mark { width: 40px; height: 40px; }
