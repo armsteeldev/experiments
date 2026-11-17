@@ -61,7 +61,13 @@ All qa:* package commands now use scripts/run-browser-qa.mjs, and each individua
 
 The preview and browser are ordinary foreground children of the runner; none are detached. The owner token is local process metadata only and is not logged or sent to a service. Test output continues to use the existing paths and is not removed by cleanup.
 
-Run npm run build only when the machine is healthy, then invoke an individual npm run qa:<name>. QA now fails closed when the host has less than 20% or 2 GiB available RAM (whichever is greater), less than 10% or 64 MiB free swap (capped at 512 MiB), sustained CPU pressure over 25%, one-minute load over 1.5 per logical CPU (minimum threshold 4), or CPU temperature at/above 85°C.
+Run npm run build only when the machine is healthy, then invoke an individual npm run qa:<name>. QA fails closed when available RAM is below 20% or 2 GiB (whichever is greater), sustained CPU pressure is over 25%, memory-full pressure is over 1%, one-minute load is over 1.5 per logical CPU (minimum threshold 4), or CPU temperature is at/above 85°C. When free swap is below 10% or 64 MiB (whichever is greater, capped at 512 MiB), the runner raises the available-RAM floor to 30% of total RAM or 4 GiB (whichever is greater). It keeps that reserve in force during the run and still monitors pressure, load, and temperature every 15 seconds. This permits safe browser QA when swap is occupied by inactive pages but the host has substantial RAM headroom; low free swap alone does not block a run.
+
+## Reassessment: 2026-11-17
+
+Before and during release QA, the host had 6.7–7.4 GiB available RAM, 12–444 KiB free of 4 GiB swap, memory PSI `some` and `full` at 0.00% avg10, CPU PSI below 5% avg10, load below 2.5 on six logical CPUs, and CPU temperatures below 70°C. `vmstat 1 5` showed swap-in/out only in the initial since-boot sample, then zero for the four one-second samples. The first brand QA preflight refused solely because free swap was below its fixed 512 MiB threshold. No abandoned Chromium tree or QA lock was present; the remaining Firefox session, unrelated Vite servers, and unrelated Codex process were left untouched.
+
+This evidence indicates stale/idle swap rather than active memory pressure. The fixed swap rule was therefore too conservative for this state. The rule now requires a larger RAM reserve whenever swap capacity is constrained (4.66 GiB on this host), while preserving the existing pressure/load/temperature checks and in-run monitoring. This is a guard adjustment based on measured headroom, not an override of the QA supervisor.
 
 ## Health after cleanup
 

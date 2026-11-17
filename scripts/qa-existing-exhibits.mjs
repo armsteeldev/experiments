@@ -24,7 +24,8 @@ const waiting = new Map()
 socket.addEventListener('message', (event) => {
   const message = JSON.parse(event.data)
   if (message.id && waiting.has(message.id)) {
-    const { resolve: resolveCall, reject, method } = waiting.get(message.id)
+    const { resolve: resolveCall, reject, method, timeout } = waiting.get(message.id)
+    clearTimeout(timeout)
     waiting.delete(message.id)
     if (message.error) reject(new Error(`${method}: ${message.error.message}`))
     else resolveCall(message.result)
@@ -39,8 +40,8 @@ function call(method, params = {}) {
   const id = ++nextId
   socket.send(JSON.stringify({ id, method, params }))
   return new Promise((resolveCall, reject) => {
-    waiting.set(id, { resolve: resolveCall, reject, method })
-    setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    const timeout = setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    waiting.set(id, { resolve: resolveCall, reject, method, timeout })
   })
 }
 

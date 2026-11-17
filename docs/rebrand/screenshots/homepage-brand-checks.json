@@ -1,0 +1,411 @@
+{
+  "createdAt": "2026-11-17T10:11:59.082Z",
+  "method": "Supervised Chromium production preview: centered hero geometry, entry placement and target size, live preview canvas, keyboard focus and activation, reduced-motion styles, interior brand lockup, metadata, and mobile overflow.",
+  "screenshots": [
+    "home-desktop.png",
+    "home-tablet.png",
+    "home-landscape.png",
+    "home-mobile.png",
+    "home-narrow.png"
+  ],
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "documentWidth": 1425,
+      "title": "The Shape of Motion",
+      "titleLines": 2,
+      "titleRect": {
+        "x": 471.203125,
+        "y": 336.3151550292969,
+        "width": 497.59375,
+        "height": 227.37503051757812,
+        "left": 471.203125,
+        "right": 968.796875,
+        "bottom": 563.690185546875
+      },
+      "titleAnimation": "title-arrive-centered",
+      "byline": "A collection by ARMSTEEL",
+      "bylineRect": {
+        "x": 617.703125,
+        "y": 589.7802124023438,
+        "width": 204.59375,
+        "height": 22.5,
+        "left": 617.703125,
+        "right": 822.296875,
+        "bottom": 612.2802124023438
+      },
+      "entryText": "Explore the collection",
+      "entryRect": {
+        "x": 610.15625,
+        "y": 633.75,
+        "width": 219.6875,
+        "height": 56,
+        "left": 610.15625,
+        "right": 829.84375,
+        "bottom": 689.75
+      },
+      "entryOpacity": "1",
+      "entryBlur": "blur(18px) saturate(1.22)",
+      "entryRadius": "17px",
+      "entryOutline": "none",
+      "brandName": "THE SHAPE OF MOTION",
+      "brandRect": {
+        "x": 52,
+        "y": 14,
+        "width": 206.96875,
+        "height": 60,
+        "left": 52,
+        "right": 258.96875,
+        "bottom": 74
+      },
+      "navRect": {
+        "x": 1202.90625,
+        "y": 24,
+        "width": 170.09375,
+        "height": 40,
+        "left": 1202.90625,
+        "right": 1373,
+        "bottom": 64
+      },
+      "markLoaded": true,
+      "markBox": {
+        "x": 54,
+        "y": 22.84000015258789,
+        "width": 42.31999969482422,
+        "height": 42.320003509521484,
+        "left": 54,
+        "right": 96.31999969482422,
+        "bottom": 65.16000366210938
+      },
+      "preview": "CANVAS",
+      "hasTaglineInCollection": true,
+      "taglineInHero": false,
+      "screenshot": "home-desktop.png"
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "documentWidth": 1009,
+      "title": "The Shape of Motion",
+      "titleLines": 2,
+      "titleRect": {
+        "x": 349.8515625,
+        "y": 309.890625,
+        "width": 324.296875,
+        "height": 148.21875,
+        "left": 349.8515625,
+        "right": 674.1484375,
+        "bottom": 458.109375
+      },
+      "titleAnimation": "title-arrive-centered",
+      "byline": "A collection by ARMSTEEL",
+      "bylineRect": {
+        "x": 409.703125,
+        "y": 482.125,
+        "width": 204.59375,
+        "height": 22.5,
+        "left": 409.703125,
+        "right": 614.296875,
+        "bottom": 504.625
+      },
+      "entryText": "Explore the collection",
+      "entryRect": {
+        "x": 402.15625,
+        "y": 524.625,
+        "width": 219.6875,
+        "height": 56,
+        "left": 402.15625,
+        "right": 621.84375,
+        "bottom": 580.625
+      },
+      "entryOpacity": "1",
+      "entryBlur": "blur(18px) saturate(1.22)",
+      "entryRadius": "17px",
+      "entryOutline": "none",
+      "brandName": "THE SHAPE OF MOTION",
+      "brandRect": {
+        "x": 52,
+        "y": 14,
+        "width": 206.96875,
+        "height": 60,
+        "left": 52,
+        "right": 258.96875,
+        "bottom": 74
+      },
+      "navRect": {
+        "x": 786.90625,
+        "y": 24,
+        "width": 170.09375,
+        "height": 40,
+        "left": 786.90625,
+        "right": 957,
+        "bottom": 64
+      },
+      "markLoaded": true,
+      "markBox": {
+        "x": 54,
+        "y": 22.84000015258789,
+        "width": 42.31999969482422,
+        "height": 42.320003509521484,
+        "left": 54,
+        "right": 96.31999969482422,
+        "bottom": 65.16000366210938
+      },
+      "preview": "CANVAS",
+      "hasTaglineInCollection": true,
+      "taglineInHero": false,
+      "screenshot": "home-tablet.png"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "documentWidth": 844,
+      "title": "The Shape of Motion",
+      "titleLines": 2,
+      "titleRect": {
+        "x": 288.359375,
+        "y": 133.921875,
+        "width": 267.28125,
+        "height": 122.15625,
+        "left": 288.359375,
+        "right": 555.640625,
+        "bottom": 256.078125
+      },
+      "titleAnimation": "title-arrive-centered",
+      "byline": "A collection by ARMSTEEL",
+      "bylineRect": {
+        "x": 326.515625,
+        "y": 275,
+        "width": 190.96875,
+        "height": 21,
+        "left": 326.515625,
+        "right": 517.484375,
+        "bottom": 296
+      },
+      "entryText": "Explore the collection",
+      "entryRect": {
+        "x": 312.15625,
+        "y": 313,
+        "width": 219.6875,
+        "height": 52,
+        "left": 312.15625,
+        "right": 531.84375,
+        "bottom": 365
+      },
+      "entryOpacity": "1",
+      "entryBlur": "blur(18px) saturate(1.22)",
+      "entryRadius": "17px",
+      "entryOutline": "none",
+      "brandName": "THE SHAPE OF MOTION",
+      "brandRect": {
+        "x": 52,
+        "y": 14,
+        "width": 206.96875,
+        "height": 60,
+        "left": 52,
+        "right": 258.96875,
+        "bottom": 74
+      },
+      "navRect": {
+        "x": 621.90625,
+        "y": 24,
+        "width": 170.09375,
+        "height": 40,
+        "left": 621.90625,
+        "right": 792,
+        "bottom": 64
+      },
+      "markLoaded": true,
+      "markBox": {
+        "x": 54,
+        "y": 22.84000015258789,
+        "width": 42.31999969482422,
+        "height": 42.320003509521484,
+        "left": 54,
+        "right": 96.31999969482422,
+        "bottom": 65.16000366210938
+      },
+      "preview": "CANVAS",
+      "hasTaglineInCollection": true,
+      "taglineInHero": false,
+      "screenshot": "home-landscape.png"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "documentWidth": 390,
+      "title": "The Shape of Motion",
+      "titleLines": 2,
+      "titleRect": {
+        "x": 96.5390625,
+        "y": 375,
+        "width": 196.921875,
+        "height": 94,
+        "left": 96.5390625,
+        "right": 293.4609375,
+        "bottom": 469
+      },
+      "titleAnimation": "title-arrive-centered",
+      "byline": "A collection by ARMSTEEL",
+      "bylineRect": {
+        "x": 102.875,
+        "y": 489.078125,
+        "width": 184.25,
+        "height": 21,
+        "left": 102.875,
+        "right": 287.125,
+        "bottom": 510.078125
+      },
+      "entryText": "Explore the collection",
+      "entryRect": {
+        "x": 95.8984375,
+        "y": 522.828125,
+        "width": 198.203125,
+        "height": 54,
+        "left": 95.8984375,
+        "right": 294.1015625,
+        "bottom": 576.828125
+      },
+      "entryOpacity": "1",
+      "entryBlur": "blur(18px) saturate(1.22)",
+      "entryRadius": "17px",
+      "entryOutline": "none",
+      "brandName": "THE SHAPE OF MOTION",
+      "brandRect": {
+        "x": 19,
+        "y": 13,
+        "width": 182,
+        "height": 48,
+        "left": 19,
+        "right": 201,
+        "bottom": 61
+      },
+      "navRect": {
+        "x": 232.515625,
+        "y": 16,
+        "width": 138.484375,
+        "height": 42,
+        "left": 232.515625,
+        "right": 371,
+        "bottom": 58
+      },
+      "markLoaded": true,
+      "markBox": {
+        "x": 21,
+        "y": 19.780000686645508,
+        "width": 34.439998626708984,
+        "height": 34.44000244140625,
+        "left": 21,
+        "right": 55.439998626708984,
+        "bottom": 54.22000312805176
+      },
+      "preview": "CANVAS",
+      "hasTaglineInCollection": true,
+      "taglineInHero": false,
+      "screenshot": "home-mobile.png"
+    },
+    {
+      "width": 320,
+      "height": 740,
+      "documentWidth": 320,
+      "title": "The Shape of Motion",
+      "titleLines": 2,
+      "titleRect": {
+        "x": 71.7421875,
+        "y": 327.875,
+        "width": 176.515625,
+        "height": 84.25,
+        "left": 71.7421875,
+        "right": 248.2578125,
+        "bottom": 412.125
+      },
+      "titleAnimation": "title-arrive-centered",
+      "byline": "A collection by ARMSTEEL",
+      "bylineRect": {
+        "x": 81.0390625,
+        "y": 432,
+        "width": 157.921875,
+        "height": 18,
+        "left": 81.0390625,
+        "right": 238.9609375,
+        "bottom": 450
+      },
+      "entryText": "Explore the collection",
+      "entryRect": {
+        "x": 68.09375,
+        "y": 467,
+        "width": 183.8125,
+        "height": 52,
+        "left": 68.09375,
+        "right": 251.90625,
+        "bottom": 519
+      },
+      "entryOpacity": "1",
+      "entryBlur": "blur(18px) saturate(1.22)",
+      "entryRadius": "17px",
+      "entryOutline": "none",
+      "brandName": "THE SHAPE OF MOTION",
+      "brandRect": {
+        "x": 15,
+        "y": 13,
+        "width": 154.109375,
+        "height": 48,
+        "left": 15,
+        "right": 169.109375,
+        "bottom": 61
+      },
+      "navRect": {
+        "x": 183.125,
+        "y": 16,
+        "width": 121.875,
+        "height": 42,
+        "left": 183.125,
+        "right": 305,
+        "bottom": 58
+      },
+      "markLoaded": true,
+      "markBox": {
+        "x": 17,
+        "y": 20.600000381469727,
+        "width": 32.79999923706055,
+        "height": 32.80000305175781,
+        "left": 17,
+        "right": 49.79999923706055,
+        "bottom": 53.40000343322754
+      },
+      "preview": "CANVAS",
+      "hasTaglineInCollection": true,
+      "taglineInHero": false,
+      "screenshot": "home-narrow.png"
+    }
+  ],
+  "focusState": {
+    "focused": true,
+    "outline": "solid",
+    "width": 219.6875
+  },
+  "reducedMotion": {
+    "preference": true,
+    "titleAnimation": "none",
+    "titleOpacity": "1",
+    "bylineAnimation": "none",
+    "entryTransition": "1e-05s"
+  },
+  "interior": {
+    "title": "Privacy — The Shape of Motion",
+    "lockup": "THE SHAPE OF MOTION",
+    "markLoaded": true,
+    "overflow": false,
+    "hasManifest": true,
+    "hasFavicon": true,
+    "theme": "#090b0d",
+    "description": "How The Shape of Motion stores favourites in your browser and handles website requests.",
+    "ogTitle": "Privacy — The Shape of Motion"
+  },
+  "interiorMobile": [
+    390,
+    320
+  ],
+  "browserErrors": []
+}

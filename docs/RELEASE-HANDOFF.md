@@ -16,25 +16,34 @@ No completed experiment or user feature was intentionally removed. Older duplica
 
 ## Verification and release status
 
-The existing Renaissance branch records a passing `npm run verify` and sequential browser suites from 2026-11-16. Those results cover the 19-work branch before this rebrand and final CTA adjustment, so they do not verify this exact candidate.
+The exact final candidate was verified on 2026-11-17:
 
-For this integration pass, `git diff --check` and JavaScript syntax checks passed. The current host QA supervisor has refused new build and browser runs while available swap remains below its ~410 MiB admission threshold. No bypass was used. Before publishing, wait for the resource gate to pass and run:
+- `npm run verify` passed: TypeScript build, production Vite build, all 17 automated checks, and the 19-work/21-URL site metadata check.
+- `npm run qa:brand` passed across five homepage viewports, keyboard entry, reduced motion, interior navigation, metadata and mobile overflow. The centered desktop and mobile screenshots were visually reviewed in `docs/rebrand/screenshots/`.
+- `npm run qa:existing` passed all 13 original exhibits at desktop and mobile sizes, with no browser or HTTP errors.
+- `npm run qa:invisible-world` passed all six studies, 50 screenshots, 12 repeated route entries, desktop/mobile interactions, gallery search and navigation, with no browser or HTTP errors.
+- `npm run qa:state-sharing` passed shared-state save/restore across all 19 exhibits, with no browser or HTTP errors.
+- `git diff --check` passed. Browser runs were serialized and the owned Chromium, preview, temporary profiles and QA lock were cleaned after each suite.
 
-~~~sh
-npm run verify
-npm run qa:brand
-npm run qa:existing
-npm run qa:invisible-world
-npm run qa:state-sharing
-~~~
+Host assessment: the machine had 6.7–7.4 GiB available RAM during the sequence, nearly full swap with no swap-in/out after the initial `vmstat` sample, zero memory-full PSI, CPU PSI below 5%, load below 2.5 on six CPUs, and temperatures below 70°C. The original unconditional free-swap rule was too conservative for these readings. The supervisor now requires at least 30% of physical RAM or 4 GiB free (whichever is greater) whenever swap is constrained, and continues enforcing its PSI/load/temperature checks and in-run reserve. All four browser suites passed under that supervisor; no gate was bypassed and no unrelated process was stopped.
 
-`qa:brand` also refreshes the desktop, tablet, phone, narrow-phone, and landscape screenshots in `docs/rebrand/screenshots/`. Review those screenshots and the generated `homepage-brand-checks.json` before approving publication. If the supervisor refuses a run, stop and wait for recovery; do not bypass the guard.
+Headless Chrome used software WebGL on this host. The release checks exercise browser behavior and interactions, but do not establish physical-GPU rendering/performance, a real phone’s performance, or real-device WebGPU/device-loss behavior. These remain non-blocking device validation items in `docs/renaissance/BACKLOG.md`.
 
-The public site was checked read-only on 2026-11-17 and still serves the previous Armsteel Experiments title and fifteen sitemap URLs. The candidate has not been pushed, deployed, or published.
+At the previous read-only public check on 2026-11-17, the site still served the Armsteel Experiments title and fifteen sitemap URLs. This verification pass did not publish or change production.
+
+Release assessment: **GO for publication after approval**. This handoff will be committed at the head of `codex/production-ready`; get its exact SHA with `git rev-parse HEAD` before publishing.
 
 ## Publish after approval
 
-The repository checkout on the Ubuntu deployment host must first receive the reviewed candidate commit. After the approved branch has been pushed, run the following from that host's project checkout, replacing the placeholder with the full reviewed commit SHA:
+After approval, push the final candidate branch from the release-candidate worktree, then run the following from the Ubuntu deployment host. Replace the placeholder with the final reviewed commit SHA:
+
+From `/home/charlie/experiments-release-candidate`:
+
+~~~sh
+git push origin codex/production-ready
+~~~
+
+On the deployment host's project checkout:
 
 ~~~sh
 git fetch origin codex/production-ready

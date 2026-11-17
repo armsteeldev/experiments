@@ -2293,7 +2293,7 @@ body.immersive-active { height: 100%; min-height: 0; }
   flex-direction: column;
   position: absolute;
   top: 50dvh;
-  left: 50%;
+  left: 50vw;
   width: max-content;
   max-width: calc(100% - 32px);
   margin: 0;
@@ -2312,7 +2312,7 @@ body.immersive-active { height: 100%; min-height: 0; }
 .exhibition-page .hero-byline {
   position: absolute;
   top: calc(50dvh + clamp(92px, calc(7.9vw + 26px), 141px));
-  left: 50%;
+  left: 50vw;
   width: max-content;
   max-width: calc(100% - 32px);
   margin: 0;
@@ -2330,7 +2330,7 @@ body.immersive-active { height: 100%; min-height: 0; }
   z-index: 3;
   isolation: isolate;
   top: calc(50dvh + clamp(136px, calc(7.9vw + 70px), 185px));
-  left: 50%;
+  left: 50vw;
   display: inline-flex;
   min-height: 56px;
   align-items: center;

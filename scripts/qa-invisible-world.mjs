@@ -110,6 +110,17 @@ async function clickButton(label) {
   await clickAt(target.x, target.y)
 }
 
+async function clickCollectionDockLink() {
+  const target = await evaluate(`(() => {
+    const link = document.querySelector('.experience-dock a.dock-home')
+    if (!link || !link.getAttribute('aria-label')?.includes('return to the collection')) return null
+    const rect = link.getBoundingClientRect()
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+  })()`)
+  assert.ok(target, 'The exhibit dock exposes its accessible return-to-collection link')
+  await clickAt(target.x, target.y)
+}
+
 async function clickPartialLabel(label) {
   const target = await evaluate(`(() => {
     const element = [...document.querySelectorAll('label.range-control')].find((item) => item.innerText.toLowerCase().includes(${JSON.stringify(label.toLowerCase())}))
@@ -386,7 +397,7 @@ for (const id of studies) {
   await toggleControls()
   if (id === 'sound') await clickButton('Listen to the signal')
   for (let cycle = 0; cycle < 2; cycle++) {
-    await clickButton('Return to exhibition')
+    await clickCollectionDockLink()
     for (let attempt = 0; attempt < 100; attempt++) {
       if (await evaluate(`Boolean(document.querySelector('.exhibition-page'))`)) break
       await sleep(60)
@@ -406,7 +417,7 @@ for (const id of studies) {
 }
 
 await viewport(1440, 900, false)
-await clickButton('Return to exhibition')
+await clickCollectionDockLink()
 for (let attempt = 0; attempt < 100; attempt++) {
   if (await evaluate(`Boolean(document.querySelector('.exhibition-page'))`)) break
   await sleep(60)
@@ -424,8 +435,9 @@ assert.ok(await evaluate(`Boolean(document.querySelector('#collection-search inp
 await call('Input.insertText', { text: 'Schwarzschild' })
 await sleep(250)
 const searchSummary = await evaluate(`({ count: document.querySelector('.result-count')?.textContent.trim(), lensingLink: Boolean(document.querySelector('#gallery-grid a[href="/exhibits/lensing"]')) })`)
-assert.equal(searchSummary.count, '01 STUDY', 'The collection search finds the relativity study')
+assert.equal(searchSummary.count, '01 WORK', 'The collection search finds the relativity work')
 assert.ok(searchSummary.lensingLink)
+await scrollGalleryCardIntoView('lensing')
 await saveScreenshot('gallery-search-schwarzschild.png')
 
 const summary = {

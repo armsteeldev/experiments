@@ -117,11 +117,19 @@ async function checkHostHealth(log = true) {
   }
 
   const limits = []
-  const minimumMemory = Math.max(2 * memoryGiB, Math.ceil(total * 0.2))
-  if (available < minimumMemory) limits.push('available RAM is below ' + formatBytes(minimumMemory))
+  let minimumMemory = Math.max(2 * memoryGiB, Math.ceil(total * 0.2))
+  let swapConstrained = false
   if (swapTotal > 0) {
     const minimumSwapFree = Math.min(512 * 1024 ** 2, Math.max(64 * 1024 ** 2, Math.ceil(swapTotal * 0.1)))
-    if (swapFree < minimumSwapFree) limits.push('free swap is below ' + formatBytes(minimumSwapFree))
+    if (swapFree < minimumSwapFree) {
+      // Full swap may contain old, inactive pages. In that case, admit QA only
+      // with a larger RAM reserve and rely on PSI/load monitoring while it runs.
+      swapConstrained = true
+      minimumMemory = Math.max(minimumMemory, 4 * memoryGiB, Math.ceil(total * 0.3))
+    }
+  }
+  if (available < minimumMemory) {
+    limits.push('available RAM is below ' + formatBytes(minimumMemory) + (swapConstrained ? ' while swap capacity is constrained' : ''))
   }
   if (load1 > Math.max(4, cpuCount * 1.5)) limits.push('1-minute system load is too high for the available CPUs')
   if (cpuPressure !== null && cpuPressure > 25) limits.push('CPU pressure has been high in the last 10 seconds')

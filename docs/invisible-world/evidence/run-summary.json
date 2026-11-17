@@ -19,11 +19,11 @@
     "cards": 18
   },
   "search": {
-    "count": "01 STUDY",
+    "count": "01 WORK",
     "lensingLink": true
   },
   "networkDelivery": {
-    "tick": 96,
+    "tick": 97,
     "delivered": 6,
     "status": "Sent “a small idea” · route selected\norigin → west → relay → south → arrival"
   },

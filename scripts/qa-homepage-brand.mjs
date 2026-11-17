@@ -22,7 +22,8 @@ const waiting = new Map()
 socket.addEventListener('message', (event) => {
   const message = JSON.parse(event.data)
   if (message.id && waiting.has(message.id)) {
-    const { resolve: resolveCall, reject, method } = waiting.get(message.id)
+    const { resolve: resolveCall, reject, method, timeout } = waiting.get(message.id)
+    clearTimeout(timeout)
     waiting.delete(message.id)
     if (message.error) reject(new Error(`${method}: ${message.error.message}`))
     else resolveCall(message.result)
@@ -37,8 +38,8 @@ function call(method, params = {}) {
   const id = ++nextId
   socket.send(JSON.stringify({ id, method, params }))
   return new Promise((resolveCall, reject) => {
-    waiting.set(id, { resolve: resolveCall, reject, method })
-    setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    const timeout = setTimeout(() => { if (waiting.has(id)) { waiting.delete(id); reject(new Error(`CDP timeout: ${method}`)) } }, 30000)
+    waiting.set(id, { resolve: resolveCall, reject, method, timeout })
   })
 }
 
@@ -52,13 +53,13 @@ const sleep = (ms) => new Promise((done) => setTimeout(done, ms))
 
 async function setViewport(width, height, mobile) {
   await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile, screenWidth: width, screenHeight: height })
-  await call('Emulation.setTouchEmulationEnabled', { enabled: mobile, maxTouchPoints: mobile ? 1 : 0 })
+  await call('Emulation.setTouchEmulationEnabled', { enabled: mobile, maxTouchPoints: 1 })
   await evaluate('window.scrollTo(0, 0)')
 }
 
 async function waitFor(expression, label) {
   for (let attempt = 0; attempt < 100; attempt++) {
-    if (await evaluate(expression)) return
+    if (await evaluate(`Boolean(${expression})`)) return
     await sleep(100)
   }
   throw new Error(`Timed out waiting for ${label}`)
@@ -73,7 +74,7 @@ async function inspectHome(width, height, mobile) {
     const brand = document.querySelector('.site-header .brand')
     const nav = document.querySelector('.site-header nav')
     const mark = brand?.querySelector('.brand-mark')
-    const rect = (element) => { const box = element?.getBoundingClientRect(); return box && { x: box.x, y: box.y, width: box.width, height: box.height, right: box.right, bottom: box.bottom } }
+    const rect = (element) => { const box = element?.getBoundingClientRect(); return box && { x: box.x, y: box.y, width: box.width, height: box.height, left: box.left, right: box.right, bottom: box.bottom } }
     const titleRect = rect(title)
     const bylineRect = rect(byline)
     const entryRect = rect(entry)
@@ -97,7 +98,7 @@ async function inspectHome(width, height, mobile) {
 
   assert.equal(state.title, 'The Shape of Motion', 'hero title has the approved name')
   assert.equal(state.titleLines, 2, 'hero title remains in two lines')
-  assert.ok(Math.abs(state.titleRect.x + state.titleRect.width / 2 - width / 2) <= 1.5, `title is horizontally centered at ${width}px`)
+  assert.ok(Math.abs(state.titleRect.x + state.titleRect.width / 2 - width / 2) <= 1.5, `title is horizontally centered at ${width}px (${JSON.stringify({ actualWidth: state.width, titleRect: state.titleRect })})`)
   assert.ok(Math.abs(state.titleRect.y + state.titleRect.height / 2 - height / 2) <= 1.5, `title is vertically centered at ${height}px`)
   assert.ok(state.byline.startsWith('A collection by') && state.byline.includes('ARMSTEEL'), 'the centered ARMSTEEL attribution remains below the title')
   assert.ok(Math.abs(state.bylineRect.x + state.bylineRect.width / 2 - width / 2) <= 1.5, 'attribution is centered')
@@ -108,7 +109,7 @@ async function inspectHome(width, height, mobile) {
   assert.equal(state.entryOpacity, '1', 'collection entry remains available during the title entrance')
   assert.match(state.entryBlur, /blur\(/, 'collection entry uses a glass-like blurred surface')
   assert.ok(state.markLoaded && state.brandName === 'THE SHAPE OF MOTION', 'homepage header shows the approved symbol and compact wordmark')
-  assert.ok(state.brandRect.right < state.navRect.left, 'brand and navigation do not collide')
+  assert.ok(state.brandRect.right < state.navRect.left, `brand and navigation do not collide (${JSON.stringify({ viewport: state.width, expectedWidth: width, brandRect: state.brandRect, navRect: state.navRect, gap: state.navRect.left - state.brandRect.right })})`)
   assert.ok(state.documentWidth <= width + 1, `homepage has no horizontal overflow at ${width}px`)
   assert.equal(state.preview, 'CANVAS', 'the live exhibit preview remains a canvas')
   assert.ok(state.hasTaglineInCollection && !state.taglineInHero, 'the tagline remains in the collection heading, outside the hero')
